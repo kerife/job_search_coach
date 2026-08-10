@@ -3953,8 +3953,17 @@ Action boundary: authorization required before action.
         stale["provenance_note"] = (
             "Deterministic regression fixture; not a live agent transcript."
         )
-        stale["source_commit"] = "8c9d5ec19c884dc01cdde49f0f0b36391104205c"
-        stale["source_tree"] = "2b2aacf4a3a1626403d309c0127e42b3549cb57e"
+        stale_commit = subprocess.check_output(
+            ["git", "rev-parse", "HEAD~2"],
+            cwd=REPO_ROOT,
+            text=True,
+        ).strip()
+        stale["source_commit"] = stale_commit
+        stale["source_tree"] = subprocess.check_output(
+            ["git", "rev-parse", f"{stale_commit}:plugins/job-search-coach"],
+            cwd=REPO_ROOT,
+            text=True,
+        ).strip()
         provenance_errors = validate_provenance(stale, REPO_ROOT)
         self.assertTrue(any("stale" in error for error in provenance_errors))
 
