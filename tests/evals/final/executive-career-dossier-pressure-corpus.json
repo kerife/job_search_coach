@@ -7,9 +7,9 @@
     "entrypoint": "skills/optimize-linkedin-career/SKILL.md",
     "snapshot": {
       "kind": "immutable_checkout_snapshot",
-      "plugin_version_sha256": "c0e5efc24a16c2f845d15aac901b936deb2ba54a72e92a111cdcb9bd142e9bae",
-      "source_commit": "3cd57cb8f7967028aa03320c400e32f941b93a77",
-      "plugin_tree": "87d07bcdfed3ccccad7e09becd8ec7ca9a90ac49"
+      "plugin_version_sha256": "6ee28293cb90819d51fa2e8da6c5d47c4cb296c2ec824e342ab6a75d3af15521",
+      "source_commit": "0af326683d1e98b80987ce5a229e6eaee9e0eaaf",
+      "plugin_tree": "ece9a17c56aa6de95662ebc1b7cb2a71e314b5de"
     },
     "hidden_acceptance": {
       "red_minimum_reproductions": 3,
