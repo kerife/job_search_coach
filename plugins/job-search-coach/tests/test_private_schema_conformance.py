@@ -315,7 +315,6 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         for value, schema in (
             (True, {"type": "integer", "const": 1}),
             (0, {"type": "boolean", "const": False}),
-            ({}, {"pattern": "^x$"}),
             (17, {"type": ["string", "null"]}),
         ):
             with self.subTest(value=value, schema=schema):
@@ -326,6 +325,33 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
                 self.assertEqual(
                     [], validate_schema_instance(value, {"type": ["string", "null"]})
                 )
+
+    def test_dependency_free_checker_applies_pattern_only_to_strings(self):
+        nullable_pattern = {"type": ["string", "null"], "pattern": "^CAP-[0-9]{3}$"}
+        self.assertEqual([], validate_schema_instance(None, nullable_pattern))
+        self.assertEqual([], validate_schema_instance("CAP-001", nullable_pattern))
+        self.assertTrue(
+            any(
+                "pattern mismatch" in error
+                for error in validate_schema_instance("E-001", nullable_pattern)
+            )
+        )
+        string_only_pattern = {"type": "string", "pattern": "^CAP-[0-9]{3}$"}
+        self.assertTrue(
+            any(
+                "type mismatch" in error
+                for error in validate_schema_instance(None, string_only_pattern)
+            )
+        )
+
+        schema = self._schema("executive-career-dossier-v1.schema.json")
+        dossier = json.loads(
+            (
+                ROOT.parent.parent
+                / "tests/evals/with-skill/fixtures/executive-career-dossier/scenario-a-es.json"
+            ).read_text(encoding="utf-8")
+        )
+        self.assertEqual([], validate_schema_instance(dossier, schema))
 
     def test_dependency_free_checker_enforces_contains_and_if_then_else(self):
         schema = {
