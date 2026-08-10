@@ -1835,7 +1835,7 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
     def test_numeric_progress_has_visible_text_equivalent(self) -> None:
         rendered = self.renderer.render_dossier_html(self.es_dossier)
         progress_values = re.findall(
-            r'<progress value="(\d+)" max="100">(\d+)/100</progress>',
+            r'<progress value="(\d+)" max="100"[^>]*>(\d+)/100</progress>',
             rendered,
         )
 
@@ -1844,6 +1844,30 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
             with self.subTest(value=value):
                 self.assertEqual(value, fallback)
                 self.assertIn(f'<span class="score-value">{value}/100</span>', rendered)
+
+    def test_scorecard_progress_has_named_dimension_headings(self) -> None:
+        for dossier in (self.es_dossier, self.en_dossier):
+            with self.subTest(locale=dossier["locale"]):
+                rendered = self.renderer.render_dossier_html(dossier)
+                progress_refs = re.findall(
+                    r'<progress\b[^>]*aria-labelledby="([^"]+)"[^>]*>',
+                    rendered,
+                )
+                dimension_headings = dict(
+                    re.findall(
+                        r'<h3 id="(dimension-title-[^"]+)">([^<]+)</h3>',
+                        rendered,
+                    )
+                )
+                evaluated_count = sum(
+                    row["state"] == "evaluated" for row in dossier["dimensions"]
+                )
+                self.assertEqual(evaluated_count, len(progress_refs))
+                self.assertEqual(len(dimension_headings), len(dossier["dimensions"]))
+                self.assertEqual(len(progress_refs), len(set(progress_refs)))
+                self.assertTrue(
+                    all(reference in dimension_headings for reference in progress_refs)
+                )
 
     def test_renderer_escapes_dynamic_text(self) -> None:
         mutated = copy.deepcopy(self.es_dossier)

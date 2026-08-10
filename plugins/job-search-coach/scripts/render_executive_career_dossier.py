@@ -699,17 +699,19 @@ def _render_dimensions(dossier: Mapping[str, object], locale: str) -> str:
     for dimension in _rows(dossier["dimensions"]):
         evaluated = dimension["state"] == "evaluated"
         score = dimension["score"]
+        dimension_key = text(dimension["dimension"])
+        heading_id = f"dimension-title-{dimension_key}"
         score_markup = (
             f'<div class="score-line"><span class="score-value">{score}/100</span>'
             f'<span class="state-chip">{_natural_state(locale, dimension["evidence_state"])}</span></div>'
-            f'<progress value="{score}" max="100">{score}/100</progress>'
+            f'<progress value="{score}" max="100" aria-labelledby="{heading_id}">{score}/100</progress>'
             if evaluated
             else f'<span class="state-chip">{labels["not_evaluated"]}</span>'
         )
         extra_class = "" if evaluated else " not-evaluated"
         cards.append(f"""
       <article class="card dimension-card{extra_class}" data-dimension-card="true">
-        <h3>{DIMENSION_LABELS[locale][text(dimension['dimension'])]}</h3>
+        <h3 id="{heading_id}">{DIMENSION_LABELS[locale][dimension_key]}</h3>
         {score_markup}
         <p>{text(dimension['reason'])}</p>
       </article>""")
