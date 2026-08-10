@@ -1,0 +1,61 @@
+{
+  "schema_version": "linkedin-client-report-advisory-rubric-1",
+  "prompt_version": "linkedin-client-report-advisory-prompt-1",
+  "rubric_version": "linkedin-client-report-advisory-rubric-1",
+  "blocking": false,
+  "cannot_override_deterministic_failure": true,
+  "input_boundary": "synthetic_fixture_or_privacy_minimized_report_only",
+  "required_result_fields": ["prompt_version", "rubric_version", "model", "textual_evidence"],
+  "score_range": {"minimum": 1, "maximum": 5},
+  "axes": {
+    "specificity": {
+      "1": "Interchangeable advice with no case-specific decision.",
+      "2": "Mostly generic advice with one weak case reference.",
+      "3": "Some concrete case linkage but uneven specificity.",
+      "4": "Concrete advice consistently linked to case evidence.",
+      "5": "Every recommendation is precise, bounded, and case-specific."
+    },
+    "decision_utility": {
+      "1": "No clear decision or ordering.",
+      "2": "Decisions are vague or difficult to act on.",
+      "3": "The main decision is usable but tradeoffs are incomplete.",
+      "4": "Decisions are ordered and explain material tradeoffs.",
+      "5": "Decisions clearly resolve what to do, defer, and confirm."
+    },
+    "evidence_fidelity": {
+      "1": "Claims conflict with or exceed available evidence.",
+      "2": "Several claims have weak or unclear evidence linkage.",
+      "3": "Core claims are supported with minor fidelity gaps.",
+      "4": "Claims consistently preserve evidence states and limits.",
+      "5": "Every material claim is traceable and truthfully bounded."
+    },
+    "differentiation": {
+      "1": "The output could apply unchanged to any fixture.",
+      "2": "Only labels differ while recommendations remain generic.",
+      "3": "The primary recommendation reflects the fixture.",
+      "4": "Multiple decisions materially reflect the fixture.",
+      "5": "The full diagnosis is distinctly shaped by fixture evidence."
+    },
+    "clarity": {
+      "1": "The report is confusing or internally contradictory.",
+      "2": "Important conclusions require substantial interpretation.",
+      "3": "The main conclusions are understandable.",
+      "4": "The report is concise and easy to scan.",
+      "5": "The report communicates nuanced decisions with exceptional clarity."
+    },
+    "actionability": {
+      "1": "No reviewable next action is supplied.",
+      "2": "Actions are broad and lack completion criteria.",
+      "3": "Actions are feasible but some acceptance tests are weak.",
+      "4": "Actions are feasible, time-bounded, and reviewable.",
+      "5": "Every action has a precise owner, boundary, and acceptance test."
+    },
+    "boundaries": {
+      "1": "The report overclaims, predicts outcomes, or implies authorization.",
+      "2": "Several privacy, truth, or action boundaries are unclear.",
+      "3": "Core boundaries are stated but not consistently reinforced.",
+      "4": "Privacy, truth, source, and authorization limits are clear.",
+      "5": "Boundaries are explicit, consistent, and decision-relevant throughout."
+    }
+  }
+}

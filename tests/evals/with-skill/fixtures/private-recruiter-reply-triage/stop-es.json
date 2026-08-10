@@ -1,0 +1,14 @@
+{
+  "schema_version": "private-recruiter-reply-triage-v1",
+  "artifact_kind": "private_recruiter_reply_triage",
+  "locale": "es",
+  "state": "stop",
+  "classification": "decline",
+  "safe_context": {"stage": "not_applicable", "role_context": "not_applicable", "critical_constraints": "not_applicable", "summary": "El resumen seguro indica una vía cerrada sin contexto para preparar."},
+  "facts": [{"id": "F-001", "state": "verified", "summary": "La única evidencia disponible no permite una preparación adicional."}],
+  "question": {"id": "Q-001", "text": "¿Qué límite conviene mantener para una futura revisión privada?", "fact_ids": ["F-001"]},
+  "blocked_claims": ["No reabrir la vía ni afirmar una oportunidad futura."],
+  "handoff_allowed": false,
+  "next_safe_action": "record_stop_decision",
+  "delivery": {"draft_only": true, "external_actions_authorized": false, "no_calendar_action": true, "raw_reply_retained": false, "local_save_mode": "disabled"}
+}

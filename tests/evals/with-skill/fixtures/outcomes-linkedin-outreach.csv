@@ -1,0 +1,5 @@
+application_id,candidate_id,application_date,response_date,interview_date,interview_stage,offer_date,currency,role,geography,source,referral,asset_version,intervention_id,confounders,simultaneous_interventions,benchmark_consent
+linkedin-001,candidate-001,2026-07-20,,,,,USD,Principal SRE,Mexico,linkedin_outreach,false,linkedin-sequence-v1,LI-FIRST-002,,false,false
+linkedin-002,candidate-001,2026-07-23,2026-07-25,,,,USD,Principal SRE,Mexico,linkedin_outreach,false,linkedin-sequence-v1,LI-FIRST-002,,false,false
+linkedin-003,candidate-001,2026-07-29,,,,,USD,Principal SRE,Mexico,linkedin_outreach,false,linkedin-sequence-v1,LI-FIRST-002,,false,false
+linkedin-004,candidate-001,2026-08-02,,,,,USD,Principal SRE,Mexico,linkedin_outreach,false,linkedin-sequence-v1,LI-FIRST-002,,false,false

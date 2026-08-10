@@ -1,0 +1,20 @@
+{
+  "name": "job-search-coach-local",
+  "interface": {
+    "displayName": "Job Search Coach Local"
+  },
+  "plugins": [
+    {
+      "name": "job-search-coach",
+      "source": {
+        "source": "local",
+        "path": "./plugins/job-search-coach"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

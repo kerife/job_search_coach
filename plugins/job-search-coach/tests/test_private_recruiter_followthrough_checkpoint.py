@@ -1,0 +1,161 @@
+import copy
+import datetime as dt
+import importlib.util
+import json
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SCRIPT = ROOT / "scripts" / "validate_private_recruiter_followthrough_checkpoint.py"
+SCHEMA = ROOT / "schemas" / "private-recruiter-followthrough-checkpoint-v1.schema.json"
+OUTCOME_SCRIPT = ROOT / "scripts" / "validate_private_recruiter_conversion_outcome.py"
+FIXTURES = ROOT / "tests" / "fixtures" / "private-recruiter-conversion-outcome"
+
+
+def _load(path, name):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+checkpoint = _load(SCRIPT, "checkpoint_validator")
+outcome = _load(OUTCOME_SCRIPT, "outcome_validator")
+
+
+class FollowthroughCheckpointContractTests(unittest.TestCase):
+    def setUp(self):
+        self.receipt = json.loads((FIXTURES / "screen-requested-en.json").read_text())
+        self.valid = {
+            "schema_version": "private-recruiter-followthrough-checkpoint-v1",
+            "artifact_kind": "private_recruiter_followthrough_checkpoint",
+            "locale": "en",
+            "source_receipt": {"id": "D-104", "source_version": "draft-v1", "event_type": "screen_requested"},
+            "action_state": "accepted",
+            "observed_date": "2026-08-08",
+            "next_measurement_event": "unknown",
+            "next_safe_action": "manual_reenter_private_prep",
+            "delivery": {
+                "draft_only": True,
+                "external_actions_authorized": False,
+                "no_message_action": True,
+                "no_calendar_action": True,
+                "raw_event_retained": False,
+                "local_save_mode": "disabled",
+            },
+        }
+
+    def test_valid_en_and_es_and_all_mapping_branches(self):
+        for state, event, action in [
+            ("accepted", "unknown", "manual_reenter_private_prep"),
+            ("deferred", "unknown", "clarify_context_before_reply"),
+            ("declined", "unknown", "record_stop_decision"),
+            ("completed", "screen_prepared", "route_to_prepare-role-interviews"),
+            ("completed", "interview_requested", "route_to_prepare-role-interviews"),
+            ("completed", "stop_decision", "record_stop_decision"),
+            ("completed", "screen_attended", "clarify_context_before_reply"),
+        ]:
+            item = copy.deepcopy(self.valid)
+            item.update(action_state=state, next_measurement_event=event, next_safe_action=action)
+            item["locale"] = "es" if state in {"deferred", "completed"} else "en"
+            self.assertEqual([], checkpoint.validate_checkpoint(item, self.receipt, as_of=dt.date(2026, 8, 8)), (state, event))
+
+    def test_completed_screen_prepared_branch(self):
+        item = copy.deepcopy(self.valid)
+        item.update(action_state="completed", next_measurement_event="screen_prepared", next_safe_action="route_to_prepare-role-interviews")
+        self.assertEqual([], checkpoint.validate_checkpoint(item, self.receipt, as_of=dt.date(2026, 8, 8)))
+
+    def test_symlink_inputs_are_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / "target.json"
+            link = Path(directory) / "link.json"
+            target.write_text(json.dumps(self.valid), encoding="utf-8")
+            link.symlink_to(target)
+            with self.assertRaises(checkpoint.CheckpointLoadError):
+                checkpoint.load_checkpoint(link)
+
+    def test_checkpoint_and_receipt_loaders_reject_depth_over_12(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            deep = json.dumps({"x": [[[[[[[[[[[[[1]]]]]]]]]]]]]})
+            checkpoint_path = root / "checkpoint.json"
+            receipt_path = root / "receipt.json"
+            checkpoint_path.write_text(deep, encoding="utf-8")
+            receipt_path.write_text(deep, encoding="utf-8")
+            with self.assertRaises(checkpoint.CheckpointLoadError):
+                checkpoint.load_checkpoint(checkpoint_path)
+            with self.assertRaises(checkpoint.CheckpointLoadError):
+                checkpoint.load_receipt(receipt_path)
+
+    def test_receipt_is_required_and_validated_first(self):
+        self.assertTrue(any("receipt" in e for e in checkpoint.validate_checkpoint(self.valid, None, as_of=dt.date(2026, 8, 8))))
+        bad = copy.deepcopy(self.receipt)
+        bad["next_safe_action"] = "record_stop_decision"
+        self.assertTrue(any("receipt" in e for e in checkpoint.validate_checkpoint(self.valid, bad, as_of=dt.date(2026, 8, 8))))
+
+    def test_source_receipt_must_match_exactly(self):
+        for key, value in (("id", "D-999"), ("source_version", "other-v1"), ("event_type", "stop_decision")):
+            item = copy.deepcopy(self.valid); item["source_receipt"][key] = value
+            self.assertTrue(any("source_receipt" in e for e in checkpoint.validate_checkpoint(item, self.receipt, as_of=dt.date(2026, 8, 8))))
+
+    def test_dates_and_as_of_are_strict(self):
+        for field, value in (("observed_date", "2026-02-30"), ("observed_date", "2026-08-09"), ("observed_date", "not-date")):
+            item = copy.deepcopy(self.valid); item[field] = value
+            self.assertTrue(any("date" in e for e in checkpoint.validate_checkpoint(item, self.receipt, as_of=dt.date(2026, 8, 8))))
+
+    def test_chronology_and_noncompleted_event_boundaries(self):
+        item = copy.deepcopy(self.valid); item["observed_date"] = "2026-08-07"
+        self.assertTrue(any("receipt date" in e for e in checkpoint.validate_checkpoint(item, self.receipt, as_of=dt.date(2026, 8, 8))))
+        for state in ("accepted", "deferred", "declined"):
+            item = copy.deepcopy(self.valid); item.update(action_state=state, next_measurement_event="screen_prepared")
+            item["next_safe_action"] = {"accepted": "manual_reenter_private_prep", "deferred": "clarify_context_before_reply", "declined": "record_stop_decision"}[state]
+            self.assertTrue(any("unknown" in e for e in checkpoint.validate_checkpoint(item, self.receipt, as_of=dt.date(2026, 8, 8))))
+
+    def test_source_stop_event_is_only_compatible_with_terminal_states(self):
+        receipt = copy.deepcopy(self.receipt); receipt["event_type"] = "stop_decision"; receipt["next_safe_action"] = "record_stop_decision"
+        for state in ("accepted", "deferred"):
+            item = copy.deepcopy(self.valid); item["source_receipt"]["event_type"] = "stop_decision"
+            self.assertTrue(any("stop" in e for e in checkpoint.validate_checkpoint(item, receipt, as_of=dt.date(2026, 8, 8))))
+
+    def test_closed_types_and_forbidden_content(self):
+        for key, value in [("extra", True), ("source_receipt", "D-104"), ("candidate_id", "C-001"), ("raw_event", "raw"), ("answer", "send this"), ("outcome", "guaranteed offer"), ("score", 99)]:
+            item = copy.deepcopy(self.valid); item[key] = value
+            self.assertTrue(checkpoint.validate_checkpoint(item, self.receipt, as_of=dt.date(2026, 8, 8)), key)
+
+    def test_delivery_is_immutable(self):
+        for key, value in [("draft_only", False), ("external_actions_authorized", True), ("no_message_action", False), ("no_calendar_action", False), ("raw_event_retained", True), ("local_save_mode", "enabled")]:
+            item = copy.deepcopy(self.valid); item["delivery"][key] = value
+            self.assertTrue(any("delivery" in e for e in checkpoint.validate_checkpoint(item, self.receipt, as_of=dt.date(2026, 8, 8))), key)
+
+    def test_cli_normalizes_parse_errors_and_preserves_help(self):
+        item_path = ROOT / "tests/fixtures/private-recruiter-followthrough-checkpoint/accepted-en.json"
+        receipt_path = FIXTURES / "screen-requested-en.json"
+        invalid = subprocess.run([sys.executable, "-B", str(SCRIPT), str(item_path), "--receipt", str(receipt_path), "--as-of", "bad"], capture_output=True, text=True)
+        self.assertEqual(invalid.returncode, 3)
+        self.assertNotIn("Traceback", invalid.stderr)
+        missing = subprocess.run([sys.executable, "-B", str(SCRIPT), str(item_path), "--as-of", "2026-08-08"], capture_output=True, text=True)
+        self.assertEqual(missing.returncode, 3)
+        help_result = subprocess.run([sys.executable, "-B", str(SCRIPT), "--help"], capture_output=True, text=True)
+        self.assertEqual(help_result.returncode, 0)
+
+    def test_schema_declares_cross_field_action_invariants(self):
+        schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
+        branches = schema.get("allOf", [])
+        self.assertGreaterEqual(len(branches), 7)
+        serialized = json.dumps(branches, sort_keys=True)
+        for state, action in (("accepted", "manual_reenter_private_prep"), ("deferred", "clarify_context_before_reply"), ("declined", "record_stop_decision"), ("completed", "route_to_prepare-role-interviews")):
+            self.assertIn(state, serialized)
+            self.assertIn(action, serialized)
+        self.assertIn("unknown", serialized)
+
+    def test_schema_dates_declare_format_date(self):
+        schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
+        self.assertEqual("date", schema["properties"]["observed_date"]["format"])
+
+
+if __name__ == "__main__":
+    unittest.main()

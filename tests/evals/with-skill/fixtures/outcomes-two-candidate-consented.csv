@@ -1,0 +1,3 @@
+application_id,candidate_id,application_date,response_date,interview_date,interview_stage,offer_date,currency,role,geography,source,referral,asset_version,intervention_id,confounders,simultaneous_interventions,benchmark_consent
+consented-001,candidate-001,2026-08-01,2026-08-02,,,,USD,Principal SRE,Mexico,company-site,false,cv-v1,,,,true
+consented-002,candidate-002,2026-08-01,,2026-08-03,recruiter_screen,,USD,Principal SRE,Mexico,company-site,false,cv-v1,,,,true

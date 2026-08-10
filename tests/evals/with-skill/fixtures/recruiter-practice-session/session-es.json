@@ -1,0 +1,47 @@
+{
+  "schema_version": "recruiter-practice-session-v1",
+  "session_kind": "private_recruiter_practice",
+  "locale": "es",
+  "state": "awaiting_answer",
+  "safe_context": {
+    "stage": "recruiter_screen",
+    "vacancy_state": "safe_summary_provided",
+    "summary": "Se practica una explicación breve para un requisito técnico confirmado."
+  },
+  "requirement": {
+    "id": "R-001",
+    "summary": "Explicar una experiencia técnica relevante sin ampliar el alcance confirmado.",
+    "fact_ids": ["F-001"]
+  },
+  "question": {
+    "id": "Q-001",
+    "kind": "proof_example",
+    "text": "¿Cómo explicarías esta experiencia en una primera conversación?",
+    "requirement_id": "R-001",
+    "fact_ids": ["F-001"]
+  },
+  "facts": [
+    {
+      "id": "F-001",
+      "state": "verified",
+      "summary": "La persona confirmó experiencia relevante para explicar un proceso técnico."
+    }
+  ],
+  "observed_answer": null,
+  "rubric": {
+    "id": "RB-001",
+    "criterion": "Describir una acción relevante sin afirmar resultados no observados."
+  },
+  "feedback": {
+    "score": "unknown",
+    "score_state": "unknown",
+    "observations": []
+  },
+  "delivery": {
+    "draft_only": true,
+    "external_actions_authorized": false,
+    "local_save_mode": "disabled",
+    "raw_answer_retained": false
+  },
+  "handoff_context": {"source": "executive_career_dossier", "source_snapshot": "snap-dossier-001", "question_rank": 1, "question_id": "Q-001", "requirement_id": "R-001", "fact_ids": ["F-001"], "claim_ids": ["C-001"], "evidence_ids": ["E-001"], "draft_only": true, "external_actions_authorized": false}
+}

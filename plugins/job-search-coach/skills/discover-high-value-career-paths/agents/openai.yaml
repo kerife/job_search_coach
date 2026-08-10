@@ -1,0 +1,4 @@
+interface:
+  display_name: "High-Value Career Path Discovery"
+  short_description: "Compare realistic career paths safely"
+  default_prompt: "Use $discover-high-value-career-paths to compare realistic career paths from my evidence."

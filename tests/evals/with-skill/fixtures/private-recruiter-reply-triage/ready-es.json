@@ -1,0 +1,15 @@
+{
+  "schema_version": "private-recruiter-reply-triage-v1",
+  "artifact_kind": "private_recruiter_reply_triage",
+  "locale": "es",
+  "state": "ready_for_private_prep",
+  "classification": "screen_invite",
+  "safe_context": {"stage": "recruiter_screen", "role_context": "confirmed", "critical_constraints": "confirmed", "summary": "El resumen seguro confirma etapa, alcance del rol y restricciones críticas."},
+  "facts": [{"id": "F-001", "state": "verified", "summary": "La persona confirmó una experiencia técnica relevante para preparar una explicación privada."}],
+  "question": {"id": "Q-001", "kind": "screen_opening", "text": "¿Qué ejemplo comprobable conviene practicar primero para esta conversación?", "fact_ids": ["F-001"]},
+  "blocked_claims": ["No afirmar ajuste, resultados, disponibilidad ni autorización externa."],
+  "handoff_allowed": true,
+  "next_safe_action": "manual_reenter_private_prep",
+  "handoff": {"module": "prepare-role-interviews", "scope": "one recruiter-screen question", "input_mode": "identity_free_summary_plus_verified_fact", "auto_start": false, "external_actions": false, "raw_reply_retained": false, "local_save_mode": "disabled", "packet": {"context_summary": "El resumen seguro confirma etapa, alcance del rol y restricciones críticas.", "source_snapshot": "snap-triage-001", "fact_id": "F-001", "question_id": "Q-001", "prep_scope": "screen_opening"}, "reentry_packet": {"schema_version": "private-recruiter-screen-reentry-v1", "source_artifact_kind": "private_recruiter_reply_triage", "context_summary": "El resumen seguro confirma etapa, alcance del rol y restricciones críticas.", "source_snapshot": "snap-triage-001", "fact_id": "F-001", "question_id": "Q-001", "prep_scope": "screen_opening", "manual_reentry_required": true, "candidate_answer_state": "unanswered", "score_state": "unknown"}},
+  "delivery": {"draft_only": true, "external_actions_authorized": false, "no_calendar_action": true, "raw_reply_retained": false, "local_save_mode": "disabled"}
+}

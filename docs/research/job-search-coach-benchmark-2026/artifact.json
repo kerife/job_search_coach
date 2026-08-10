@@ -1,0 +1,226 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "Un coach experto que se entiende",
+    "description": "Benchmark de diez referentes activos para diseñar un coach de búsqueda de empleo claro, humano y basado en evidencia.",
+    "generatedAt": "2026-08-07T13:29:29Z",
+    "cards": [],
+    "charts": [
+      {
+        "id": "method_coverage",
+        "title": "Etapas explícitas en los métodos públicos",
+        "subtitle": "Número de referentes, entre los 10 revisados; codificación del material público al 7 de agosto de 2026.",
+        "type": "bar",
+        "dataset": "coverage",
+        "sourceId": "benchmark_coding",
+        "encodings": {
+          "x": {"field": "stage", "type": "ordinal", "label": "Etapa"},
+          "y": {"field": "count", "type": "quantitative", "label": "Referentes", "format": "number"}
+        },
+        "yAxisTitle": "Referentes con cobertura explícita",
+        "valueFormat": "number",
+        "layout": "full"
+      }
+    ],
+    "tables": [],
+    "sources": [
+      {"id": "madeline_mann", "label": "Madeline Mann — Standout Job Search Coaching", "href": "https://madelinemann.com/coaching/"},
+      {"id": "austin_belcak", "label": "Austin Belcak — Cultivated Culture", "href": "https://cultivatedculture.com/about/"},
+      {"id": "andrew_lacivita", "label": "Andrew LaCivita — Job Search Coaching Program", "href": "https://www.milewalkacademy.com/andrew-lacivita-job-search-coaching-program"},
+      {"id": "jenny_foss", "label": "Jenny Foss — JobJenny", "href": "https://www.jobjenny.com/about-us"},
+      {"id": "liz_ryan", "label": "Liz Ryan — Human Workplace", "href": "https://humanworkplace.com/catapult-course/"},
+      {"id": "sarah_johnston", "label": "Sarah Johnston — Briefcase Coach", "href": "https://www.briefcasecoach.com/"},
+      {"id": "linda_raynier", "label": "Linda Raynier — Stand Out & Get Hired", "href": "https://www.lindaraynier.com/sogh"},
+      {"id": "emily_liou", "label": "Emily Liou — Inner Magic", "href": "https://www.cultivitae.com/magic"},
+      {"id": "hannah_morgan", "label": "Hannah Morgan — Career Sherpa", "href": "https://careersherpa.net/about/"},
+      {"id": "kyle_elliott", "label": "Kyle Elliott — Fabulousness Methodology", "href": "https://caffeinatedkyle.com/methodology/"},
+      {
+        "id": "benchmark_coding",
+        "label": "Codificación del benchmark de métodos públicos",
+        "path": "coverage.json",
+        "query": {
+          "engine": "duckdb",
+          "language": "sql",
+          "description": "Lee los conteos revisados de cobertura explícita por etapa.",
+          "sql": "SELECT stage, count, population FROM read_json_auto('coverage.json') ORDER BY count DESC, stage ASC",
+          "tables_used": ["coverage.json"],
+          "filters": ["Diez referentes seleccionados", "Material público revisado al 2026-08-07"]
+        }
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "body": "# Un coach experto que se entiende"
+      },
+      {
+        "id": "executive_summary",
+        "type": "markdown",
+        "body": "## Executive Summary\n\n- **La profundidad debe estar en el razonamiento, no en la cantidad de texto.** El cliente necesita entender qué está pasando, por qué importa y cuál es su siguiente decisión.\n- **El coach debe descubrir antes de redactar.** Los mejores patrones públicos empiezan por dirección, valores, fortalezas, historias y evidencia; no por reescribir el perfil a ciegas.\n- **La experiencia debe ser dual.** La conversación diaria será breve y humana; un informe HTML se reservará para diagnósticos integrales que necesiten calificaciones, evidencia y un plan consultable.\n- **No se copiarán fórmulas ni promesas.** Se adoptan principios útiles, pero testimonios, garantías y estadísticas publicadas por los propios proveedores se tratan como marketing no verificado."
+      },
+      {
+        "id": "selection",
+        "type": "markdown",
+        "body": "## Diez referentes útiles, no un ranking absoluto\n\nLa selección exige actividad pública vigente, un método observable y al menos una contribución transferible a un coach integral. No existe un registro independiente que permita afirmar cuáles son los diez mejores por resultados. Por eso este informe compara diez referentes activos y diversos, sin convertir popularidad, testimonios o seguidores en prueba causal de eficacia."
+      },
+      {
+        "id": "coverage_intro",
+        "type": "markdown",
+        "body": "## La ventaja aparece al conectar etapas\n\nLa revisión muestra una concentración clara en **dirección, evidencia, posicionamiento, búsqueda proactiva e entrevista**. Negociación y sostenibilidad aparecen con menor frecuencia. La gráfica cuenta cobertura explícita en las páginas revisadas; no mide calidad ni resultados."
+      },
+      {
+        "id": "coverage_chart",
+        "type": "chart",
+        "chartId": "method_coverage",
+        "layout": "full"
+      },
+      {
+        "id": "coverage_interpretation",
+        "type": "markdown",
+        "sourceId": "benchmark_coding",
+        "body": "## El coach necesita cerrar las brechas, no elegir una sola escuela\n\nNueve de diez referencias hacen explícita la claridad o el posicionamiento; ocho muestran evidencia, búsqueda proactiva o entrevista. Solo cinco hacen explícita la negociación y cinco la sostenibilidad o propiedad de la decisión. **La oportunidad del plugin es integrar las siete etapas sin exponerlas todas a la vez.**"
+      },
+      {
+        "id": "madeline",
+        "type": "markdown",
+        "sourceId": "madeline_mann",
+        "body": "## 1. Madeline Mann: devolver agencia al candidato\n\n**Aporte útil:** su idea de *Job Shopping* cambia la búsqueda de una súplica a una decisión bilateral. El candidato define lo que quiere, construye relaciones y evalúa si la oportunidad encaja.\n\n**Aplicación al plugin:** preguntar qué debe mejorar el próximo empleo y preparar al usuario para evaluar al empleador, no solo para agradarle.\n\n**Límite:** sus plazos, incrementos salariales y garantía son afirmaciones de su propio programa; no se usarán como promesa del coach."
+      },
+      {
+        "id": "austin",
+        "type": "markdown",
+        "sourceId": "austin_belcak",
+        "body": "## 2. Austin Belcak: demostrar valor antes de pedir una oportunidad\n\n**Aporte útil:** combina rutas no tradicionales, relaciones directas, herramientas prácticas y proyectos que muestran cómo el candidato resolvería un problema real.\n\n**Aplicación al plugin:** cuando falte experiencia exacta, buscar evidencia transferible o proponer un proyecto de prueba; nunca inventar equivalencias.\n\n**Límite:** un score automático de CV o titular orienta una revisión, pero no demuestra que un reclutador contratará al candidato."
+      },
+      {
+        "id": "andrew",
+        "type": "markdown",
+        "sourceId": "andrew_lacivita",
+        "body": "## 3. Andrew LaCivita: convertir consejos aislados en un sistema\n\n**Aporte útil:** conecta claridad, posicionamiento, búsqueda proactiva, entrevista bilateral y negociación en una secuencia reutilizable.\n\n**Aplicación al plugin:** diagnosticar en qué etapa está bloqueada la búsqueda y recomendar solo el siguiente movimiento de mayor impacto.\n\n**Límite:** un sistema completo puede abrumar si se entrega de una sola vez; la complejidad se queda detrás del coach."
+      },
+      {
+        "id": "jenny",
+        "type": "markdown",
+        "sourceId": "jenny_foss",
+        "body": "## 4. Jenny Foss: hacer que actuar se sienta posible\n\n**Aporte útil:** lenguaje accesible, instrucciones rápidas, ejemplos y una voz que reduce vergüenza y confusión.\n\n**Aplicación al plugin:** explicar como una persona, mostrar un ejemplo concreto y evitar jerga de reclutamiento cuando no aporta valor.\n\n**Límite:** se adopta la claridad, no su personalidad, frases o estilo de marca."
+      },
+      {
+        "id": "liz",
+        "type": "markdown",
+        "sourceId": "liz_ryan",
+        "body": "## 5. Liz Ryan: recuperar la voz y las historias propias\n\n**Aporte útil:** sus métodos públicos enfatizan currículums con voz humana, historias breves de problemas resueltos y una búsqueda en la que el candidato es protagonista.\n\n**Aplicación al plugin:** sustituir adjetivos genéricos por historias verificables: contexto, tensión, decisión, acción y cambio producido.\n\n**Límite:** sus técnicas tienen nombres propietarios; el plugin no las copiará y validará cada táctica contra el mercado y la situación del usuario."
+      },
+      {
+        "id": "sarah",
+        "type": "markdown",
+        "sourceId": "sarah_johnston",
+        "body": "## 6. Sarah Johnston: el documento es el final del descubrimiento\n\n**Aporte útil:** en su proceso ejecutivo, el currículum aparece como resultado de una investigación profunda de marca, historia y mensajes, acompañado por práctica de entrevistas y búsqueda dirigida.\n\n**Aplicación al plugin:** no redactar un CV o LinkedIn definitivo antes de entender nivel, alcance, decisiones, audiencias y logros del candidato.\n\n**Límite:** referencias a aumentos de seis cifras y casos de éxito son marketing del proveedor, no un benchmark verificable."
+      },
+      {
+        "id": "linda",
+        "type": "markdown",
+        "sourceId": "linda_raynier",
+        "body": "## 7. Linda Raynier: comunicar valor con confianza auténtica\n\n**Aporte útil:** conecta autoconocimiento, currículum maestro, lenguaje del hiring manager, alcance directo, storytelling y preparación por etapa de entrevista.\n\n**Aplicación al plugin:** ayudar a una persona reservada a explicar su impacto sin convertirla en alguien estridente ni inflar sus logros.\n\n**Límite:** frases como ser el candidato número uno en segundos son copy comercial, no criterios de evaluación."
+      },
+      {
+        "id": "emily",
+        "type": "markdown",
+        "sourceId": "emily_liou",
+        "body": "## 8. Emily Liou: no confundir estrategia con dirección personal\n\n**Aporte útil:** antes de optimizar postulaciones, explora alineación, autoconfianza, valores y el tipo de cambio que la persona puede sostener. También rechaza decidir por el cliente.\n\n**Aplicación al plugin:** preguntar qué quiere preservar, qué necesita cambiar y qué costo personal no está dispuesto a pagar.\n\n**Límite:** el coach de empleo no diagnostica salud mental ni sustituye terapia; debe mantener una frontera explícita."
+      },
+      {
+        "id": "hannah",
+        "type": "markdown",
+        "sourceId": "hannah_morgan",
+        "body": "## 9. Hannah Morgan: enseñar una búsqueda digital y proactiva\n\n**Aporte útil:** sigue cambios tecnológicos y convierte tendencias de LinkedIn, visibilidad y networking en acciones inmediatas, con énfasis en buscar de forma proactiva.\n\n**Aplicación al plugin:** explicar qué acción tomar hoy y medir conversaciones, entrevistas y calidad de oportunidades, no solo vistas del perfil.\n\n**Límite:** más vistas pueden ser una señal intermedia, pero no prueban una mejor contratación."
+      },
+      {
+        "id": "kyle",
+        "type": "markdown",
+        "sourceId": "kyle_elliott",
+        "body": "## 10. Kyle Elliott: hacer preguntas que devuelven la respuesta al cliente\n\n**Aporte útil:** su secuencia pública —aclarar, posicionar, desempeñarse y progresar— se personaliza mediante preguntas profundas, notas y tareas co-diseñadas. Explicita que el coach no debe limitarse a decir qué hacer.\n\n**Aplicación al plugin:** separar consejo experto de coaching: ofrecer criterio cuando existe evidencia y formular una sola pregunta poderosa cuando la decisión depende de la esencia del cliente.\n\n**Límite:** testimonios y cifras de clientes siguen siendo evidencia del propio proveedor, no validación independiente."
+      },
+      {
+        "id": "synthesis",
+        "type": "markdown",
+        "body": "## El modelo que debe adoptar el plugin\n\n**1. Esencia.** Entender qué quiere la persona, por qué ahora, qué desea conservar y qué costo no acepta.\n\n**2. Evidencia.** Convertir capacidades en historias y resultados verificables; marcar lo desconocido y preguntar antes de completar.\n\n**3. Posicionamiento.** Elegir a quién ayuda, qué problemas resuelve y por qué su trayectoria es creíble para el siguiente rol.\n\n**4. Acción.** Proponer un máximo de tres prioridades y una siguiente acción concreta, acorde con la etapa real de la búsqueda.\n\n**5. Aprendizaje.** Medir la respuesta del mercado y ajustar hipótesis; no prometer empleo, salarios ni plazos."
+      },
+      {
+        "id": "conversation",
+        "type": "markdown",
+        "body": "## Una respuesta profesional puede ser corta\n\nLa respuesta predeterminada del coach debe tener cinco piezas: **lo que veo**, **por qué importa**, **las tres prioridades**, **una pregunta esencial** y **qué hará después con la respuesta**. El informe completo aparece solo cuando el análisis necesita conservar puntuaciones, evidencia, comparaciones y borradores.\n\nEjemplo de pregunta esencial: *Si tu próximo empleo solo pudiera mejorar dos cosas de tu vida profesional, ¿cuáles serían y por qué esas dos?*"
+      },
+      {
+        "id": "next_steps",
+        "type": "markdown",
+        "body": "## Siguientes cambios recomendados\n\n1. Hacer del chat breve el modo predeterminado y del HTML una entrega opcional para auditorías integrales.\n2. Añadir un contrato de preguntas: una pregunta por turno cuando la respuesta cambie el rumbo; hasta cinco únicamente para una entrevista diagnóstica acordada.\n3. Exigir que cada pregunta explique, en una frase, qué decisión permitirá tomar.\n4. Separar siempre hechos confirmados, datos reportados por el candidato, inferencias y desconocidos.\n5. Evaluar el coach con casos frescos: claridad para no expertos, calidad de la pregunta, utilidad de la siguiente acción y ausencia de invenciones."
+      },
+      {
+        "id": "further_questions",
+        "type": "markdown",
+        "body": "## Decisión que falta\n\n¿Quieres que esta arquitectura dual —chat breve por defecto e informe HTML para diagnósticos integrales— sea el contrato de experiencia del plugin?"
+      },
+      {
+        "id": "caveats",
+        "type": "markdown",
+        "body": "## Caveats y supuestos\n\nLa revisión usa material público disponible el 7 de agosto de 2026. Evalúa métodos comunicados públicamente, no sesiones privadas. No compara precios ni certifica resultados. Testimonios, número de clientes, incrementos salariales, plazos y garantías permanecen atribuidos a cada proveedor y no se tratan como evidencia causal. La selección busca diversidad metodológica y actualidad; no pretende ser una clasificación universal."
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "generatedAt": "2026-08-07T13:29:29Z",
+    "status": "ready",
+    "datasets": {
+      "coverage": [
+        {"stage": "Claridad y ajuste", "count": 9, "population": 10},
+        {"stage": "Posicionamiento y activos", "count": 9, "population": 10},
+        {"stage": "Evidencia e historias", "count": 8, "population": 10},
+        {"stage": "Búsqueda proactiva", "count": 8, "population": 10},
+        {"stage": "Entrevista", "count": 8, "population": 10},
+        {"stage": "Negociación", "count": 5, "population": 10},
+        {"stage": "Sostenibilidad y agencia", "count": 5, "population": 10}
+      ],
+      "coding_detail": [
+        {"coach": "Madeline Mann", "clarity_fit": 1, "evidence_story": 1, "positioning_assets": 1, "proactive_search": 1, "interview": 1, "negotiation": 1, "sustainable_ownership": 1},
+        {"coach": "Austin Belcak", "clarity_fit": 1, "evidence_story": 1, "positioning_assets": 1, "proactive_search": 1, "interview": 1, "negotiation": 0, "sustainable_ownership": 0},
+        {"coach": "Andrew LaCivita", "clarity_fit": 1, "evidence_story": 1, "positioning_assets": 1, "proactive_search": 1, "interview": 1, "negotiation": 1, "sustainable_ownership": 1},
+        {"coach": "Jenny Foss", "clarity_fit": 1, "evidence_story": 1, "positioning_assets": 1, "proactive_search": 1, "interview": 1, "negotiation": 1, "sustainable_ownership": 0},
+        {"coach": "Liz Ryan", "clarity_fit": 1, "evidence_story": 1, "positioning_assets": 1, "proactive_search": 1, "interview": 1, "negotiation": 0, "sustainable_ownership": 1},
+        {"coach": "Sarah Johnston", "clarity_fit": 1, "evidence_story": 1, "positioning_assets": 1, "proactive_search": 1, "interview": 1, "negotiation": 0, "sustainable_ownership": 0},
+        {"coach": "Linda Raynier", "clarity_fit": 1, "evidence_story": 1, "positioning_assets": 1, "proactive_search": 1, "interview": 1, "negotiation": 1, "sustainable_ownership": 0},
+        {"coach": "Emily Liou", "clarity_fit": 1, "evidence_story": 0, "positioning_assets": 0, "proactive_search": 0, "interview": 0, "negotiation": 0, "sustainable_ownership": 1},
+        {"coach": "Hannah Morgan", "clarity_fit": 0, "evidence_story": 0, "positioning_assets": 1, "proactive_search": 1, "interview": 0, "negotiation": 0, "sustainable_ownership": 0},
+        {"coach": "Kyle Elliott", "clarity_fit": 1, "evidence_story": 1, "positioning_assets": 1, "proactive_search": 0, "interview": 1, "negotiation": 1, "sustainable_ownership": 1}
+      ]
+    }
+  },
+  "sources": [
+    {"id": "madeline_mann", "label": "Madeline Mann — Standout Job Search Coaching", "href": "https://madelinemann.com/coaching/"},
+    {"id": "austin_belcak", "label": "Austin Belcak — Cultivated Culture", "href": "https://cultivatedculture.com/about/"},
+    {"id": "andrew_lacivita", "label": "Andrew LaCivita — Job Search Coaching Program", "href": "https://www.milewalkacademy.com/andrew-lacivita-job-search-coaching-program"},
+    {"id": "jenny_foss", "label": "Jenny Foss — JobJenny", "href": "https://www.jobjenny.com/about-us"},
+    {"id": "liz_ryan", "label": "Liz Ryan — Human Workplace", "href": "https://humanworkplace.com/catapult-course/"},
+    {"id": "sarah_johnston", "label": "Sarah Johnston — Briefcase Coach", "href": "https://www.briefcasecoach.com/"},
+    {"id": "linda_raynier", "label": "Linda Raynier — Stand Out & Get Hired", "href": "https://www.lindaraynier.com/sogh"},
+    {"id": "emily_liou", "label": "Emily Liou — Inner Magic", "href": "https://www.cultivitae.com/magic"},
+    {"id": "hannah_morgan", "label": "Hannah Morgan — Career Sherpa", "href": "https://careersherpa.net/about/"},
+    {"id": "kyle_elliott", "label": "Kyle Elliott — Fabulousness Methodology", "href": "https://caffeinatedkyle.com/methodology/"},
+    {
+      "id": "benchmark_coding",
+      "label": "Codificación del benchmark de métodos públicos",
+      "path": "coverage.json",
+      "query": {
+        "engine": "duckdb",
+        "language": "sql",
+        "description": "Lee los conteos revisados de cobertura explícita por etapa.",
+        "sql": "SELECT stage, count, population FROM read_json_auto('coverage.json') ORDER BY count DESC, stage ASC",
+        "tables_used": ["coverage.json"],
+        "filters": ["Diez referentes seleccionados", "Material público revisado al 2026-08-07"]
+      }
+    }
+  ]
+}

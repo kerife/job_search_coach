@@ -1,0 +1,97 @@
+{
+  "base_dossier_fixture": "scenario-a-es.json",
+  "dossier_overrides": {
+    "screen_bridge": {
+      "state": "requires_confirmation",
+      "copy": "Puedo ampliar un ejemplo técnico tras confirmar su alcance.",
+      "why_it_works": "Mantiene la conversación dentro de la evidencia reportada.",
+      "claim_ids": ["C-002"],
+      "evidence_ids": ["E-004"],
+      "claim_boundary": "No afirma resultados ni un resultado de selección.",
+      "evidence_state": "candidate_reported",
+      "question_rank": 1
+    },
+    "question_linked_copy_category": "screen_bridge",
+    "about_opening": {
+      "state": "ready",
+      "claim_ids": ["C-001"],
+      "evidence_ids": ["E-001"],
+      "evidence_state": "verified",
+      "question_rank": null
+    }
+  },
+  "vacancy": {
+    "locale": "es",
+    "safe_context": {
+      "stage": "recruiter_screen",
+      "vacancy_state": "safe_summary_provided",
+      "summary": "La vacante solicita explicar un ejemplo técnico con alcance confirmado."
+    },
+    "requirement": {
+      "summary": "Describir un ejemplo técnico relevante sin ampliar el alcance reportado."
+    }
+  },
+  "source_snapshot": "snap-dossier-001",
+  "expected": {
+    "schema_version": "dossier-recruiter-practice-handoff-v1",
+    "source": "executive_career_dossier",
+    "source_snapshot": "snap-dossier-001",
+    "dossier_projection": {
+      "question_rank": 1,
+      "claim_ids": ["C-002"],
+      "evidence_ids": ["E-004"],
+      "question_evidence_ids": ["E-004"],
+      "source_fact_evidence_id": "E-004",
+      "fact_state": "candidate_reported",
+      "fact_summary": "Terraform fue reportado y requiere un ejemplo verificable."
+    },
+    "practice_projection": {
+      "safe_context": {
+        "stage": "recruiter_screen",
+        "vacancy_state": "safe_summary_provided",
+        "summary": "La vacante solicita explicar un ejemplo técnico con alcance confirmado."
+      },
+      "requirement": {
+        "id": "R-001",
+        "summary": "Describir un ejemplo técnico relevante sin ampliar el alcance reportado.",
+        "fact_ids": ["F-001"]
+      },
+      "question": {
+        "id": "Q-001",
+        "kind": "screen_opening",
+        "text": "¿Qué ejemplo confirmado describe mejor el alcance de la habilidad reportada?",
+        "requirement_id": "R-001",
+        "fact_ids": ["F-001"]
+      },
+      "facts": [
+        {
+          "id": "F-001",
+          "state": "candidate_reported",
+          "summary": "Terraform fue reportado y requiere un ejemplo verificable."
+        }
+      ],
+      "handoff_context": {
+        "source": "executive_career_dossier",
+        "source_snapshot": "snap-dossier-001",
+        "question_rank": 1,
+        "question_id": "Q-001",
+        "requirement_id": "R-001",
+        "fact_ids": ["F-001"],
+        "claim_ids": ["C-002"],
+        "evidence_ids": ["E-004"],
+        "draft_only": true,
+        "external_actions_authorized": false
+      }
+    },
+    "delivery": {
+      "draft_only": true,
+      "external_actions_authorized": false,
+      "manual_reentry_required": true,
+      "auto_start": false,
+      "candidate_answer_state": "unanswered",
+      "score_state": "unknown",
+      "local_save_mode": "disabled",
+      "raw_answer_retained": false
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "schema_version": "linkedin-client-report-v2-fixture-2", "fixture_id": "FIXTURE-JSC3-STRUCTURAL-NO-VISUAL", "internal_candidate_id": "CANDIDATE-JSC3-SYNTH",
+  "origin_class": "synthetic_from_authorized_structural_review", "derivation": "composite_plus_counterfactual_perturbation", "real_profile_mapping": "none_created",
+  "locale": "es", "evaluation_date": "2026-08-07", "evidence_mode": "structural_only",
+  "structural_state_fixture": {"observations": [
+    {"evidence_id": "EVID-JSC3-VISUAL", "section": "visual", "state": "not_inspected"}, {"evidence_id": "EVID-JSC3-HEADLINE", "section": "headline", "state": "present"},
+    {"evidence_id": "EVID-JSC3-ABOUT", "section": "about", "state": "present"}, {"evidence_id": "EVID-JSC3-EXPERIENCE", "section": "experience", "state": "present"},
+    {"evidence_id": "EVID-JSC3-SKILLS", "section": "skills", "state": "present"}, {"evidence_id": "EVID-JSC3-PROOF", "section": "proof", "state": "present"},
+    {"evidence_id": "EVID-JSC3-COMPLETE", "section": "completeness", "state": "present"}, {"evidence_id": "EVID-JSC3-PRIORITY-1", "section": "headline", "state": "present"},
+    {"evidence_id": "EVID-JSC3-PRIORITY-2", "section": "about", "state": "present"}, {"evidence_id": "EVID-JSC3-PRIORITY-3", "section": "proof", "state": "present"}
+  ]},
+  "synthetic_fact_catalog": [
+    {"fact_id": "FACT-JSC3-READY", "evidence_state": "candidate_reported", "fact_type": "role_signal", "role_family": "technical_operations", "capability_family": "observability", "scope_bucket": "individual", "claim_tokens": ["OBSERVABILITY", "TECHNICAL_SCOPE"]},
+    {"fact_id": "FACT-JSC3-UNKNOWN", "evidence_state": "unknown", "fact_type": "proof_signal", "role_family": "technical_operations", "capability_family": "none", "scope_bucket": "unknown", "claim_tokens": ["OUTCOME_SCOPE"]}
+  ],
+  "score_ledger": {"numeric_weighted_total": 54.45, "scored_weight": 85, "not_scored_weight": 15, "overall_score": 64, "confidence": "medium", "domains": [
+    {"domain": "visual", "weight": 15, "state": "not_scored", "raw_score": null, "weighted_points": 0.0, "evidence_ids": ["EVID-JSC3-VISUAL"], "reason_code": "VISUAL_NOT_INSPECTED"},
+    {"domain": "headline", "weight": 15, "state": "scored", "raw_score": 60, "weighted_points": 9.0, "evidence_ids": ["EVID-JSC3-HEADLINE"], "reason_code": "CONTENT_SPECIFIC"},
+    {"domain": "about", "weight": 15, "state": "scored", "raw_score": 60, "weighted_points": 9.0, "evidence_ids": ["EVID-JSC3-ABOUT"], "reason_code": "CONTENT_GENERAL"},
+    {"domain": "experience", "weight": 20, "state": "scored", "raw_score": 65, "weighted_points": 13.0, "evidence_ids": ["EVID-JSC3-EXPERIENCE"], "reason_code": "CONTENT_SPECIFIC"},
+    {"domain": "skills", "weight": 15, "state": "scored", "raw_score": 65, "weighted_points": 9.75, "evidence_ids": ["EVID-JSC3-SKILLS"], "reason_code": "CONTENT_SPECIFIC"},
+    {"domain": "proof", "weight": 10, "state": "scored", "raw_score": 65, "weighted_points": 6.5, "evidence_ids": ["EVID-JSC3-PROOF"], "reason_code": "PROOF_AVAILABLE"},
+    {"domain": "completeness", "weight": 10, "state": "scored", "raw_score": 72, "weighted_points": 7.2, "evidence_ids": ["EVID-JSC3-COMPLETE"], "reason_code": "STRUCTURAL_COMPLETE"}
+  ]},
+  "priorities": [
+    {"priority_id": "PRIORITY-JSC3-1", "rank": 1, "section": "headline", "diagnosed_gap": "GAP-C-PRIMARY", "action_type": "ACTION-C-HEADLINE", "evidence_ids": ["EVID-JSC3-PRIORITY-1"], "timebox": "TIMEBOX-C-1", "done_when": "DONE-WHEN-C-1", "impact_basis": "COACH_HEURISTIC"},
+    {"priority_id": "PRIORITY-JSC3-2", "rank": 2, "section": "about", "diagnosed_gap": "GAP-C-SECONDARY", "action_type": "ACTION-C-ABOUT", "evidence_ids": ["EVID-JSC3-PRIORITY-2"], "timebox": "TIMEBOX-C-2", "done_when": "DONE-WHEN-C-2", "impact_basis": "COACH_HEURISTIC"},
+    {"priority_id": "PRIORITY-JSC3-3", "rank": 3, "section": "proof", "diagnosed_gap": "GAP-C-PROOF", "action_type": "ACTION-C-EVIDENCE", "evidence_ids": ["EVID-JSC3-PRIORITY-3"], "timebox": "TIMEBOX-C-3", "done_when": "DONE-WHEN-C-3", "impact_basis": "COACH_HEURISTIC"}
+  ],
+  "copy_blocks": [
+    {"copy_id": "COPY-JSC3-PRIMARY", "section": "headline", "state": "ready", "audience": "RECRUITER", "problem": "STRUCTURAL_SIGNAL_GAP", "fact_ids": ["FACT-JSC3-READY"], "evidence_ids": ["EVID-JSC3-HEADLINE"], "claim_boundary": "USE_ONLY_SUPPORTED_FACTS"},
+    {"copy_id": "COPY-JSC3-ABOUT", "section": "about_opening", "state": "ready", "audience": "HIRING_MANAGER", "problem": "STRUCTURAL_SIGNAL_GAP", "fact_ids": ["FACT-JSC3-READY"], "evidence_ids": ["EVID-JSC3-ABOUT"], "claim_boundary": "USE_ONLY_SUPPORTED_FACTS"},
+    {"copy_id": "COPY-JSC3-EXPERIENCE", "section": "experience_bullet", "state": "requires_confirmation", "audience": "TECHNICAL_PEER", "problem": "MISSING_PROOF_BOUNDARY", "fact_ids": ["FACT-JSC3-UNKNOWN"], "evidence_ids": ["EVID-JSC3-PROOF"], "claim_boundary": "CONFIRM_SCOPE_BEFORE_USE"}
+  ],
+  "blocked_claims": ["VISUAL_NOT_INSPECTED"],
+  "source_catalog": [
+    {"source_id": "SOURCE-JSC3-1", "source_category": "good_profile", "source_class": "official", "url": "https://www.linkedin.com/help/linkedin/answer/a554351", "publisher": "LinkedIn", "document_title": "Good profile guidance", "access_date": "2026-08-01", "reachability": "reachable", "scope": "PROFILE_GUIDANCE", "inference_limit": "NO_INDIVIDUAL_OUTCOME_INFERENCE", "fallback": "COACH_HEURISTIC"},
+    {"source_id": "SOURCE-JSC3-2", "source_category": "profile_photo", "source_class": "official", "url": "https://www.linkedin.com/help/linkedin/answer/a541850", "publisher": "LinkedIn", "document_title": "Profile photo guidance", "access_date": "2026-08-01", "reachability": "reachable", "scope": "PROFILE_GUIDANCE", "inference_limit": "NO_INDIVIDUAL_OUTCOME_INFERENCE", "fallback": "COACH_HEURISTIC"},
+    {"source_id": "SOURCE-JSC3-3", "source_category": "cover_image", "source_class": "official", "url": "https://www.linkedin.com/help/linkedin/answer/a1377087", "publisher": "LinkedIn", "document_title": "Cover image guidance", "access_date": "2026-08-01", "reachability": "reachable", "scope": "PROFILE_GUIDANCE", "inference_limit": "NO_INDIVIDUAL_OUTCOME_INFERENCE", "fallback": "COACH_HEURISTIC"},
+    {"source_id": "SOURCE-JSC3-4", "source_category": "featured_section", "source_class": "official", "url": "https://www.linkedin.com/help/linkedin/answer/a552452", "publisher": "LinkedIn", "document_title": "Featured section guidance", "access_date": "2026-08-01", "reachability": "reachable", "scope": "PROFILE_GUIDANCE", "inference_limit": "NO_INDIVIDUAL_OUTCOME_INFERENCE", "fallback": "COACH_HEURISTIC"},
+    {"source_id": "SOURCE-JSC3-5", "source_category": "skills", "source_class": "official", "url": "https://www.linkedin.com/help/linkedin/answer/a549047", "publisher": "LinkedIn", "document_title": "Skills guidance", "access_date": "2026-08-01", "reachability": "reachable", "scope": "PROFILE_GUIDANCE", "inference_limit": "NO_INDIVIDUAL_OUTCOME_INFERENCE", "fallback": "COACH_HEURISTIC"},
+    {"source_id": "SOURCE-JSC3-6", "source_category": "job_match", "source_class": "official", "url": "https://www.linkedin.com/help/linkedin/answer/a8078207", "publisher": "LinkedIn", "document_title": "Job match guidance", "access_date": "2026-08-01", "reachability": "reachable", "scope": "PROFILE_GUIDANCE", "inference_limit": "NO_INDIVIDUAL_OUTCOME_INFERENCE", "fallback": "COACH_HEURISTIC"},
+    {"source_id": "SOURCE-JSC3-7", "source_category": "ai_hiring_agents", "source_class": "official", "url": "https://www.linkedin.com/help/linkedin/answer/a7437598", "publisher": "LinkedIn", "document_title": "How LinkedIn uses AI Agents to connect job seekers and hirers", "access_date": "2026-08-01", "reachability": "reachable", "scope": "PROFILE_GUIDANCE", "inference_limit": "NO_INDIVIDUAL_OUTCOME_INFERENCE", "fallback": "COACH_HEURISTIC"},
+    {"source_id": "SOURCE-JSC3-8", "source_category": "job_seeker_hirer_connection", "source_class": "official", "url": "https://www.linkedin.com/help/linkedin/answer/a7134286", "publisher": "LinkedIn", "document_title": "Job seeker and hirer connection guidance", "access_date": "2026-08-01", "reachability": "reachable", "scope": "PROFILE_GUIDANCE", "inference_limit": "NO_INDIVIDUAL_OUTCOME_INFERENCE", "fallback": "COACH_HEURISTIC"}
+  ],
+  "authorization_state": {"inspection": "authorized", "external_actions": "not_authorized", "action_state": "not_executed"},
+  "eval_expectations": {"scenario_class": "structural_no_visual", "primary_gap": "GAP-C-PRIMARY", "primary_copy_category": "headline", "pending_evidence_policy": "NO_EXTRA_VISUAL_REQUEST"}
+}

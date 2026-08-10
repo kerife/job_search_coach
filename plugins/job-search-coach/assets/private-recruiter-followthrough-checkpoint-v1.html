@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="{{LANG}}">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'none'; font-src 'none'; connect-src 'none'; form-action 'none'; frame-ancestors 'none'">
+  <title>{{TITLE}}</title><style>{{INLINE_CSS}}</style>
+</head>
+<body class="private-recruiter-checkpoint-document">
+  <a class="skip-link" href="#main-content">{{SKIP}}</a>
+  <main id="main-content" class="checkpoint-shell" tabindex="-1">
+    <article class="checkpoint-card" aria-labelledby="checkpoint-heading">
+      <p class="checkpoint-kicker">{{KICKER}}</p>
+      <h1 id="checkpoint-heading">{{HEADING}}</h1>
+      <dl class="checkpoint-facts">
+        <div><dt>{{STATE_LABEL}}</dt><dd>{{STATE}}</dd></div>
+        <div><dt>{{EVENT_LABEL}}</dt><dd>{{EVENT}}</dd></div>
+        <div><dt>{{DATE_LABEL}}</dt><dd><time datetime="{{DATE}}">{{DATE}}</time></dd></div>
+        <div><dt>{{ACTION_LABEL}}</dt><dd>{{ACTION}}</dd></div>
+      </dl>
+      <p class="checkpoint-boundary">{{BOUNDARY}}</p>
+    </article>
+  </main>
+  <footer class="checkpoint-footer">{{SAVE}}</footer>
+</body>
+</html>

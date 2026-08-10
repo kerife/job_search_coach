@@ -1,0 +1,14 @@
+{
+  "schema_version": "private-recruiter-reply-triage-v1",
+  "artifact_kind": "private_recruiter_reply_triage",
+  "locale": "en",
+  "state": "clarify_first",
+  "classification": "request_for_proof",
+  "safe_context": {"stage": "recruiter_screen", "role_context": "missing", "critical_constraints": "missing", "summary": "A safe summary notes a proof request without role scope."},
+  "facts": [{"id": "F-001", "state": "verified", "summary": "A supported candidate fact is available for a factual summary."}],
+  "question": {"id": "Q-001", "text": "Which role scope should be clarified privately before preparation?", "fact_ids": ["F-001"]},
+  "blocked_claims": ["Do not claim fit, confidential proof, or unconfirmed scope."],
+  "handoff_allowed": false,
+  "next_safe_action": "clarify_context_before_private_prep",
+  "delivery": {"draft_only": true, "external_actions_authorized": false, "no_calendar_action": true, "raw_reply_retained": false, "local_save_mode": "disabled"}
+}

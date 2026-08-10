@@ -1,0 +1,29 @@
+{
+  "registry_version": "linkedin-source-registry-1",
+  "official_categories": {
+    "good_profile": [
+      {"host": "www.linkedin.com", "path_prefix": "/help/linkedin/answer/a554351"}
+    ],
+    "profile_photo": [
+      {"host": "www.linkedin.com", "path_prefix": "/help/linkedin/answer/a541850"}
+    ],
+    "cover_image": [
+      {"host": "www.linkedin.com", "path_prefix": "/help/linkedin/answer/a1377087"}
+    ],
+    "featured_section": [
+      {"host": "www.linkedin.com", "path_prefix": "/help/linkedin/answer/a552452"}
+    ],
+    "skills": [
+      {"host": "www.linkedin.com", "path_prefix": "/help/linkedin/answer/a549047"}
+    ],
+    "job_match": [
+      {"host": "www.linkedin.com", "path_prefix": "/help/linkedin/answer/a8078207"}
+    ],
+    "job_seeker_hirer_connection": [
+      {"host": "www.linkedin.com", "path_prefix": "/help/linkedin/answer/a7134286"}
+    ],
+    "ai_hiring_agents": [
+      {"host": "www.linkedin.com", "path_prefix": "/help/linkedin/answer/a7437598"}
+    ]
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "schema_version": "linkedin-client-report-v2-fixture-2",
+  "fixture_id": "FIXTURE-JSC1-TECHNICAL-SIGNAL-DISPERSED",
+  "internal_candidate_id": "CANDIDATE-JSC1-SYNTH",
+  "origin_class": "synthetic_from_authorized_structural_review",
+  "derivation": "composite_plus_counterfactual_perturbation",
+  "real_profile_mapping": "none_created",
+  "locale": "es",
+  "evaluation_date": "2026-08-07",
+  "evidence_mode": "authorized_visual_visible",
+  "structural_state_fixture": {
+    "observations": [
+      {"evidence_id": "EVID-JSC1-VISUAL", "section": "visual", "state": "visible"},
+      {"evidence_id": "EVID-JSC1-HEADLINE", "section": "headline", "state": "present"},
+      {"evidence_id": "EVID-JSC1-ABOUT", "section": "about", "state": "present"},
+      {"evidence_id": "EVID-JSC1-EXPERIENCE", "section": "experience", "state": "present"},
+      {"evidence_id": "EVID-JSC1-SKILLS", "section": "skills", "state": "present"},
+      {"evidence_id": "EVID-JSC1-PROOF", "section": "proof", "state": "present"},
+      {"evidence_id": "EVID-JSC1-COMPLETE", "section": "completeness", "state": "present"},
+      {"evidence_id": "EVID-JSC1-PRIORITY-1", "section": "headline", "state": "present"},
+      {"evidence_id": "EVID-JSC1-PRIORITY-2", "section": "about", "state": "present"},
+      {"evidence_id": "EVID-JSC1-PRIORITY-3", "section": "experience", "state": "present"}
+    ]
+  },
+  "synthetic_fact_catalog": [
+    {"fact_id": "FACT-JSC1-READY", "evidence_state": "verified", "fact_type": "capability_signal", "role_family": "platform_reliability", "capability_family": "reliability", "scope_bucket": "team", "claim_tokens": ["RELIABILITY", "TECHNICAL_SCOPE"]},
+    {"fact_id": "FACT-JSC1-UNKNOWN", "evidence_state": "unknown", "fact_type": "capability_signal", "role_family": "platform_reliability", "capability_family": "automation", "scope_bucket": "unknown", "claim_tokens": ["AUTOMATION"]}
+  ],
+  "score_ledger": {
+    "numeric_weighted_total": 58.0, "scored_weight": 100, "not_scored_weight": 0, "overall_score": 58, "confidence": "high",
+    "domains": [
+      {"domain": "visual", "weight": 15, "state": "scored", "raw_score": 60, "weighted_points": 9.0, "evidence_ids": ["EVID-JSC1-VISUAL"], "reason_code": "VISUAL_VISIBLE"},
+      {"domain": "headline", "weight": 15, "state": "scored", "raw_score": 40, "weighted_points": 6.0, "evidence_ids": ["EVID-JSC1-HEADLINE"], "reason_code": "SIGNAL_DISPERSED"},
+      {"domain": "about", "weight": 15, "state": "scored", "raw_score": 60, "weighted_points": 9.0, "evidence_ids": ["EVID-JSC1-ABOUT"], "reason_code": "CONTENT_GENERAL"},
+      {"domain": "experience", "weight": 20, "state": "scored", "raw_score": 55, "weighted_points": 11.0, "evidence_ids": ["EVID-JSC1-EXPERIENCE"], "reason_code": "SIGNAL_DISPERSED"},
+      {"domain": "skills", "weight": 15, "state": "scored", "raw_score": 60, "weighted_points": 9.0, "evidence_ids": ["EVID-JSC1-SKILLS"], "reason_code": "CONTENT_SPECIFIC"},
+      {"domain": "proof", "weight": 10, "state": "scored", "raw_score": 60, "weighted_points": 6.0, "evidence_ids": ["EVID-JSC1-PROOF"], "reason_code": "PROOF_AVAILABLE"},
+      {"domain": "completeness", "weight": 10, "state": "scored", "raw_score": 80, "weighted_points": 8.0, "evidence_ids": ["EVID-JSC1-COMPLETE"], "reason_code": "STRUCTURAL_COMPLETE"}
+    ]
+  },
+  "priorities": [
+    {"priority_id": "PRIORITY-JSC1-1", "rank": 1, "section": "headline", "diagnosed_gap": "GAP-A-PRIMARY", "action_type": "ACTION-A-HEADLINE", "evidence_ids": ["EVID-JSC1-PRIORITY-1"], "timebox": "TIMEBOX-A-1", "done_when": "DONE-WHEN-A-1", "impact_basis": "COACH_HEURISTIC"},
+    {"priority_id": "PRIORITY-JSC1-2", "rank": 2, "section": "about", "diagnosed_gap": "GAP-A-SECONDARY", "action_type": "ACTION-A-ABOUT", "evidence_ids": ["EVID-JSC1-PRIORITY-2"], "timebox": "TIMEBOX-A-2", "done_when": "DONE-WHEN-A-2", "impact_basis": "COACH_HEURISTIC"},
+    {"priority_id": "PRIORITY-JSC1-3", "rank": 3, "section": "experience", "diagnosed_gap": "GAP-A-PROOF", "action_type": "ACTION-A-EXPERIENCE", "evidence_ids": ["EVID-JSC1-PRIORITY-3"], "timebox": "TIMEBOX-A-3", "done_when": "DONE-WHEN-A-3", "impact_basis": "COACH_HEURISTIC"}
+  ],
+  "copy_blocks": [
+    {"copy_id": "COPY-JSC1-PRIMARY", "section": "headline", "state": "ready", "audience": "RECRUITER", "problem": "TECHNICAL_SIGNAL_DISPERSED", "fact_ids": ["FACT-JSC1-READY"], "evidence_ids": ["EVID-JSC1-HEADLINE"], "claim_boundary": "USE_ONLY_SUPPORTED_FACTS"},
+    {"copy_id": "COPY-JSC1-ABOUT", "section": "about_opening", "state": "requires_confirmation", "audience": "HIRING_MANAGER", "problem": "TECHNICAL_SIGNAL_DISPERSED", "fact_ids": ["FACT-JSC1-UNKNOWN"], "evidence_ids": ["EVID-JSC1-ABOUT"], "claim_boundary": "CONFIRM_CAPABILITY_BEFORE_USE"},
+    {"copy_id": "COPY-JSC1-EXPERIENCE", "section": "experience_bullet", "state": "omit", "audience": "TECHNICAL_PEER", "problem": "MISSING_PROOF_BOUNDARY", "fact_ids": [], "evidence_ids": ["EVID-JSC1-EXPERIENCE"], "claim_boundary": "OMIT_UNSUPPORTED_OUTCOME"}
+  ],
+  "blocked_claims": ["CAPABILITY_UNVERIFIED"],
+  "source_catalog": [
+    {"source_id": "SOURCE-JSC1-1", "source_category": "good_profile", "source_class": "official", "url": "https://www.linkedin.com/help/linkedin/answer/a554351", "publisher": "LinkedIn", "document_title": "Good profile guidance", "access_date": "2026-08-01", "reachability": "reachable", "scope": "PROFILE_GUIDANCE", "inference_limit": "NO_INDIVIDUAL_OUTCOME_INFERENCE", "fallback": "COACH_HEURISTIC"},
+    {"source_id": "SOURCE-JSC1-2", "source_category": "profile_photo", "source_class": "official", "url": "https://www.linkedin.com/help/linkedin/answer/a541850", "publisher": "LinkedIn", "document_title": "Profile photo guidance", "access_date": "2026-08-01", "reachability": "reachable", "scope": "PROFILE_GUIDANCE", "inference_limit": "NO_INDIVIDUAL_OUTCOME_INFERENCE", "fallback": "COACH_HEURISTIC"},
+    {"source_id": "SOURCE-JSC1-3", "source_category": "cover_image", "source_class": "official", "url": "https://www.linkedin.com/help/linkedin/answer/a1377087", "publisher": "LinkedIn", "document_title": "Cover image guidance", "access_date": "2026-08-01", "reachability": "reachable", "scope": "PROFILE_GUIDANCE", "inference_limit": "NO_INDIVIDUAL_OUTCOME_INFERENCE", "fallback": "COACH_HEURISTIC"},
+    {"source_id": "SOURCE-JSC1-4", "source_category": "featured_section", "source_class": "official", "url": "https://www.linkedin.com/help/linkedin/answer/a552452", "publisher": "LinkedIn", "document_title": "Featured section guidance", "access_date": "2026-08-01", "reachability": "reachable", "scope": "PROFILE_GUIDANCE", "inference_limit": "NO_INDIVIDUAL_OUTCOME_INFERENCE", "fallback": "COACH_HEURISTIC"},
+    {"source_id": "SOURCE-JSC1-5", "source_category": "skills", "source_class": "official", "url": "https://www.linkedin.com/help/linkedin/answer/a549047", "publisher": "LinkedIn", "document_title": "Skills guidance", "access_date": "2026-08-01", "reachability": "reachable", "scope": "PROFILE_GUIDANCE", "inference_limit": "NO_INDIVIDUAL_OUTCOME_INFERENCE", "fallback": "COACH_HEURISTIC"},
+    {"source_id": "SOURCE-JSC1-6", "source_category": "job_match", "source_class": "official", "url": "https://www.linkedin.com/help/linkedin/answer/a8078207", "publisher": "LinkedIn", "document_title": "Job match guidance", "access_date": "2026-08-01", "reachability": "reachable", "scope": "PROFILE_GUIDANCE", "inference_limit": "NO_INDIVIDUAL_OUTCOME_INFERENCE", "fallback": "COACH_HEURISTIC"},
+    {"source_id": "SOURCE-JSC1-7", "source_category": "ai_hiring_agents", "source_class": "official", "url": "https://www.linkedin.com/help/linkedin/answer/a7437598", "publisher": "LinkedIn", "document_title": "How LinkedIn uses AI Agents to connect job seekers and hirers", "access_date": "2026-08-01", "reachability": "reachable", "scope": "PROFILE_GUIDANCE", "inference_limit": "NO_INDIVIDUAL_OUTCOME_INFERENCE", "fallback": "COACH_HEURISTIC"},
+    {"source_id": "SOURCE-JSC1-8", "source_category": "job_seeker_hirer_connection", "source_class": "official", "url": "https://www.linkedin.com/help/linkedin/answer/a7134286", "publisher": "LinkedIn", "document_title": "Job seeker and hirer connection guidance", "access_date": "2026-08-01", "reachability": "reachable", "scope": "PROFILE_GUIDANCE", "inference_limit": "NO_INDIVIDUAL_OUTCOME_INFERENCE", "fallback": "COACH_HEURISTIC"}
+  ],
+  "authorization_state": {"inspection": "authorized", "external_actions": "not_authorized", "action_state": "not_executed"},
+  "eval_expectations": {"scenario_class": "technical_signal_dispersed", "primary_gap": "GAP-A-PRIMARY", "primary_copy_category": "headline", "pending_evidence_policy": "ASK_ONLY_IF_DECISION_CHANGES"}
+}

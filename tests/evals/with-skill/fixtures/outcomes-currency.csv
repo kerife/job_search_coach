@@ -1,0 +1,3 @@
+application_id,candidate_id,application_date,response_date,interview_date,interview_stage,offer_date,currency,role,geography,source,referral,asset_version,intervention_id,confounders,simultaneous_interventions,benchmark_consent
+currency-001,candidate-001,2026-07-15,2026-07-18,2026-07-25,hiring_manager,2026-08-01,USD,Principal SRE,Remote,company-site,false,cv-v1,,,,false
+currency-002,candidate-001,2026-07-20,2026-07-22,2026-07-28,hiring_manager,2026-08-04,MXN,Principal SRE,Remote,company-site,false,cv-v1,,,,false

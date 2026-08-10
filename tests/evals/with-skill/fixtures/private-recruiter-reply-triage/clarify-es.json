@@ -1,0 +1,14 @@
+{
+  "schema_version": "private-recruiter-reply-triage-v1",
+  "artifact_kind": "private_recruiter_reply_triage",
+  "locale": "es",
+  "state": "clarify_first",
+  "classification": "unknown",
+  "safe_context": {"stage": "unknown", "role_context": "missing", "critical_constraints": "missing", "summary": "Hay una respuesta resumida sin suficiente contexto de rol."},
+  "facts": [{"id": "F-001", "state": "candidate_reported", "summary": "La persona reportó experiencia relevante que requiere confirmación de alcance."}],
+  "question": {"id": "Q-001", "text": "¿Cuál es el alcance del rol que conviene confirmar de forma privada?", "fact_ids": ["F-001"]},
+  "blocked_claims": ["No afirmar ajuste, disponibilidad ni alcance técnico no confirmado."],
+  "handoff_allowed": false,
+  "next_safe_action": "clarify_context_before_private_prep",
+  "delivery": {"draft_only": true, "external_actions_authorized": false, "no_calendar_action": true, "raw_reply_retained": false, "local_save_mode": "disabled"}
+}

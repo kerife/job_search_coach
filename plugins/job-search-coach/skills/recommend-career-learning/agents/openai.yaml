@@ -1,0 +1,4 @@
+interface:
+  display_name: "Career Learning ROI"
+  short_description: "Compare learning, certification, and project ROI"
+  default_prompt: "Use $recommend-career-learning to compare courses, certifications, projects, and no-action options for my target role."

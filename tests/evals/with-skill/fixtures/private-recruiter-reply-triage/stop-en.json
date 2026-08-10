@@ -1,0 +1,14 @@
+{
+  "schema_version": "private-recruiter-reply-triage-v1",
+  "artifact_kind": "private_recruiter_reply_triage",
+  "locale": "en",
+  "state": "stop",
+  "classification": "compensation_question",
+  "safe_context": {"stage": "not_applicable", "role_context": "not_applicable", "critical_constraints": "not_applicable", "summary": "The safe summary has no basis for a private preparation handoff."},
+  "facts": [{"id": "F-001", "state": "verified", "summary": "The available supported fact does not justify further preparation."}],
+  "question": {"id": "Q-001", "text": "Which boundary should remain in place for a later private review?", "fact_ids": ["F-001"]},
+  "blocked_claims": ["Do not state compensation expectations, fit, or a future opportunity."],
+  "handoff_allowed": false,
+  "next_safe_action": "record_stop_decision",
+  "delivery": {"draft_only": true, "external_actions_authorized": false, "no_calendar_action": true, "raw_reply_retained": false, "local_save_mode": "disabled"}
+}

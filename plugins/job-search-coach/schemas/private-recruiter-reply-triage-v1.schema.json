@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/job-search-coach/private-recruiter-reply-triage-v1.schema.json",
+  "title": "Private Recruiter Reply Triage v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_kind", "locale", "state", "classification", "safe_context", "facts", "question", "blocked_claims", "handoff_allowed", "next_safe_action", "delivery"],
+  "properties": {
+    "schema_version": {"const": "private-recruiter-reply-triage-v1"},
+    "artifact_kind": {"const": "private_recruiter_reply_triage"},
+    "locale": {"enum": ["es", "en"]},
+    "state": {"enum": ["clarify_first", "ready_for_private_prep", "stop"]},
+    "classification": {"enum": ["screen_invite", "request_for_proof", "eligibility_question", "compensation_question", "decline", "unknown"]},
+    "safe_context": {"$ref": "#/$defs/safe_context"},
+    "facts": {"type": "array", "minItems": 1, "maxItems": 1, "items": {"$ref": "#/$defs/fact"}},
+    "question": {"$ref": "#/$defs/question"},
+    "blocked_claims": {"type": "array", "minItems": 1, "maxItems": 4, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 280}},
+    "handoff_allowed": {"type": "boolean"},
+    "next_safe_action": {"enum": ["clarify_context_before_private_prep", "manual_reenter_private_prep", "record_stop_decision"]},
+    "handoff": {"$ref": "#/$defs/handoff"},
+    "delivery": {"$ref": "#/$defs/delivery"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"state": {"const": "ready_for_private_prep"}}, "required": ["state"]},
+      "then": {
+        "required": ["handoff"],
+        "properties": {
+          "safe_context": {"properties": {"stage": {"const": "recruiter_screen"}, "role_context": {"const": "confirmed"}, "critical_constraints": {"const": "confirmed"}}},
+          "facts": {"items": {"properties": {"state": {"const": "verified"}}, "required": ["state"]}},
+          "question": {"required": ["kind"]},
+          "handoff_allowed": {"const": true},
+          "next_safe_action": {"const": "manual_reenter_private_prep"}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"state": {"const": "clarify_first"}}, "required": ["state"]},
+      "then": {"properties": {"handoff_allowed": {"const": false}, "handoff": {"not": {}}, "next_safe_action": {"const": "clarify_context_before_private_prep"}}}
+    },
+    {
+      "if": {"properties": {"state": {"const": "stop"}}, "required": ["state"]},
+      "then": {"properties": {"handoff_allowed": {"const": false}, "handoff": {"not": {}}, "next_safe_action": {"const": "record_stop_decision"}}}
+    },
+    {
+      "if": {"properties": {"state": {"const": "ready_for_private_prep"}, "classification": {"const": "decline"}}, "required": ["state", "classification"]},
+      "then": {"not": {}}
+    },
+    {
+      "if": {"properties": {"facts": {"contains": {"properties": {"state": {"const": "candidate_reported"}}, "required": ["state"]}}}, "required": ["facts"]},
+      "then": {
+        "anyOf": [
+          {"properties": {"state": {"const": "clarify_first"}}, "required": ["state"]},
+          {"properties": {"handoff_allowed": {"const": false}}, "required": ["handoff_allowed"]}
+        ]
+      }
+    },
+    {
+      "if": {"properties": {"classification": {"const": "screen_invite"}}, "required": ["classification"]},
+      "then": {"properties": {"question": {"properties": {"kind": {"const": "screen_opening"}}}}}
+    },
+    {
+      "if": {"properties": {"classification": {"const": "request_for_proof"}}, "required": ["classification"]},
+      "then": {"properties": {"question": {"properties": {"kind": {"const": "proof_example"}}}}}
+    },
+    {
+      "if": {"properties": {"classification": {"const": "eligibility_question"}}, "required": ["classification"]},
+      "then": {"properties": {"question": {"properties": {"kind": {"const": "eligibility_boundary"}}}}}
+    },
+    {
+      "if": {"properties": {"classification": {"const": "compensation_question"}}, "required": ["classification"]},
+      "then": {"properties": {"question": {"properties": {"kind": {"const": "compensation_boundary"}}}}}
+    },
+    {
+      "if": {"properties": {"classification": {"const": "unknown"}}, "required": ["classification"]},
+      "then": {"properties": {"question": {"properties": {"kind": {"const": "missing_detail"}}}}}
+    }
+  ],
+  "$defs": {
+    "safe_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "role_context", "critical_constraints", "summary"],
+      "properties": {
+        "stage": {"enum": ["recruiter_screen", "unknown", "not_applicable"]},
+        "role_context": {"enum": ["confirmed", "missing", "not_applicable"]},
+        "critical_constraints": {"enum": ["confirmed", "missing", "not_applicable"]},
+        "summary": {"type": "string", "minLength": 1, "maxLength": 280}
+      }
+    },
+    "fact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "state", "summary"],
+      "properties": {
+        "id": {"pattern": "^F-[0-9]{3}$"},
+        "state": {"enum": ["verified", "candidate_reported"]},
+        "summary": {"type": "string", "minLength": 1, "maxLength": 500}
+      }
+    },
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+        "required": ["id", "text", "fact_ids"],
+        "properties": {
+          "id": {"pattern": "^Q-[0-9]{3}$"},
+          "text": {"type": "string", "minLength": 1, "maxLength": 500},
+          "kind": {"enum": ["screen_opening", "proof_example", "eligibility_boundary", "compensation_boundary", "missing_detail"]},
+          "fact_ids": {"type": "array", "minItems": 1, "maxItems": 1, "uniqueItems": true, "items": {"pattern": "^F-[0-9]{3}$"}}
+      }
+    },
+    "delivery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["draft_only", "external_actions_authorized", "no_calendar_action", "raw_reply_retained", "local_save_mode"],
+      "properties": {
+        "draft_only": {"const": true},
+        "external_actions_authorized": {"const": false},
+        "no_calendar_action": {"const": true},
+        "raw_reply_retained": {"const": false},
+        "local_save_mode": {"const": "disabled"}
+      }
+    },
+    "handoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["module", "scope", "input_mode", "auto_start", "external_actions", "raw_reply_retained", "local_save_mode", "packet", "reentry_packet"],
+      "properties": {
+        "module": {"const": "prepare-role-interviews"},
+        "scope": {"const": "one recruiter-screen question"},
+        "input_mode": {"const": "identity_free_summary_plus_verified_fact"},
+        "auto_start": {"const": false},
+        "external_actions": {"const": false},
+        "raw_reply_retained": {"const": false},
+        "local_save_mode": {"const": "disabled"},
+        "packet": {"$ref": "#/$defs/handoff_packet"},
+        "reentry_packet": {"$ref": "#/$defs/reentry_packet"}
+      }
+    },
+    "handoff_packet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["context_summary", "source_snapshot", "fact_id", "question_id", "prep_scope"],
+      "properties": {
+        "context_summary": {"type": "string", "minLength": 1, "maxLength": 280},
+        "source_snapshot": {"pattern": "^snap-triage-[0-9]{3}$"},
+        "fact_id": {"pattern": "^F-[0-9]{3}$"},
+        "question_id": {"pattern": "^Q-[0-9]{3}$"},
+        "prep_scope": {"enum": ["screen_opening", "proof_example", "eligibility_boundary", "compensation_boundary", "missing_detail"]}
+      }
+    },
+    "reentry_packet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "source_artifact_kind", "context_summary", "source_snapshot", "fact_id", "question_id", "prep_scope", "manual_reentry_required", "candidate_answer_state", "score_state"],
+      "properties": {
+        "schema_version": {"const": "private-recruiter-screen-reentry-v1"},
+        "source_artifact_kind": {"const": "private_recruiter_reply_triage"},
+        "context_summary": {"type": "string", "minLength": 1, "maxLength": 280},
+        "source_snapshot": {"pattern": "^snap-triage-[0-9]{3}$"},
+        "fact_id": {"pattern": "^F-[0-9]{3}$"},
+        "question_id": {"pattern": "^Q-[0-9]{3}$"},
+        "prep_scope": {"enum": ["screen_opening", "proof_example", "eligibility_boundary", "compensation_boundary", "missing_detail"]},
+        "manual_reentry_required": {"const": true},
+        "candidate_answer_state": {"const": "unanswered"},
+        "score_state": {"const": "unknown"}
+      }
+    }
+  }
+}

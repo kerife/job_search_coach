@@ -1,0 +1,15 @@
+{
+  "schema_version": "private-recruiter-reply-triage-v1",
+  "artifact_kind": "private_recruiter_reply_triage",
+  "locale": "en",
+  "state": "ready_for_private_prep",
+  "classification": "eligibility_question",
+  "safe_context": {"stage": "recruiter_screen", "role_context": "confirmed", "critical_constraints": "confirmed", "summary": "The safe summary confirms stage, role context, and critical constraints."},
+  "facts": [{"id": "F-001", "state": "verified", "summary": "The candidate confirmed relevant experience for private preparation."}],
+  "question": {"id": "Q-001", "kind": "eligibility_boundary", "text": "Which supported example should be practiced first for this conversation?", "fact_ids": ["F-001"]},
+  "blocked_claims": ["Do not claim eligibility, fit, availability, or an external action."],
+  "handoff_allowed": true,
+  "next_safe_action": "manual_reenter_private_prep",
+  "handoff": {"module": "prepare-role-interviews", "scope": "one recruiter-screen question", "input_mode": "identity_free_summary_plus_verified_fact", "auto_start": false, "external_actions": false, "raw_reply_retained": false, "local_save_mode": "disabled", "packet": {"context_summary": "The safe summary confirms stage, role context, and critical constraints.", "source_snapshot": "snap-triage-001", "fact_id": "F-001", "question_id": "Q-001", "prep_scope": "eligibility_boundary"}, "reentry_packet": {"schema_version": "private-recruiter-screen-reentry-v1", "source_artifact_kind": "private_recruiter_reply_triage", "context_summary": "The safe summary confirms stage, role context, and critical constraints.", "source_snapshot": "snap-triage-001", "fact_id": "F-001", "question_id": "Q-001", "prep_scope": "eligibility_boundary", "manual_reentry_required": true, "candidate_answer_state": "unanswered", "score_state": "unknown"}},
+  "delivery": {"draft_only": true, "external_actions_authorized": false, "no_calendar_action": true, "raw_reply_retained": false, "local_save_mode": "disabled"}
+}

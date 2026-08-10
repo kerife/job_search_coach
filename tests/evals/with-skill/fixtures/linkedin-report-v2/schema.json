@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/linkedin-client-report-v2-fixture-2.schema.json",
+  "title": "Privacy-safe LinkedIn client report v2 synthetic fixture bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "fixture_id", "internal_candidate_id", "origin_class",
+    "derivation", "real_profile_mapping", "locale", "evaluation_date",
+    "evidence_mode", "structural_state_fixture", "synthetic_fact_catalog",
+    "score_ledger", "priorities", "copy_blocks", "blocked_claims",
+    "source_catalog", "authorization_state", "eval_expectations"
+  ],
+  "properties": {
+    "schema_version": {"const": "linkedin-client-report-v2-fixture-2"},
+    "fixture_id": {"type": "string", "pattern": "^FIXTURE-JSC[0-9]+-[A-Z0-9]+(?:-[A-Z0-9]+)*$"},
+    "internal_candidate_id": {"type": "string", "pattern": "^CANDIDATE-JSC[0-9]+-[A-Z0-9]+(?:-[A-Z0-9]+)*$"},
+    "origin_class": {"const": "synthetic_from_authorized_structural_review"},
+    "derivation": {"const": "composite_plus_counterfactual_perturbation"},
+    "real_profile_mapping": {"const": "none_created"},
+    "locale": {"enum": ["en", "es"]},
+    "evaluation_date": {"type": "string", "format": "date"},
+    "evidence_mode": {"enum": ["authorized_visual_visible", "partial_visual_banner_only", "partial_visual_photo_only", "structural_only"]},
+    "structural_state_fixture": {
+      "type": "object", "additionalProperties": false, "required": ["observations"],
+      "properties": {"observations": {"type": "array", "items": {"$ref": "#/$defs/observation"}}}
+    },
+    "synthetic_fact_catalog": {"type": "array", "items": {"$ref": "#/$defs/fact"}},
+    "score_ledger": {"$ref": "#/$defs/score_ledger"},
+    "priorities": {
+      "type": "array", "minItems": 3, "maxItems": 3, "items": {"$ref": "#/$defs/priority"},
+      "allOf": [
+        {"contains": {"type": "object", "required": ["rank"], "properties": {"rank": {"const": 1}}}, "minContains": 1, "maxContains": 1},
+        {"contains": {"type": "object", "required": ["rank"], "properties": {"rank": {"const": 2}}}, "minContains": 1, "maxContains": 1},
+        {"contains": {"type": "object", "required": ["rank"], "properties": {"rank": {"const": 3}}}, "minContains": 1, "maxContains": 1}
+      ]
+    },
+    "copy_blocks": {
+      "type": "array", "minItems": 3, "maxItems": 3, "items": {"$ref": "#/$defs/copy"},
+      "allOf": [
+        {"contains": {"type": "object", "required": ["section"], "properties": {"section": {"const": "headline"}}}, "minContains": 1, "maxContains": 1},
+        {"contains": {"type": "object", "required": ["section"], "properties": {"section": {"const": "about_opening"}}}, "minContains": 1, "maxContains": 1},
+        {"contains": {"type": "object", "required": ["section"], "properties": {"section": {"const": "experience_bullet"}}}, "minContains": 1, "maxContains": 1}
+      ]
+    },
+    "blocked_claims": {"type": "array", "items": {"enum": ["CAPABILITY_UNVERIFIED", "LEADERSHIP_SCOPE_UNQUANTIFIED", "VISUAL_NOT_INSPECTED", "VISUAL_PARTIAL_NO_AGGREGATE"]}},
+    "source_catalog": {
+      "type": "array", "minItems": 8, "items": {"$ref": "#/$defs/source"},
+      "allOf": [
+        {"contains": {"type": "object", "required": ["source_class", "source_category"], "properties": {"source_class": {"const": "official"}, "source_category": {"const": "ai_hiring_agents"}}}, "minContains": 1, "maxContains": 1},
+        {"contains": {"type": "object", "required": ["source_class", "source_category"], "properties": {"source_class": {"const": "official"}, "source_category": {"const": "cover_image"}}}, "minContains": 1, "maxContains": 1},
+        {"contains": {"type": "object", "required": ["source_class", "source_category"], "properties": {"source_class": {"const": "official"}, "source_category": {"const": "featured_section"}}}, "minContains": 1, "maxContains": 1},
+        {"contains": {"type": "object", "required": ["source_class", "source_category"], "properties": {"source_class": {"const": "official"}, "source_category": {"const": "good_profile"}}}, "minContains": 1, "maxContains": 1},
+        {"contains": {"type": "object", "required": ["source_class", "source_category"], "properties": {"source_class": {"const": "official"}, "source_category": {"const": "job_match"}}}, "minContains": 1, "maxContains": 1},
+        {"contains": {"type": "object", "required": ["source_class", "source_category"], "properties": {"source_class": {"const": "official"}, "source_category": {"const": "job_seeker_hirer_connection"}}}, "minContains": 1, "maxContains": 1},
+        {"contains": {"type": "object", "required": ["source_class", "source_category"], "properties": {"source_class": {"const": "official"}, "source_category": {"const": "profile_photo"}}}, "minContains": 1, "maxContains": 1},
+        {"contains": {"type": "object", "required": ["source_class", "source_category"], "properties": {"source_class": {"const": "official"}, "source_category": {"const": "skills"}}}, "minContains": 1, "maxContains": 1}
+      ]
+    },
+    "authorization_state": {"$ref": "#/$defs/authorization"},
+    "eval_expectations": {"$ref": "#/$defs/expectations"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"evidence_mode": {"enum": ["structural_only", "partial_visual_photo_only", "partial_visual_banner_only"]}}},
+      "then": {"properties": {"score_ledger": {"properties": {"domains": {"contains": {"type": "object", "required": ["domain", "state", "raw_score", "weighted_points"], "properties": {"domain": {"const": "visual"}, "state": {"const": "not_scored"}, "raw_score": {"const": null}, "weighted_points": {"const": 0}}}}}}}}
+    }
+  ],
+  "$defs": {
+    "observation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["evidence_id", "section", "state"],
+      "properties": {
+        "evidence_id": {"type": "string", "pattern": "^EVID-JSC[0-9]+-[A-Z0-9]+(?:-[A-Z0-9]+)*$"},
+        "section": {"enum": ["about", "banner", "completeness", "experience", "headline", "photo", "proof", "skills", "visual"]},
+        "state": {"enum": ["absent", "not_applicable", "not_inspected", "partially_visible", "present", "visible"]}
+      }
+    },
+    "fact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["fact_id", "evidence_state", "fact_type", "role_family", "capability_family", "scope_bucket", "claim_tokens"],
+      "properties": {
+        "fact_id": {"type": "string", "pattern": "^FACT-JSC[0-9]+-[A-Z0-9]+(?:-[A-Z0-9]+)*$"},
+        "evidence_state": {"enum": ["candidate_reported", "inferred", "unknown", "verified"]},
+        "fact_type": {"enum": ["capability_signal", "proof_signal", "role_signal", "scope_signal"]},
+        "role_family": {"enum": ["engineering_leadership", "platform_reliability", "technical_operations"]},
+        "capability_family": {"enum": ["automation", "delivery", "leadership", "none", "observability", "reliability"]},
+        "scope_bucket": {"enum": ["cross_functional", "individual", "team", "unknown"]},
+        "claim_tokens": {"type": "array", "items": {"enum": ["AUTOMATION", "DELIVERY", "LEADERSHIP", "OBSERVABILITY", "OUTCOME_SCOPE", "RELIABILITY", "TECHNICAL_SCOPE"]}}
+      }
+    },
+    "domain": {
+      "type": "object", "additionalProperties": false,
+      "required": ["domain", "weight", "state", "raw_score", "weighted_points", "evidence_ids", "reason_code"],
+      "properties": {
+        "domain": {"enum": ["about", "completeness", "experience", "headline", "proof", "skills", "visual"]},
+        "weight": {"type": "integer", "enum": [10, 15, 20]},
+        "state": {"enum": ["not_scored", "scored"]},
+        "raw_score": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+        "weighted_points": {"type": "number", "minimum": 0, "maximum": 20},
+        "evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "reason_code": {"enum": ["CONTENT_GENERAL", "CONTENT_SPECIFIC", "PARTIAL_VISUAL_NO_AGGREGATE", "PROOF_AVAILABLE", "PROOF_NOT_SCORED", "SIGNAL_DISPERSED", "STRUCTURAL_COMPLETE", "STRUCTURAL_GAP", "VISUAL_NOT_INSPECTED", "VISUAL_VISIBLE"]}
+      },
+      "allOf": [
+        {"if": {"properties": {"state": {"const": "scored"}}}, "then": {"properties": {"raw_score": {"type": "number", "minimum": 0, "maximum": 100}}}},
+        {"if": {"properties": {"state": {"const": "not_scored"}}}, "then": {"properties": {"raw_score": {"const": null}, "weighted_points": {"const": 0}}}},
+        {"if": {"properties": {"domain": {"const": "visual"}}}, "then": {"properties": {"weight": {"const": 15}}}},
+        {"if": {"properties": {"domain": {"const": "headline"}}}, "then": {"properties": {"weight": {"const": 15}}}},
+        {"if": {"properties": {"domain": {"const": "about"}}}, "then": {"properties": {"weight": {"const": 15}}}},
+        {"if": {"properties": {"domain": {"const": "experience"}}}, "then": {"properties": {"weight": {"const": 20}}}},
+        {"if": {"properties": {"domain": {"const": "skills"}}}, "then": {"properties": {"weight": {"const": 15}}}},
+        {"if": {"properties": {"domain": {"const": "proof"}}}, "then": {"properties": {"weight": {"const": 10}}}},
+        {"if": {"properties": {"domain": {"const": "completeness"}}}, "then": {"properties": {"weight": {"const": 10}}}}
+      ]
+    },
+    "score_ledger": {
+      "type": "object", "additionalProperties": false,
+      "required": ["numeric_weighted_total", "scored_weight", "not_scored_weight", "overall_score", "confidence", "domains"],
+      "properties": {
+        "numeric_weighted_total": {"type": "number", "minimum": 0, "maximum": 100}, "scored_weight": {"type": "integer", "minimum": 0, "maximum": 100},
+        "not_scored_weight": {"type": "integer", "minimum": 0, "maximum": 100}, "overall_score": {"type": "integer", "minimum": 0, "maximum": 100},
+        "confidence": {"enum": ["high", "medium"]},
+        "domains": {
+          "type": "array", "minItems": 7, "maxItems": 7, "items": {"$ref": "#/$defs/domain"},
+          "allOf": [
+            {"contains": {"type": "object", "required": ["domain"], "properties": {"domain": {"const": "visual"}}}, "minContains": 1, "maxContains": 1},
+            {"contains": {"type": "object", "required": ["domain"], "properties": {"domain": {"const": "headline"}}}, "minContains": 1, "maxContains": 1},
+            {"contains": {"type": "object", "required": ["domain"], "properties": {"domain": {"const": "about"}}}, "minContains": 1, "maxContains": 1},
+            {"contains": {"type": "object", "required": ["domain"], "properties": {"domain": {"const": "experience"}}}, "minContains": 1, "maxContains": 1},
+            {"contains": {"type": "object", "required": ["domain"], "properties": {"domain": {"const": "skills"}}}, "minContains": 1, "maxContains": 1},
+            {"contains": {"type": "object", "required": ["domain"], "properties": {"domain": {"const": "proof"}}}, "minContains": 1, "maxContains": 1},
+            {"contains": {"type": "object", "required": ["domain"], "properties": {"domain": {"const": "completeness"}}}, "minContains": 1, "maxContains": 1}
+          ]
+        }
+      }
+    },
+    "priority": {
+      "type": "object", "additionalProperties": false,
+      "required": ["priority_id", "rank", "section", "diagnosed_gap", "action_type", "evidence_ids", "timebox", "done_when", "impact_basis"],
+      "properties": {
+        "priority_id": {"type": "string", "pattern": "^PRIORITY-JSC[0-9]+-[A-Z0-9]+(?:-[A-Z0-9]+)*$"},
+        "rank": {"type": "integer", "enum": [1, 2, 3]},
+        "section": {"enum": ["about", "experience", "headline", "proof", "skills", "visual"]},
+        "diagnosed_gap": {"enum": ["GAP-A-PRIMARY", "GAP-A-PROOF", "GAP-A-SECONDARY", "GAP-B-PRIMARY", "GAP-B-PROOF", "GAP-B-SECONDARY", "GAP-C-PRIMARY", "GAP-C-PROOF", "GAP-C-SECONDARY", "GAP-D-PRIMARY", "GAP-D-PROOF", "GAP-D-SECONDARY"]},
+        "action_type": {"enum": ["ACTION-A-ABOUT", "ACTION-A-EXPERIENCE", "ACTION-A-HEADLINE", "ACTION-B-ABOUT", "ACTION-B-EXPERIENCE", "ACTION-B-HEADLINE", "ACTION-C-ABOUT", "ACTION-C-EVIDENCE", "ACTION-C-HEADLINE", "ACTION-D-ABOUT", "ACTION-D-EXPERIENCE", "ACTION-D-EVIDENCE"]},
+        "evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "timebox": {"enum": ["TIMEBOX-A-1", "TIMEBOX-A-2", "TIMEBOX-A-3", "TIMEBOX-B-1", "TIMEBOX-B-2", "TIMEBOX-B-3", "TIMEBOX-C-1", "TIMEBOX-C-2", "TIMEBOX-C-3", "TIMEBOX-D-1", "TIMEBOX-D-2", "TIMEBOX-D-3"]},
+        "done_when": {"enum": ["DONE-WHEN-A-1", "DONE-WHEN-A-2", "DONE-WHEN-A-3", "DONE-WHEN-B-1", "DONE-WHEN-B-2", "DONE-WHEN-B-3", "DONE-WHEN-C-1", "DONE-WHEN-C-2", "DONE-WHEN-C-3", "DONE-WHEN-D-1", "DONE-WHEN-D-2", "DONE-WHEN-D-3"]},
+        "impact_basis": {"enum": ["COACH_HEURISTIC", "CURRENT_OFFICIAL_SOURCE"]}
+      }
+    },
+    "copy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["copy_id", "section", "state", "audience", "problem", "fact_ids", "evidence_ids", "claim_boundary"],
+      "properties": {
+        "copy_id": {"type": "string", "pattern": "^COPY-JSC[0-9]+-[A-Z0-9]+(?:-[A-Z0-9]+)*$"},
+        "section": {"enum": ["about_opening", "experience_bullet", "headline"]},
+        "state": {"enum": ["omit", "ready", "requires_confirmation"]},
+        "audience": {"enum": ["HIRING_MANAGER", "RECRUITER", "TECHNICAL_PEER"]},
+        "problem": {"enum": ["GENERAL_LEADERSHIP_STORY", "MISSING_PROOF_BOUNDARY", "PARTIAL_VISUAL_CONTEXT", "STRUCTURAL_SIGNAL_GAP", "TECHNICAL_SIGNAL_DISPERSED"]},
+        "fact_ids": {"type": "array", "items": {"type": "string"}},
+        "evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "claim_boundary": {"enum": ["CONFIRM_CAPABILITY_BEFORE_USE", "CONFIRM_SCOPE_BEFORE_USE", "OMIT_UNSUPPORTED_OUTCOME", "USE_ONLY_SUPPORTED_FACTS"]}
+      }
+    },
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_id", "source_category", "source_class", "url", "access_date", "reachability", "scope", "inference_limit", "fallback"],
+      "properties": {
+        "source_id": {"type": "string", "pattern": "^SOURCE-JSC[0-9]+-[A-Z0-9]+(?:-[A-Z0-9]+)*$"},
+        "source_category": {"enum": ["ai_hiring_agents", "cover_image", "featured_section", "good_profile", "job_match", "job_seeker_hirer_connection", "profile_photo", "skills"]},
+        "source_class": {"enum": ["official", "secondary"]}, "url": {"type": "string", "format": "uri"},
+        "publisher": {"type": "string", "minLength": 1, "maxLength": 120, "pattern": "^[^\\n\\r\\u000B\\u000C\\u001C-\\u001E\\u0085\\u2028\\u2029]+$"}, "document_title": {"type": "string", "minLength": 1, "maxLength": 240, "pattern": "^[^\\n\\r\\u000B\\u000C\\u001C-\\u001E\\u0085\\u2028\\u2029]+$"},
+        "access_date": {"type": "string", "format": "date"}, "reachability": {"enum": ["reachable", "unreachable"]},
+        "scope": {"enum": ["PROFILE_GUIDANCE"]}, "inference_limit": {"enum": ["NO_INDIVIDUAL_OUTCOME_INFERENCE"]},
+        "fallback": {"enum": ["BLOCK_CLAIM", "COACH_HEURISTIC"]}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"source_class": {"const": "secondary"}}, "required": ["source_class"]},
+          "then": {"required": ["publisher", "document_title"]}
+        }
+      ]
+    },
+    "authorization": {
+      "type": "object", "additionalProperties": false,
+      "required": ["inspection", "external_actions", "action_state"],
+      "properties": {
+        "inspection": {"enum": ["authorized"]},
+        "external_actions": {"enum": ["not_authorized"]},
+        "action_state": {"enum": ["not_executed"]}
+      }
+    },
+    "expectations": {
+      "type": "object", "additionalProperties": false,
+      "required": ["scenario_class", "primary_gap", "primary_copy_category", "pending_evidence_policy"],
+      "properties": {
+        "scenario_class": {"enum": ["leadership_story_general", "partial_visual_no_aggregate", "structural_no_visual", "technical_signal_dispersed"]},
+        "primary_gap": {"enum": ["GAP-A-PRIMARY", "GAP-B-PRIMARY", "GAP-C-PRIMARY", "GAP-D-PRIMARY"]},
+        "primary_copy_category": {"enum": ["about_opening", "experience_bullet", "headline"]},
+        "pending_evidence_policy": {"enum": ["ASK_ONLY_IF_DECISION_CHANGES", "NO_EXTRA_VISUAL_REQUEST"]}
+      }
+    }
+  }
+}

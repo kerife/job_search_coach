@@ -1,0 +1,4 @@
+interface:
+  display_name: "Job Search Asset Optimizer"
+  short_description: "Draft truthful CV and portfolio assets"
+  default_prompt: "Use $optimize-job-search-assets to tailor my CV and portfolio evidence to a vacancy without inventing claims."

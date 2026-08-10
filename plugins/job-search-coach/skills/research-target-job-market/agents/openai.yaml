@@ -1,0 +1,4 @@
+interface:
+  display_name: "Target Job Market Research"
+  short_description: "Collect dated, comparable job-market evidence"
+  default_prompt: "Use $research-target-job-market to research my target role across the markets I specify."

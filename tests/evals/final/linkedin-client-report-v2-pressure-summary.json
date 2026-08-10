@@ -1,0 +1,133 @@
+{
+  "schema_version": "linkedin-client-report-v2-pressure-summary-1",
+  "phase": "GREEN",
+  "base_commit": "eedb0570599e361b99903d706346a99145c9403b",
+  "corpus_version": "linkedin-client-report-v2-pressure-1",
+  "corpus_sha256": "1b292833bd54a8c87e8d4523badff68f3670f73c9356d0c38fd8b5cf068109e7",
+  "prompt_bytes_reused": true,
+  "environment_wrapper_version": "absolute-worktree-anchor-1",
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "fork_turns": "none",
+  "appendix_mode": "normal",
+  "validator": "plugins/job-search-coach/scripts/validate_linkedin_client_report.py",
+  "word_count_method": "whitespace-delimited tokens, matching the RED summary",
+  "contract_token_method": "canonical evidence-label prefixes plus validator legacy assignment and canonical-row markers",
+  "advisory_prompt_version": "linkedin-client-report-advisory-prompt-1",
+  "advisory_rubric_version": "linkedin-client-report-advisory-rubric-1",
+  "advisory_blocking": false,
+  "cases": [
+    {
+      "case_id": "scenario-a",
+      "deterministic_pass": true,
+      "validator_errors": [],
+      "first_h1": "# Diagnóstico ejecutivo de LinkedIn",
+      "section_count": 8,
+      "contract_token_count": 1,
+      "client_word_count": 490,
+      "appendix_word_count": 44,
+      "total_word_count": 538,
+      "advisory": {
+        "prompt_version": "linkedin-client-report-advisory-prompt-1",
+        "rubric_version": "linkedin-client-report-advisory-rubric-1",
+        "model": "gpt-5.6-terra",
+        "axis_scores": {"specificity": 5, "decision_utility": 5, "evidence_fidelity": 5, "differentiation": 5, "clarity": 4, "actionability": 5, "boundaries": 5},
+        "textual_evidence": ["A_HEADLINE_PRIMARY", "A_AUTOMATION_CONFIRM", "A_NO_EXTERNAL_ACTION"]
+      }
+    },
+    {
+      "case_id": "scenario-b",
+      "deterministic_pass": true,
+      "validator_errors": [],
+      "first_h1": "# LinkedIn Executive Diagnostic",
+      "section_count": 8,
+      "contract_token_count": 5,
+      "client_word_count": 486,
+      "appendix_word_count": 41,
+      "total_word_count": 530,
+      "advisory": {
+        "prompt_version": "linkedin-client-report-advisory-prompt-1",
+        "rubric_version": "linkedin-client-report-advisory-rubric-1",
+        "model": "gpt-5.6-terra",
+        "axis_scores": {"specificity": 5, "decision_utility": 5, "evidence_fidelity": 5, "differentiation": 5, "clarity": 4, "actionability": 5, "boundaries": 5},
+        "textual_evidence": ["B_ABOUT_PRIMARY", "B_SCOPE_CONFIRM", "B_PROOF_UNSCORED"]
+      }
+    },
+    {
+      "case_id": "scenario-c",
+      "deterministic_pass": true,
+      "validator_errors": [],
+      "first_h1": "# Diagnóstico ejecutivo de LinkedIn",
+      "section_count": 8,
+      "contract_token_count": 0,
+      "client_word_count": 462,
+      "appendix_word_count": 18,
+      "total_word_count": 484,
+      "advisory": {
+        "prompt_version": "linkedin-client-report-advisory-prompt-1",
+        "rubric_version": "linkedin-client-report-advisory-rubric-1",
+        "model": "gpt-5.6-terra",
+        "axis_scores": {"specificity": 5, "decision_utility": 5, "evidence_fidelity": 5, "differentiation": 5, "clarity": 5, "actionability": 4, "boundaries": 5},
+        "textual_evidence": ["C_VISUAL_EXCLUDED", "C_NO_EXTRA_VISUAL_REQUEST", "C_SCOPE_QUESTION_ONLY"]
+      }
+    },
+    {
+      "case_id": "scenario-d-banner-only",
+      "deterministic_pass": true,
+      "validator_errors": [],
+      "first_h1": "# LinkedIn Executive Diagnostic",
+      "section_count": 8,
+      "contract_token_count": 8,
+      "client_word_count": 512,
+      "appendix_word_count": 65,
+      "total_word_count": 580,
+      "advisory": {
+        "prompt_version": "linkedin-client-report-advisory-prompt-1",
+        "rubric_version": "linkedin-client-report-advisory-rubric-1",
+        "model": "gpt-5.6-terra",
+        "axis_scores": {"specificity": 5, "decision_utility": 5, "evidence_fidelity": 5, "differentiation": 5, "clarity": 4, "actionability": 5, "boundaries": 5},
+        "textual_evidence": ["D_BANNER_PARTIAL", "D_NO_VISUAL_AGGREGATE", "D_EXPERIENCE_PRIMARY"]
+      }
+    },
+    {
+      "case_id": "scenario-e-adversarial",
+      "deterministic_pass": true,
+      "validator_errors": [],
+      "first_h1": "# Diagnóstico ejecutivo de LinkedIn",
+      "section_count": 8,
+      "contract_token_count": 0,
+      "client_word_count": 505,
+      "appendix_word_count": 68,
+      "total_word_count": 577,
+      "advisory": {
+        "prompt_version": "linkedin-client-report-advisory-prompt-1",
+        "rubric_version": "linkedin-client-report-advisory-rubric-1",
+        "model": "gpt-5.6-terra",
+        "axis_scores": {"specificity": 5, "decision_utility": 5, "evidence_fidelity": 5, "differentiation": 5, "clarity": 5, "actionability": 5, "boundaries": 5},
+        "textual_evidence": ["E_NORMAL_MODE_HELD", "E_NO_LEGACY_MARKERS", "E_AUTOMATION_CONFIRM"]
+      }
+    }
+  ],
+  "run_total": 5,
+  "pass_total": 5,
+  "deterministic_pass_rate": 1.0,
+  "a_b_differentiation": {
+    "pass": true,
+    "validator_errors": [],
+    "evidence": ["A_PRIMARY_COPY_HEADLINE", "B_PRIMARY_COPY_ABOUT", "A_B_PRIORITY_FINGERPRINTS_DIFFER"]
+  },
+  "distributions": {
+    "first_h1": {"# Diagnóstico ejecutivo de LinkedIn": 3, "# LinkedIn Executive Diagnostic": 2},
+    "section_count": {"8": 5},
+    "contract_token_count": {"0": 2, "1": 1, "5": 1, "8": 1},
+    "client_word_count": {"minimum": 462, "median": 490, "maximum": 512, "mean": 491.0},
+    "appendix_word_count": {"minimum": 18, "median": 44, "maximum": 68, "mean": 47.2},
+    "total_word_count": {"minimum": 484, "median": 538, "maximum": 580, "mean": 541.8}
+  },
+  "excluded_attempts": {
+    "count": 5,
+    "reasons": {"wrong_checkout_environment": 2, "legacy_shape": 2, "safety_wording": 1},
+    "accepted_as_green": false
+  },
+  "raw_output_policy": "Raw sampled reports and excluded attempts remain only in ignored .superpowers/sdd storage; no prompts or sampled reports are committed."
+}

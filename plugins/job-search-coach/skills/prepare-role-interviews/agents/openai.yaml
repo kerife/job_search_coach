@@ -1,0 +1,4 @@
+interface:
+  display_name: "Role Interview Preparation"
+  short_description: "Prepare truthful, vacancy-specific interviews"
+  default_prompt: "Use $prepare-role-interviews to prepare truthful answers for my supplied vacancy and interview stage."

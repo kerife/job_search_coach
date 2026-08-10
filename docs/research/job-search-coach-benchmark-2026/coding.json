@@ -1,0 +1,26 @@
+{
+  "asOf": "2026-08-07",
+  "population": "Ten active job-search coaching references selected for observable public methods; not a universal top-ten ranking.",
+  "rule": "1 means the capability is explicit in the reviewed public source. 0 means it was not explicit in that bounded source, not that the practitioner lacks it.",
+  "capabilities": {
+    "clarity_fit": "Clarifies desired direction, fit, values, or career criteria.",
+    "evidence_story": "Develops evidence, achievements, or career stories.",
+    "positioning_assets": "Addresses positioning, resume, LinkedIn, or career-marketing assets.",
+    "proactive_search": "Uses relationships, direct outreach, target companies, or another proactive search channel.",
+    "interview": "Includes interview preparation, practice, or candidate evaluation of the employer.",
+    "negotiation": "Explicitly covers offer or compensation negotiation.",
+    "sustainable_ownership": "Protects candidate ownership, fit, sustainability, self-trust, or long-term career capability."
+  },
+  "records": [
+    {"coach": "Madeline Mann", "clarity_fit": 1, "evidence_story": 1, "positioning_assets": 1, "proactive_search": 1, "interview": 1, "negotiation": 1, "sustainable_ownership": 1},
+    {"coach": "Austin Belcak", "clarity_fit": 1, "evidence_story": 1, "positioning_assets": 1, "proactive_search": 1, "interview": 1, "negotiation": 0, "sustainable_ownership": 0},
+    {"coach": "Andrew LaCivita", "clarity_fit": 1, "evidence_story": 1, "positioning_assets": 1, "proactive_search": 1, "interview": 1, "negotiation": 1, "sustainable_ownership": 1},
+    {"coach": "Jenny Foss", "clarity_fit": 1, "evidence_story": 1, "positioning_assets": 1, "proactive_search": 1, "interview": 1, "negotiation": 1, "sustainable_ownership": 0},
+    {"coach": "Liz Ryan", "clarity_fit": 1, "evidence_story": 1, "positioning_assets": 1, "proactive_search": 1, "interview": 1, "negotiation": 0, "sustainable_ownership": 1},
+    {"coach": "Sarah Johnston", "clarity_fit": 1, "evidence_story": 1, "positioning_assets": 1, "proactive_search": 1, "interview": 1, "negotiation": 0, "sustainable_ownership": 0},
+    {"coach": "Linda Raynier", "clarity_fit": 1, "evidence_story": 1, "positioning_assets": 1, "proactive_search": 1, "interview": 1, "negotiation": 1, "sustainable_ownership": 0},
+    {"coach": "Emily Liou", "clarity_fit": 1, "evidence_story": 0, "positioning_assets": 0, "proactive_search": 0, "interview": 0, "negotiation": 0, "sustainable_ownership": 1},
+    {"coach": "Hannah Morgan", "clarity_fit": 0, "evidence_story": 0, "positioning_assets": 1, "proactive_search": 1, "interview": 0, "negotiation": 0, "sustainable_ownership": 0},
+    {"coach": "Kyle Elliott", "clarity_fit": 1, "evidence_story": 1, "positioning_assets": 1, "proactive_search": 0, "interview": 1, "negotiation": 1, "sustainable_ownership": 1}
+  ]
+}

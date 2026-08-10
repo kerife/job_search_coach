@@ -1,0 +1,6 @@
+.worktrees/
+.release-validation-venv/
+.job-search-coach-artifacts/
+.superpowers/
+__pycache__/
+*.py[cod]

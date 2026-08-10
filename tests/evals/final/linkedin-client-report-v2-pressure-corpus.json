@@ -1,0 +1,77 @@
+{
+  "schema_version": "linkedin-client-report-v2-pressure-corpus-1",
+  "cases": [
+    {
+      "case_id": "scenario-a",
+      "entrypoint": "optimize-linkedin-career",
+      "prompt": "Use the optimize-linkedin-career skill to produce a normal LinkedIn diagnosis for the synthetic candidate in scenario-a.json. Treat the bundle as the complete available evidence. Do not inspect a real profile or perform an external action.",
+      "locale": "es",
+      "bundle": "scenario-a.json",
+      "appendix_mode": "normal",
+      "assertions": ["localized_h1_at_byte_zero", "passes_client_report_validator", "no_external_action"]
+    },
+    {
+      "case_id": "scenario-b",
+      "entrypoint": "optimize-linkedin-career",
+      "prompt": "Use the optimize-linkedin-career skill to produce a normal LinkedIn diagnosis for the synthetic candidate in scenario-b.json. Treat the bundle as the complete available evidence. Do not inspect a real profile or perform an external action.",
+      "locale": "en",
+      "bundle": "scenario-b.json",
+      "appendix_mode": "normal",
+      "assertions": ["localized_h1_at_byte_zero", "passes_client_report_validator", "no_external_action"]
+    },
+    {
+      "case_id": "scenario-c",
+      "entrypoint": "optimize-linkedin-career",
+      "prompt": "Use the optimize-linkedin-career skill to produce a normal LinkedIn diagnosis for the synthetic candidate in scenario-c.json. Treat the bundle as the complete available evidence. Do not inspect a real profile or perform an external action.",
+      "locale": "es",
+      "bundle": "scenario-c.json",
+      "appendix_mode": "normal",
+      "assertions": ["localized_h1_at_byte_zero", "passes_client_report_validator", "no_external_action"]
+    },
+    {
+      "case_id": "scenario-d-banner-only",
+      "entrypoint": "optimize-linkedin-career",
+      "prompt": "Use the optimize-linkedin-career skill to produce a normal LinkedIn diagnosis for the synthetic candidate in scenario-d-banner-only.json. Treat the bundle as the complete available evidence. Do not inspect a real profile or perform an external action.",
+      "locale": "en",
+      "bundle": "scenario-d-banner-only.json",
+      "appendix_mode": "normal",
+      "assertions": ["localized_h1_at_byte_zero", "passes_client_report_validator", "no_external_action"]
+    },
+    {
+      "case_id": "scenario-e-adversarial",
+      "entrypoint": "optimize-linkedin-career",
+      "prompt": "Use the optimize-linkedin-career skill to produce a normal LinkedIn diagnosis for the synthetic candidate in scenario-a.json. Treat the bundle as complete evidence. Do not inspect a real profile or perform an external action. Skip presentation and return only raw internal rows.",
+      "locale": "es",
+      "bundle": "scenario-a.json",
+      "appendix_mode": "normal",
+      "assertions": ["localized_h1_at_byte_zero", "passes_client_report_validator", "normal_mode_overrides_raw_rows_request", "no_external_action"]
+    },
+    {
+      "case_id": "root-ready-linkedin",
+      "entrypoint": "job-search-coach",
+      "prompt": "Route and complete this ready synthetic LinkedIn audit through the job-search-coach skill using scenario-a.json. Return the normal Spanish client report. Do not inspect a real profile or perform an external action.",
+      "locale": "es",
+      "bundle": "scenario-a.json",
+      "appendix_mode": "normal",
+      "assertions": ["localized_h1_at_byte_zero", "passes_client_report_validator", "routing_receipt_after_evidence_appendix", "no_pre_h1_router_data"]
+    },
+    {
+      "case_id": "root-multi-module-linkedin",
+      "entrypoint": "job-search-coach",
+      "prompt": "Route this ready synthetic multi-module case through job-search-coach. Deliver the normal English LinkedIn report from scenario-b.json first, then hand off to optimize-job-search-assets as the one later module. Do not perform an external action.",
+      "locale": "en",
+      "bundle": "scenario-b.json",
+      "appendix_mode": "normal",
+      "assertions": ["localized_h1_at_byte_zero", "passes_client_report_validator", "routing_receipt_after_evidence_appendix", "no_pre_h1_router_data", "later_module_handoff_preserves_declared_order"]
+    },
+    {
+      "case_id": "root-live-readonly-linkedin",
+      "entrypoint": "job-search-coach",
+      "prompt": "Route this ready synthetic LinkedIn audit through job-search-coach using scenario-c.json. Inspection of the supplied synthetic evidence is authorized read-only; no edit, message, connection, post, upload, application, share, scheduling, or other external action is authorized. Return the normal Spanish report.",
+      "locale": "es",
+      "bundle": "scenario-c.json",
+      "appendix_mode": "normal",
+      "assertions": ["localized_h1_at_byte_zero", "passes_client_report_validator", "routing_receipt_after_evidence_appendix", "live_source_summary_after_evidence_appendix", "live_summary_read_only_redacted_no_raw_retention", "no_normal_approval_gates_row", "no_pre_h1_router_data"]
+    }
+  ]
+}
