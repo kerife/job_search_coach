@@ -352,6 +352,22 @@ class FullPluginIntegrationTests(unittest.TestCase):
         ):
             self.assertEqual(1, checker.main())
 
+    def test_static_main_short_circuits_after_private_schema_harness_failure(self) -> None:
+        checker = load_static_checker()
+        private_result = type(
+            "Result", (), {"returncode": 1, "stdout": "", "stderr": "private failure"}
+        )()
+        with patch.object(checker, "run_private_schema_harness", return_value=private_result), patch.object(
+            checker,
+            "run_dossier_practice_handoff_harness",
+            side_effect=AssertionError("second harness must not run"),
+        ), patch.object(
+            checker,
+            "validate_executive_dossier_package",
+            side_effect=AssertionError("must abort"),
+        ):
+            self.assertEqual(1, checker.main())
+
     def test_dossier_practice_pair_validator_rejects_source_drift(self) -> None:
         scripts_root = PLUGIN_ROOT / "scripts"
 

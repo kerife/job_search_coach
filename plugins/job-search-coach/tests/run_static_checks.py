@@ -16401,6 +16401,10 @@ def main() -> int:
         errors.append(f"private schema conformance harness timed out after 30s ({harness})")
     else:
         errors.extend(validate_harness_result(harness, harness_result))
+    if errors:
+        for error in errors:
+            print(f"ERROR: {error}", file=sys.stderr)
+        return 1
     handoff_harness = PLUGIN_ROOT / "tests" / "test_dossier_recruiter_practice_handoff.py"
     handoff_result = run_dossier_practice_handoff_harness(handoff_harness)
     if handoff_result is None:
