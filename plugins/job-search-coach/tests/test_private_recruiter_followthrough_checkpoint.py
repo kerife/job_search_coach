@@ -131,6 +131,12 @@ class FollowthroughCheckpointContractTests(unittest.TestCase):
             item = copy.deepcopy(self.valid); item["delivery"][key] = value
             self.assertTrue(any("delivery" in e for e in checkpoint.validate_checkpoint(item, self.receipt, as_of=dt.date(2026, 8, 8))), key)
 
+        for key, value in (("draft_only", 1), ("external_actions_authorized", 0),
+                           ("no_message_action", 0), ("no_calendar_action", 0),
+                           ("raw_event_retained", 0)):
+            item = copy.deepcopy(self.valid); item["delivery"][key] = value
+            self.assertTrue(any("delivery" in e for e in checkpoint.validate_checkpoint(item, self.receipt, as_of=dt.date(2026, 8, 8))), key)
+
     def test_cli_normalizes_parse_errors_and_preserves_help(self):
         item_path = ROOT / "tests/fixtures/private-recruiter-followthrough-checkpoint/accepted-en.json"
         receipt_path = FIXTURES / "screen-requested-en.json"

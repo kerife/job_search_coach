@@ -81,7 +81,7 @@ def _validate_handoff_schema(value: object) -> list[str]:
         errors,
     )
     if dossier is not None:
-        if dossier.get("question_rank") != 1:
+        if type(dossier.get("question_rank")) is not int or dossier.get("question_rank") != 1:
             errors.append("handoff.dossier_projection.question_rank must be 1")
         for field in ("claim_ids", "evidence_ids", "question_evidence_ids"):
             if not _identifiers(dossier.get(field), "C" if field == "claim_ids" else "E"):
@@ -133,7 +133,7 @@ def _validate_handoff_schema(value: object) -> list[str]:
                 errors.append("handoff.practice_projection.facts[0].summary must be safe text")
         source = _closed(projection.get("handoff_context"), "handoff.practice_projection.handoff_context", frozenset({"source", "source_snapshot", "question_rank", "question_id", "requirement_id", "fact_ids", "claim_ids", "evidence_ids", "draft_only", "external_actions_authorized"}), errors)
         if source is not None:
-            if source.get("source") != "executive_career_dossier" or source.get("question_rank") != 1:
+            if source.get("source") != "executive_career_dossier" or type(source.get("question_rank")) is not int or source.get("question_rank") != 1:
                 errors.append("handoff.practice_projection.handoff_context has invalid provenance")
             if source.get("question_id") != "Q-001" or source.get("requirement_id") != "R-001" or source.get("fact_ids") != ["F-001"]:
                 errors.append("handoff.practice_projection.handoff_context must reference Q-001, R-001, and F-001")
@@ -149,7 +149,7 @@ def _validate_handoff_schema(value: object) -> list[str]:
     if delivery is not None:
         expected_delivery = {"draft_only": True, "external_actions_authorized": False, "manual_reentry_required": True, "auto_start": False, "candidate_answer_state": "unanswered", "score_state": "unknown", "local_save_mode": "disabled", "raw_answer_retained": False}
         for field, expected in expected_delivery.items():
-            if delivery.get(field) != expected:
+            if type(delivery.get(field)) is not type(expected) or delivery.get(field) != expected:
                 rendered = str(expected).lower() if isinstance(expected, bool) else expected
                 errors.append(f"handoff.delivery.{field} must be {rendered}")
     return errors

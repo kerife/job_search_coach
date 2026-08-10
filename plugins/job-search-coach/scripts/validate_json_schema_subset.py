@@ -14,7 +14,11 @@ def _pointer(root: Mapping[str, object], reference: str) -> Mapping[str, object]
     return value  # type: ignore[return-value]
 
 
-def _type_ok(value: object, expected: str) -> bool:
+def _type_ok(value: object, expected: object) -> bool:
+    if isinstance(expected, list):
+        return any(_type_ok(value, option) for option in expected)
+    if not isinstance(expected, str):
+        return True
     return {
         "object": isinstance(value, Mapping),
         "array": isinstance(value, list),
@@ -24,6 +28,25 @@ def _type_ok(value: object, expected: str) -> bool:
         "number": isinstance(value, (int, float)) and not isinstance(value, bool),
         "null": value is None,
     }.get(expected, True)
+
+
+def _json_equal(left: object, right: object) -> bool:
+    """Compare JSON values without Python's bool/int equality quirk."""
+    if isinstance(left, bool) or isinstance(right, bool):
+        return isinstance(left, bool) and isinstance(right, bool) and left == right
+    if isinstance(left, (int, float)) and isinstance(right, (int, float)):
+        return left == right
+    if type(left) is not type(right):
+        return False
+    if isinstance(left, list) and isinstance(right, list):
+        return len(left) == len(right) and all(
+            _json_equal(item, other) for item, other in zip(left, right)
+        )
+    if isinstance(left, Mapping) and isinstance(right, Mapping):
+        return set(left) == set(right) and all(
+            _json_equal(left[key], right[key]) for key in left
+        )
+    return left == right
 
 
 def _validate(
@@ -37,20 +60,25 @@ def _validate(
     errors: list[str] = []
     if "$ref" in schema:
         return _validate(value, _pointer(root, str(schema["$ref"])), root, path, collect=collect)
-    if "type" in schema and not _type_ok(value, str(schema["type"])):
+    if "type" in schema and not _type_ok(value, schema["type"]):
         return [f"{path}: type mismatch"]
-    if "const" in schema and value != schema["const"]:
+    if "const" in schema and not _json_equal(value, schema["const"]):
         errors.append(f"{path}: const mismatch")
-    if "enum" in schema and value not in schema["enum"]:  # type: ignore[operator]
+    if "enum" in schema and not any(
+        _json_equal(value, option) for option in schema["enum"]
+    ):
         errors.append(f"{path}: enum mismatch")
     if isinstance(value, (int, float)) and not isinstance(value, bool):
         if "minimum" in schema and value < schema["minimum"]:
             errors.append(f"{path}: number below minimum")
         if "maximum" in schema and value > schema["maximum"]:
             errors.append(f"{path}: number above maximum")
-    if isinstance(value, str):
-        if "pattern" in schema and re.fullmatch(str(schema["pattern"]), value) is None:
+    if "pattern" in schema:
+        if not isinstance(value, str):
+            errors.append(f"{path}: type mismatch")
+        elif re.fullmatch(str(schema["pattern"]), value) is None:
             errors.append(f"{path}: pattern mismatch")
+    if isinstance(value, str):
         if "minLength" in schema and len(value) < schema["minLength"]:
             errors.append(f"{path}: string too short")
         if "maxLength" in schema and len(value) > schema["maxLength"]:

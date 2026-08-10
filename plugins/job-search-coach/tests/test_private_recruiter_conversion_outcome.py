@@ -70,4 +70,12 @@ class OutcomeContractTests(unittest.TestCase):
         for key,value in {'draft_only':False,'external_actions_authorized':True,'no_message_action':False,'no_calendar_action':False,'raw_event_retained':True,'local_save_mode':'enabled'}.items():
             bad=copy.deepcopy(item); bad['delivery'][key]=value; self.assertTrue(validate_outcome(bad),key)
         bad=copy.deepcopy(item); bad['candidate_id']='C-001'; self.assertTrue(validate_outcome(bad))
+
+    def test_delivery_rejects_integer_boolean_coercion(self):
+        item = load_outcome(FIXTURES/'stop-decision-en.json')
+        for key, value in {'draft_only': 1, 'external_actions_authorized': 0,
+                           'no_message_action': 0, 'no_calendar_action': 0,
+                           'raw_event_retained': 0}.items():
+            bad = copy.deepcopy(item); bad['delivery'][key] = value
+            self.assertTrue(validate_outcome(bad), key)
 if __name__=='__main__': unittest.main()

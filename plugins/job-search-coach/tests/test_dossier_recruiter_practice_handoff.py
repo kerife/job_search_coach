@@ -13,6 +13,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import build_dossier_recruiter_practice_handoff as handoff_builder
 from build_dossier_recruiter_practice_handoff import build_handoff
 from validate_dossier_recruiter_practice_handoff import validate_handoff
+from dossier_practice_safe_text import is_safe_handoff_text
 
 
 class DossierRecruiterPracticeHandoffTests(unittest.TestCase):
@@ -149,6 +150,19 @@ class DossierRecruiterPracticeHandoffTests(unittest.TestCase):
         changed["delivery"]["auto_start"] = True
         cases.append(("auto start", changed, self.dossier, self.fixture["vacancy"], practice,
                       "handoff.delivery.auto_start must be false"))
+
+        changed = copy.deepcopy(handoff)
+        changed["dossier_projection"]["question_rank"] = True
+        cases.append(("boolean rank", changed, self.dossier, self.fixture["vacancy"], practice,
+                      "handoff.dossier_projection.question_rank must be 1"))
+
+        for field, expected in (("draft_only", True), ("external_actions_authorized", False),
+                                ("manual_reentry_required", True), ("auto_start", False),
+                                ("raw_answer_retained", False)):
+            changed = copy.deepcopy(handoff)
+            changed["delivery"][field] = 1 if expected is True else 0
+            cases.append((f"integer delivery {field}", changed, self.dossier, self.fixture["vacancy"], practice,
+                          f"handoff.delivery.{field} must be {str(expected).lower()}"))
 
         changed = copy.deepcopy(handoff)
         changed["practice_projection"]["requirement"]["summary"] = "https://example.invalid/private"
@@ -421,6 +435,29 @@ class DossierRecruiterPracticeHandoffTests(unittest.TestCase):
                             self.fixture["source_snapshot"],
                         )
 
+    def test_safe_text_preserves_natural_role_prose_and_rejects_private_roots(self):
+        for value in (
+            "The candidate should explain relevant scope.",
+            "Recruiter screen focuses on scope.",
+            "The candidate reports experience with SQL.",
+        ):
+            with self.subTest(value=value):
+                self.assertTrue(is_safe_handoff_text(value, 500))
+
+        for value in (
+            "/root/.ssh/config",
+            "/usr/local/private.txt",
+            "/Library/Application Support/private.txt",
+            "/Applications/private.app",
+            "/mnt/private.txt",
+            "/srv/private.txt",
+            "//internal.example/private",
+            "Candidate\u200b: Ana López",
+            "www\u200b.example.invalid/private",
+        ):
+            with self.subTest(value=value):
+                self.assertFalse(is_safe_handoff_text(value, 500))
+
     def test_builder_guards_dossier_text_before_copying_it_to_the_sidecar(self):
         cases = (
             ("question", "questions", "question"),
@@ -455,6 +492,13 @@ class DossierRecruiterPracticeHandoffTests(unittest.TestCase):
             "custom+private://source/value",
             "data:text/plain,private",
             "/Users/Ana/private-cv.pdf",
+            "/root/.ssh/config",
+            "/usr/local/private.txt",
+            "/Library/Application Support/private.txt",
+            "/Applications/private.app",
+            "/mnt/private.txt",
+            "/srv/private.txt",
+            "//internal.example/private",
             "Candidate name: Ana López",
             "Candidate Ana López",
             "Contact: ana@example.org",
@@ -469,6 +513,19 @@ class DossierRecruiterPracticeHandoffTests(unittest.TestCase):
                     handoff = copy.deepcopy(self.fixture["expected"])
                     handoff["practice_projection"][field]["summary"] = value
                     self.assertTrue(validate_schema_instance(handoff, schema))
+
+    def test_schema_preserves_natural_role_prose(self):
+        schema = json.loads(
+            (ROOT / "schemas/dossier-recruiter-practice-handoff-v1.schema.json").read_text(encoding="utf-8")
+        )
+        for value in (
+            "The candidate should explain relevant scope.",
+            "Recruiter screen focuses on scope.",
+            "The candidate reports experience with SQL.",
+        ):
+            handoff = copy.deepcopy(self.fixture["expected"])
+            handoff["practice_projection"]["requirement"]["summary"] = value
+            self.assertEqual([], validate_schema_instance(handoff, schema), value)
 
     def test_schema_rejects_forbidden_text_in_every_sidecar_text_projection(self):
         schema = json.loads(

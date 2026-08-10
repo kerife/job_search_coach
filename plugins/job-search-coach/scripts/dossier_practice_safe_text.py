@@ -3,23 +3,19 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 
 
 _FORBIDDEN_TEXT = re.compile(
     r"(?<![A-Z0-9+.-])(?:[A-Z][A-Z0-9+.-]*):(?=//|[^\s])|"
     r"\bwww\.|"
     r"(?<![A-Z0-9_])(?:~[/\\]|\.\.?[/\\]|"
-    r"/(?:users|home|private|tmp|var|etc|opt|volumes|workspace)[/\\]|"
+    r"/(?:users|home|private|tmp|var|etc|opt|volumes|workspace|root|usr|bin|sbin|lib|lib64|system|library|applications|mnt|srv)(?:[/\\]|$)|"
+    r"//[^\s/]+(?:[/\\]|$)|"
     r"[A-Z]:[/\\]|\\\\[^\s\\]+\\[^\s\\]+)|"
     r"\b(?:candidate\s+name|nombre\s+del\s+candidat[oa]|name|contact|contacto|"
     r"tel[eé]fono(?:\s+de\s+contacto)?|phone|email|correo|recruiter\s+name|"
     r"nombre\s+del\s+reclutador)\s*[:=]|"
-    r"\b(?:candidate|candidat[oa]|recruiter|reclutador[ae]?)\s+"
-    r"(?:name\s+|nombre\s+)?[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑa-záéíóúñ'-]+\s+"
-    r"[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑa-záéíóúñ'-]+\b|"
-    r"\b(?:mr|mrs|ms|dr|sr|sra|srta)\.?\s+"
-    r"[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑa-záéíóúñ'-]+\s+"
-    r"[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑa-záéíóúñ'-]+\b|"
     r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b|"
     r"(?<!\d)(?:\+\d{1,3}[\s.-])?(?:\(?\d{2,4}\)?[\s.-])"
     r"\d{3,4}[\s.-]\d{3,4}(?!\d)|"
@@ -34,12 +30,27 @@ _FORBIDDEN_TEXT = re.compile(
     re.IGNORECASE,
 )
 
+_FORBIDDEN_NAME = re.compile(
+    r"\b(?i:(?:candidate|candidat[oa]|recruiter|reclutador[ae]?)\s+"
+    r"(?:name\s+|nombre\s+)?)"
+    r"[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑa-záéíóúñ'-]+\s+"
+    r"[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑa-záéíóúñ'-]+\b|"
+    r"\b(?i:(?:mr|mrs|ms|dr|sr|sra|srta)\.?)\s+"
+    r"[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑa-záéíóúñ'-]+\s+"
+    r"[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑa-záéíóúñ'-]+\b"
+)
+
+_FORBIDDEN_CONTROL = re.compile(r"[\u0000-\u001f\u007f-\u009f\u200b-\u200d\u2060\ufeff]")
+
 
 def is_safe_handoff_text(value: object, maximum: int) -> bool:
     """Return whether text is bounded, non-empty, and safe to project."""
+    if not isinstance(value, str) or _FORBIDDEN_CONTROL.search(value):
+        return False
+    normalized = unicodedata.normalize("NFKC", value)
     return (
-        isinstance(value, str)
-        and bool(value.strip())
-        and len(value) <= maximum
-        and _FORBIDDEN_TEXT.search(value) is None
+        bool(normalized.strip())
+        and len(normalized) <= maximum
+        and _FORBIDDEN_TEXT.search(normalized) is None
+        and _FORBIDDEN_NAME.search(normalized) is None
     )

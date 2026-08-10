@@ -213,6 +213,25 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         ):
             self.assertTrue(any(expected in error for error in validate_schema_instance(value, schema)), (value, expected))
 
+    def test_dependency_free_checker_enforces_strict_json_types_and_const(self):
+        self.assertEqual(
+            [], validate_schema_instance(1, {"type": "integer", "const": 1})
+        )
+        for value, schema in (
+            (True, {"type": "integer", "const": 1}),
+            (0, {"type": "boolean", "const": False}),
+            ({}, {"pattern": "^x$"}),
+            (17, {"type": ["string", "null"]}),
+        ):
+            with self.subTest(value=value, schema=schema):
+                self.assertTrue(validate_schema_instance(value, schema))
+
+        for value in (None, "x"):
+            with self.subTest(value=value):
+                self.assertEqual(
+                    [], validate_schema_instance(value, {"type": ["string", "null"]})
+                )
+
     def test_dependency_free_checker_enforces_contains_and_if_then_else(self):
         schema = {
             "type": "object",

@@ -77,7 +77,7 @@ def validate_outcome(value: object, *, today: dt.date | None = None, as_of: dt.d
     delivery=_closed(item.get("delivery"), "delivery", frozenset(DELIVERY), errors)
     if delivery is not None:
         for key, expected in DELIVERY.items():
-            if delivery.get(key) != expected: errors.append(f"delivery.{key} has immutable value")
+            if type(delivery.get(key)) is not type(expected) or delivery.get(key) != expected: errors.append(f"delivery.{key} has immutable value")
     structural = {SCHEMA_VERSION, "private_recruiter_conversion_outcome", "en", "es", *EVENTS, *ACTION_BY_EVENT.values(), "observed_candidate_reported", "draft-v1", *DELIVERY.values()}
     prose="\n".join(text for text in _strings(item) if text not in structural and not re.fullmatch(r"(?:D|F)-\d{3}|\d{4}-\d{2}-\d{2}", text))
     if FORBIDDEN.search(prose): errors.append("outcome contains forbidden raw, identity, action, outcome, score, or contact prose")
