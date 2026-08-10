@@ -17,6 +17,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from build_dossier_recruiter_practice_handoff import build_handoff
 from validate_dossier_recruiter_practice_handoff import validate_handoff
+from private_prose_safety import is_safe_prose_text
+from validate_private_recruiter_reply_triage import validate_triage
+from validate_recruiter_practice_session import validate_session
 
 
 class PrivateSchemaConformanceTests(unittest.TestCase):
@@ -94,6 +97,80 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         self.assertTrue(validate_schema_instance(triage_snapshot, schema), "triage source must reject dossier snapshot")
         triage_snapshot["handoff_context"]["source_snapshot"] = "snap-triage-001"
         self.assertEqual([], validate_schema_instance(triage_snapshot, schema))
+
+    def test_schema_prose_mutations_match_custom_unicode_boundary(self):
+        controls = ("\u200b", "\u202e", "\u2066", "\ufeff")
+        cases = (
+            (
+                "private-recruiter-reply-triage-v1.schema.json",
+                ROOT.parent.parent / "tests/evals/with-skill/fixtures/private-recruiter-reply-triage/ready-es.json",
+                ("facts", 0, "summary"),
+                validate_triage,
+            ),
+            (
+                "recruiter-practice-session-v1.schema.json",
+                ROOT.parent.parent / "tests/evals/with-skill/fixtures/recruiter-practice-session/session-es.json",
+                ("facts", 0, "summary"),
+                validate_session,
+            ),
+        )
+        for schema_name, fixture_path, field_path, custom_validator in cases:
+            schema = self._schema(schema_name)
+            canonical = json.loads(fixture_path.read_text(encoding="utf-8"))
+            self.assertEqual([], validate_schema_instance(canonical, schema))
+            for control in controls:
+                with self.subTest(schema=schema_name, code_point=f"U+{ord(control):04X}"):
+                    mutated = copy.deepcopy(canonical)
+                    target = mutated
+                    for part in field_path[:-1]:
+                        target = target[part]
+                    target[field_path[-1]] = f"Safe prefix{control} hidden"
+                    custom_errors = custom_validator(mutated)
+                    schema_errors = validate_schema_instance(mutated, schema)
+                    self.assertFalse(is_safe_prose_text(target[field_path[-1]]))
+                    self.assertTrue(custom_errors)
+                    self.assertTrue(schema_errors)
+                    for error in custom_errors + schema_errors:
+                        self.assertLess(len(error), 240)
+                        self.assertNotIn(target[field_path[-1]], error)
+
+    def test_dossier_schema_prose_mutations_match_custom_unicode_boundary(self):
+        fixture = json.loads(
+            (ROOT / "tests/fixtures/dossier-recruiter-practice-handoff/valid-es.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        dossier = json.loads(
+            (
+                ROOT.parent.parent
+                / "tests/evals/with-skill/fixtures/executive-career-dossier"
+                / fixture["base_dossier_fixture"]
+            ).read_text(encoding="utf-8")
+        )
+        dossier["screen_bridge"] = fixture["dossier_overrides"]["screen_bridge"]
+        dossier["questions"][0]["linked_copy_category"] = fixture["dossier_overrides"]["question_linked_copy_category"]
+        dossier["copy_blocks"][1].update(fixture["dossier_overrides"]["about_opening"])
+        practice = json.loads(
+            (
+                ROOT.parent.parent
+                / "tests/evals/with-skill/fixtures/recruiter-practice-session/session-es.json"
+            ).read_text(encoding="utf-8")
+        )
+        handoff = build_handoff(dossier, fixture["vacancy"], fixture["source_snapshot"])
+        schema = self._schema("dossier-recruiter-practice-handoff-v1.schema.json")
+        self.assertEqual([], validate_schema_instance(handoff, schema))
+        for control in ("\u200b", "\u202e", "\u2066", "\ufeff"):
+            with self.subTest(code_point=f"U+{ord(control):04X}"):
+                mutated = copy.deepcopy(handoff)
+                mutated["dossier_projection"]["fact_summary"] = f"Safe prefix{control} hidden"
+                custom_errors = validate_handoff(mutated, dossier, fixture["vacancy"], practice)
+                schema_errors = validate_schema_instance(mutated, schema)
+                self.assertFalse(is_safe_prose_text(mutated["dossier_projection"]["fact_summary"]))
+                self.assertTrue(custom_errors)
+                self.assertTrue(schema_errors)
+                for error in custom_errors + schema_errors:
+                    self.assertLess(len(error), 240)
+                    self.assertNotIn(mutated["dossier_projection"]["fact_summary"], error)
 
     def test_handoff_pair_rejects_an_unrelated_shape_valid_projection(self):
         fixture = json.loads(
