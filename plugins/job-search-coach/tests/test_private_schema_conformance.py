@@ -98,6 +98,24 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         triage_snapshot["handoff_context"]["source_snapshot"] = "snap-triage-001"
         self.assertEqual([], validate_schema_instance(triage_snapshot, schema))
 
+    def test_practice_question_rank_custom_validator_matches_schema_for_boolean_values(self):
+        schema = self._schema("recruiter-practice-session-v1.schema.json")
+        fixture = json.loads((ROOT.parent.parent / "tests/evals/with-skill/fixtures/recruiter-practice-session/session-es.json").read_text(encoding="utf-8"))
+        for invalid_rank in (True, False):
+            with self.subTest(question_rank=repr(invalid_rank)):
+                mutated = copy.deepcopy(fixture)
+                mutated["handoff_context"]["question_rank"] = invalid_rank
+                self.assertTrue(validate_session(mutated))
+                self.assertTrue(validate_schema_instance(mutated, schema))
+
+        self.assertEqual([], validate_session(fixture))
+        self.assertEqual([], validate_schema_instance(fixture, schema))
+
+    def test_practice_question_rank_custom_validator_rejects_float_one(self):
+        fixture = json.loads((ROOT.parent.parent / "tests/evals/with-skill/fixtures/recruiter-practice-session/session-es.json").read_text(encoding="utf-8"))
+        fixture["handoff_context"]["question_rank"] = 1.0
+        self.assertTrue(validate_session(fixture))
+
     def test_schema_prose_mutations_match_custom_unicode_boundary(self):
         controls = ("\u200b", "\u202e", "\u2066", "\ufeff")
         cases = (
