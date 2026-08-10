@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import copy
+import contextlib
 import importlib.util
+import io
 import json
 import re
 import tempfile
@@ -88,6 +90,54 @@ class LinkedInReportFixtureTests(unittest.TestCase):
     def test_load_bundle_reads_a_json_object(self) -> None:
         bundle = validator.load_bundle(FIXTURE_ROOT / "scenario-a.json")
         self.assertEqual("FIXTURE-JSC1-TECHNICAL-SIGNAL-DISPERSED", bundle["fixture_id"])
+
+    def test_load_bundle_rejects_duplicate_keys_before_last_write_wins(self) -> None:
+        source = (FIXTURE_ROOT / "scenario-a.json").read_text(encoding="utf-8")
+        duplicate = source.replace(
+            '"fixture_id": "FIXTURE-JSC1-TECHNICAL-SIGNAL-DISPERSED",',
+            '"fixture_id": "hidden@example.invalid",\n'
+            '  "fixture_id": "FIXTURE-JSC1-TECHNICAL-SIGNAL-DISPERSED",',
+            1,
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "duplicate.json"
+            path.write_text(duplicate, encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "duplicate JSON key") as raised:
+                validator.load_bundle(path)
+        self.assertNotIn("hidden@example.invalid", str(raised.exception))
+
+    def test_load_bundle_rejects_duplicate_nested_keys(self) -> None:
+        source = (FIXTURE_ROOT / "scenario-a.json").read_text(encoding="utf-8")
+        duplicate = source.replace(
+            '"action_state": "not_executed"',
+            '"action_state": "not_executed", "action_state": "hidden"',
+            1,
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "duplicate-nested.json"
+            path.write_text(duplicate, encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "duplicate JSON key"):
+                validator.load_bundle(path)
+
+    def test_cli_rejects_duplicate_bundle_without_echoing_hidden_value(self) -> None:
+        source = (FIXTURE_ROOT / "scenario-a.json").read_text(encoding="utf-8")
+        duplicate = source.replace(
+            '"fixture_id": "FIXTURE-JSC1-TECHNICAL-SIGNAL-DISPERSED",',
+            '"fixture_id": "hidden@example.invalid",\n'
+            '  "fixture_id": "FIXTURE-JSC1-TECHNICAL-SIGNAL-DISPERSED",',
+            1,
+        )
+        report = FIXTURE_ROOT / "scenario-a-es.md"
+        with tempfile.TemporaryDirectory() as temporary:
+            bundle = Path(temporary) / "duplicate.json"
+            bundle.write_text(duplicate, encoding="utf-8")
+            stdout = io.StringIO()
+            stderr = io.StringIO()
+            with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+                result = validator._cli([str(report), str(bundle)])
+        self.assertNotEqual(0, result)
+        self.assertNotIn("valid", stdout.getvalue().lower())
+        self.assertNotIn("hidden@example.invalid", stderr.getvalue())
 
     def test_official_source_registry_matches_the_eight_reviewed_locators(self) -> None:
         self.assertTrue(SOURCE_REGISTRY_PATH.is_file())

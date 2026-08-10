@@ -802,7 +802,10 @@ class LegacyAppendixSection(NamedTuple):
 
 def load_bundle(path: Path) -> dict[str, object]:
     """Load a fixture bundle and require a JSON object at the file boundary."""
-    value = json.loads(path.read_text(encoding="utf-8"))
+    value = json.loads(
+        path.read_text(encoding="utf-8"),
+        object_pairs_hook=_unique_json_object,
+    )
     if not isinstance(value, dict):
         raise ValueError("fixture must be a JSON object")
     return value
@@ -3551,8 +3554,8 @@ def _cli(argv: list[str] | None = None) -> int:
     bundle: object = None
     if raw_bundle:
         try:
-            bundle = json.loads(raw_bundle)
-        except (json.JSONDecodeError, RecursionError):
+            bundle = json.loads(raw_bundle, object_pairs_hook=_unique_json_object)
+        except (json.JSONDecodeError, RecursionError, ValueError):
             errors.append("bundle file must contain valid JSON")
 
     if not errors:
