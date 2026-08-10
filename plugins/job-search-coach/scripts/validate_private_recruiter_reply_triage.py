@@ -10,6 +10,8 @@ import sys
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 
+from private_prose_safety import is_safe_prose_text
+
 
 SCHEMA_VERSION = "private-recruiter-reply-triage-v1"
 TOP_LEVEL_FIELDS = frozenset({
@@ -107,7 +109,7 @@ def _closed(value: object, path: str, fields: frozenset[str], errors: list[str])
 
 
 def _text(value: object, path: str, errors: list[str], *, maximum: int) -> str | None:
-    if not isinstance(value, str) or not value.strip() or len(value) > maximum:
+    if not is_safe_prose_text(value) or not value.strip() or len(value) > maximum:
         errors.append(f"{path} must be non-empty prose within {maximum} characters")
         return None
     return value

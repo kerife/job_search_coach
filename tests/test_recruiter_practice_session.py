@@ -286,6 +286,80 @@ class RecruiterPracticeSessionContractTests(unittest.TestCase):
                 path = "facts[0].summary" if section == "facts" else f"{section}.{field}"
                 self.assert_rejected(invalid, f"{path} must not expose internal identifiers")
 
+    def test_rejects_unicode_controls_in_every_prose_field(self) -> None:
+        prose_fields = (
+            ("safe_context", "summary", 280),
+            ("requirement", "summary", 280),
+            ("question", "text", 500),
+            ("facts", 0, "summary", 500),
+            ("rubric", "criterion", 500),
+            ("observed_answer", "text", 2000),
+        )
+        controls = ("\u200b", "\u202e", "\u2066", "\ufeff")
+        for control in controls:
+            for path in prose_fields:
+                with self.subTest(code_point=f"U+{ord(control):04X}", path=path):
+                    invalid = copy.deepcopy(self.awaiting_session)
+                    if path[0] == "observed_answer":
+                        invalid["state"] = "feedback_available"
+                        invalid["observed_answer"] = {
+                            "id": "OBS-001",
+                            "text": f"Visible{control} prose",
+                            "storage": "ephemeral",
+                        }
+                        invalid["feedback"] = {
+                            "score": "unknown",
+                            "score_state": "categorical",
+                            "observations": [{
+                                "label": "solid",
+                                "statement": "Distinct feedback statement.",
+                                "source_refs": ["OBS-001", "RB-001"],
+                            }],
+                        }
+                    else:
+                        target: object = invalid
+                        for key in path[:-2]:
+                            target = target[key]  # type: ignore[index]
+                        target[path[-2]] = (
+                            f"Visible{control} prose?" if path[0] == "question"
+                            else f"Visible{control} prose"
+                        )  # type: ignore[index]
+                    result = self.run_cli(invalid)
+                    self.assertEqual(result.returncode, 2, result.stderr)
+                    field_path = "facts[0].summary" if path[0] == "facts" else ".".join(str(part) for part in path[:2])
+                    self.assertIn(
+                        f"{field_path} must be non-empty prose within {path[-1]} characters",
+                        result.stderr,
+                    )
+                    self.assertNotIn("Visible", result.stderr)
+
+    def test_rejects_unicode_controls_in_feedback_statements(self) -> None:
+        for control in ("\u200b", "\u202e", "\u2066", "\ufeff"):
+            with self.subTest(code_point=f"U+{ord(control):04X}"):
+                invalid = copy.deepcopy(self.awaiting_session)
+                invalid["state"] = "feedback_available"
+                invalid["observed_answer"] = {
+                    "id": "OBS-001",
+                    "text": "Expliqué una acción relevante.",
+                    "storage": "ephemeral",
+                }
+                invalid["feedback"] = {
+                    "score": "unknown",
+                    "score_state": "categorical",
+                    "observations": [{
+                        "label": "solid",
+                        "statement": f"Visible{control} feedback statement.",
+                        "source_refs": ["OBS-001", "RB-001"],
+                    }],
+                }
+                result = self.run_cli(invalid)
+                self.assertEqual(result.returncode, 2, result.stderr)
+                self.assertIn(
+                    "feedback.observations[0].statement must be non-empty prose within 500 characters",
+                    result.stderr,
+                )
+                self.assertNotIn("Visible", result.stderr)
+
     def test_internal_prose_ids_are_rejected_after_unicode_normalization(self) -> None:
         invalid = copy.deepcopy(self.awaiting_session)
         invalid["question"]["text"] = "Practica Ｑ－００１ en privado."
@@ -431,12 +505,12 @@ class RecruiterPracticeSessionContractTests(unittest.TestCase):
 
     def test_feedback_statements_cannot_echo_answers_after_normalization(self) -> None:
         cases = (
-            ("case", "EXPLIQUÉ UNA ACCIÓN RELEVANTE."),
-            ("whitespace", "Expliqué\n  una   acción relevante."),
-            ("unicode", "Explique\u0301 una accio\u0301n relevante."),
-            ("zero_width", "Expliqué una acci\u200bón relevante."),
+            ("case", "EXPLIQUÉ UNA ACCIÓN RELEVANTE.", "feedback.observations[0].statement must not repeat the observed answer"),
+            ("whitespace", "Expliqué\n  una   acción relevante.", "feedback.observations[0].statement must be non-empty prose within 500 characters"),
+            ("unicode", "Explique\u0301 una accio\u0301n relevante.", "feedback.observations[0].statement must not repeat the observed answer"),
+            ("zero_width", "Expliqué una acci\u200bón relevante.", "feedback.observations[0].statement must be non-empty prose within 500 characters"),
         )
-        for name, statement in cases:
+        for name, statement, message in cases:
             with self.subTest(case=name):
                 invalid = copy.deepcopy(self.awaiting_session)
                 invalid["state"] = "feedback_available"
@@ -458,7 +532,7 @@ class RecruiterPracticeSessionContractTests(unittest.TestCase):
                 }
                 self.assert_rejected(
                     invalid,
-                    "feedback.observations[0].statement must not repeat the observed answer",
+                    message,
                 )
 
     def test_feedback_statements_cannot_obscure_internal_identifiers(self) -> None:

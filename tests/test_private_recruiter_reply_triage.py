@@ -442,6 +442,39 @@ class PrivateRecruiterReplyTriageContractTests(unittest.TestCase):
                         f"session contains forbidden {violation} prose",
                     )
 
+    def test_rejects_unicode_controls_in_every_prose_field(self) -> None:
+        prose_fields = (
+            ("safe_context", "summary"),
+            ("facts", 0, "summary"),
+            ("question", "text"),
+            ("blocked_claims", 0),
+        )
+        controls = ("\u200b", "\u202e", "\u2066", "\ufeff")
+        for control in controls:
+            for path in prose_fields:
+                with self.subTest(code_point=f"U+{ord(control):04X}", path=path):
+                    triage = copy.deepcopy(self.fixtures["clarify-en.json"])
+                    target: object = triage
+                    for key in path[:-1]:
+                        target = target[key]  # type: ignore[index]
+                    target[path[-1]] = (
+                        f"Visible{control} prose?" if path[0] == "question"
+                        else f"Visible{control} prose"
+                    )  # type: ignore[index]
+                    result = self.run_cli(triage)
+                    self.assertEqual(result.returncode, 2, result.stderr)
+                    field_path = (
+                        f"facts[0].summary" if path[0] == "facts"
+                        else f"blocked_claims[0]" if path[0] == "blocked_claims"
+                        else ".".join(str(part) for part in path)
+                    )
+                    maximum = 500 if path[0] in {"facts", "question"} else 280
+                    self.assertIn(
+                        f"{field_path} must be non-empty prose within {maximum} characters",
+                        result.stderr,
+                    )
+                    self.assertNotIn("Visible", result.stderr)
+
     def test_rejects_internal_fact_and_question_ids_embedded_in_prose(self) -> None:
         for path in (("facts", 0, "summary"), ("question", "text"), ("blocked_claims", 0)):
             with self.subTest(path=path):

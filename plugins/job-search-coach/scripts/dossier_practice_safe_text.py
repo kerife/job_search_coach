@@ -5,6 +5,8 @@ from __future__ import annotations
 import re
 import unicodedata
 
+from private_prose_safety import is_safe_prose_text
+
 
 _FORBIDDEN_TEXT = re.compile(
     r"(?<![A-Z0-9+.-])(?:[A-Z][A-Z0-9+.-]*):(?=//|[^\s])|"
@@ -45,7 +47,7 @@ _FORBIDDEN_CONTROL = re.compile(r"[\u0000-\u001f\u007f-\u009f\u200b-\u200d\u2060
 
 def is_safe_handoff_text(value: object, maximum: int) -> bool:
     """Return whether text is bounded, non-empty, and safe to project."""
-    if not isinstance(value, str) or _FORBIDDEN_CONTROL.search(value):
+    if not is_safe_prose_text(value) or _FORBIDDEN_CONTROL.search(value):
         return False
     normalized = unicodedata.normalize("NFKC", value)
     return (
