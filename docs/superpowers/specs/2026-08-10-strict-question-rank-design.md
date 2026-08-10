@@ -3,9 +3,10 @@
 ## Goal
 
 Make the recruiter-practice semantic validator agree with the already strict
-JSON Schema: only the JSON integer `1` is accepted for
-`handoff_context.question_rank`. JSON booleans and non-integral/float values
-must fail closed before rendering or CLI success.
+JSON Schema: the JSON numeric value equal to `1` is accepted for
+`handoff_context.question_rank`, while JSON booleans must fail closed. JSON
+Schema treats `1` and `1.0` as numerically equal; Python's `True == 1` is the
+specific mismatch being removed.
 
 ## Scope and behavior
 
@@ -14,8 +15,8 @@ must fail closed before rendering or CLI success.
   fields, copy, rendering order, privacy, and marketplace structure.
 - Return the existing deterministic `question_rank must be 1` error without
   echoing the invalid value.
-- Test `True`, `False`, and `1.0` as rejected, integer `1` as accepted, and
-  schema/custom parity for the mutation.
+- Test `True` and `False` as rejected, numeric `1` and `1.0` as accepted, and
+  schema/custom parity for each mutation.
 
 ## Verification
 

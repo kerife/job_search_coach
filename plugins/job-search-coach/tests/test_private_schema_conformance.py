@@ -111,10 +111,10 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         self.assertEqual([], validate_session(fixture))
         self.assertEqual([], validate_schema_instance(fixture, schema))
 
-    def test_practice_question_rank_custom_validator_rejects_float_one(self):
+    def test_practice_question_rank_custom_validator_accepts_json_numeric_one(self):
         fixture = json.loads((ROOT.parent.parent / "tests/evals/with-skill/fixtures/recruiter-practice-session/session-es.json").read_text(encoding="utf-8"))
         fixture["handoff_context"]["question_rank"] = 1.0
-        self.assertTrue(validate_session(fixture))
+        self.assertEqual([], validate_session(fixture))
 
     def test_schema_prose_mutations_match_custom_unicode_boundary(self):
         controls = ("\u200b", "\u202e", "\u2066", "\ufeff")

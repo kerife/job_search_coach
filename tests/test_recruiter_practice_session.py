@@ -208,8 +208,8 @@ class RecruiterPracticeSessionContractTests(unittest.TestCase):
 
         self.assert_accepted(direct_triage_practice)
 
-    def test_handoff_question_rank_requires_json_integer_one(self) -> None:
-        for invalid_rank in (True, False, 1.0):
+    def test_handoff_question_rank_rejects_json_booleans_but_accepts_numeric_one(self) -> None:
+        for invalid_rank in (True, False):
             with self.subTest(question_rank=repr(invalid_rank)):
                 invalid = copy.deepcopy(self.awaiting_session)
                 invalid["handoff_context"]["question_rank"] = invalid_rank
@@ -218,9 +218,11 @@ class RecruiterPracticeSessionContractTests(unittest.TestCase):
                     "handoff_context.question_rank must be 1",
                 )
 
-        canonical = copy.deepcopy(self.awaiting_session)
-        canonical["handoff_context"]["question_rank"] = 1
-        self.assert_accepted(canonical)
+        for numeric_rank in (1, 1.0):
+            with self.subTest(question_rank=repr(numeric_rank)):
+                canonical = copy.deepcopy(self.awaiting_session)
+                canonical["handoff_context"]["question_rank"] = numeric_rank
+                self.assert_accepted(canonical)
 
     def test_cli_accepts_ready_awaiting_and_feedback_states(self) -> None:
         ready = copy.deepcopy(self.awaiting_session)

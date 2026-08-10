@@ -338,7 +338,7 @@ def validate_session(value: object) -> list[str]:
                 errors.append("handoff_context.source_snapshot must match executive_career_dossier source")
             elif handoff.get("source") == "private_recruiter_reply_triage" and not source_snapshot.startswith("snap-triage-"):
                 errors.append("handoff_context.source_snapshot must match private_recruiter_reply_triage source")
-            if type(handoff.get("question_rank")) is not int or handoff.get("question_rank") != 1: errors.append("handoff_context.question_rank must be 1")
+            if isinstance(handoff.get("question_rank"), bool) or handoff.get("question_rank") != 1: errors.append("handoff_context.question_rank must be 1")
             if handoff.get("draft_only") is not True: errors.append("handoff_context.draft_only must be true")
             if handoff.get("external_actions_authorized") is not False: errors.append("handoff_context.external_actions_authorized must be false")
             handoff_question_id = _id(handoff.get("question_id"), "handoff_context.question_id", "Q", errors)
