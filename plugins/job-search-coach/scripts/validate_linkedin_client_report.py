@@ -802,6 +802,8 @@ class LegacyAppendixSection(NamedTuple):
 
 def load_bundle(path: Path) -> dict[str, object]:
     """Load a fixture bundle and require a JSON object at the file boundary."""
+    if path.is_symlink():
+        raise ValueError("fixture bundle input must not be a symlink")
     value = json.loads(
         path.read_text(encoding="utf-8"),
         object_pairs_hook=_unique_json_object,
@@ -3541,16 +3543,24 @@ def _cli(argv: list[str] | None = None) -> int:
     arguments = parser.parse_args(argv)
 
     errors: list[str] = []
-    try:
-        markdown = arguments.report.read_text(encoding="utf-8")
-    except (OSError, UnicodeError):
-        errors.append("cannot read report file as UTF-8")
+    if arguments.report.is_symlink():
+        errors.append("report input must not be a symlink")
         markdown = ""
-    try:
-        raw_bundle = arguments.bundle.read_text(encoding="utf-8")
-    except (OSError, UnicodeError):
-        errors.append("cannot read bundle file as UTF-8")
+    else:
+        try:
+            markdown = arguments.report.read_text(encoding="utf-8")
+        except (OSError, UnicodeError):
+            errors.append("cannot read report file as UTF-8")
+            markdown = ""
+    if arguments.bundle.is_symlink():
+        errors.append("bundle input must not be a symlink")
         raw_bundle = ""
+    else:
+        try:
+            raw_bundle = arguments.bundle.read_text(encoding="utf-8")
+        except (OSError, UnicodeError):
+            errors.append("cannot read bundle file as UTF-8")
+            raw_bundle = ""
     bundle: object = None
     if raw_bundle:
         try:

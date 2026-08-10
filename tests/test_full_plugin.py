@@ -522,6 +522,33 @@ class FullPluginIntegrationTests(unittest.TestCase):
                 extra_errors,
             )
 
+    def test_linkedin_report_fixture_directory_rejects_symlink_artifacts(self) -> None:
+        checker = load_static_checker()
+        with TemporaryDirectory() as directory, TemporaryDirectory() as external:
+            root = Path(directory)
+            outside = Path(external)
+            copy_linkedin_report_artifacts(root)
+            external_bundle = outside / "bundle.json"
+            external_report = outside / "report.md"
+            external_bundle.write_bytes((root / "scenario-a.json").read_bytes())
+            external_report.write_bytes((root / "scenario-a-es.md").read_bytes())
+
+            bundle_path = root / "scenario-a.json"
+            report_path = root / "scenario-a-es.md"
+            bundle_path.unlink()
+            report_path.unlink()
+            bundle_path.symlink_to(external_bundle)
+            report_path.symlink_to(external_report)
+
+            errors = checker.validate_linkedin_report_fixture_directory(root)
+            root_link = outside / "fixture-dir"
+            root_link.symlink_to(root, target_is_directory=True)
+            root_errors = checker.validate_linkedin_report_fixture_directory(root_link)
+
+        self.assertTrue(any(str(bundle_path) in error and "symlink" in error for error in errors), errors)
+        self.assertTrue(any(str(report_path) in error and "symlink" in error for error in errors), errors)
+        self.assertTrue(any(str(root_link) in error and "symlink" in error for error in root_errors), root_errors)
+
     def test_linkedin_report_fixture_directory_validates_all_five_normal_pairs(self) -> None:
         checker = load_static_checker()
         self.assertTrue(hasattr(checker, "validate_linkedin_report_fixture_directory"))

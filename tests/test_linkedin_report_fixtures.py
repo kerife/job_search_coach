@@ -119,6 +119,22 @@ class LinkedInReportFixtureTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "duplicate JSON key"):
                 validator.load_bundle(path)
 
+    def test_load_bundle_rejects_symlink_input_but_accepts_regular_target(self) -> None:
+        source = (FIXTURE_ROOT / "scenario-a.json").read_bytes()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            target = root / "target.json"
+            link = root / "link.json"
+            target.write_bytes(source)
+            link.symlink_to(target)
+            self.assertEqual(
+                "FIXTURE-JSC1-TECHNICAL-SIGNAL-DISPERSED",
+                validator.load_bundle(target)["fixture_id"],
+            )
+            with self.assertRaisesRegex(ValueError, "symlink") as raised:
+                validator.load_bundle(link)
+        self.assertNotIn(str(target), str(raised.exception))
+
     def test_cli_rejects_duplicate_bundle_without_echoing_hidden_value(self) -> None:
         source = (FIXTURE_ROOT / "scenario-a.json").read_text(encoding="utf-8")
         duplicate = source.replace(
@@ -138,6 +154,25 @@ class LinkedInReportFixtureTests(unittest.TestCase):
         self.assertNotEqual(0, result)
         self.assertNotIn("valid", stdout.getvalue().lower())
         self.assertNotIn("hidden@example.invalid", stderr.getvalue())
+
+    def test_cli_rejects_symlink_report_and_bundle_inputs(self) -> None:
+        report = FIXTURE_ROOT / "scenario-a-es.md"
+        bundle = FIXTURE_ROOT / "scenario-a.json"
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            report_link = root / "report.md"
+            bundle_link = root / "bundle.json"
+            report_link.symlink_to(report)
+            bundle_link.symlink_to(bundle)
+            for linked in (report_link, bundle_link):
+                stdout = io.StringIO()
+                stderr = io.StringIO()
+                with self.subTest(input=linked.name), contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+                    result = validator._cli([str(report_link), str(bundle_link)])
+                self.assertNotEqual(0, result)
+                self.assertNotIn("valid", stdout.getvalue().lower())
+                self.assertNotIn(str(report), stderr.getvalue())
+                self.assertNotIn(str(bundle), stderr.getvalue())
 
     def test_official_source_registry_matches_the_eight_reviewed_locators(self) -> None:
         self.assertTrue(SOURCE_REGISTRY_PATH.is_file())

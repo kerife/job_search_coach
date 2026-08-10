@@ -1291,6 +1291,8 @@ def validate_linkedin_report_fixture_directory(root: Path) -> list[str]:
     expected_bundles = {
         bundle_name for _report_name, bundle_name in LINKEDIN_REPORT_NORMAL_PAIRS
     }
+    if root.is_symlink():
+        return [f"{root}: LinkedIn v2 fixture directory must not be a symlink"]
     if not root.is_dir():
         return [f"{root}: missing LinkedIn v2 fixture directory"]
 
@@ -1321,6 +1323,12 @@ def validate_linkedin_report_fixture_directory(root: Path) -> list[str]:
     for report_name, bundle_name, appendix_mode in pairs:
         report_path = root / report_name
         bundle_path = root / bundle_name
+        if report_path.is_symlink():
+            errors.append(f"{report_path}: report artifact must not be a symlink")
+        if bundle_path.is_symlink():
+            errors.append(f"{bundle_path}: bundle artifact must not be a symlink")
+        if report_path.is_symlink() or bundle_path.is_symlink():
+            continue
         if not report_path.is_file() or not bundle_path.is_file():
             continue
         try:
