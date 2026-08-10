@@ -1439,6 +1439,20 @@ class ExecutiveCareerDossierRuntimeTests(unittest.TestCase):
         with self.assertRaisesRegex(self.validator.DossierLoadError, "duplicate JSON key"):
             self.validator.load_dossier(path)
 
+    def test_loader_rejects_symlink_input_but_accepts_regular_target(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = root / "target.json"
+            link = root / "link.json"
+            target.write_bytes((FIXTURE_ROOT / "scenario-a-es.json").read_bytes())
+
+            loaded = self.validator.load_dossier(target)
+            self.assertEqual(loaded["schema_version"], "executive-career-dossier-v1")
+
+            link.symlink_to(target)
+            with self.assertRaisesRegex(self.validator.DossierLoadError, "symlink"):
+                self.validator.load_dossier(link)
+
 
 class ExecutiveCareerDossierRendererTests(unittest.TestCase):
     @classmethod
@@ -2265,6 +2279,28 @@ class ExecutiveCareerDossierCliTests(unittest.TestCase):
             self.assertEqual(result.stdout, "")
             self.assertFalse(output.exists())
             self.assertNotIn("Traceback", result.stderr)
+
+    def test_symlink_input_exits_two_without_rendering_target(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = root / "target.json"
+            link = root / "link.json"
+            output = root / "executive-career-dossier.html"
+            regular_output = root / "regular-executive-career-dossier.html"
+            target.write_bytes((FIXTURE_ROOT / "scenario-a-es.json").read_bytes())
+
+            regular_result = self.run_cli(target, "--output", regular_output)
+            self.assertEqual(regular_result.returncode, 0, regular_result.stderr)
+            self.assertTrue(regular_output.is_file())
+
+            link.symlink_to(target)
+
+            result = self.run_cli(link, "--output", output)
+
+            self.assertEqual(result.returncode, 2)
+            self.assertEqual(result.stdout, "")
+            self.assertIn("symlink", result.stderr)
+            self.assertFalse(output.exists())
 
     def test_existing_target_exits_three_without_changing_it(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

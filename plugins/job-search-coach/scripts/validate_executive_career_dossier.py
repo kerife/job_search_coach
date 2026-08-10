@@ -347,6 +347,8 @@ def _assert_max_depth(value: object, maximum: int, depth: int = 0) -> None:
 
 
 def load_dossier(path: Path) -> dict[str, object]:
+    if path.is_symlink():
+        raise DossierLoadError("dossier input must not be a symlink")
     try:
         raw = path.read_bytes()
     except OSError as error:
