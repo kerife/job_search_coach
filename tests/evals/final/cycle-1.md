@@ -4,9 +4,9 @@ no_real_profile_mapping: true
 
 artifact_kind=deterministic-regression-fixture
 
-source_commit=54f21bf1beeb99494c118f6a0c7a1423c3cc55ae
+source_commit=98eaf73d26ecfe9102be6c1d52a6f214fbbb68d0
 
-source_tree=080f864ae60d135f4c3e206077f8c3b8f7f6d1ab
+source_tree=9e2ddcb915e9f544c723eee5eb72692ef476c7b8
 
 These independently fabricated composites are not live agent transcripts. They cover only behavior-level routing, truthfulness, isolation, and authorization contracts.
 
