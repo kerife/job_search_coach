@@ -599,7 +599,10 @@ def main(argv: list[str] | None = None) -> int:
     except _DuplicateJsonKeyError:
         print("invalid case file: duplicate JSON key", file=sys.stderr)
         return 2
-    except (OSError, UnicodeError, json.JSONDecodeError, RecursionError) as error:
+    except OSError:
+        print("invalid case file: unable to read input", file=sys.stderr)
+        return 2
+    except (UnicodeError, json.JSONDecodeError, RecursionError) as error:
         print(f"invalid case file: {error}", file=sys.stderr)
         return 2
 

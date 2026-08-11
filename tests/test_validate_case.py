@@ -770,6 +770,20 @@ class ValidateCaseTests(unittest.TestCase):
         self.assertTrue(result.stderr.startswith("invalid case file: "))
         self.assertEqual(result.stderr.count("\n"), 1)
 
+    def test_unreadable_input_does_not_echo_private_path(self) -> None:
+        sentinel = "token_sk_live_SENTINEL_12345678901234567890"
+        missing = Path(tempfile.gettempdir()) / sentinel
+        result = subprocess.run(
+            [sys.executable, "-B", str(VALIDATOR), str(missing)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(result.stderr, "invalid case file: unable to read input\n")
+        self.assertNotIn(sentinel, result.stderr)
+
     def test_rejects_duplicate_top_level_key_without_echoing_hidden_content(self) -> None:
         contents = json.dumps(valid_case(), separators=(",", ":"))
         needle = '"claims":[{"candidate_id":"candidate-001","claim_id":"claim-001","text":"Operates Kubernetes clusters.","evidence_label":"verified"}]'
