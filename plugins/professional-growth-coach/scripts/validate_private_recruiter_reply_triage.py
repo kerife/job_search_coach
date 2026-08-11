@@ -11,7 +11,7 @@ import unicodedata
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 
-from private_prose_safety import is_safe_prose_text
+from private_prose_safety import is_safe_prose_text, safe_diagnostic_field_name
 from triage_snapshot import is_snapshot, snapshot_for_triage
 
 
@@ -146,7 +146,8 @@ def _closed(value: object, path: str, fields: frozenset[str], errors: list[str])
     for field in missing:
         errors.append(f"missing required field: {path}.{field}" if path else f"missing required field: {field}")
     if unsupported:
-        errors.append(f"{path or 'session'} has unsupported fields: {', '.join(unsupported)}")
+        safe_fields = (safe_diagnostic_field_name(field) for field in unsupported)
+        errors.append(f"{path or 'session'} has unsupported fields: {', '.join(safe_fields)}")
     return value
 
 

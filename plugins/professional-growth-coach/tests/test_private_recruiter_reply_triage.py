@@ -51,6 +51,25 @@ class PrivateRecruiterReplyTriageIdentityTests(unittest.TestCase):
             renderer.render_triage_html(triage)
         self.assertNotIn(sentinel, str(raised.exception))
 
+    def test_suspicious_unsupported_field_names_are_redacted(self):
+        baseline = json.loads(FIXTURE.read_text(encoding="utf-8"))
+        for sentinel in (
+            "person@example.invalid",
+            "/Users/synthetic/private-case.json",
+            "token_sk_live_SYNTHETIC",
+        ):
+            with self.subTest(sentinel=sentinel):
+                triage = copy.deepcopy(baseline)
+                triage[sentinel] = "synthetic"
+
+                errors = validator.validate_triage(triage)
+
+                self.assertIn(
+                    "session has unsupported fields: <redacted-field>",
+                    errors,
+                )
+                self.assertNotIn(sentinel, "\n".join(errors))
+
     def test_candidate_identity_markers_are_rejected_before_render(self):
         baseline = json.loads(FIXTURE.read_text(encoding="utf-8"))
         mutations = {

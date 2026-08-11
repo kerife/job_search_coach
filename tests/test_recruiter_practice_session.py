@@ -365,6 +365,25 @@ class RecruiterPracticeSessionContractTests(unittest.TestCase):
         invalid["unsupported_claim"] = "Expert in a technology without supplied evidence."
         self.assert_rejected(invalid, "session has unsupported fields: unsupported_claim")
 
+    def test_suspicious_unsupported_field_names_are_not_echoed(self) -> None:
+        for sentinel in (
+            "person@example.invalid",
+            "/Users/synthetic/private-case.json",
+            "token_sk_live_SYNTHETIC",
+        ):
+            with self.subTest(sentinel=sentinel):
+                invalid = copy.deepcopy(self.awaiting_session)
+                invalid[sentinel] = "synthetic"
+
+                result = self.run_cli(invalid)
+
+                self.assertEqual(result.returncode, 2, result.stderr)
+                self.assertIn(
+                    "session has unsupported fields: <redacted-field>",
+                    result.stderr,
+                )
+                self.assertNotIn(sentinel, result.stderr)
+
     def test_raw_identity_and_external_action_prose_are_rejected(self) -> None:
         identity = copy.deepcopy(self.awaiting_session)
         identity["question"]["text"] = "Candidate: Example Person. ¿Cómo responderías?"

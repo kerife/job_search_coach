@@ -12,7 +12,7 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
-from private_prose_safety import is_safe_prose_text
+from private_prose_safety import is_safe_prose_text, safe_diagnostic_field_name
 
 
 SCHEMA_VERSION = "recruiter-practice-session-v1"
@@ -153,7 +153,8 @@ def _closed(
         errors.append(f"missing required field: {path}.{field}" if path else f"missing required field: {field}")
     if unsupported:
         prefix = "session" if not path else path
-        errors.append(f"{prefix} has unsupported fields: {', '.join(unsupported)}")
+        safe_fields = (safe_diagnostic_field_name(field) for field in unsupported)
+        errors.append(f"{prefix} has unsupported fields: {', '.join(safe_fields)}")
     return value
 
 
@@ -288,7 +289,8 @@ def validate_session(value: object) -> list[str]:
         errors.append(f"missing required field: {field}")
     unsupported = sorted(set(session) - fields)
     if unsupported:
-        errors.append(f"session has unsupported fields: {', '.join(unsupported)}")
+        safe_fields = (safe_diagnostic_field_name(field) for field in unsupported)
+        errors.append(f"session has unsupported fields: {', '.join(safe_fields)}")
     if not _enum(schema_version, {SCHEMA_VERSION, V2_SCHEMA_VERSION}):
         errors.append("schema_version has invalid value")
     if session.get("session_kind") != "private_recruiter_practice":

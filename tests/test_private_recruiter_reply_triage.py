@@ -340,6 +340,26 @@ class PrivateRecruiterReplyTriageContractTests(unittest.TestCase):
         triage["raw_reply"] = "texto recibido"
         self.assert_rejected(triage, "session has unsupported fields: raw_reply")
 
+    def test_suspicious_unsupported_field_names_are_not_echoed(self) -> None:
+        baseline = self.fixtures["clarify-es.json"]
+        for sentinel in (
+            "person@example.invalid",
+            "/Users/synthetic/private-case.json",
+            "token_sk_live_SYNTHETIC",
+        ):
+            with self.subTest(sentinel=sentinel):
+                triage = copy.deepcopy(baseline)
+                triage[sentinel] = "synthetic"
+
+                result = self.run_cli(triage)
+
+                self.assertEqual(result.returncode, 2, result.stderr)
+                self.assertIn(
+                    "session has unsupported fields: <redacted-field>",
+                    result.stderr,
+                )
+                self.assertNotIn(sentinel, result.stderr)
+
     def test_requires_exactly_one_fact_and_one_safe_question_with_known_references(self) -> None:
         triage = copy.deepcopy(self.fixtures["clarify-en.json"])
         triage["facts"].append(copy.deepcopy(triage["facts"][0]))

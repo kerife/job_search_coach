@@ -6,7 +6,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from private_prose_safety import contains_unicode_controls, is_safe_prose_text
+from private_prose_safety import (
+    contains_unicode_controls,
+    is_safe_prose_text,
+    safe_diagnostic_field_name,
+)
 
 
 class PrivateProseSafetyTests(unittest.TestCase):
@@ -33,6 +37,17 @@ class PrivateProseSafetyTests(unittest.TestCase):
 
     def test_is_safe_prose_text_accepts_normal_visible_prose_and_whitespace(self):
         self.assertTrue(is_safe_prose_text("  Visible prose with whitespace  "))
+
+    def test_safe_diagnostic_field_name_redacts_suspicious_names_only(self):
+        cases = {
+            "extra": "extra",
+            "person@example.invalid": "<redacted-field>",
+            "/Users/synthetic/private-case.json": "<redacted-field>",
+            "token_sk_live_SYNTHETIC": "<redacted-field>",
+        }
+        for value, expected in cases.items():
+            with self.subTest(value=value):
+                self.assertEqual(expected, safe_diagnostic_field_name(value))
 
 
 if __name__ == "__main__":
