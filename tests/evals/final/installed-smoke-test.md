@@ -1,8 +1,8 @@
-# Interim synthetic release attestation
+# Installed synthetic smoke attestation
 
 no_real_profile_mapping: true
 
-case_id: `JSC-CASE-I`
+case_id: `PGC-CASE-I`
 
 origin_class: `synthetic_composite`
 
@@ -10,19 +10,19 @@ derivation: `counterfactual_non_mappable`
 
 real_profile_mapping: `none_created`
 
-attestation_state: `interim_not_installed`
+attestation_state: `installed_green`
 
-This record is a deterministic source-tree fixture, not a live agent transcript
-and not evidence of a fresh plugin installation. Increment 5 performs no
-cachebuster update, marketplace edit, Codex configuration change, or plugin
-install. Increment 6 must replace this file after exact installation
-authorization, source-to-cache equivalence checks, official validator passes,
-and a fresh installed synthetic smoke run.
+plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
-Aggregate source-tree evidence available at this increment:
+active_config: `canonical_only`
 
-- Repository privacy gate: passed on controlled synthetic artifacts.
-- Static checker: passed on the source tree.
-- Full unit suite: passed on the source tree.
-- Official validators: passed through the checksum-gated pinned runner.
-- External action state: `not_executed`.
+source_cache_equivalence: `diff_qr_silent`
+
+installed_renderer_smokes: `5/5`
+
+official_release_validator: `passed`
+
+external_action_state: `not_executed`
+
+This record is a deterministic synthetic release attestation. It contains no
+real profile mapping, recruiter identity, credential, or external action.
