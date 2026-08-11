@@ -295,6 +295,19 @@ def _validate_records(
             errors.append(f"{location} must be an object")
             continue
         errors.extend(_closed_mapping(record, RECORD_FIELDS[field], location))
+        provenance_field = {
+            "sources": "source_id",
+            "claims": "claim_id",
+            "interventions": "intervention_id",
+            "outcomes": "outcome_id",
+        }[field]
+        if provenance_field in record and (
+            not isinstance(record[provenance_field], str)
+            or not record[provenance_field].strip()
+        ):
+            errors.append(
+                f"{location}.{provenance_field} must be a non-empty string"
+            )
         if "candidate_id" not in record:
             errors.append(f"{location}.candidate_id is required")
         elif candidate_id is not None and record["candidate_id"] != candidate_id:

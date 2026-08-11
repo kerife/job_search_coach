@@ -768,6 +768,28 @@ class ValidateCaseTests(unittest.TestCase):
         self.assertEqual(result.stderr, "invalid case file: duplicate JSON key\n")
         self.assertNotIn("candidate_id", result.stderr)
 
+    def test_rejects_non_string_optional_provenance_ids(self) -> None:
+        cases = (
+            ("sources", "source_id"),
+            ("claims", "claim_id"),
+            ("interventions", "intervention_id"),
+            ("outcomes", "outcome_id"),
+        )
+        for field, id_field in cases:
+            for value in ({}, [], 7, True):
+                with self.subTest(field=field, value=value):
+                    case = valid_case()
+                    case[field] = [{"candidate_id": "candidate-001", id_field: value}]
+                    if field in {"sources", "claims"}:
+                        case[field][0]["evidence_label"] = "verified"
+                    result = run_validator(case)
+                    self.assertEqual(result.returncode, 2)
+                    self.assertIn(
+                        f"{field}[0].{id_field} must be a non-empty string",
+                        result.stderr,
+                    )
+                    self.assertNotIn(str(value), result.stderr)
+
     def test_cli_rejects_invalid_utf8_without_a_traceback(self) -> None:
         result = run_validator_bytes(b'{"candidate_id":"\xff"}')
 
