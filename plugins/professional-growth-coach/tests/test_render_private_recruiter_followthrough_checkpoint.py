@@ -56,6 +56,43 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
                 self.assertNotIn("D-104", html); self.assertNotIn("F-105", html); self.assertNotIn("screen_requested", html)
                 self.assertNotIn("<form", html.lower()); self.assertNotIn("<button", html.lower()); self.assertNotIn("javascript:", html.lower())
 
+    def test_stop_decision_copy_preserves_employment_continuity_in_english_and_spanish(self):
+        stop_receipt = json.loads(
+            (ROOT / "tests/fixtures/private-recruiter-conversion-outcome/stop-decision-en.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        expected = {
+            "en": {
+                "action": "Record this recruiter-process outcome privately; do not continue this preparation path.",
+                "boundary": "Scope: this records one recruiter-process outcome only. It is not advice to resign, leave a job, or stop your job search; you decide what comes next.",
+            },
+            "es": {
+                "action": "Registra en privado el resultado de este proceso de reclutamiento; no continúes por esta vía de preparación.",
+                "boundary": "Alcance: esto solo registra un resultado de este proceso de reclutamiento. No es una recomendación de renunciar, dejar un empleo ni abandonar tu búsqueda; tú decides qué sigue.",
+            },
+        }
+        item = copy.deepcopy(self.item)
+        item.update(
+            action_state="completed",
+            next_measurement_event="stop_decision",
+            next_safe_action="record_stop_decision",
+            source_receipt={
+                "id": stop_receipt["source_artifact_id"],
+                "source_version": stop_receipt["source_version"],
+                "event_type": stop_receipt["event_type"],
+            },
+        )
+        for locale in ("en", "es"):
+            with self.subTest(locale=locale):
+                localized = copy.deepcopy(item)
+                localized["locale"] = locale
+                rendered = renderer.render_checkpoint_html(
+                    localized, stop_receipt, as_of=dt.date(2026, 8, 8)
+                )
+                self.assertIn(expected[locale]["action"], rendered)
+                self.assertIn(expected[locale]["boundary"], rendered)
+
     def test_css_accessibility_hooks_and_deterministic_render(self):
         first = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
         second = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))

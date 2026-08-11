@@ -50,6 +50,26 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
             seen.add(item["event_type"])
         self.assertEqual(set(actions), seen)
 
+    def test_stop_decision_copy_preserves_employment_continuity_in_english_and_spanish(self):
+        item = load_outcome(FIXTURES / "stop-decision-en.json")
+        expected = {
+            "en": {
+                "action": "Record this recruiter-process outcome privately; do not continue this preparation path.",
+                "boundary": "Scope: this records one recruiter-process outcome only. It is not advice to resign, leave a job, or stop your job search; you decide what comes next.",
+            },
+            "es": {
+                "action": "Registra en privado el resultado de este proceso de reclutamiento; no continúes por esta vía de preparación.",
+                "boundary": "Alcance: esto solo registra un resultado de este proceso de reclutamiento. No es una recomendación de renunciar, dejar un empleo ni abandonar tu búsqueda; tú decides qué sigue.",
+            },
+        }
+        for locale in ("en", "es"):
+            with self.subTest(locale=locale):
+                localized = copy.deepcopy(item)
+                localized["locale"] = locale
+                rendered = render_outcome_html(localized, today=dt.date(2026, 8, 9))
+                self.assertIn(expected[locale]["action"], rendered)
+                self.assertIn(expected[locale]["boundary"], rendered)
+
     def test_localized_skip_link_targets_main_content(self):
         expected = {
             "en": ("Skip to main content", "Private observation receipt"),
