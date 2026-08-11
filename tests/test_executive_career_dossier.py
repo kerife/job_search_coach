@@ -1789,6 +1789,8 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
                 rendered = self.renderer.render_dossier_html(dossier)
                 self.assertIn(expected, rendered)
                 self.assertNotIn(absent, rendered)
+                self.assertIn('</strong> <span class="employment-boundary">', rendered)
+                self.assertIn("</strong> <span class=\"employment-boundary\">", rendered)
 
     def test_copy_controls_have_stable_names_and_live_status_targets(self) -> None:
         rendered = self.renderer.render_dossier_html(self.es_dossier)
