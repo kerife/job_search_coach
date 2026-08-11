@@ -78,3 +78,13 @@ class DarkModeAccessibilityTests(unittest.TestCase):
                 self.assertIn("color: CanvasText", forced)
                 self.assertIn("border-color: CanvasText", forced)
 
+    def test_practice_confirm_feedback_has_dark_contrast(self) -> None:
+        css = (ASSETS / "recruiter-practice-session-v1.css").read_text(encoding="utf-8")
+        dark_start = css.index("@media screen and (prefers-color-scheme: dark)")
+        print_start = css.index("@media print")
+        dark_block = css[dark_start:print_start]
+        self.assertIn(".feedback-item--confirm", dark_block)
+        self.assertIn("background: var(--gold-soft)", dark_block)
+        self.assertIn("border-left-color: var(--decision-term)", dark_block)
+        self.assertIn(".feedback-label--confirm", dark_block)
+        self.assertGreaterEqual(_contrast("#f3f6ff", "#3b301f"), 4.5)

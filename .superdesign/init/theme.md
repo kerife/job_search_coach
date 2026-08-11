@@ -840,6 +840,12 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-next-action h2,
   .recruiter-practice-document .practice-decision h2,
   .recruiter-practice-document .practice-decision dd { color: var(--ink); }
+  .recruiter-practice-document .feedback-item--confirm {
+    background: var(--gold-soft);
+    border-left-color: var(--decision-term);
+    color: var(--ink);
+  }
+  .recruiter-practice-document .feedback-label--confirm { color: var(--ink); }
   .recruiter-practice-document .practice-boundary { background: var(--coral-soft); }
   .recruiter-practice-document .practice-footer { color: var(--muted); border-color: var(--forest); }
 }
