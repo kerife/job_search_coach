@@ -322,10 +322,10 @@ def _safe_path_key(key: object) -> str:
 
 
 def _escape_diagnostic_controls(value: str) -> str:
-    """Render C0/DEL controls literally so diagnostics cannot inject records."""
+    """Render unsafe Unicode controls and separators literally in diagnostics."""
     return "".join(
         f"\\u{ord(character):04x}"
-        if unicodedata.category(character) == "Cc"
+        if unicodedata.category(character) in {"Cc", "Cs", "Zl", "Zp"}
         else character
         for character in value
     )

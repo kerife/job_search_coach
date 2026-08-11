@@ -925,6 +925,36 @@ class ValidateCaseTests(unittest.TestCase):
         self.assertNotIn("\nINJECTED", result.stderr)
         self.assertNotIn("\x1b", result.stderr)
 
+    def test_cli_escapes_unpaired_surrogates_in_unknown_field_diagnostics(self) -> None:
+        for surrogate in ("\ud800", "\udcff"):
+            with self.subTest(surrogate=repr(surrogate)):
+                case = valid_case()
+                case[f"ordinary{surrogate}key"] = "x"
+
+                result = run_validator(case)
+
+                self.assertEqual(result.returncode, 2)
+                self.assertEqual(
+                    result.stderr,
+                    f"case has unsupported field: ordinary\\u{ord(surrogate):04x}key\n",
+                )
+                self.assertNotIn("Traceback", result.stderr)
+
+    def test_cli_escapes_unicode_line_separators_in_unknown_field_diagnostics(self) -> None:
+        for separator, escape in (("\u2028", "\\u2028"), ("\u2029", "\\u2029")):
+            with self.subTest(separator=escape):
+                case = valid_case()
+                case[f"ordinary{separator}INJECTED"] = "x"
+
+                result = run_validator(case)
+
+                self.assertEqual(result.returncode, 2)
+                self.assertEqual(
+                    result.stderr,
+                    f"case has unsupported field: ordinary{escape}INJECTED\n",
+                )
+                self.assertEqual(result.stderr.splitlines(), [result.stderr.rstrip("\n")])
+
     def test_email_classifier_skips_values_without_at_sign(self) -> None:
         validator = load_validator_module()
 
