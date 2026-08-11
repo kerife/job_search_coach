@@ -852,13 +852,13 @@ class RecruiterPracticeSessionRendererTests(unittest.TestCase):
         session["feedback"] = {"score": "unknown", "score_state": "unknown", "observations": []}
         self.assertEqual(self.renderer.VALIDATOR.validate_session(session), [])
         rendered = self.renderer.render_session_html(session)
-        self.assertNotIn("snap-dossier-001", rendered)
+        self.assertNotIn("snap-dossier-sha256-873fb8cf4957d72c0aa06a15b253716a3d0397d45997073adb0b8e486decfa25", rendered)
         missing = copy.deepcopy(session)
         del missing["handoff_context"]["source_snapshot"]
         self.assertTrue(any("missing required field: handoff_context.source_snapshot" in error for error in self.renderer.VALIDATOR.validate_session(missing)))
         invalid = copy.deepcopy(session)
         invalid["handoff_context"]["source_snapshot"] = "snapshot-with-sensitive-url"
-        self.assertIn("handoff_context.source_snapshot must use the snap-dossier-000 or snap-triage-000 identifier format", self.renderer.VALIDATOR.validate_session(invalid))
+        self.assertIn("handoff_context.source_snapshot must use the bound dossier or snap-triage-000 identifier format", self.renderer.VALIDATOR.validate_session(invalid))
         wrong_source = copy.deepcopy(session)
         wrong_source["handoff_context"]["source"] = "private_recruiter_reply_triage"
         self.assertIn("handoff_context.source_snapshot must match private_recruiter_reply_triage source", self.renderer.VALIDATOR.validate_session(wrong_source))

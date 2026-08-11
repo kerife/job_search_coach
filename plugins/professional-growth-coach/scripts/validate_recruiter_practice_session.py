@@ -355,9 +355,9 @@ def validate_session(value: object) -> list[str]:
         if handoff is not None:
             if not _enum(handoff.get("source"), {"executive_career_dossier", "private_recruiter_reply_triage"}): errors.append("handoff_context.source has invalid value")
             source_snapshot = handoff.get("source_snapshot")
-            if not isinstance(source_snapshot, str) or not re.fullmatch(r"snap-(?:dossier|triage)-[0-9]{3}", source_snapshot):
-                errors.append("handoff_context.source_snapshot must use the snap-dossier-000 or snap-triage-000 identifier format")
-            elif handoff.get("source") == "executive_career_dossier" and not source_snapshot.startswith("snap-dossier-"):
+            if not isinstance(source_snapshot, str) or not re.fullmatch(r"snap-(?:dossier-sha256-[0-9a-f]{64}|triage-[0-9]{3})", source_snapshot):
+                errors.append("handoff_context.source_snapshot must use the bound dossier or snap-triage-000 identifier format")
+            elif handoff.get("source") == "executive_career_dossier" and not source_snapshot.startswith("snap-dossier-sha256-"):
                 errors.append("handoff_context.source_snapshot must match executive_career_dossier source")
             elif handoff.get("source") == "private_recruiter_reply_triage" and not source_snapshot.startswith("snap-triage-"):
                 errors.append("handoff_context.source_snapshot must match private_recruiter_reply_triage source")

@@ -31,11 +31,11 @@
       "summary": "Describir un ejemplo técnico relevante sin ampliar el alcance reportado."
     }
   },
-  "source_snapshot": "snap-dossier-001",
+  "source_snapshot": "snap-dossier-sha256-873fb8cf4957d72c0aa06a15b253716a3d0397d45997073adb0b8e486decfa25",
   "expected": {
     "schema_version": "dossier-recruiter-practice-handoff-v1",
     "source": "executive_career_dossier",
-    "source_snapshot": "snap-dossier-001",
+    "source_snapshot": "snap-dossier-sha256-873fb8cf4957d72c0aa06a15b253716a3d0397d45997073adb0b8e486decfa25",
     "dossier_projection": {
       "question_rank": 1,
       "claim_ids": ["C-002"],
@@ -72,7 +72,7 @@
       ],
       "handoff_context": {
         "source": "executive_career_dossier",
-        "source_snapshot": "snap-dossier-001",
+        "source_snapshot": "snap-dossier-sha256-873fb8cf4957d72c0aa06a15b253716a3d0397d45997073adb0b8e486decfa25",
         "question_rank": 1,
         "question_id": "Q-001",
         "requirement_id": "R-001",

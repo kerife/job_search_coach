@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 SCHEMA_VERSION = "dossier-recruiter-practice-handoff-v1"
-_SNAPSHOT = re.compile(r"snap-dossier-[0-9]{3}\Z")
+_SNAPSHOT = re.compile(r"snap-dossier-sha256-[0-9a-f]{64}\Z")
 
 
 @lru_cache(maxsize=None)
@@ -72,7 +72,7 @@ def _validate_handoff_schema(value: object) -> list[str]:
     if handoff.get("source") != "executive_career_dossier":
         errors.append("handoff.source has invalid value")
     if not isinstance(handoff.get("source_snapshot"), str) or not _SNAPSHOT.fullmatch(handoff["source_snapshot"]):
-        errors.append("handoff.source_snapshot must use the snap-dossier-000 identifier format")
+        errors.append("handoff.source_snapshot must use the snap-dossier-sha256 identifier format")
 
     dossier = _closed(
         handoff.get("dossier_projection"),
@@ -138,7 +138,7 @@ def _validate_handoff_schema(value: object) -> list[str]:
             if source.get("question_id") != "Q-001" or source.get("requirement_id") != "R-001" or source.get("fact_ids") != ["F-001"]:
                 errors.append("handoff.practice_projection.handoff_context must reference Q-001, R-001, and F-001")
             if not isinstance(source.get("source_snapshot"), str) or not _SNAPSHOT.fullmatch(source["source_snapshot"]):
-                errors.append("handoff.practice_projection.handoff_context.source_snapshot must use the snap-dossier-000 identifier format")
+                errors.append("handoff.practice_projection.handoff_context.source_snapshot must use the snap-dossier-sha256 identifier format")
             for field, prefix in (("claim_ids", "C"), ("evidence_ids", "E")):
                 if not _identifiers(source.get(field), prefix):
                     errors.append(f"handoff.practice_projection.handoff_context.{field} must contain bounded identifiers")
@@ -346,6 +346,10 @@ def validate_handoff(
     if dossier_errors:
         return sorted(set(errors))
     _validate_bridge_claim_evidence_links(dossier, handoff, errors)
+    snapshot_helper = _load_sibling("dossier_snapshot")
+    if source_snapshot != snapshot_helper.snapshot_for_dossier(dossier):
+        errors.append("handoff.source_snapshot must match dossier content")
+        return sorted(set(errors))
 
     builder = _load_sibling("build_dossier_recruiter_practice_handoff")
     try:

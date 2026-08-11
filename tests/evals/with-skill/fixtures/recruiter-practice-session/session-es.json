@@ -43,5 +43,5 @@
     "local_save_mode": "disabled",
     "raw_answer_retained": false
   },
-  "handoff_context": {"source": "executive_career_dossier", "source_snapshot": "snap-dossier-001", "question_rank": 1, "question_id": "Q-001", "requirement_id": "R-001", "fact_ids": ["F-001"], "claim_ids": ["C-001"], "evidence_ids": ["E-001"], "draft_only": true, "external_actions_authorized": false}
+  "handoff_context": {"source": "executive_career_dossier", "source_snapshot": "snap-dossier-sha256-873fb8cf4957d72c0aa06a15b253716a3d0397d45997073adb0b8e486decfa25", "question_rank": 1, "question_id": "Q-001", "requirement_id": "R-001", "fact_ids": ["F-001"], "claim_ids": ["C-001"], "evidence_ids": ["E-001"], "draft_only": true, "external_actions_authorized": false}
 }

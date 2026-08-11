@@ -44,6 +44,34 @@ class DossierRecruiterPracticeHandoffTests(unittest.TestCase):
         )
         self.assertEqual([], validate_schema_instance(handoff, schema))
 
+    def test_builder_rejects_a_fabricated_but_well_formed_snapshot(self):
+        fabricated = self.fixture["source_snapshot"][:-1] + ("0" if self.fixture["source_snapshot"][-1] != "0" else "1")
+        with self.assertRaisesRegex(ValueError, "source_snapshot must match dossier"):
+            build_handoff(self.dossier, self.fixture["vacancy"], fabricated)
+
+    def test_snapshot_changes_with_dossier_content(self):
+        self.assertEqual(
+            self.fixture["source_snapshot"],
+            handoff_builder.snapshot_for_dossier(self.dossier),
+        )
+        changed = copy.deepcopy(self.dossier)
+        changed["questions"][0]["question"] = "Pregunta segura distinta."
+        self.assertNotEqual(
+            self.fixture["source_snapshot"],
+            handoff_builder.snapshot_for_dossier(changed),
+        )
+        with self.assertRaisesRegex(ValueError, "source_snapshot must match dossier"):
+            build_handoff(changed, self.fixture["vacancy"], self.fixture["source_snapshot"])
+
+    def test_parity_rejects_a_fabricated_snapshot(self):
+        handoff, practice = self._valid_handoff_and_practice()
+        fabricated = handoff["source_snapshot"][:-1] + ("0" if handoff["source_snapshot"][-1] != "0" else "1")
+        handoff["source_snapshot"] = fabricated
+        handoff["practice_projection"]["handoff_context"]["source_snapshot"] = fabricated
+        practice["handoff_context"]["source_snapshot"] = fabricated
+        errors = validate_handoff(handoff, self.dossier, self.fixture["vacancy"], practice)
+        self.assertIn("handoff.source_snapshot must match dossier content", errors)
+
     def _valid_handoff_and_practice(self):
         handoff = build_handoff(
             self.dossier,
@@ -71,7 +99,7 @@ class DossierRecruiterPracticeHandoffTests(unittest.TestCase):
         cases = []
 
         changed = copy.deepcopy(practice)
-        changed["handoff_context"]["source_snapshot"] = "snap-dossier-999"
+        changed["handoff_context"]["source_snapshot"] = "snap-dossier-sha256-0000000000000000000000000000000000000000000000000000000000000000"
         cases.append(("source snapshot", handoff, self.dossier, self.fixture["vacancy"], changed,
                       "practice_session.handoff_context.source_snapshot must match handoff.source_snapshot"))
 

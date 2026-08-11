@@ -12,7 +12,6 @@ from pathlib import Path
 
 
 SCHEMA_VERSION = "dossier-recruiter-practice-handoff-v1"
-_SNAPSHOT = re.compile(r"snap-dossier-[0-9]{3}\Z")
 _VACANCY_FIELDS = frozenset({"locale", "safe_context", "requirement"})
 _SAFE_CONTEXT_FIELDS = frozenset({"stage", "vacancy_state", "summary"})
 _REQUIREMENT_FIELDS = frozenset({"summary"})
@@ -33,6 +32,10 @@ def _load_sibling(name: str):
 
 def _load_dossier_validator():
     return _load_sibling("validate_executive_career_dossier")
+
+
+def snapshot_for_dossier(dossier: Mapping[str, object]) -> str:
+    return _load_sibling("dossier_snapshot").snapshot_for_dossier(dossier)
 
 
 def is_safe_handoff_text(value: object, maximum: int) -> bool:
@@ -123,8 +126,8 @@ def build_handoff(
     """Return a deterministic, closed projection for one rank-1 bridge."""
     if not isinstance(dossier, Mapping):
         raise ValueError("dossier must be an object")
-    if not isinstance(source_snapshot, str) or not _SNAPSHOT.fullmatch(source_snapshot):
-        raise ValueError("source_snapshot must use snap-dossier-000 format")
+    if not _load_sibling("dossier_snapshot").is_snapshot(source_snapshot):
+        raise ValueError("source_snapshot must use snap-dossier-sha256 format")
     validator = _load_dossier_validator()
     if validator.validate_dossier(dossier):
         raise ValueError("dossier validation failed")
@@ -187,6 +190,8 @@ def build_handoff(
         raise ValueError("source fact evidence must contain safe summary")
     if not is_safe_handoff_text(fact_summary, 500):
         raise ValueError("source fact evidence contains forbidden safe text")
+    if source_snapshot != snapshot_for_dossier(dossier):
+        raise ValueError("source_snapshot must match dossier content")
 
     fact_ids = ["F-001"]
     practice_projection = {

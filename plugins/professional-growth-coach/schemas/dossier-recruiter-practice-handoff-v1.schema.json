@@ -8,7 +8,7 @@
   "properties": {
     "schema_version": {"const": "dossier-recruiter-practice-handoff-v1"},
     "source": {"const": "executive_career_dossier"},
-    "source_snapshot": {"pattern": "^snap-dossier-[0-9]{3}$"},
+    "source_snapshot": {"type": "string", "pattern": "^snap-dossier-sha256-[0-9a-f]{64}$"},
     "dossier_projection": {"$ref": "#/$defs/dossier_projection"},
     "practice_projection": {"$ref": "#/$defs/practice_projection"},
     "delivery": {"$ref": "#/$defs/delivery"}
@@ -44,7 +44,7 @@
     "requirement": {"type": "object", "additionalProperties": false, "required": ["id", "summary", "fact_ids"], "properties": {"id": {"const": "R-001"}, "summary": {"$ref": "#/$defs/safe_text_280"}, "fact_ids": {"$ref": "#/$defs/fact_ids"}}},
     "question": {"type": "object", "additionalProperties": false, "required": ["id", "kind", "text", "requirement_id", "fact_ids"], "properties": {"id": {"const": "Q-001"}, "kind": {"const": "screen_opening"}, "text": {"$ref": "#/$defs/safe_text_500"}, "requirement_id": {"const": "R-001"}, "fact_ids": {"$ref": "#/$defs/fact_ids"}}},
     "fact": {"type": "object", "additionalProperties": false, "required": ["id", "state", "summary"], "properties": {"id": {"const": "F-001"}, "state": {"enum": ["verified", "candidate_reported"]}, "summary": {"$ref": "#/$defs/safe_text_500"}}},
-    "handoff_context": {"type": "object", "additionalProperties": false, "required": ["source", "source_snapshot", "question_rank", "question_id", "requirement_id", "fact_ids", "claim_ids", "evidence_ids", "draft_only", "external_actions_authorized"], "properties": {"source": {"const": "executive_career_dossier"}, "source_snapshot": {"pattern": "^snap-dossier-[0-9]{3}$"}, "question_rank": {"const": 1}, "question_id": {"const": "Q-001"}, "requirement_id": {"const": "R-001"}, "fact_ids": {"$ref": "#/$defs/fact_ids"}, "claim_ids": {"$ref": "#/$defs/claim_ids"}, "evidence_ids": {"$ref": "#/$defs/evidence_ids"}, "draft_only": {"const": true}, "external_actions_authorized": {"const": false}}},
+    "handoff_context": {"type": "object", "additionalProperties": false, "required": ["source", "source_snapshot", "question_rank", "question_id", "requirement_id", "fact_ids", "claim_ids", "evidence_ids", "draft_only", "external_actions_authorized"], "properties": {"source": {"const": "executive_career_dossier"}, "source_snapshot": {"type": "string", "pattern": "^snap-dossier-sha256-[0-9a-f]{64}$"}, "question_rank": {"const": 1}, "question_id": {"const": "Q-001"}, "requirement_id": {"const": "R-001"}, "fact_ids": {"$ref": "#/$defs/fact_ids"}, "claim_ids": {"$ref": "#/$defs/claim_ids"}, "evidence_ids": {"$ref": "#/$defs/evidence_ids"}, "draft_only": {"const": true}, "external_actions_authorized": {"const": false}}},
     "claim_ids": {"type": "array", "minItems": 1, "maxItems": 10, "uniqueItems": true, "items": {"pattern": "^C-[0-9]{3}$"}},
     "evidence_ids": {"type": "array", "minItems": 1, "maxItems": 10, "uniqueItems": true, "items": {"pattern": "^E-[0-9]{3}$"}},
     "fact_ids": {"type": "array", "minItems": 1, "maxItems": 1, "uniqueItems": true, "items": {"const": "F-001"}},

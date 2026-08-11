@@ -192,7 +192,7 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
         sourced = copy.deepcopy(session)
         sourced["handoff_context"] = {
             "source": "executive_career_dossier",
-            "source_snapshot": "snap-dossier-001",
+            "source_snapshot": "snap-dossier-sha256-873fb8cf4957d72c0aa06a15b253716a3d0397d45997073adb0b8e486decfa25",
             "question_rank": 1,
             "question_id": "Q-001",
             "requirement_id": "R-001",
@@ -219,7 +219,7 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
         sourced["feedback"]["observations"][0]["statement"] = "SOURCE-RAW-FEEDBACK-SENTINEL"
         sourced["handoff_context"] = {
             "source": "executive_career_dossier",
-            "source_snapshot": "snap-dossier-001",
+            "source_snapshot": "snap-dossier-sha256-873fb8cf4957d72c0aa06a15b253716a3d0397d45997073adb0b8e486decfa25",
             "question_rank": 1,
             "question_id": "Q-001",
             "requirement_id": "R-001",
@@ -233,7 +233,7 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
         rendered = renderer.render_session_html(sourced)
 
         for omitted in (
-            "snap-dossier-001",
+            "snap-dossier-sha256-873fb8cf4957d72c0aa06a15b253716a3d0397d45997073adb0b8e486decfa25",
             "Q-001",
             "R-001",
             "F-001",
