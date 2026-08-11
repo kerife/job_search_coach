@@ -18,3 +18,4 @@ dd { margin: .15rem 0 0; font-weight: 600; }
 @media print { html { background: #fff; } .outcome-card { box-shadow: none; } .skip-link { display: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
 @media (forced-colors: active) { .outcome-card, .outcome-boundary { border: 1px solid CanvasText; } .outcome-kicker { color: LinkText; } }
+@media (prefers-contrast: more) { .outcome-card { border: 2px solid var(--ink); box-shadow: none; } .outcome-facts div { border-top: 2px solid var(--ink); } .outcome-boundary { border-left-width: .5rem; color: var(--ink); } }

@@ -88,6 +88,23 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
             anchor = rendered.split('<a class="skip-link"', 1)[1].split("</a>", 1)[0]
             self.assertNotIn(kicker, anchor)
 
+    def test_prefers_contrast_more_reinforces_card_facts_and_boundary(self):
+        rendered = render_outcome_html(
+            load_outcome(FIXTURES / "contact-received-en.json"), today=dt.date(2026, 8, 9)
+        )
+        self.assertRegex(
+            rendered,
+            r"(?s)@media \(prefers-contrast: more\).*?\.outcome-card\s*\{[^}]*border:\s*2px solid var\(--ink\);[^}]*box-shadow:\s*none;",
+        )
+        self.assertRegex(
+            rendered,
+            r"(?s)@media \(prefers-contrast: more\).*?\.outcome-facts div\s*\{[^}]*border-top:\s*2px solid var\(--ink\);",
+        )
+        self.assertRegex(
+            rendered,
+            r"(?s)@media \(prefers-contrast: more\).*?\.outcome-boundary\s*\{[^}]*border-left-width:\s*\.5rem;[^}]*color:\s*var\(--ink\);",
+        )
+
     def test_evidence_count_uses_natural_localized_singular_and_plural_copy(self):
         cases = (
             ("contact-received-en.json", "en", "1 candidate-supplied fact"),

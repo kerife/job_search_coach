@@ -121,6 +121,21 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
         for hook in ("@media print", "prefers-reduced-motion", "forced-colors", "@media (min-width"):
             self.assertIn(hook, first)
 
+    def test_prefers_contrast_more_reinforces_card_facts_and_boundary(self):
+        rendered = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
+        self.assertRegex(
+            rendered,
+            r"(?s)@media \(prefers-contrast: more\).*?\.checkpoint-card\s*\{[^}]*border:\s*2px solid var\(--ink\);[^}]*box-shadow:\s*none;",
+        )
+        self.assertRegex(
+            rendered,
+            r"(?s)@media \(prefers-contrast: more\).*?\.checkpoint-facts div\s*\{[^}]*border-top:\s*2px solid var\(--ink\);",
+        )
+        self.assertRegex(
+            rendered,
+            r"(?s)@media \(prefers-contrast: more\).*?\.checkpoint-boundary\s*\{[^}]*border-left-width:\s*\.5rem;[^}]*color:\s*var\(--ink\);",
+        )
+
     def test_atomic_private_write_mode_and_no_overwrite(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "checkpoint.html"
