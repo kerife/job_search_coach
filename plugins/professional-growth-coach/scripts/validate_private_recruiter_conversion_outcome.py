@@ -5,6 +5,8 @@ import argparse, datetime as dt, json, re, sys
 from collections.abc import Mapping
 from pathlib import Path
 
+from private_prose_safety import safe_diagnostic_field_name
+
 SCHEMA_VERSION = "private-recruiter-conversion-outcome-v1"
 TOP_LEVEL_FIELDS = frozenset({"schema_version", "artifact_kind", "locale", "event_date", "event_type", "source_artifact_id", "source_version", "fact_ids", "observation_state", "next_safe_action", "delivery"})
 EVENTS = frozenset({"contact_received", "reply_received", "referral_received", "screen_requested", "interview_requested", "stop_decision"})
@@ -40,7 +42,7 @@ def load_outcome(path: Path) -> dict:
     return value
 def _closed(value, path, fields, errors):
     if not isinstance(value, Mapping): errors.append(f"{path} must be an object"); return None
-    for key in sorted(set(value) - fields): errors.append(f"{path} has unsupported fields: {key}")
+    for key in sorted(set(value) - fields): errors.append(f"{path} has unsupported fields: {safe_diagnostic_field_name(key)}")
     for key in sorted(fields - set(value)): errors.append(f"missing required field: {path}.{key}")
     return value
 def _strings(value):

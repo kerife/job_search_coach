@@ -67,6 +67,16 @@ class OutcomeContractTests(unittest.TestCase):
         for field in ('source_artifact_id','source_version','fact_ids'):
             bad=copy.deepcopy(item); bad.pop(field); self.assertTrue(validate_outcome(bad),field)
         bad=copy.deepcopy(item); bad['extra']='x'; self.assertTrue(validate_outcome(bad))
+
+    def test_closed_diagnostics_redact_suspicious_unknown_keys(self):
+        item = load_outcome(FIXTURES / 'reply-received-en.json')
+        for key in ('person@example.invalid', '/Users/synthetic/private-case.json', 'token_sk_live_SYNTHETIC'):
+            bad = copy.deepcopy(item); bad[key] = True
+            errors = validate_outcome(bad)
+            rendered = '\n'.join(errors)
+            self.assertIn('outcome has unsupported fields', rendered)
+            self.assertIn('<redacted-field>', rendered)
+            self.assertNotIn(key, rendered)
     def test_mixed_ids_and_wrong_action_fail(self):
         item=load_outcome(FIXTURES/'referral-received-es.json'); item['source_artifact_id']='C-101'; self.assertTrue(validate_outcome(item))
         item=load_outcome(FIXTURES/'referral-received-es.json'); item['fact_ids']=['F-101','C-201']; self.assertTrue(validate_outcome(item))

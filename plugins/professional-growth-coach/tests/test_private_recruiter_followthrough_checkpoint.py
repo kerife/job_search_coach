@@ -10,6 +10,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
 SCRIPT = ROOT / "scripts" / "validate_private_recruiter_followthrough_checkpoint.py"
 SCHEMA = ROOT / "schemas" / "private-recruiter-followthrough-checkpoint-v1.schema.json"
 OUTCOME_SCRIPT = ROOT / "scripts" / "validate_private_recruiter_conversion_outcome.py"
@@ -149,6 +150,15 @@ class FollowthroughCheckpointContractTests(unittest.TestCase):
         for key, value in [("extra", True), ("source_receipt", "D-104"), ("candidate_id", "C-001"), ("raw_event", "raw"), ("answer", "send this"), ("outcome", "guaranteed offer"), ("score", 99)]:
             item = copy.deepcopy(self.valid); item[key] = value
             self.assertTrue(checkpoint.validate_checkpoint(item, self.receipt, as_of=dt.date(2026, 8, 8)), key)
+
+    def test_closed_diagnostics_redact_suspicious_unknown_keys(self):
+        for key in ("person@example.invalid", "/Users/synthetic/private-case.json", "token_sk_live_SYNTHETIC"):
+            item = copy.deepcopy(self.valid); item[key] = True
+            errors = checkpoint.validate_checkpoint(item, self.receipt, as_of=dt.date(2026, 8, 8))
+            rendered = "\n".join(errors)
+            self.assertIn("checkpoint has unsupported fields", rendered)
+            self.assertIn("<redacted-field>", rendered)
+            self.assertNotIn(key, rendered)
 
     def test_delivery_is_immutable(self):
         for key, value in [("draft_only", False), ("external_actions_authorized", True), ("no_message_action", False), ("no_calendar_action", False), ("raw_event_retained", True), ("local_save_mode", "enabled")]:

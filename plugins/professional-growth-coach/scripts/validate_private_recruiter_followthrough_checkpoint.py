@@ -11,6 +11,8 @@ import sys
 from collections.abc import Mapping
 from pathlib import Path
 
+from private_prose_safety import safe_diagnostic_field_name
+
 SCHEMA_VERSION = "private-recruiter-followthrough-checkpoint-v1"
 TOP_LEVEL_FIELDS = frozenset({
     "schema_version", "artifact_kind", "locale", "source_receipt", "action_state",
@@ -110,7 +112,7 @@ def _closed(value: object, path: str, fields: frozenset[str], errors: list[str])
     for key in sorted(fields - set(value)):
         errors.append(f"missing required field: {path}.{key}")
     for key in sorted(set(value) - fields):
-        errors.append(f"{path} has unsupported fields: {key}")
+        errors.append(f"{path} has unsupported fields: {safe_diagnostic_field_name(key)}")
     return value
 
 
