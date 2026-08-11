@@ -1772,6 +1772,24 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
         self.assertEqual(rendered.count('data-priority-card="true"'), 3)
         self.assertEqual(rendered.count('data-dimension-card="true"'), 7)
 
+    def test_dossier_footer_preserves_employment_continuity_in_english_and_spanish(self) -> None:
+        for dossier, expected, absent in (
+            (
+                self.es_dossier,
+                "Este análisis evalúa opciones y desarrollo profesional; no recomienda renunciar ni dejar tu empleo. Tú decides qué sigue.",
+                "This analysis evaluates professional options and development; it does not recommend resigning or leaving your job. You decide what comes next.",
+            ),
+            (
+                self.en_dossier,
+                "This analysis evaluates professional options and development; it does not recommend resigning or leaving your job. You decide what comes next.",
+                "Este análisis evalúa opciones y desarrollo profesional; no recomienda renunciar ni dejar tu empleo. Tú decides qué sigue.",
+            ),
+        ):
+            with self.subTest(locale=dossier["locale"]):
+                rendered = self.renderer.render_dossier_html(dossier)
+                self.assertIn(expected, rendered)
+                self.assertNotIn(absent, rendered)
+
     def test_copy_controls_have_stable_names_and_live_status_targets(self) -> None:
         rendered = self.renderer.render_dossier_html(self.es_dossier)
         buttons = re.findall(

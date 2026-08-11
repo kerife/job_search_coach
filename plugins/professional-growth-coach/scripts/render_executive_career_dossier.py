@@ -161,6 +161,7 @@ COPY = {
         "privacy": "Privacidad y límites",
         "privacy_text": "Este dossier no incluye identidad, contacto, texto crudo del perfil ni analítica privada individual.",
         "action_boundary": "No se realizó ninguna acción en LinkedIn.",
+        "employment_boundary": "Este análisis evalúa opciones y desarrollo profesional; no recomienda renunciar ni dejar tu empleo. Tú decides qué sigue.",
         "first_action": "Primera acción privada",
         "first_question": "Pregunta clave",
         "not_evaluated": "No evaluado",
@@ -247,6 +248,7 @@ COPY = {
         "privacy": "Privacy and limits",
         "privacy_text": "This dossier includes no identity, contact data, raw profile text, or individual private analytics.",
         "action_boundary": "No LinkedIn action was performed.",
+        "employment_boundary": "This analysis evaluates professional options and development; it does not recommend resigning or leaving your job. You decide what comes next.",
         "first_action": "First private action",
         "first_question": "Key question",
         "not_evaluated": "Not evaluated",
@@ -1045,7 +1047,7 @@ def _render_main(dossier: Mapping[str, object], locale: str) -> str:
     {_render_questions(dossier, locale)}
     <div class="dossier-grid section-block">{_render_plan(dossier, locale)}{_render_details(dossier, locale)}</div>
   </main>
-  <footer class="shell footer"><strong>{labels['action_boundary']}</strong></footer>"""
+  <footer class="shell footer"><strong>{labels['action_boundary']}</strong><span class="employment-boundary">{labels['employment_boundary']}</span></footer>"""
 
 
 def build_chat_summary(dossier: Mapping[str, object]) -> str:
