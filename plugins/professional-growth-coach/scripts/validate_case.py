@@ -289,6 +289,7 @@ def _validate_records(
     benchmark_consent: bool,
 ) -> list[str]:
     errors: list[str] = []
+    seen_ids: set[str] = set()
     for index, record in enumerate(records):
         location = f"{field}[{index}]"
         if not isinstance(record, Mapping):
@@ -310,6 +311,12 @@ def _validate_records(
             errors.append(
                 f"{location}.{provenance_field} must be a non-empty string"
             )
+        else:
+            record_id = record[provenance_field]
+            if record_id in seen_ids:
+                errors.append(f"{location}.{provenance_field} must be unique")
+            else:
+                seen_ids.add(record_id)
         if "candidate_id" not in record:
             errors.append(f"{location}.candidate_id is required")
         elif candidate_id is not None and record["candidate_id"] != candidate_id:

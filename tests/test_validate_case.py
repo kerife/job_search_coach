@@ -863,6 +863,97 @@ class ValidateCaseTests(unittest.TestCase):
                     result.stderr,
                 )
 
+    def test_rejects_duplicate_provenance_ids_without_echoing_values(self) -> None:
+        cases = (
+            (
+                "sources",
+                "source_id",
+                [
+                    {
+                        "candidate_id": "candidate-001",
+                        "source_id": "source-001",
+                        "kind": "cv",
+                        "evidence_label": "candidate-reported",
+                    },
+                    {
+                        "candidate_id": "candidate-001",
+                        "source_id": "source-001",
+                        "kind": "article",
+                        "evidence_label": "verified",
+                    },
+                ],
+            ),
+            (
+                "claims",
+                "claim_id",
+                [
+                    {
+                        "candidate_id": "candidate-001",
+                        "claim_id": "claim-001",
+                        "text": "Operates Kubernetes clusters.",
+                        "evidence_label": "verified",
+                    },
+                    {
+                        "candidate_id": "candidate-001",
+                        "claim_id": "claim-001",
+                        "text": "Leads incident response.",
+                        "evidence_label": "inferred",
+                    },
+                ],
+            ),
+            (
+                "interventions",
+                "intervention_id",
+                [
+                    {
+                        "candidate_id": "candidate-001",
+                        "intervention_id": "intervention-001",
+                        "kind": "practice",
+                        "description": "Private rehearsal",
+                        "occurred_at": "2026-08-11",
+                    },
+                    {
+                        "candidate_id": "candidate-001",
+                        "intervention_id": "intervention-001",
+                        "kind": "research",
+                        "description": "Market evidence review",
+                        "occurred_at": "2026-08-12",
+                    },
+                ],
+            ),
+            (
+                "outcomes",
+                "outcome_id",
+                [
+                    {
+                        "candidate_id": "candidate-001",
+                        "outcome_id": "outcome-001",
+                        "kind": "screen",
+                        "value": "Observed",
+                        "observed_at": "2026-08-11",
+                    },
+                    {
+                        "candidate_id": "candidate-001",
+                        "outcome_id": "outcome-001",
+                        "kind": "interview",
+                        "value": "Advanced",
+                        "observed_at": "2026-08-12",
+                    },
+                ],
+            ),
+        )
+        for field, id_field, records in cases:
+            with self.subTest(field=field):
+                case = valid_case()
+                case[field] = records
+                result = run_validator(case)
+                self.assertEqual(result.returncode, 2)
+                self.assertIn(
+                    f"{field}[1].{id_field} must be unique",
+                    result.stderr,
+                )
+                self.assertNotIn(records[0][id_field], result.stderr)
+
     def test_cli_rejects_invalid_utf8_without_a_traceback(self) -> None:
         result = run_validator_bytes(b'{"candidate_id":"\xff"}')
 
