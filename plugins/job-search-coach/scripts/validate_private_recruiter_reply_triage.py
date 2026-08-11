@@ -277,7 +277,7 @@ def validate_triage(value: object) -> list[str]:
                     "local_save_mode": "disabled",
                 }
                 for field, value in expected.items():
-                    if handoff_map.get(field) != value:
+                    if type(handoff_map.get(field)) is not type(value) or handoff_map.get(field) != value:
                         errors.append(f"handoff.{field} has invalid value" if field in {"module", "scope", "input_mode"} else f"handoff.{field} has immutable value")
                 packet = _closed(handoff_map.get("packet"), "handoff.packet", frozenset({"context_summary", "source_snapshot", "fact_id", "question_id", "prep_scope"}), errors)
                 reentry = _closed(
@@ -312,7 +312,7 @@ def validate_triage(value: object) -> list[str]:
                         "score_state": "unknown",
                     }
                     for field, expected in immutable_reentry.items():
-                        if reentry.get(field) != expected:
+                        if type(reentry.get(field)) is not type(expected) or reentry.get(field) != expected:
                             errors.append(f"handoff.reentry_packet.{field} has immutable value")
                     reentry_context = _text(reentry.get("context_summary"), "handoff.reentry_packet.context_summary", errors, maximum=280)
                     if not isinstance(reentry.get("source_snapshot"), str) or not re.fullmatch(r"snap-triage-[0-9]{3}", reentry.get("source_snapshot", "")):
@@ -354,7 +354,7 @@ def validate_triage(value: object) -> list[str]:
             "local_save_mode": "disabled",
         }
         for field, expected in immutable_values.items():
-            if delivery.get(field) != expected:
+            if type(delivery.get(field)) is not type(expected) or delivery.get(field) != expected:
                 errors.append(f"delivery.{field} has immutable value")
 
     _validate_prose_safety(triage, errors)

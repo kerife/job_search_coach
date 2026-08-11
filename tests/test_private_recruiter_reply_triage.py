@@ -569,6 +569,37 @@ class PrivateRecruiterReplyTriageContractTests(unittest.TestCase):
                 triage["delivery"][field] = value
                 self.assert_rejected(triage, f"delivery.{field} has immutable value")
 
+    def test_delivery_rejects_integer_boolean_coercion(self) -> None:
+        for field, value in {
+            "draft_only": 1,
+            "external_actions_authorized": 0,
+            "no_calendar_action": 1,
+            "raw_reply_retained": 0,
+        }.items():
+            with self.subTest(field=field):
+                triage = copy.deepcopy(self.fixtures["ready-en.json"])
+                triage["delivery"][field] = value
+                self.assert_rejected(triage, f"delivery.{field} has immutable value")
+
+    def test_handoff_rejects_integer_boolean_coercion(self) -> None:
+        for field, value in {
+            "auto_start": 0,
+            "external_actions": 0,
+            "raw_reply_retained": 0,
+        }.items():
+            with self.subTest(field=field):
+                triage = copy.deepcopy(self.fixtures["ready-en.json"])
+                triage["handoff"][field] = value
+                self.assert_rejected(triage, f"handoff.{field} has immutable value")
+
+    def test_handoff_reentry_rejects_integer_boolean_coercion(self) -> None:
+        triage = copy.deepcopy(self.fixtures["ready-en.json"])
+        triage["handoff"]["reentry_packet"]["manual_reentry_required"] = 1
+        self.assert_rejected(
+            triage,
+            "handoff.reentry_packet.manual_reentry_required has immutable value",
+        )
+
     def test_malformed_blocked_claim_is_rejected_without_a_validator_crash(self) -> None:
         triage = copy.deepcopy(self.fixtures["clarify-es.json"])
         triage["blocked_claims"] = [{"unexpected": "object"}]
