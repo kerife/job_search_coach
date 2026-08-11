@@ -14,7 +14,27 @@ ASSET_NAMES = (
     "executive-career-dossier-v1.css",
     "recruiter-practice-session-v1.css",
     "private-recruiter-reply-triage-v1.css",
+    "private-recruiter-followthrough-checkpoint-v1.css",
+    "private-recruiter-conversion-outcome-v1.css",
 )
+EXPECTED_THEME_ASSET_NAMES = {
+    "executive-career-dossier-v1.css",
+    "recruiter-practice-session-v1.css",
+    "private-recruiter-reply-triage-v1.css",
+    "private-recruiter-followthrough-checkpoint-v1.css",
+    "private-recruiter-conversion-outcome-v1.css",
+}
+
+
+def _theme_asset_names() -> set[str]:
+    text = THEME.read_text(encoding="utf-8")
+    return set(
+        re.findall(
+            r"^### `plugins/professional-growth-coach/assets/([^`]+\.css)`$",
+            text,
+            re.MULTILINE,
+        )
+    )
 
 
 def _theme_dump(name: str) -> str:
@@ -27,6 +47,17 @@ def _theme_dump(name: str) -> str:
 
 
 class SuperdesignThemeAssetParityTests(unittest.TestCase):
+    def test_theme_dump_set_covers_every_shipped_css_asset(self):
+        self.assertEqual(
+            _theme_asset_names(),
+            EXPECTED_THEME_ASSET_NAMES,
+        )
+        self.assertEqual(set(ASSET_NAMES), EXPECTED_THEME_ASSET_NAMES)
+        self.assertEqual(
+            {path.name for path in ASSETS.glob("*.css")},
+            EXPECTED_THEME_ASSET_NAMES,
+        )
+
     def test_private_css_dumps_match_shipped_assets(self):
         for name in ASSET_NAMES:
             with self.subTest(name=name):
