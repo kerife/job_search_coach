@@ -92,6 +92,7 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
                 )
                 self.assertIn(expected[locale]["action"], rendered)
                 self.assertIn(expected[locale]["boundary"], rendered)
+                self.assertNotIn('class="checkpoint-employment-boundary"', rendered)
 
         declined = copy.deepcopy(self.item)
         declined.update(
@@ -112,6 +113,42 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
                 )
                 self.assertIn(expected[locale]["action"], rendered)
                 self.assertIn(expected[locale]["boundary"], rendered)
+
+    def test_normal_checkpoints_show_employment_continuity_once_in_english_and_spanish(self):
+        employment_boundary = {
+            "en": "This analysis evaluates professional options; it does not recommend resigning, leaving a job, or stopping your job search; you decide what comes next.",
+            "es": "Este análisis evalúa opciones profesionales; no recomienda renunciar, dejar un empleo ni abandonar tu búsqueda; tú decides qué sigue.",
+        }
+        checkpoint_boundary = {
+            "en": "Candidate-supplied checkpoint only. No external action was taken.",
+            "es": "Solo punto de control reportado por la persona. No se realizó ninguna acción externa.",
+        }
+        normal_states = (
+            ("accepted", "unknown", "manual_reenter_private_prep"),
+            ("deferred", "unknown", "clarify_context_before_reply"),
+            ("declined", "unknown", "record_stop_decision"),
+            ("completed", "screen_prepared", "route_to_prepare-role-interviews"),
+        )
+        for state, event, action in normal_states:
+            for locale in ("en", "es"):
+                with self.subTest(state=state, locale=locale):
+                    item = copy.deepcopy(self.item)
+                    item.update(
+                        locale=locale,
+                        action_state=state,
+                        next_measurement_event=event,
+                        next_safe_action=action,
+                    )
+                    rendered = renderer.render_checkpoint_html(
+                        item, self.receipt, as_of=dt.date(2026, 8, 8)
+                    )
+                    self.assertEqual(rendered.count(employment_boundary[locale]), 1)
+                    self.assertEqual(
+                        rendered.count(checkpoint_boundary[locale]),
+                        1,
+                    )
+                    self.assertIn('class="checkpoint-employment-boundary"', rendered)
+                    self.assertNotIn("no-print", rendered)
 
     def test_css_accessibility_hooks_and_deterministic_render(self):
         first = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))

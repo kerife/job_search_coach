@@ -32,7 +32,24 @@ ACTION_LABELS = {
     "en": {"clarify_context_before_reply": "Clarify context before replying", "prepare_fact_checked_summary": "Prepare a fact-checked summary", "route_to_prepare-role-interviews": "Route to interview preparation", "record_stop_decision": "Record the stop decision"},
     "es": {"clarify_context_before_reply": "Aclara el contexto antes de responder", "prepare_fact_checked_summary": "Prepara un resumen verificado", "route_to_prepare-role-interviews": "Dirige a preparación de entrevista", "record_stop_decision": "Registra la decisión de detenerse"},
 }
-COPY = {"en": {"title": "Private recruiter outcome receipt", "skip": "Skip to main content", "kicker": "Private observation receipt", "heading": "Recruiter conversion outcome", "event": "Observed event", "date": "Event date", "action": "Safe next step", "evidence": "Evidence count", "boundary": "Candidate-supplied observation only. No external action was taken.", "save": "Local saving is disabled."}, "es": {"title": "Recibo privado de resultado del reclutador", "skip": "Saltar al contenido principal", "kicker": "Recibo privado de observación", "heading": "Resultado de conversión del reclutador", "event": "Evento observado", "date": "Fecha del evento", "action": "Siguiente paso seguro", "evidence": "Evidencia", "boundary": "Solo observación reportada por la persona. No se realizó ninguna acción externa.", "save": "El guardado local está deshabilitado."}}
+COPY = {
+    "en": {
+        "title": "Private recruiter outcome receipt", "skip": "Skip to main content",
+        "kicker": "Private observation receipt", "heading": "Recruiter conversion outcome",
+        "event": "Observed event", "date": "Event date", "action": "Safe next step",
+        "evidence": "Evidence count", "boundary": "Candidate-supplied observation only. No external action was taken.",
+        "employment_boundary": "This analysis evaluates professional options; it does not recommend resigning, leaving a job, or stopping your job search; you decide what comes next.",
+        "save": "Local saving is disabled.",
+    },
+    "es": {
+        "title": "Recibo privado de resultado del reclutador", "skip": "Saltar al contenido principal",
+        "kicker": "Recibo privado de observación", "heading": "Resultado de conversión del reclutador",
+        "event": "Evento observado", "date": "Fecha del evento", "action": "Siguiente paso seguro",
+        "evidence": "Evidencia", "boundary": "Solo observación reportada por la persona. No se realizó ninguna acción externa.",
+        "employment_boundary": "Este análisis evalúa opciones profesionales; no recomienda renunciar, dejar un empleo ni abandonar tu búsqueda; tú decides qué sigue.",
+        "save": "El guardado local está deshabilitado.",
+    },
+}
 STOP_COPY = {
     "en": {
         "action": "Record this recruiter-process outcome privately; do not continue this preparation path.",
@@ -88,7 +105,7 @@ def render_outcome_html(item: Mapping[str, object], *, today: dt.date | None = N
         "{{KICKER}}": labels["kicker"], "{{HEADING}}": labels["heading"], "{{EVENT_LABEL}}": labels["event"],
         "{{EVENT}}": EVENT_LABELS[locale][event], "{{DATE_LABEL}}": labels["date"], "{{DATE}}": html.escape(value["event_date"]),
         "{{ACTION_LABEL}}": labels["action"], "{{ACTION}}": stop_copy["action"] if stop_copy else ACTION_LABELS[locale][action], "{{EVIDENCE_LABEL}}": labels["evidence"],
-        "{{EVIDENCE}}": _evidence_count_copy(locale, len(value["fact_ids"])), "{{BOUNDARY}}": stop_copy["boundary"] if stop_copy else labels["boundary"], "{{SAVE}}": labels["save"],
+        "{{EVIDENCE}}": _evidence_count_copy(locale, len(value["fact_ids"])), "{{BOUNDARY}}": stop_copy["boundary"] if stop_copy else labels["boundary"], "{{EMPLOYMENT_BOUNDARY}}": "" if stop_copy else f'<p class="outcome-employment-boundary">{labels["employment_boundary"]}</p>', "{{SAVE}}": labels["save"],
     }
     for token, replacement in replacements.items(): template = template.replace(token, replacement)
     if re.search(r"\{\{[A-Z_]+\}\}", template): raise RuntimeError("outcome template token contract is invalid")

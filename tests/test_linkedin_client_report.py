@@ -1333,6 +1333,45 @@ class LinkedInClientReportDecisionTests(unittest.TestCase):
                     validator.validate_client_report(report, self.bundle("scenario-a.json")),
                 )
 
+    def test_uncontrolled_claim_errors_do_not_echo_supplied_values(self) -> None:
+        baseline = self.report("scenario-a-es.md")
+        claim_fields = (
+            (
+                "headline",
+                "- Claims: `RELIABILITY`, `TECHNICAL_SCOPE`",
+                "- Claims: `{sentinel}`",
+            ),
+            (
+                "about_opening",
+                "- Claims: `AUTOMATION`",
+                "- Claims: `{sentinel}`",
+            ),
+            (
+                "experience_bullet",
+                "- Claims: ninguno",
+                "- Claims: `{sentinel}`",
+            ),
+        )
+        for sentinel in ("person@example.com", "EVID-JSC1-PRIVATE"):
+            for section, original, replacement in claim_fields:
+                with self.subTest(sentinel=sentinel, section=section):
+                    report = self.replace_once(
+                        baseline,
+                        original,
+                        replacement.format(sentinel=sentinel),
+                    )
+                    errors = validator.validate_client_report(
+                        report,
+                        self.bundle("scenario-a.json"),
+                    )
+                    self.assertTrue(
+                        any(
+                            f"copy {section} has uncontrolled claim" in error
+                            for error in errors
+                        )
+                    )
+                    self.assertNotIn(sentinel, "\n".join(errors))
+
     def test_actual_copy_and_claims_cannot_expose_a_blocked_claim_code(self) -> None:
         baseline = self.report("scenario-a-es.md")
         mutants = (

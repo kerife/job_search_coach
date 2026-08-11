@@ -2319,7 +2319,7 @@ def _validate_report_copies(
             )
         for claim in copy_block.claims:
             if claim not in CLAIM_TOKENS:
-                errors.append(f"copy {copy_block.section} has uncontrolled claim {claim}")
+                errors.append(f"copy {copy_block.section} has uncontrolled claim")
         for claim in sorted(all_fact_claim_tokens):
             if (
                 _normalized_code_is_exposed(copy_block.actual_copy, claim)

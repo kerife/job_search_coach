@@ -38,7 +38,7 @@ LABELS = {
         "title": "Private recruiter follow-through checkpoint", "skip": "Skip to checkpoint",
         "kicker": "Private candidate checkpoint", "heading": "Recruiter follow-through checkpoint",
         "state": "Action state", "event": "Next measurement event", "date": "Observed date", "action": "Safe next step",
-        "boundary": "Candidate-supplied checkpoint only. No external action was taken.", "save": "Local saving is disabled.",
+        "boundary": "Candidate-supplied checkpoint only. No external action was taken.", "employment_boundary": "This analysis evaluates professional options; it does not recommend resigning, leaving a job, or stopping your job search; you decide what comes next.", "save": "Local saving is disabled.",
         "states": {"accepted": "Accepted", "deferred": "Deferred", "declined": "Declined", "completed": "Completed"},
         "events": {"screen_prepared": "Screen prepared", "screen_attended": "Screen attended", "interview_requested": "Interview requested", "stop_decision": "Stop decision", "unknown": "Not specified"},
         "actions": {"manual_reenter_private_prep": "Re-enter private preparation manually", "clarify_context_before_reply": "Clarify context before replying", "record_stop_decision": "Record the stop decision", "route_to_prepare-role-interviews": "Route to interview preparation"},
@@ -47,7 +47,7 @@ LABELS = {
         "title": "Punto de control privado de seguimiento del reclutador", "skip": "Ir al punto de control",
         "kicker": "Punto de control privado reportado por la persona", "heading": "Seguimiento del reclutador",
         "state": "Estado de acción", "event": "Siguiente evento de medición", "date": "Fecha observada", "action": "Siguiente paso seguro",
-        "boundary": "Solo punto de control reportado por la persona. No se realizó ninguna acción externa.", "save": "El guardado local está deshabilitado.",
+        "boundary": "Solo punto de control reportado por la persona. No se realizó ninguna acción externa.", "employment_boundary": "Este análisis evalúa opciones profesionales; no recomienda renunciar, dejar un empleo ni abandonar tu búsqueda; tú decides qué sigue.", "save": "El guardado local está deshabilitado.",
         "states": {"accepted": "Aceptado", "deferred": "Pospuesto", "declined": "Rechazado", "completed": "Completado"},
         "events": {"screen_prepared": "Filtro preparado", "screen_attended": "Filtro atendido", "interview_requested": "Solicitaron entrevista", "stop_decision": "Decisión de detenerse", "unknown": "No especificado"},
         "actions": {"manual_reenter_private_prep": "Reingresa manualmente a la preparación privada", "clarify_context_before_reply": "Aclara el contexto antes de responder", "record_stop_decision": "Registra la decisión de detenerse", "route_to_prepare-role-interviews": "Dirige a preparación de entrevista"},
@@ -98,7 +98,7 @@ def render_checkpoint_html(item: Mapping[str, object], receipt: Mapping[str, obj
         "{{EVENT_LABEL}}": labels["event"], "{{EVENT}}": labels["events"][value["next_measurement_event"]],
         "{{DATE_LABEL}}": labels["date"], "{{DATE}}": html.escape(value["observed_date"]),
         "{{ACTION_LABEL}}": labels["action"], "{{ACTION}}": stop_copy["action"] if stop_copy else labels["actions"][value["next_safe_action"]],
-        "{{BOUNDARY}}": stop_copy["boundary"] if stop_copy else labels["boundary"], "{{SAVE}}": labels["save"],
+        "{{BOUNDARY}}": stop_copy["boundary"] if stop_copy else labels["boundary"], "{{EMPLOYMENT_BOUNDARY}}": "" if stop_copy else f'<p class="checkpoint-employment-boundary">{labels["employment_boundary"]}</p>', "{{SAVE}}": labels["save"],
     }
     for token, replacement in replacements.items(): template = template.replace(token, replacement)
     if re.search(r"\{\{[A-Z_]+\}\}", template): raise RuntimeError("checkpoint template token contract is invalid")

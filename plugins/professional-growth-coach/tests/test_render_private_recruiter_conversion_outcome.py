@@ -69,6 +69,34 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
                 rendered = render_outcome_html(localized, today=dt.date(2026, 8, 9))
                 self.assertIn(expected[locale]["action"], rendered)
                 self.assertIn(expected[locale]["boundary"], rendered)
+                self.assertNotIn('class="outcome-employment-boundary"', rendered)
+
+    def test_normal_receipts_show_employment_continuity_once_in_english_and_spanish(self):
+        employment_boundary = {
+            "en": "This analysis evaluates professional options; it does not recommend resigning, leaving a job, or stopping your job search; you decide what comes next.",
+            "es": "Este análisis evalúa opciones profesionales; no recomienda renunciar, dejar un empleo ni abandonar tu búsqueda; tú decides qué sigue.",
+        }
+        observation_boundary = {
+            "en": "Candidate-supplied observation only. No external action was taken.",
+            "es": "Solo observación reportada por la persona. No se realizó ninguna acción externa.",
+        }
+        normal_fixtures = sorted(
+            path for path in FIXTURES.glob("*.json") if path.name != "stop-decision-en.json"
+        )
+        for path in normal_fixtures:
+            item = load_outcome(path)
+            for locale in ("en", "es"):
+                with self.subTest(fixture=path.name, locale=locale):
+                    localized = copy.deepcopy(item)
+                    localized["locale"] = locale
+                    rendered = render_outcome_html(localized, today=dt.date(2026, 8, 9))
+                    self.assertEqual(rendered.count(employment_boundary[locale]), 1)
+                    self.assertEqual(
+                        rendered.count(observation_boundary[locale]),
+                        1,
+                    )
+                    self.assertIn('class="outcome-employment-boundary"', rendered)
+                    self.assertNotIn("no-print", rendered)
 
     def test_localized_skip_link_targets_main_content(self):
         expected = {
