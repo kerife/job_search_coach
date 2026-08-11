@@ -140,6 +140,13 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
             rendered.index("@media (forced-colors: active)"),
         )
 
+    def test_print_keeps_checkpoint_card_atomic(self):
+        rendered = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
+        self.assertRegex(
+            rendered,
+            r"(?s)@media print.*?\.checkpoint-card\s*\{[^}]*break-inside:\s*avoid;[^}]*page-break-inside:\s*avoid;",
+        )
+
     def test_atomic_private_write_mode_and_no_overwrite(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "checkpoint.html"

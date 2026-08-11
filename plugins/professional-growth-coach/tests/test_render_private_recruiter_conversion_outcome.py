@@ -109,6 +109,15 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
             rendered.index("@media (forced-colors: active)"),
         )
 
+    def test_print_keeps_outcome_card_atomic(self):
+        rendered = render_outcome_html(
+            load_outcome(FIXTURES / "contact-received-en.json"), today=dt.date(2026, 8, 9)
+        )
+        self.assertRegex(
+            rendered,
+            r"(?s)@media print.*?\.outcome-card\s*\{[^}]*break-inside:\s*avoid;[^}]*page-break-inside:\s*avoid;",
+        )
+
     def test_evidence_count_uses_natural_localized_singular_and_plural_copy(self):
         cases = (
             ("contact-received-en.json", "en", "1 candidate-supplied fact"),
