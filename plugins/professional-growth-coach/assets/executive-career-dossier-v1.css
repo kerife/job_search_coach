@@ -500,7 +500,11 @@ details summary {
   details { display: block; }
   details > * { display: block !important; }
   .card { animation: none; transition: none; }
-  .footer { padding-bottom: 0; }
+  .footer {
+    padding-bottom: 0;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 }
 
 @media (forced-colors: active) {

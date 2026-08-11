@@ -99,6 +99,10 @@
     transition: none !important;
     transform: none !important;
   }
+  .private-recruiter-triage-document .triage-footer {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 }
 
 @media (forced-colors: active) {

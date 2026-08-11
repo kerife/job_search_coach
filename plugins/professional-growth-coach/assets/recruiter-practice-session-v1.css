@@ -309,4 +309,8 @@ html { color-scheme: light; background: var(--paper); }
     transform: none !important;
   }
   .recruiter-practice-document .practice-session { box-shadow: none; }
+  .recruiter-practice-document .practice-footer {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 }

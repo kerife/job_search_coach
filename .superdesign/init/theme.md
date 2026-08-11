@@ -531,7 +531,11 @@ details summary {
   details { display: block; }
   details > * { display: block !important; }
   .card { animation: none; transition: none; }
-  .footer { padding-bottom: 0; }
+  .footer {
+    padding-bottom: 0;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 }
 
 @media (forced-colors: active) {
@@ -875,6 +879,10 @@ html { color-scheme: light; background: var(--paper); }
     transform: none !important;
   }
   .recruiter-practice-document .practice-session { box-shadow: none; }
+  .recruiter-practice-document .practice-footer {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 }
 ```
 
@@ -982,6 +990,10 @@ html { color-scheme: light; background: var(--paper); }
     transition: none !important;
     transform: none !important;
   }
+  .private-recruiter-triage-document .triage-footer {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 }
 
 @media (forced-colors: active) {
@@ -1045,6 +1057,7 @@ dt { color: var(--muted); font-size: .85rem; font-weight: 700; }
 dd { margin: .15rem 0 0; font-weight: 600; }
 .checkpoint-boundary { border-left: .25rem solid var(--accent); margin: 0; padding: .75rem 1rem; color: var(--muted); }
 .checkpoint-footer { max-width: 48rem; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 3rem) 2rem; color: var(--muted); font-size: .85rem; }
+.checkpoint-employment-boundary { margin: .5rem 0 0; color: var(--ink); font-weight: 600; }
 @media (min-width: 40rem) { .checkpoint-facts { grid-template-columns: 1fr 1fr; } }
 @media screen and (prefers-color-scheme: dark) {
   :root { color-scheme: dark; --ink: #f3f6ff; --muted: #b8c4d8; --surface: #182235; --accent: #8eb2ff; --line: #5f718e; }
@@ -1052,7 +1065,7 @@ dd { margin: .15rem 0 0; font-weight: 600; }
   .checkpoint-card { box-shadow: 0 .5rem 2rem rgb(0 0 0 / .35); }
 }
 @page { size: auto; margin: 14mm; }
-@media print { html { background: #fff; } .checkpoint-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
+@media print { html { background: #fff; } .checkpoint-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .checkpoint-footer { break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
 @media (prefers-contrast: more) { .checkpoint-card { border: 2px solid var(--ink); box-shadow: none; } .checkpoint-facts div { border-top: 2px solid var(--ink); } .checkpoint-boundary { border-left-width: .5rem; color: var(--ink); } }
 @media (forced-colors: active) { .checkpoint-card { background: Canvas; color: CanvasText; border: 1px solid CanvasText; } .checkpoint-boundary { color: CanvasText; border: 1px solid CanvasText; border-left-width: .25rem; } .checkpoint-kicker { color: LinkText; } }
@@ -1077,6 +1090,7 @@ dt { color: var(--muted); font-size: .85rem; font-weight: 700; }
 dd { margin: .15rem 0 0; font-weight: 600; }
 .outcome-boundary { border-left: .25rem solid var(--accent); margin: 0; padding: .75rem 1rem; color: var(--muted); }
 .outcome-footer { max-width: 48rem; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 3rem) 2rem; color: var(--muted); font-size: .85rem; }
+.outcome-employment-boundary { margin: .5rem 0 0; color: var(--ink); font-weight: 600; }
 @media (min-width: 40rem) { .outcome-facts { grid-template-columns: 1fr 1fr; } }
 @media screen and (prefers-color-scheme: dark) {
   :root { color-scheme: dark; --ink: #f3f6ff; --muted: #b8c4d8; --surface: #182235; --accent: #8eb2ff; --line: #5f718e; }
@@ -1084,7 +1098,7 @@ dd { margin: .15rem 0 0; font-weight: 600; }
   .outcome-card { box-shadow: 0 .5rem 2rem rgb(0 0 0 / .35); }
 }
 @page { size: auto; margin: 14mm; }
-@media print { html { background: #fff; } .outcome-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
+@media print { html { background: #fff; } .outcome-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .outcome-footer { break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
 @media (prefers-contrast: more) { .outcome-card { border: 2px solid var(--ink); box-shadow: none; } .outcome-facts div { border-top: 2px solid var(--ink); } .outcome-boundary { border-left-width: .5rem; color: var(--ink); } }
 @media (forced-colors: active) { .outcome-card { background: Canvas; color: CanvasText; border: 1px solid CanvasText; } .outcome-boundary { color: CanvasText; border: 1px solid CanvasText; border-left-width: .25rem; } .outcome-kicker { color: LinkText; } }
