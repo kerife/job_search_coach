@@ -74,7 +74,7 @@ def _validate(
         if "maximum" in schema and value > schema["maximum"]:
             errors.append(f"{path}: number above maximum")
     if "pattern" in schema and isinstance(value, str):
-        if re.fullmatch(str(schema["pattern"]), value) is None:
+        if re.search(str(schema["pattern"]), value) is None:
             errors.append(f"{path}: pattern mismatch")
     if isinstance(value, str):
         if "minLength" in schema and len(value) < schema["minLength"]:

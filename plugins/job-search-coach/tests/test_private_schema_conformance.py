@@ -336,6 +336,23 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
                 for error in validate_schema_instance("E-001", nullable_pattern)
             )
         )
+
+    def test_dependency_free_checker_uses_json_schema_pattern_search_semantics(self):
+        self.assertEqual(
+            [],
+            validate_schema_instance(
+                "prefix-abc-suffix", {"type": "string", "pattern": "abc"}
+            ),
+        )
+        self.assertTrue(
+            any(
+                "pattern mismatch" in error
+                for error in validate_schema_instance(
+                    "prefix-CAP-001-suffix",
+                    {"type": "string", "pattern": "^CAP-[0-9]{3}$"},
+                )
+            )
+        )
         string_only_pattern = {"type": "string", "pattern": "^CAP-[0-9]{3}$"}
         self.assertTrue(
             any(
