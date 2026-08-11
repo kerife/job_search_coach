@@ -473,7 +473,11 @@ def _render_next_action(
     </section>'''
 
 
-def _render_main(session: Mapping[str, object], locale: str) -> str:
+def _render_main(
+    session: Mapping[str, object], ui_locale: str, content_locale: str | None = None
+) -> str:
+    locale = ui_locale
+    dynamic_lang = "" if content_locale is None else f' lang="{content_locale}"'
     labels = COPY[locale]
     context = _mapping(session["safe_context"])
     requirement = _mapping(session["requirement"])
@@ -509,24 +513,24 @@ def _render_main(session: Mapping[str, object], locale: str) -> str:
       <p id="practice-session-state" class="state-chip state-chip--{html.escape(state)}">{labels[state]}</p>
       <section class="practice-context" aria-labelledby="context-title">
         <h2 id="context-title">{labels["context"]}</h2>
-        <p class="practice-summary">{html.escape(_text(context["summary"]))}</p>
+        <p class="practice-summary"{dynamic_lang}>{html.escape(_text(context["summary"]))}</p>
         <p class="practice-label">{labels["focus"]}</p>
-        <p class="practice-summary">{html.escape(_text(requirement["summary"]))}</p>
+        <p class="practice-summary"{dynamic_lang}>{html.escape(_text(requirement["summary"]))}</p>
       </section>
       <section class="practice-prompt" aria-labelledby="prompt-title">
         <h2 id="prompt-title">{labels["prompt"]}</h2>
         <p class="practice-label">{labels["question_purpose"]}</p>
         <p class="practice-purpose">{labels["purpose_" + _text(question["kind"])]}</p>
-        <p id="practice-question-text">{html.escape(_text(question["text"]))}</p>
+        <p id="practice-question-text"{dynamic_lang}>{html.escape(_text(question["text"]))}</p>
       </section>
       {practice_sequence}
       <section class="practice-evidence" aria-labelledby="evidence-title">
         <h2 id="evidence-title">{labels["evidence"]}</h2>
-        <ul><li><strong>{labels[_text(fact["state"])]}:</strong> {html.escape(_text(fact["summary"]))}</li></ul>
+        <ul><li><strong>{labels[_text(fact["state"])]}:</strong> <span{dynamic_lang}>{html.escape(_text(fact["summary"]))}</span></li></ul>
       </section>
       <aside class="practice-boundary" aria-labelledby="boundary-title">
         <h2 id="boundary-title">{labels["boundary"]}</h2>
-        <p>{labels["boundary_text"]} {html.escape(_text(rubric["criterion"]))}</p>
+        <p>{labels["boundary_text"]} <span{dynamic_lang}>{html.escape(_text(rubric["criterion"]))}</span></p>
       </aside>
     </section>
   </main>
@@ -535,7 +539,9 @@ def _render_main(session: Mapping[str, object], locale: str) -> str:
 
 def render_session_html(session: Mapping[str, object]) -> str:
     validated = _validate(session)
-    locale = _text(validated["locale"])
+    is_v2 = _text(validated["schema_version"]) == VALIDATOR.V2_SCHEMA_VERSION
+    locale = _text(validated["ui_locale"] if is_v2 else validated["locale"])
+    content_locale = _text(validated["content_locale"]) if is_v2 else None
     template = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, TEMPLATE_PATH)
     static_tokens = STATIC_TEMPLATE_TOKEN.findall(template)
     if sorted(static_tokens) != sorted(TEMPLATE_TOKENS):
@@ -545,14 +551,18 @@ def render_session_html(session: Mapping[str, object]) -> str:
         "{{TITLE}}": COPY[locale]["title"],
         "{{INLINE_CSS}}": ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, CSS_PATH),
         "{{HEADER}}": _render_header(locale),
-        "{{MAIN}}": _render_main(validated, locale),
+        "{{MAIN}}": _render_main(validated, locale, content_locale),
     }
     return STATIC_TEMPLATE_TOKEN.sub(lambda match: substitutions[match.group(0)], template)
 
 
 def build_chat_summary(session: Mapping[str, object]) -> str:
     validated = _validate(session)
-    locale = _text(validated["locale"])
+    locale = _text(
+        validated["ui_locale"]
+        if _text(validated["schema_version"]) == VALIDATOR.V2_SCHEMA_VERSION
+        else validated["locale"]
+    )
     labels = COPY[locale]
     question = _mapping(validated["question"])
     return f'{labels["summary"]}{_text(question["text"])} {labels["footer"]}'
@@ -672,7 +682,11 @@ def write_session_html(session_path: Path, output_path: Path, *, force: bool = F
     return RenderReceipt(
         artifact_path=output,
         artifact_type="text/html",
-        locale=_text(validated["locale"]),
+        locale=_text(
+            validated["ui_locale"]
+            if _text(validated["schema_version"]) == VALIDATOR.V2_SCHEMA_VERSION
+            else validated["locale"]
+        ),
         chat_summary=build_chat_summary(validated),
     )
 

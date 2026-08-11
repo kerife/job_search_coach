@@ -250,6 +250,22 @@ class RecruiterPracticeSessionContractTests(unittest.TestCase):
             with self.subTest(state=state["state"]):
                 self.assert_accepted(state)
 
+    def test_v2_requires_separate_ui_and_content_locales_without_changing_v1(self) -> None:
+        v2 = copy.deepcopy(self.awaiting_session)
+        v2["schema_version"] = "recruiter-practice-session-v2"
+        v2["ui_locale"] = "en"
+        v2["content_locale"] = "es"
+        del v2["locale"]
+        self.assert_accepted(v2)
+
+        missing_content_locale = copy.deepcopy(v2)
+        del missing_content_locale["content_locale"]
+        self.assert_rejected(missing_content_locale, "missing required field: content_locale")
+
+        v1_with_v2_locales = copy.deepcopy(self.awaiting_session)
+        v1_with_v2_locales.update({"ui_locale": "en", "content_locale": "es"})
+        self.assert_rejected(v1_with_v2_locales, "session has unsupported fields: content_locale, ui_locale")
+
     def test_session_without_an_observed_answer_has_exactly_unknown_score(self) -> None:
         invalid = copy.deepcopy(self.awaiting_session)
         invalid["feedback"]["score"] = "75"

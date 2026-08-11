@@ -98,6 +98,24 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         triage_snapshot["handoff_context"]["source_snapshot"] = "snap-triage-001"
         self.assertEqual([], validate_schema_instance(triage_snapshot, schema))
 
+    def test_practice_v2_schema_accepts_independent_ui_and_content_locales(self):
+        fixture = json.loads(
+            (ROOT.parent.parent / "tests/evals/with-skill/fixtures/recruiter-practice-session/session-es.json").read_text(encoding="utf-8")
+        )
+        fixture["schema_version"] = "recruiter-practice-session-v2"
+        fixture["ui_locale"] = "en"
+        fixture["content_locale"] = "es"
+        del fixture["locale"]
+
+        self.assertEqual([], validate_session(fixture))
+        self.assertEqual(
+            [],
+            validate_schema_instance(
+                fixture,
+                self._schema("recruiter-practice-session-v2.schema.json"),
+            ),
+        )
+
     def test_practice_question_rank_custom_validator_matches_schema_for_boolean_values(self):
         schema = self._schema("recruiter-practice-session-v1.schema.json")
         fixture = json.loads((ROOT.parent.parent / "tests/evals/with-skill/fixtures/recruiter-practice-session/session-es.json").read_text(encoding="utf-8"))

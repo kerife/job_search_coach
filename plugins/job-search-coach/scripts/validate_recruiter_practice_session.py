@@ -16,12 +16,19 @@ from private_prose_safety import is_safe_prose_text
 
 
 SCHEMA_VERSION = "recruiter-practice-session-v1"
+V2_SCHEMA_VERSION = "recruiter-practice-session-v2"
 TOP_LEVEL_FIELDS = frozenset({
     "schema_version", "session_kind", "locale", "state", "safe_context",
     "requirement", "question", "facts", "observed_answer", "rubric",
     "feedback", "delivery", "handoff_context",
 })
 REQUIRED_TOP_LEVEL_FIELDS = TOP_LEVEL_FIELDS - {"handoff_context"}
+V2_TOP_LEVEL_FIELDS = frozenset({
+    "schema_version", "session_kind", "ui_locale", "content_locale", "state",
+    "safe_context", "requirement", "question", "facts", "observed_answer",
+    "rubric", "feedback", "delivery", "handoff_context",
+})
+V2_REQUIRED_TOP_LEVEL_FIELDS = V2_TOP_LEVEL_FIELDS - {"handoff_context"}
 IDENTITY_OR_RAW_CONTENT = re.compile(
     r"\b(?:candidate(?:\s+name)?|prepared\s+for|nombre(?:\s+del\s+candidat[oa])?|"
     r"my\s+name\s+is|me\s+llamo|company|empresa|compañ[ií]a|employer|empleador)\s*:|"
@@ -248,16 +255,28 @@ def validate_session(value: object) -> list[str]:
         errors.append("session must be an object")
         return sorted(set(errors))
     session = value
-    for field in sorted(REQUIRED_TOP_LEVEL_FIELDS - set(session)):
+    schema_version = session.get("schema_version")
+    fields = V2_TOP_LEVEL_FIELDS if schema_version == V2_SCHEMA_VERSION else TOP_LEVEL_FIELDS
+    required_fields = (
+        V2_REQUIRED_TOP_LEVEL_FIELDS
+        if schema_version == V2_SCHEMA_VERSION
+        else REQUIRED_TOP_LEVEL_FIELDS
+    )
+    for field in sorted(required_fields - set(session)):
         errors.append(f"missing required field: {field}")
-    unsupported = sorted(set(session) - TOP_LEVEL_FIELDS)
+    unsupported = sorted(set(session) - fields)
     if unsupported:
         errors.append(f"session has unsupported fields: {', '.join(unsupported)}")
-    if session.get("schema_version") != SCHEMA_VERSION:
+    if schema_version not in {SCHEMA_VERSION, V2_SCHEMA_VERSION}:
         errors.append("schema_version has invalid value")
     if session.get("session_kind") != "private_recruiter_practice":
         errors.append("session_kind has invalid value")
-    if session.get("locale") not in {"es", "en"}:
+    if schema_version == V2_SCHEMA_VERSION:
+        if session.get("ui_locale") not in {"es", "en"}:
+            errors.append("ui_locale has invalid value")
+        if session.get("content_locale") not in {"es", "en"}:
+            errors.append("content_locale has invalid value")
+    elif session.get("locale") not in {"es", "en"}:
         errors.append("locale has invalid value")
     state = session.get("state")
     if state not in {"ready_to_practice", "awaiting_answer", "feedback_available"}:

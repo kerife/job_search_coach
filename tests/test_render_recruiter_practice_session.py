@@ -106,6 +106,28 @@ class RecruiterPracticeSessionRendererTests(unittest.TestCase):
         )
         return session
 
+    def v2_mixed_locale_session(self) -> dict[str, object]:
+        session = copy.deepcopy(self.awaiting_session)
+        session["schema_version"] = "recruiter-practice-session-v2"
+        session["ui_locale"] = "en"
+        session["content_locale"] = "es"
+        del session["locale"]
+        return session
+
+    def test_v2_uses_ui_locale_for_copy_and_content_locale_for_dynamic_prose(self) -> None:
+        rendered = self.renderer.render_session_html(self.v2_mixed_locale_session())
+
+        self.assertIn('lang="en"', rendered)
+        self.assertIn("Private rehearsal", rendered)
+        self.assertIn(
+            '<p id="practice-question-text" lang="es">¿Cómo explicarías esta experiencia en una primera conversación?</p>',
+            rendered,
+        )
+        self.assertIn(
+            '<span lang="es">La persona confirmó experiencia relevante para explicar un proceso técnico.</span>',
+            rendered,
+        )
+
     def test_awaiting_answer_renders_spanish_context_prompt_and_categorical_state(self) -> None:
         rendered = self.renderer.render_session_html(self.awaiting_session)
 
