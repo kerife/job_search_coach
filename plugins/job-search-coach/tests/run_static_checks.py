@@ -16401,6 +16401,18 @@ def validate_dossier_practice_handoff_harness_result(harness: Path, result) -> l
     return []
 
 
+def validate_design_token_palette() -> list[str]:
+    checker_path = PLUGIN_ROOT / "scripts" / "validate_design_tokens.py"
+    if not checker_path.is_file():
+        return ["missing design token checker"]
+    spec = importlib.util.spec_from_file_location("validate_design_tokens", checker_path)
+    if spec is None or spec.loader is None:
+        return ["could not load design token checker"]
+    checker = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(checker)
+    return checker.validate_palette_assets(PLUGIN_ROOT)
+
+
 def main() -> int:
     errors: list[str] = []
     harness = PLUGIN_ROOT / "tests" / "test_private_schema_conformance.py"
@@ -16432,6 +16444,7 @@ def main() -> int:
     errors.extend(
         validate_executive_dossier_package(PLUGIN_ROOT, PLUGIN_ROOT.parents[1])
     )
+    errors.extend(validate_design_token_palette())
     manifest_path = PLUGIN_ROOT / ".codex-plugin" / "plugin.json"
     if not manifest_path.is_file():
         errors.append("missing plugin manifest")

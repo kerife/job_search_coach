@@ -26,7 +26,8 @@ identity, or external action.
 
 - Preserve the existing editorial document aesthetic: calm, sober, private,
   evidence-led, and printable.
-- Use only the existing colors:
+- Use only the declared color of the artifact family. The base editorial
+  palette is:
   - paper `#f6f4ee`
   - surface `#ffffff`
   - forest `#173e30`
@@ -36,6 +37,19 @@ identity, or external action.
   - coral soft `#f6e0da`
   - line `#b8c7c0`
   - gold-compatible caution `#f5ecd8` with text `#5c4a12`
+- Family boundaries are intentional and machine-checked by
+  `scripts/validate_design_tokens.py`:
+  - **Dossier:** its established editorial legacy aliases include ink
+    `#1a1a1a`, muted `#e2ddd6`, coral `#d96c52`, gold `#be9338`, coral soft
+    `#f7e4df`, and their existing contrast companions.
+  - **Practice / triage:** the shared editorial palette may use decision gold
+    `#dfbf70`, caution ink/soft `#854117`/`#f7ecd5`, rehearsal surface
+    `#f8f7f2`, muted border `#9fc4b4`, and hint ink `#46534d`.
+  - **Compact receipts:** the separate blue receipt family uses ink
+    `#172033`, accent `#315bd6`, muted `#536174`, line `#d9dfeb`, and paper
+    `#f4f6fa`.
+- Do not copy a color between families without a visual and print review. The
+  allowlist is a consistency guard, not permission to recolor an artifact.
 - Display headings use `Georgia, "Times New Roman", Times, serif`.
 - Body text uses `-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
   Arial, sans-serif`.
