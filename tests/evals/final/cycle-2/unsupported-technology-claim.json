@@ -3,7 +3,7 @@
   "artifact_kind": "deterministic-regression-fixture",
   "cycle": 2,
   "case_id": "unsupported-technology-claim",
-  "source_commit": "41d00944ff868fe4b0674c63e77a01cfc209148c",
+  "source_commit": "c9471377c76e891194d86067290510dd3fc40276",
   "source_tree": "b5d8b2a7335f22af6bc9508528a7e6a3979d4873",
   "fork_turns": "none",
   "run_id": "JSC-RUN-C2-UNSUPPORTED-TECHNOLOGY-CLAIM",
