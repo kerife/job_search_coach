@@ -337,7 +337,7 @@ class ValidateCaseTests(unittest.TestCase):
             (
                 ("sources", 0, "metadata", "api\u200b_key"),
                 "synthetic",
-                "case contains sensitive key segment at sources[0].metadata.api\u200b_key",
+                "case contains sensitive key segment at sources[0].metadata.api\\u200b_key",
             ),
             (
                 ("target", "person‐id"),
@@ -347,7 +347,7 @@ class ValidateCaseTests(unittest.TestCase):
             (
                 ("sources", 0, "metadata", "candidate\u200b_id"),
                 "candidate-foreign",
-                "sources[0].metadata.candidate\u200b_id must match case candidate_id",
+                "sources[0].metadata.candidate\\u200b_id must match case candidate_id",
             ),
             (
                 ("claims", 0, "text"),
@@ -990,6 +990,26 @@ class ValidateCaseTests(unittest.TestCase):
                     f"case has unsupported field: ordinary{escape}INJECTED\n",
                 )
                 self.assertEqual(result.stderr.splitlines(), [result.stderr.rstrip("\n")])
+
+    def test_cli_escapes_unicode_format_controls_in_unknown_field_diagnostics(self) -> None:
+        for control, escape in (
+            ("\u202e", "\\u202e"),  # right-to-left override
+            ("\u202c", "\\u202c"),  # pop directional formatting
+            ("\u200b", "\\u200b"),  # zero-width space
+            ("\u2066", "\\u2066"),  # left-to-right isolate
+        ):
+            with self.subTest(control=escape):
+                case = valid_case()
+                case[f"ordinary{control}INJECTED"] = "x"
+
+                result = run_validator(case)
+
+                self.assertEqual(result.returncode, 2)
+                self.assertEqual(
+                    result.stderr,
+                    f"case has unsupported field: ordinary{escape}INJECTED\n",
+                )
+                self.assertNotIn(control, result.stderr)
 
     def test_email_classifier_skips_values_without_at_sign(self) -> None:
         validator = load_validator_module()
