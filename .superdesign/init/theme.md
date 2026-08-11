@@ -22,7 +22,7 @@ This plugin has **no shared Tailwind config, CSS module system, theme provider, 
 - **Spacing:** no named scale; repeated steps range from `.25rem` to `3rem`, with `.5rem`, `.75rem`, `1rem`, `1.5rem`, and `2rem` most common.
 - **Radius:** dossier/practice/triage remain square; compact receipt cards use `1rem`.
 - **Shadows:** dossier none; practice/triage `0 1px 0 rgb(23 62 48 / 10%)`; compact cards `0 .5rem 2rem rgb(23 32 51 / .08)`.
-- **Breakpoints:** dossier: 900px, 680px, 480px; practice/triage: 640px; compact receipts: `min-width: 40rem`. All families include print, reduced-motion, forced-color, and high-contrast handling.
+- **Breakpoints:** dossier: 900px, 680px, 480px; practice/triage: 640px; compact receipts: `min-width: 641px` (one column through 640px). All families include print, reduced-motion, forced-color, and high-contrast handling.
 
 ## Raw source dumps
 
@@ -1161,7 +1161,7 @@ dd { margin: .15rem 0 0; font-weight: 600; }
 .checkpoint-boundary { border-left: .25rem solid var(--accent); margin: 0; padding: .75rem 1rem; color: var(--muted); }
 .checkpoint-footer { max-width: 48rem; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 3rem) 2rem; color: var(--muted); font-size: .85rem; }
 .checkpoint-employment-boundary { margin: .5rem 0 0; color: var(--ink); font-weight: 600; }
-@media (min-width: 40rem) { .checkpoint-facts { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 641px) { .checkpoint-facts { grid-template-columns: 1fr 1fr; } }
 @media screen and (prefers-color-scheme: dark) {
   :root { color-scheme: dark; --ink: #f3f6ff; --muted: #b8c4d8; --surface: #182235; --accent: #8eb2ff; --line: #5f718e; }
   html { background: #101521; }
@@ -1194,7 +1194,7 @@ dd { margin: .15rem 0 0; font-weight: 600; }
 .outcome-boundary { border-left: .25rem solid var(--accent); margin: 0; padding: .75rem 1rem; color: var(--muted); }
 .outcome-footer { max-width: 48rem; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 3rem) 2rem; color: var(--muted); font-size: .85rem; }
 .outcome-employment-boundary { margin: .5rem 0 0; color: var(--ink); font-weight: 600; }
-@media (min-width: 40rem) { .outcome-facts { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 641px) { .outcome-facts { grid-template-columns: 1fr 1fr; } }
 @media screen and (prefers-color-scheme: dark) {
   :root { color-scheme: dark; --ink: #f3f6ff; --muted: #b8c4d8; --surface: #182235; --accent: #8eb2ff; --line: #5f718e; }
   html { background: #101521; }

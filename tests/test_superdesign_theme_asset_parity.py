@@ -47,6 +47,21 @@ def _theme_dump(name: str) -> str:
 
 
 class SuperdesignThemeAssetParityTests(unittest.TestCase):
+    def test_compact_facts_keep_one_column_through_640px(self):
+        for name, selector in (
+            ("private-recruiter-followthrough-checkpoint-v1.css", ".checkpoint-facts"),
+            ("private-recruiter-conversion-outcome-v1.css", ".outcome-facts"),
+        ):
+            with self.subTest(name=name):
+                css = (ASSETS / name).read_text(encoding="utf-8")
+                match = re.search(
+                    rf"@media \(min-width:\s*([^)]+)\)\s*\{{\s*{re.escape(selector)}\s*\{{\s*grid-template-columns:\s*1fr 1fr;",
+                    css,
+                )
+                self.assertIsNotNone(match)
+                breakpoint = match.group(1).strip()
+                self.assertEqual(breakpoint, "641px")
+
     def test_theme_dump_set_covers_every_shipped_css_asset(self):
         self.assertEqual(
             _theme_asset_names(),
