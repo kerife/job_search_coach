@@ -23,14 +23,15 @@ builder/validator pair. The builder consumes:
 
 1. a dossier that has already passed the existing dossier validator;
 2. an identity-free vacancy summary and requirement supplied separately; and
-3. a synthetic `snap-dossier-###` snapshot supplied by the caller.
+3. a content-bound `snap-dossier-sha256-<digest>` snapshot supplied by the
+   caller and recomputed from the validated dossier.
 
 The builder accepts only a `requires_confirmation` dossier bridge whose
 `question_rank` is `1`, whose selected question has
 `linked_copy_category="screen_bridge"`, and whose source evidence states are
 `verified` or `candidate_reported`. It emits a sidecar containing:
 
-- the opaque source snapshot and dossier rank;
+- the content-bound opaque source snapshot and dossier rank;
 - the dossier bridge's exact claim IDs and evidence IDs;
 - the selected question's exact evidence IDs and one source fact evidence ID;
 - a sanitized source-fact projection preserving the dossier evidence state;
@@ -61,10 +62,13 @@ sidecar projection.
 - a promoted `candidate_reported` fact, fabricated snapshot, prefilled answer,
   numeric score, auto-start flag, or any external-action flag; and
 - raw profile/reply text, URLs, contact data, source IDs in prose, or other
-  private fields in the sidecar's sanitized summaries.
+  private fields in the sidecar's sanitized summaries; and
+- a syntactically valid but fabricated source snapshot.
 
-The existing dossier-v1 and recruiter-practice-session-v1 schemas remain
-unchanged. The new schema is closed (`additionalProperties: false`), uses no
+The existing dossier-v1 schema remains unchanged. The recruiter-practice
+session schemas accept the content-bound dossier snapshot format while
+retaining the existing triage format. The new schema is closed
+(`additionalProperties: false`), uses no
 external dependency, and is validated by the repository's dependency-free
 schema harness plus the custom semantic validator.
 
@@ -82,4 +86,3 @@ The cycle must include a positive dossier-plus-vacancy fixture, a matching
 practice session, and mutation tests for rank/state/snapshot/Q-R-F/C-E/fact
 drift, raw/private values, and automatic execution. It must run the existing
 practice, dossier, schema-conformance, static, privacy, and full-plugin gates.
-
