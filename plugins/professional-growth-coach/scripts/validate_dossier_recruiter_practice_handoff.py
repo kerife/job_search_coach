@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import importlib.util
 import re
+import sys
 from collections.abc import Mapping
 from functools import lru_cache
 from pathlib import Path
@@ -21,7 +22,15 @@ def _load_sibling(name: str):
     if specification is None or specification.loader is None:
         raise RuntimeError("source validator is unavailable")
     module = importlib.util.module_from_spec(specification)
-    specification.loader.exec_module(module)
+    scripts_dir = str(path.parent)
+    added_path = scripts_dir not in sys.path
+    if added_path:
+        sys.path.insert(0, scripts_dir)
+    try:
+        specification.loader.exec_module(module)
+    finally:
+        if added_path:
+            sys.path.remove(scripts_dir)
     return module
 
 
