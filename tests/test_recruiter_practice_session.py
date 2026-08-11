@@ -44,6 +44,10 @@ TRIAGE_FIXTURE_PATH = (
     / "private-recruiter-reply-triage"
     / "ready-en.json"
 )
+V2_TRIAGE_SNAPSHOT = (
+    "snap-triage-sha256-"
+    "85ad96e9cab8b222315a01a85d4a6f61f0d5a38650a1286773bc8e1664c15ebd"
+)
 
 
 def load_fixture() -> dict[str, object]:
@@ -265,6 +269,44 @@ class RecruiterPracticeSessionContractTests(unittest.TestCase):
         v1_with_v2_locales = copy.deepcopy(self.awaiting_session)
         v1_with_v2_locales.update({"ui_locale": "en", "content_locale": "es"})
         self.assert_rejected(v1_with_v2_locales, "session has unsupported fields: content_locale, ui_locale")
+
+    def test_v2_accepts_content_bound_triage_snapshot(self) -> None:
+        v2 = copy.deepcopy(self.awaiting_session)
+        v2["schema_version"] = "recruiter-practice-session-v2"
+        v2["ui_locale"] = "en"
+        v2["content_locale"] = "es"
+        del v2["locale"]
+        v2["handoff_context"]["source"] = "private_recruiter_reply_triage"
+        v2["handoff_context"]["source_snapshot"] = V2_TRIAGE_SNAPSHOT
+        v2["handoff_context"].pop("claim_ids")
+        v2["handoff_context"].pop("evidence_ids")
+        self.assert_accepted(v2)
+
+    def test_v1_rejects_content_bound_triage_snapshot_but_keeps_legacy_id(self) -> None:
+        legacy = copy.deepcopy(self.awaiting_session)
+        legacy["handoff_context"]["source"] = "private_recruiter_reply_triage"
+        legacy["handoff_context"]["source_snapshot"] = V2_TRIAGE_SNAPSHOT
+        legacy["handoff_context"].pop("claim_ids")
+        legacy["handoff_context"].pop("evidence_ids")
+        self.assert_rejected(legacy, "handoff_context.source_snapshot must use the bound dossier or snap-triage-000 identifier format")
+
+        legacy["handoff_context"]["source_snapshot"] = "snap-triage-001"
+        self.assert_accepted(legacy)
+
+    def test_v2_rejects_malformed_triage_snapshot_without_echoing_value(self) -> None:
+        malformed = copy.deepcopy(self.awaiting_session)
+        malformed["schema_version"] = "recruiter-practice-session-v2"
+        malformed["ui_locale"] = "en"
+        malformed["content_locale"] = "es"
+        del malformed["locale"]
+        malformed["handoff_context"]["source"] = "private_recruiter_reply_triage"
+        malformed["handoff_context"]["source_snapshot"] = "snap-triage-sha256-" + ("g" * 64)
+        malformed["handoff_context"].pop("claim_ids")
+        malformed["handoff_context"].pop("evidence_ids")
+        result = self.run_cli(malformed)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("handoff_context.source_snapshot", result.stderr)
+        self.assertNotIn(malformed["handoff_context"]["source_snapshot"], result.stderr)
 
     def test_session_without_an_observed_answer_has_exactly_unknown_score(self) -> None:
         invalid = copy.deepcopy(self.awaiting_session)

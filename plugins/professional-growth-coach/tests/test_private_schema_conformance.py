@@ -26,6 +26,10 @@ V2_READY_ES_SNAPSHOT = (
     "snap-triage-sha256-"
     "74720a33a8bfc5e085767831e741b7cce97d45b1bb2d76b47d3ee203a2b5d6e8"
 )
+V2_TRIAGE_PRACTICE_SNAPSHOT = (
+    "snap-triage-sha256-"
+    "85ad96e9cab8b222315a01a85d4a6f61f0d5a38650a1286773bc8e1664c15ebd"
+)
 
 
 class PrivateSchemaConformanceTests(unittest.TestCase):
@@ -191,6 +195,30 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
                 self._schema("recruiter-practice-session-v2.schema.json"),
             ),
         )
+
+    def test_practice_v2_accepts_triage_content_bound_snapshot_and_v1_rejects_it(self):
+        fixture = json.loads(
+            (ROOT.parent.parent / "tests/evals/with-skill/fixtures/recruiter-practice-session/session-es.json").read_text(encoding="utf-8")
+        )
+        fixture["schema_version"] = "recruiter-practice-session-v2"
+        fixture["ui_locale"] = "en"
+        fixture["content_locale"] = "es"
+        del fixture["locale"]
+        fixture["handoff_context"]["source"] = "private_recruiter_reply_triage"
+        fixture["handoff_context"]["source_snapshot"] = V2_TRIAGE_PRACTICE_SNAPSHOT
+        fixture["handoff_context"].pop("claim_ids")
+        fixture["handoff_context"].pop("evidence_ids")
+        schema = self._schema("recruiter-practice-session-v2.schema.json")
+        self.assertEqual([], validate_session(fixture))
+        self.assertEqual([], validate_schema_instance(fixture, schema))
+
+        v1 = copy.deepcopy(fixture)
+        v1["schema_version"] = "recruiter-practice-session-v1"
+        v1["locale"] = "es"
+        del v1["ui_locale"]
+        del v1["content_locale"]
+        self.assertTrue(validate_session(v1))
+        self.assertTrue(validate_schema_instance(v1, self._schema("recruiter-practice-session-v1.schema.json")))
 
     def test_practice_question_rank_custom_validator_matches_schema_for_boolean_values(self):
         schema = self._schema("recruiter-practice-session-v1.schema.json")
