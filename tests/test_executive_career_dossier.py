@@ -510,6 +510,21 @@ class ExecutiveCareerDossierSchemaTests(unittest.TestCase):
                     self.validate_dossier(dossier),
                 )
 
+    def test_legacy_linkedin_profile_urls_are_rejected_from_dossier_prose(self) -> None:
+        for value in (
+            "https://www.linkedin.com/pub/synthetic-sentinel/42/7b/123",
+            "www.linkedin.com/pub/synthetic-sentinel/42/7b/123",
+            "linkedin.com/pub/synthetic-sentinel/42/7b/123",
+        ):
+            with self.subTest(value=value):
+                dossier = mutate_path(self.es_dossier, ("verdict", "rationale"), value)
+                errors = self.validate_dossier(dossier)
+                self.assertIn(
+                    "verdict.rationale client report contains forbidden LinkedIn profile URL value",
+                    errors,
+                )
+                self.assertNotIn(value, "\n".join(errors))
+
     def test_natural_outcome_guarantees_are_rejected_dossier_wide(self) -> None:
         for text in (
             "This headline lands interviews.",
@@ -1547,6 +1562,18 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
         self.assertIn("Ensayo", html)
         self.assertEqual(html.count('id="questions-title"'), 1)
         self.assertNotRegex(html, r"\b(?:E|C)-\d{3}\b")
+
+    def test_renderer_rejects_legacy_linkedin_profile_urls_without_echoing_them(self) -> None:
+        for value in (
+            "www.linkedin.com/pub/synthetic-sentinel/42/7b/123",
+            "linkedin.com/pub/synthetic-sentinel/42/7b/123",
+        ):
+            with self.subTest(value=value):
+                dossier = copy.deepcopy(self.es_dossier)
+                dossier["verdict"]["rationale"] = value
+                with self.assertRaises(self.renderer.DossierValidationError) as context:
+                    self.render(dossier)
+                self.assertNotIn(value, "\n".join(context.exception.errors))
 
     def test_screen_preparation_card_localizes_english_labels(self) -> None:
         html = self.render(self.en_dossier)

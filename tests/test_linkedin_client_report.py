@@ -1628,6 +1628,20 @@ class LinkedInClientReportSafetyTests(unittest.TestCase):
                     validator.validate_client_report(self.add_to_verdict(text), self.bundle()),
                 )
 
+    def test_candidate_facing_privacy_rejects_legacy_linkedin_profile_url_forms(self) -> None:
+        for value in (
+            "https://www.linkedin.com/pub/synthetic-sentinel/42/7b/123",
+            "www.linkedin.com/pub/synthetic-sentinel/42/7b/123",
+            "linkedin.com/pub/synthetic-sentinel/42/7b/123",
+        ):
+            with self.subTest(value=value):
+                errors = validator.validate_candidate_facing_text(value)
+                self.assertIn(
+                    "client report contains forbidden LinkedIn profile URL value",
+                    errors,
+                )
+                self.assertNotIn(value, "\n".join(errors))
+
     def test_report_rejects_cross_candidate_identifiers_in_visible_and_normal_appendix_prose(self) -> None:
         foreign_bundle = self.bundle("scenario-b.json")
         tokens = (

@@ -112,7 +112,10 @@ _PHONE = re.compile(
     r"(?:\+\d{7,15}\b|\+\d{1,3}(?:[ .()-]*\d){7,14}\b|"
     r"(?:\+\d{1,3}[ .-]?)?(?:\(?\d{3}\)?[ .-])\d{3}[ .-]\d{4})"
 )
-_PROFILE_URL = re.compile(r"https?://(?:[a-z0-9-]+\.)?linkedin\.com/in/", re.I)
+_PROFILE_URL = re.compile(
+    r"(?<![a-z0-9.-])(?:https?://)?(?:[a-z0-9-]+\.)*linkedin\.com/(?:in|pub)/",
+    re.I,
+)
 _LOCAL_PATH = re.compile(r"(?:^|\s)(?:/Users/|/home/|[A-Z]:[/\\])", re.I)
 _ANY_URL = re.compile(r"(?:https?|file)://", re.I)
 _FORBIDDEN_URI_PREFIXES = (("tel:", "phone-like"), ("file:", "local-path"))
