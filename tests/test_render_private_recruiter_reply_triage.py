@@ -211,6 +211,16 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
         self.assertIn("@media (max-width: 640px)", css)
         self.assertIn("@media (forced-colors: active)", css)
 
+    def test_triage_has_preferred_contrast_semantic_panel_hooks(self) -> None:
+        css = (REPO_ROOT / "plugins" / "professional-growth-coach" / "assets" / "private-recruiter-reply-triage-v1.css").read_text(encoding="utf-8")
+        self.assertIn("@media (prefers-contrast: more)", css)
+        contrast = css.split("@media (prefers-contrast: more)", 1)[1]
+        self.assertRegex(contrast, r"triage-state[^}]*border:\s*2px")
+        self.assertRegex(contrast, r"triage-next-safe-action[^}]*border[^}]*2px")
+        self.assertRegex(contrast, r"triage-blocked[^}]*border[^}]*2px")
+        self.assertRegex(contrast, r"triage-state[^}]*text-decoration:\s*underline")
+        self.assertRegex(contrast, r"triage-(?:next-safe-action|blocked) h2[^}]*text-decoration:\s*underline")
+
     def test_clarify_gate_maps_candidate_reported_fact_to_fixed_localized_reason(self) -> None:
         expected = {
             "clarify-en.json": "One verified fact is still needed before private preparation.",

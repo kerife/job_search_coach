@@ -110,6 +110,26 @@
   .private-recruiter-triage-document .triage-handoff-sequence > li::before { border-color: CanvasText; background: Canvas; color: CanvasText; }
 }
 
+@media (prefers-contrast: more) {
+  .private-recruiter-triage-document .triage-state {
+    border: 2px solid currentColor;
+    text-decoration: underline;
+    text-decoration-thickness: 0.12em;
+    text-underline-offset: 0.15em;
+  }
+  .private-recruiter-triage-document .triage-next-safe-action,
+  .private-recruiter-triage-document .triage-blocked {
+    border: 2px solid currentColor;
+    border-left-width: 5px;
+  }
+  .private-recruiter-triage-document .triage-next-safe-action h2,
+  .private-recruiter-triage-document .triage-blocked h2 {
+    text-decoration: underline;
+    text-decoration-thickness: 0.12em;
+    text-underline-offset: 0.15em;
+  }
+}
+
 @media (max-width: 640px) {
   .private-recruiter-triage-document .triage-handoff-preview dl { grid-template-columns: 1fr; gap: 0.25rem; }
   .private-recruiter-triage-document .triage-handoff-preview dd + dt { margin-top: 0.75rem; }
