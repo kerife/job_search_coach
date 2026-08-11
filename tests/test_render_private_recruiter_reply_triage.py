@@ -30,6 +30,14 @@ FIXTURE_DIRECTORY = (
     / "fixtures"
     / "private-recruiter-reply-triage"
 )
+V2_READY_EN_SNAPSHOT = (
+    "snap-triage-sha256-"
+    "85ad96e9cab8b222315a01a85d4a6f61f0d5a38650a1286773bc8e1664c15ebd"
+)
+V2_READY_ES_SNAPSHOT = (
+    "snap-triage-sha256-"
+    "74720a33a8bfc5e085767831e741b7cce97d45b1bb2d76b47d3ee203a2b5d6e8"
+)
 
 
 def load_fixture(name: str) -> dict[str, object]:
@@ -112,6 +120,8 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
         triage["ui_locale"] = "en"
         triage["content_locale"] = "es"
         del triage["locale"]
+        triage["handoff"]["packet"]["source_snapshot"] = V2_READY_ES_SNAPSHOT
+        triage["handoff"]["reentry_packet"]["source_snapshot"] = V2_READY_ES_SNAPSHOT
         document = self.renderer.render_triage_html(triage)
         self.assertIn('<html lang="en">', document)
         self.assertIn("Private triage", document)
@@ -120,6 +130,19 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
         self.assertEqual(document.count('lang="es"'), 7)
         self.assertEqual(document.count('<html lang="en">'), 1)
         self.assertNotIn('<p lang="en">', document)
+
+    def test_v2_renderer_keeps_content_bound_snapshot_internal(self) -> None:
+        triage = copy.deepcopy(self.fixtures["ready-en.json"])
+        triage["schema_version"] = "private-recruiter-reply-triage-v2"
+        triage["ui_locale"] = "en"
+        triage["content_locale"] = "en"
+        del triage["locale"]
+        triage["handoff"]["packet"]["source_snapshot"] = V2_READY_EN_SNAPSHOT
+        triage["handoff"]["reentry_packet"]["source_snapshot"] = V2_READY_EN_SNAPSHOT
+        document = self.renderer.render_triage_html(triage)
+        self.assertNotIn("source_snapshot", document)
+        self.assertNotIn("snap-triage-sha256-", document)
+        self.assertNotIn(V2_READY_EN_SNAPSHOT, document)
 
     def test_v1_does_not_gain_fragment_language_attributes(self) -> None:
         document = self.renderer.render_triage_html(self.fixtures["ready-es.json"])

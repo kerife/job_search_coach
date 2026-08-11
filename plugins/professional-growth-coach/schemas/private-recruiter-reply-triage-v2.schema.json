@@ -145,7 +145,7 @@
       "required": ["context_summary", "source_snapshot", "fact_id", "question_id", "prep_scope"],
       "properties": {
         "context_summary": {"allOf": [{"$ref": "#/$defs/prose_control_guard"}, {"type": "string", "minLength": 1, "maxLength": 280}]},
-        "source_snapshot": {"type": "string", "pattern": "^snap-triage-[0-9]{3}$"},
+        "source_snapshot": {"type": "string", "pattern": "^snap-triage-sha256-[0-9a-f]{64}$"},
         "fact_id": {"type": "string", "pattern": "^F-[0-9]{3}$"},
         "question_id": {"type": "string", "pattern": "^Q-[0-9]{3}$"},
         "prep_scope": {"enum": ["screen_opening", "proof_example", "eligibility_boundary", "compensation_boundary", "missing_detail"]}
@@ -159,7 +159,7 @@
         "schema_version": {"const": "private-recruiter-screen-reentry-v1"},
         "source_artifact_kind": {"const": "private_recruiter_reply_triage"},
         "context_summary": {"allOf": [{"$ref": "#/$defs/prose_control_guard"}, {"type": "string", "minLength": 1, "maxLength": 280}]},
-        "source_snapshot": {"type": "string", "pattern": "^snap-triage-[0-9]{3}$"},
+        "source_snapshot": {"type": "string", "pattern": "^snap-triage-sha256-[0-9a-f]{64}$"},
         "fact_id": {"type": "string", "pattern": "^F-[0-9]{3}$"},
         "question_id": {"type": "string", "pattern": "^Q-[0-9]{3}$"},
         "prep_scope": {"enum": ["screen_opening", "proof_example", "eligibility_boundary", "compensation_boundary", "missing_detail"]},

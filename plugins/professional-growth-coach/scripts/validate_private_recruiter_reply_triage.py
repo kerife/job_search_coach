@@ -12,6 +12,7 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 
 from private_prose_safety import is_safe_prose_text
+from triage_snapshot import is_snapshot, snapshot_for_triage
 
 
 SCHEMA_VERSION = "private-recruiter-reply-triage-v1"
@@ -171,7 +172,7 @@ def _walk_strings(value: object, *, field: str | None = None) -> Sequence[str]:
         return tuple(
             text
             for key, child in value.items()
-            if key not in {"id", "fact_ids", "fact_id", "question_id"}
+            if key not in {"id", "fact_ids", "fact_id", "question_id", "source_snapshot"}
             for text in _walk_strings(child, field=key)
         )
     if isinstance(value, list):
@@ -329,9 +330,16 @@ def validate_triage(value: object) -> list[str]:
                     frozenset({"schema_version", "source_artifact_kind", "context_summary", "source_snapshot", "fact_id", "question_id", "prep_scope", "manual_reentry_required", "candidate_answer_state", "score_state"}),
                     errors,
                 )
+                expected_snapshot = snapshot_for_triage(triage) if schema_version == V2_SCHEMA_VERSION else None
                 if packet is not None:
                     packet_context = _text(packet.get("context_summary"), "handoff.packet.context_summary", errors, maximum=280)
-                    if not isinstance(packet.get("source_snapshot"), str) or not re.fullmatch(r"snap-triage-[0-9]{3}", packet.get("source_snapshot", "")):
+                    packet_snapshot = packet.get("source_snapshot")
+                    if schema_version == V2_SCHEMA_VERSION:
+                        if not is_snapshot(packet_snapshot):
+                            errors.append("handoff.packet.source_snapshot must use the snap-triage-sha256 identifier format")
+                        elif packet_snapshot != expected_snapshot:
+                            errors.append("handoff.packet.source_snapshot must match triage content")
+                    elif not isinstance(packet_snapshot, str) or not re.fullmatch(r"snap-triage-[0-9]{3}", packet_snapshot):
                         errors.append("handoff.packet.source_snapshot must use the snap-triage-000 identifier format")
                     if context is not None and packet_context is not None and packet_context != context.get("summary"):
                         errors.append("handoff.packet.context_summary must match safe_context.summary")
@@ -358,7 +366,13 @@ def validate_triage(value: object) -> list[str]:
                         if type(reentry.get(field)) is not type(expected) or reentry.get(field) != expected:
                             errors.append(f"handoff.reentry_packet.{field} has immutable value")
                     reentry_context = _text(reentry.get("context_summary"), "handoff.reentry_packet.context_summary", errors, maximum=280)
-                    if not isinstance(reentry.get("source_snapshot"), str) or not re.fullmatch(r"snap-triage-[0-9]{3}", reentry.get("source_snapshot", "")):
+                    reentry_snapshot = reentry.get("source_snapshot")
+                    if schema_version == V2_SCHEMA_VERSION:
+                        if not is_snapshot(reentry_snapshot):
+                            errors.append("handoff.reentry_packet.source_snapshot must use the snap-triage-sha256 identifier format")
+                        elif reentry_snapshot != expected_snapshot:
+                            errors.append("handoff.reentry_packet.source_snapshot must match triage content")
+                    elif not isinstance(reentry_snapshot, str) or not re.fullmatch(r"snap-triage-[0-9]{3}", reentry_snapshot):
                         errors.append("handoff.reentry_packet.source_snapshot must use the snap-triage-000 identifier format")
                     if context is not None and reentry_context is not None and reentry_context != context.get("summary"):
                         errors.append("handoff.reentry_packet.context_summary must match safe_context.summary")

@@ -22,6 +22,12 @@ from validate_private_recruiter_reply_triage import validate_triage
 from validate_recruiter_practice_session import validate_session
 
 
+V2_READY_ES_SNAPSHOT = (
+    "snap-triage-sha256-"
+    "74720a33a8bfc5e085767831e741b7cce97d45b1bb2d76b47d3ee203a2b5d6e8"
+)
+
+
 class PrivateSchemaConformanceTests(unittest.TestCase):
     def _schema(self, name):
         return json.loads((ROOT / "schemas" / name).read_text(encoding="utf-8"))
@@ -91,6 +97,8 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         fixture["ui_locale"] = "en"
         fixture["content_locale"] = "es"
         del fixture["locale"]
+        fixture["handoff"]["packet"]["source_snapshot"] = V2_READY_ES_SNAPSHOT
+        fixture["handoff"]["reentry_packet"]["source_snapshot"] = V2_READY_ES_SNAPSHOT
         schema = self._schema("private-recruiter-reply-triage-v2.schema.json")
         self.assertEqual([], validate_triage(fixture))
         self.assertEqual([], validate_schema_instance(fixture, schema))
@@ -98,6 +106,23 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         missing = copy.deepcopy(fixture)
         del missing["content_locale"]
         self.assertTrue(validate_schema_instance(missing, schema))
+
+    def test_triage_v2_snapshot_binding_rejects_content_drift(self):
+        fixture = json.loads(
+            (ROOT.parent.parent / "tests/evals/with-skill/fixtures/private-recruiter-reply-triage/ready-es.json").read_text(encoding="utf-8")
+        )
+        fixture["schema_version"] = "private-recruiter-reply-triage-v2"
+        fixture["ui_locale"] = "en"
+        fixture["content_locale"] = "es"
+        del fixture["locale"]
+        fixture["handoff"]["packet"]["source_snapshot"] = V2_READY_ES_SNAPSHOT
+        fixture["handoff"]["reentry_packet"]["source_snapshot"] = V2_READY_ES_SNAPSHOT
+        self.assertEqual([], validate_triage(fixture))
+        changed = "A different safe summary with altered role constraints."
+        fixture["safe_context"]["summary"] = changed
+        fixture["handoff"]["packet"]["context_summary"] = changed
+        fixture["handoff"]["reentry_packet"]["context_summary"] = changed
+        self.assertTrue(validate_triage(fixture))
 
     def test_triage_identifier_patterns_require_json_strings_in_v1_and_v2(self):
         source = json.loads(

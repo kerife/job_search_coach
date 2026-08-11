@@ -69,6 +69,10 @@ STATE_NEXT_SAFE_ACTIONS = {
     "ready_for_private_prep": "manual_reenter_private_prep",
     "stop": "record_stop_decision",
 }
+V2_READY_EN_SNAPSHOT = (
+    "snap-triage-sha256-"
+    "85ad96e9cab8b222315a01a85d4a6f61f0d5a38650a1286773bc8e1664c15ebd"
+)
 
 
 def load_fixture(name: str) -> dict[str, object]:
@@ -131,6 +135,30 @@ class PrivateRecruiterReplyTriageContractTests(unittest.TestCase):
         v1_with_v2_locales = copy.deepcopy(self.fixtures["clarify-es.json"])
         v1_with_v2_locales.update({"ui_locale": "en", "content_locale": "es"})
         self.assert_rejected(v1_with_v2_locales, "session has unsupported fields: content_locale, ui_locale")
+
+    def test_v2_ready_handoff_accepts_content_bound_snapshot(self) -> None:
+        v2 = copy.deepcopy(self.fixtures["ready-en.json"])
+        v2["schema_version"] = "private-recruiter-reply-triage-v2"
+        v2["ui_locale"] = "en"
+        v2["content_locale"] = "en"
+        del v2["locale"]
+        v2["handoff"]["packet"]["source_snapshot"] = V2_READY_EN_SNAPSHOT
+        v2["handoff"]["reentry_packet"]["source_snapshot"] = V2_READY_EN_SNAPSHOT
+        self.assert_accepted(v2)
+
+    def test_v2_snapshot_rejects_bound_content_mutation(self) -> None:
+        v2 = copy.deepcopy(self.fixtures["ready-en.json"])
+        v2["schema_version"] = "private-recruiter-reply-triage-v2"
+        v2["ui_locale"] = "en"
+        v2["content_locale"] = "en"
+        del v2["locale"]
+        v2["handoff"]["packet"]["source_snapshot"] = V2_READY_EN_SNAPSHOT
+        v2["handoff"]["reentry_packet"]["source_snapshot"] = V2_READY_EN_SNAPSHOT
+        changed = "A different safe summary with altered role constraints."
+        v2["safe_context"]["summary"] = changed
+        v2["handoff"]["packet"]["context_summary"] = changed
+        v2["handoff"]["reentry_packet"]["context_summary"] = changed
+        self.assert_rejected(v2, "source_snapshot must match triage content")
 
     def test_schema_declares_closed_next_safe_action_values(self) -> None:
         schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
