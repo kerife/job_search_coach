@@ -1053,6 +1053,24 @@ def _walk_strings(value: object, path: str = "") -> list[tuple[str, str]]:
     return rows
 
 
+def _contains_unsupported_script(value: str) -> bool:
+    normalized = unicodedata.normalize("NFKC", value)
+    return any(
+        character.isalpha() and "LATIN" not in unicodedata.name(character, "")
+        for character in normalized
+    )
+
+
+def _validate_supported_script_prose(value: Mapping[str, object]) -> list[str]:
+    return sorted(
+        {
+            f"{path} contains unsupported_script prose"
+            for path, text in _walk_strings(value)
+            if _contains_unsupported_script(text)
+        }
+    )
+
+
 def _scan_privacy(value: object, path: str = "") -> list[str]:
     if isinstance(value, Mapping):
         errors: list[str] = []
@@ -2157,6 +2175,7 @@ def validate_dossier(value: object) -> list[str]:
     root = _closed(value, "dossier", TOP_FIELDS, errors)
     if root is None:
         return sorted(set(errors))
+    errors.extend(_validate_supported_script_prose(root))
     scope = _validate_fixed(root, errors)
     evidence_ids, evidence_states, evidence_records = _validate_evidence(root.get("evidence"), errors)
     errors.extend(_validate_evidence_isolation(root, evidence_records))

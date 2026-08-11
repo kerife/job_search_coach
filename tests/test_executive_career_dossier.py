@@ -1045,6 +1045,21 @@ class ExecutiveCareerDossierEvidenceModuleTests(unittest.TestCase):
             any("must preserve current employment by default" in error for error in errors)
         )
 
+    def test_unsupported_script_prose_is_rejected_without_echoing_content(self) -> None:
+        for path in (("verdict", "rationale"), ("priorities", 0, "why_now")):
+            with self.subTest(path=path):
+                dossier = mutate_path(
+                    self.es_dossier,
+                    path,
+                    "Алексей Иванов описал опыт.",
+                )
+                errors = self.validator.validate_dossier(dossier)
+                self.assertTrue(
+                    any("unsupported_script prose" in error for error in errors),
+                    errors,
+                )
+                self.assertTrue(all("Алексей Иванов" not in error for error in errors))
+
     def test_dated_market_context_requires_vacancy_provenance(self) -> None:
         cases = (
             ("zero sample", ("market_context", "vacancy_sample_count"), 0, "market_context.vacancy_sample_count must be greater than zero"),
@@ -1576,6 +1591,22 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
                 with self.assertRaises(self.renderer.DossierValidationError) as context:
                     self.render(dossier)
                 self.assertNotIn(value, "\n".join(context.exception.errors))
+
+    def test_renderer_rejects_unsupported_script_prose_without_echoing_content(self) -> None:
+        for path in (("verdict", "rationale"), ("priorities", 0, "why_now")):
+            with self.subTest(path=path):
+                dossier = copy.deepcopy(self.es_dossier)
+                target = dossier
+                for part in path[:-1]:
+                    target = target[part]
+                target[path[-1]] = "Алексей Иванов описал опыт."
+                with self.assertRaises(self.renderer.DossierValidationError) as context:
+                    self.render(dossier)
+                self.assertTrue(
+                    any("unsupported_script prose" in error for error in context.exception.errors),
+                    context.exception.errors,
+                )
+                self.assertNotIn("Алексей Иванов", str(context.exception.errors))
 
     def test_screen_preparation_card_localizes_english_labels(self) -> None:
         html = self.render(self.en_dossier)
