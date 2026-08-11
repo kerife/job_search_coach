@@ -1434,7 +1434,7 @@ def _validate_scores(parsed: ParsedClientReport, bundle: Mapping[str, object]) -
             errors.append(f"visible domain score for {row.domain} does not match ledger")
         for evidence_id in row.evidence_ids:
             if evidence_id not in known_evidence:
-                errors.append(f"score row references unknown evidence {evidence_id}")
+                errors.append("score row references unknown evidence")
 
     visual = next((row for row in rows if row.domain == "visual"), None)
     if (
@@ -1792,18 +1792,11 @@ def _validate_report_identifiers(
     def validate_text(text: str) -> None:
         for identifier in _extract_identifier_tokens(text):
             if identifier.startswith("FIXTURE-"):
-                errors.append(
-                    f"client report contains forbidden fixture identifier: {identifier}"
-                )
+                errors.append("client report contains forbidden fixture identifier")
             elif identifier.startswith("CANDIDATE-"):
-                errors.append(
-                    "client report contains forbidden internal candidate "
-                    f"identifier: {identifier}"
-                )
+                errors.append("client report contains forbidden internal candidate identifier")
             elif identifier not in allowed:
-                errors.append(
-                    f"client report references identifier outside fixture: {identifier}"
-                )
+                errors.append("client report references identifier outside fixture")
 
     validate_text(parsed.client_report)
     if appendix_mode in APPENDIX_MODES - {"normal"}:
@@ -2203,9 +2196,7 @@ def _validate_report_priorities(
             errors.append(f"priority {priority.rank} has duplicate evidence {evidence_id}")
         for evidence_id in priority.evidence_ids:
             if evidence_id not in known_evidence:
-                errors.append(
-                    f"priority {priority.rank} references unknown evidence {evidence_id}"
-                )
+                errors.append(f"priority {priority.rank} references unknown evidence")
         if priority.impact_basis and priority.impact_basis != "COACH_HEURISTIC":
             errors.append(
                 f"priority {priority.rank} impact basis must be COACH_HEURISTIC "
@@ -2295,7 +2286,7 @@ def _validate_report_copies(
         for fact_id in copy_block.fact_ids:
             fact = facts.get(fact_id)
             if fact is None:
-                errors.append(f"copy {copy_block.section} references unknown fact {fact_id}")
+                errors.append(f"copy {copy_block.section} references unknown fact")
             elif copy_block.state == "ready" and fact["evidence_state"] not in {
                 "verified", "candidate_reported",
             }:
@@ -2348,9 +2339,7 @@ def _validate_report_copies(
                 )
         for evidence_id in copy_block.evidence_ids:
             if evidence_id not in known_evidence:
-                errors.append(
-                    f"copy {copy_block.section} references unknown evidence {evidence_id}"
-                )
+                errors.append(f"copy {copy_block.section} references unknown evidence")
         if copy_block.state == "requires_confirmation" and not any(
             facts.get(fact_id, {}).get("evidence_state") in {"unknown", "inferred"}
             for fact_id in copy_block.fact_ids
@@ -3479,7 +3468,7 @@ def _validate_references(
         errors.append(f"{label}.{kind}s has duplicate {kind}: {reference}")
     for reference in references:
         if reference not in known:
-            errors.append(f"{label} references unknown {kind}: {reference}")
+            errors.append(f"{label} references unknown {kind}")
 
 
 def _scan_privacy(value: object, path: str = "") -> list[str]:

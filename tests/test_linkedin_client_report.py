@@ -755,7 +755,7 @@ class LinkedInClientReportParsingTests(unittest.TestCase):
         for markdown in cases:
             with self.subTest(marker=markdown[-80:]):
                 self.assertIn(
-                    "client report contains forbidden internal candidate identifier: CANDIDATE-JSC1-SYNTH",
+                    "client report contains forbidden internal candidate identifier",
                     validator.validate_client_report(
                         markdown,
                         self.bundle("scenario-a.json"),
@@ -947,21 +947,41 @@ class LinkedInClientReportDecisionTests(unittest.TestCase):
         cases = (
             (
                 self.replace_once(report, "EVID-JSC1-PRIORITY-1", "FACT-JSC1-READY"),
-                "priority 1 references unknown evidence FACT-JSC1-READY",
+                "priority 1 references unknown evidence",
             ),
             (
                 self.replace_once(report, "FACT-JSC1-READY", "EVID-JSC1-HEADLINE"),
-                "copy headline references unknown fact EVID-JSC1-HEADLINE",
+                "copy headline references unknown fact",
             ),
             (
                 self.replace_once(report, "EVID-JSC1-PRIORITY-1", "EVID-JSC1-MISSING"),
-                "priority 1 references unknown evidence EVID-JSC1-MISSING",
+                "priority 1 references unknown evidence",
             ),
         )
         bundle = self.bundle("scenario-a.json")
         for mutant, expected in cases:
             with self.subTest(expected=expected):
-                self.assertIn(expected, validator.validate_client_report(mutant, bundle))
+                self.assertTrue(
+                    any(expected in error for error in validator.validate_client_report(mutant, bundle))
+                )
+
+    def test_unknown_reference_errors_do_not_echo_supplied_values(self) -> None:
+        report = self.report("scenario-a-es.md")
+        for sentinel in ("person@example.com", "EVID-JSC1-PRIVATE"):
+            with self.subTest(sentinel=sentinel):
+                mutant = self.replace_once(report, "EVID-JSC1-PRIORITY-1", sentinel)
+
+                errors = validator.validate_client_report(
+                    mutant, self.bundle("scenario-a.json")
+                )
+
+                self.assertTrue(
+                    any(
+                        "priority 1 references unknown evidence" in error
+                        for error in errors
+                    )
+                )
+                self.assertNotIn(sentinel, "\n".join(errors))
 
     def test_duplicate_priority_fingerprints_are_rejected(self) -> None:
         report = self.report("scenario-a-es.md")
@@ -1647,19 +1667,19 @@ class LinkedInClientReportSafetyTests(unittest.TestCase):
         tokens = (
             (
                 foreign_bundle["structural_state_fixture"]["observations"][0]["evidence_id"],
-                "client report references identifier outside fixture: EVID-JSC2-VISUAL",
+                "client report references identifier outside fixture",
             ),
             (
                 foreign_bundle["source_catalog"][0]["source_id"],
-                "client report references identifier outside fixture: SOURCE-JSC2-1",
+                "client report references identifier outside fixture",
             ),
             (
                 foreign_bundle["internal_candidate_id"],
-                "client report contains forbidden internal candidate identifier: CANDIDATE-JSC2-SYNTH",
+                "client report contains forbidden internal candidate identifier",
             ),
             (
                 foreign_bundle["fixture_id"],
-                "client report contains forbidden fixture identifier: FIXTURE-JSC2-LEADERSHIP-STORY-GENERAL",
+                "client report contains forbidden fixture identifier",
             ),
         )
         report = self.report()
@@ -1687,31 +1707,31 @@ class LinkedInClientReportSafetyTests(unittest.TestCase):
         tokens = (
             (
                 foreign_bundle["fixture_id"],
-                "client report contains forbidden fixture identifier: FIXTURE-JSC2-LEADERSHIP-STORY-GENERAL",
+                "client report contains forbidden fixture identifier",
             ),
             (
                 foreign_bundle["internal_candidate_id"],
-                "client report contains forbidden internal candidate identifier: CANDIDATE-JSC2-SYNTH",
+                "client report contains forbidden internal candidate identifier",
             ),
             (
                 foreign_bundle["structural_state_fixture"]["observations"][0]["evidence_id"],
-                "client report references identifier outside fixture: EVID-JSC2-VISUAL",
+                "client report references identifier outside fixture",
             ),
             (
                 foreign_bundle["synthetic_fact_catalog"][0]["fact_id"],
-                "client report references identifier outside fixture: FACT-JSC2-READY",
+                "client report references identifier outside fixture",
             ),
             (
                 foreign_bundle["source_catalog"][0]["source_id"],
-                "client report references identifier outside fixture: SOURCE-JSC2-1",
+                "client report references identifier outside fixture",
             ),
             (
                 foreign_bundle["priorities"][0]["priority_id"],
-                "client report references identifier outside fixture: PRIORITY-JSC2-1",
+                "client report references identifier outside fixture",
             ),
             (
                 foreign_bundle["copy_blocks"][0]["copy_id"],
-                "client report references identifier outside fixture: COPY-JSC2-PRIMARY",
+                "client report references identifier outside fixture",
             ),
         )
         separators = ("‐", "‑", "‒", "–", "—", "−", "⁃")
@@ -1819,31 +1839,31 @@ class LinkedInClientReportSafetyTests(unittest.TestCase):
         tokens = (
             (
                 "FIXTURE-JSC2-LEADERSHIP-STORY-GENERAL",
-                "client report contains forbidden fixture identifier: FIXTURE-JSC2-LEADERSHIP-STORY-GENERAL",
+                "client report contains forbidden fixture identifier",
             ),
             (
                 "CANDIDATE-JSC2-SYNTH",
-                "client report contains forbidden internal candidate identifier: CANDIDATE-JSC2-SYNTH",
+                "client report contains forbidden internal candidate identifier",
             ),
             (
                 "EVID-JSC2-VISUAL",
-                "client report references identifier outside fixture: EVID-JSC2-VISUAL",
+                "client report references identifier outside fixture",
             ),
             (
                 "FACT-JSC2-READY",
-                "client report references identifier outside fixture: FACT-JSC2-READY",
+                "client report references identifier outside fixture",
             ),
             (
                 "SOURCE-JSC2-1",
-                "client report references identifier outside fixture: SOURCE-JSC2-1",
+                "client report references identifier outside fixture",
             ),
             (
                 "PRIORITY-JSC2-1",
-                "client report references identifier outside fixture: PRIORITY-JSC2-1",
+                "client report references identifier outside fixture",
             ),
             (
                 "COPY-JSC2-PRIMARY",
-                "client report references identifier outside fixture: COPY-JSC2-PRIMARY",
+                "client report references identifier outside fixture",
             ),
         )
         separators = ("_", "\u00ad", "‐", "‑", "‒", "–", "—", "―", "−", "⁃")
@@ -1880,31 +1900,31 @@ class LinkedInClientReportSafetyTests(unittest.TestCase):
         tokens = (
             (
                 "FIXTURE-JSC2-LEADERSHIP-STORY-GENERAL",
-                "client report contains forbidden fixture identifier: FIXTURE-JSC2-LEADERSHIP-STORY-GENERAL",
+                "client report contains forbidden fixture identifier",
             ),
             (
                 "CANDIDATE-JSC2-SYNTH",
-                "client report contains forbidden internal candidate identifier: CANDIDATE-JSC2-SYNTH",
+                "client report contains forbidden internal candidate identifier",
             ),
             (
                 "EVID-JSC2-VISUAL",
-                "client report references identifier outside fixture: EVID-JSC2-VISUAL",
+                "client report references identifier outside fixture",
             ),
             (
                 "FACT-JSC2-READY",
-                "client report references identifier outside fixture: FACT-JSC2-READY",
+                "client report references identifier outside fixture",
             ),
             (
                 "SOURCE-JSC2-1",
-                "client report references identifier outside fixture: SOURCE-JSC2-1",
+                "client report references identifier outside fixture",
             ),
             (
                 "PRIORITY-JSC2-1",
-                "client report references identifier outside fixture: PRIORITY-JSC2-1",
+                "client report references identifier outside fixture",
             ),
             (
                 "COPY-JSC2-PRIMARY",
-                "client report references identifier outside fixture: COPY-JSC2-PRIMARY",
+                "client report references identifier outside fixture",
             ),
         )
         report = self.report()
@@ -3969,7 +3989,7 @@ class LinkedInClientReportScoreTests(unittest.TestCase):
             with self.subTest(evidence_id=evidence_id):
                 mutant = report.replace("EVID-JSC3-HEADLINE", evidence_id, 1)
                 self.assertIn(
-                    f"score row references unknown evidence {evidence_id}",
+                    "score row references unknown evidence",
                     validator.validate_client_report(mutant, self.bundle("scenario-c.json")),
                 )
 
