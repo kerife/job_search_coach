@@ -99,6 +99,41 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         del missing["content_locale"]
         self.assertTrue(validate_schema_instance(missing, schema))
 
+    def test_triage_identifier_patterns_require_json_strings_in_v1_and_v2(self):
+        source = json.loads(
+            (ROOT.parent.parent / "tests/evals/with-skill/fixtures/private-recruiter-reply-triage/ready-en.json").read_text(encoding="utf-8")
+        )
+        versions = []
+        v1 = (copy.deepcopy(source), self._schema("private-recruiter-reply-triage-v1.schema.json"))
+        versions.append(v1)
+        v2 = copy.deepcopy(source)
+        v2["schema_version"] = "private-recruiter-reply-triage-v2"
+        v2["ui_locale"] = "en"
+        v2["content_locale"] = "es"
+        del v2["locale"]
+        versions.append((v2, self._schema("private-recruiter-reply-triage-v2.schema.json")))
+        mutations = (
+            ("facts", 0, "id"),
+            ("question", "id"),
+            ("question", "fact_ids", 0),
+            ("handoff", "packet", "source_snapshot"),
+            ("handoff", "packet", "fact_id"),
+            ("handoff", "packet", "question_id"),
+            ("handoff", "reentry_packet", "source_snapshot"),
+            ("handoff", "reentry_packet", "fact_id"),
+            ("handoff", "reentry_packet", "question_id"),
+        )
+        for version_index, (fixture, schema) in enumerate(versions):
+            for path in mutations:
+                with self.subTest(version=version_index, path=path):
+                    mutated = copy.deepcopy(fixture)
+                    target = mutated
+                    for key in path[:-1]:
+                        target = target[key]
+                    target[path[-1]] = 123
+                    self.assertTrue(validate_triage(mutated))
+                    self.assertTrue(validate_schema_instance(mutated, schema))
+
     def test_practice_schema_binds_source_to_snapshot_prefix(self):
         schema = self._schema("recruiter-practice-session-v1.schema.json")
         fixture = json.loads((ROOT.parent.parent / "tests/evals/with-skill/fixtures/recruiter-practice-session/session-es.json").read_text(encoding="utf-8"))
