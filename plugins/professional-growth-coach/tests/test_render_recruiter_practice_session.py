@@ -245,7 +245,7 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
                 )
                 self.assertRegex(
                     rendered,
-                    r"(?s)@media \(forced-colors: active\).*?\.recruiter-practice-next-action--ready_to_practice,\s+\.recruiter-practice-document \.practice-next-action--awaiting_answer \{[^}]*border-left-color: CanvasText;",
+                    r"(?s)@media \(forced-colors: active\).*?\.recruiter-practice-document \.practice-next-action--ready_to_practice,\s+\.recruiter-practice-document \.practice-next-action--awaiting_answer \{[^}]*border-left-color: CanvasText;",
                 )
 
     def test_sourced_session_hides_provenance_and_raw_answer_material(self):
