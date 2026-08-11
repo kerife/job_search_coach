@@ -29,6 +29,10 @@ V2_TOP_LEVEL_FIELDS = frozenset({
     "rubric", "feedback", "delivery", "handoff_context",
 })
 V2_REQUIRED_TOP_LEVEL_FIELDS = V2_TOP_LEVEL_FIELDS - {"handoff_context"}
+
+
+def _enum(value: object, allowed: set[str] | frozenset[str]) -> bool:
+    return isinstance(value, str) and value in allowed
 IDENTITY_OR_RAW_CONTENT = re.compile(
     r"\b(?:candidate(?:\s+name)?|prepared\s+for|nombre(?:\s+del\s+candidat[oa])?|"
     r"my\s+name\s+is|me\s+llamo|company|empresa|compañ[ií]a|employer|empleador)\s*:|"
@@ -267,19 +271,19 @@ def validate_session(value: object) -> list[str]:
     unsupported = sorted(set(session) - fields)
     if unsupported:
         errors.append(f"session has unsupported fields: {', '.join(unsupported)}")
-    if schema_version not in {SCHEMA_VERSION, V2_SCHEMA_VERSION}:
+    if not _enum(schema_version, {SCHEMA_VERSION, V2_SCHEMA_VERSION}):
         errors.append("schema_version has invalid value")
     if session.get("session_kind") != "private_recruiter_practice":
         errors.append("session_kind has invalid value")
     if schema_version == V2_SCHEMA_VERSION:
-        if session.get("ui_locale") not in {"es", "en"}:
+        if not _enum(session.get("ui_locale"), {"es", "en"}):
             errors.append("ui_locale has invalid value")
-        if session.get("content_locale") not in {"es", "en"}:
+        if not _enum(session.get("content_locale"), {"es", "en"}):
             errors.append("content_locale has invalid value")
-    elif session.get("locale") not in {"es", "en"}:
+    elif not _enum(session.get("locale"), {"es", "en"}):
         errors.append("locale has invalid value")
     state = session.get("state")
-    if state not in {"ready_to_practice", "awaiting_answer", "feedback_available"}:
+    if not _enum(state, {"ready_to_practice", "awaiting_answer", "feedback_available"}):
         errors.append("state has invalid value")
 
     context = _closed(session.get("safe_context"), "safe_context", frozenset({"stage", "vacancy_state", "summary"}), errors)
@@ -302,9 +306,9 @@ def validate_session(value: object) -> list[str]:
             fact_id = _id(fact.get("id"), "facts[0].id", "F", errors)
             if fact_id is not None:
                 fact_ids.add(fact_id)
-                if fact.get("state") in {"verified", "candidate_reported"}:
+                if _enum(fact.get("state"), {"verified", "candidate_reported"}):
                     fact_states[fact_id] = str(fact.get("state"))
-            if fact.get("state") not in {"verified", "candidate_reported"}:
+            if not _enum(fact.get("state"), {"verified", "candidate_reported"}):
                 errors.append("facts[0].state must be verified or candidate_reported")
         _text(fact.get("summary"), "facts[0].summary", errors, maximum=500)
         _validate_prose_identifier(fact.get("summary"), "facts[0].summary", errors)
@@ -320,7 +324,7 @@ def validate_session(value: object) -> list[str]:
     question = _closed(session.get("question"), "question", frozenset({"id", "kind", "text", "requirement_id", "fact_ids"}), errors)
     if question is not None:
         _id(question.get("id"), "question.id", "Q", errors)
-        if question.get("kind") not in {"screen_opening", "proof_example", "eligibility_boundary", "compensation_boundary", "missing_detail"}:
+        if not _enum(question.get("kind"), {"screen_opening", "proof_example", "eligibility_boundary", "compensation_boundary", "missing_detail"}):
             errors.append("question.kind has invalid value")
         _text(question.get("text"), "question.text", errors, maximum=500)
         _validate_prose_identifier(question.get("text"), "question.text", errors)
@@ -349,7 +353,7 @@ def validate_session(value: object) -> list[str]:
             handoff_required = handoff_fields
         handoff = _closed(handoff, "handoff_context", handoff_fields, errors, required=handoff_required)
         if handoff is not None:
-            if handoff.get("source") not in {"executive_career_dossier", "private_recruiter_reply_triage"}: errors.append("handoff_context.source has invalid value")
+            if not _enum(handoff.get("source"), {"executive_career_dossier", "private_recruiter_reply_triage"}): errors.append("handoff_context.source has invalid value")
             source_snapshot = handoff.get("source_snapshot")
             if not isinstance(source_snapshot, str) or not re.fullmatch(r"snap-(?:dossier|triage)-[0-9]{3}", source_snapshot):
                 errors.append("handoff_context.source_snapshot must use the snap-dossier-000 or snap-triage-000 identifier format")
@@ -406,15 +410,15 @@ def validate_session(value: object) -> list[str]:
                 errors.append("observed_answer.storage must be ephemeral")
 
     feedback = _closed(session.get("feedback"), "feedback", frozenset({"score", "score_state", "observations"}), errors)
-    if state in {"ready_to_practice", "awaiting_answer"} and answer is not None:
+    if _enum(state, {"ready_to_practice", "awaiting_answer"}) and answer is not None:
         errors.append("pre-answer states cannot include an observed answer")
     if feedback is not None:
         if feedback.get("score") != "unknown":
             errors.append("feedback.score must be unknown before an observed answer")
         score_state = feedback.get("score_state")
-        if score_state not in {"unknown", "categorical"}:
+        if not _enum(score_state, {"unknown", "categorical"}):
             errors.append("feedback.score_state must be unknown or categorical")
-        if state in {"ready_to_practice", "awaiting_answer"} and score_state != "unknown":
+        if _enum(state, {"ready_to_practice", "awaiting_answer"}) and score_state != "unknown":
             errors.append("pre-answer feedback.score_state must be unknown")
         observations = feedback.get("observations")
         if not isinstance(observations, list) or len(observations) > 3:

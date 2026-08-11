@@ -18,6 +18,10 @@ from typing import Any
 
 SCHEMA_VERSION = "executive-career-dossier-v1"
 DOSSIER_KIND = "linkedin_profile_diagnostic"
+
+
+def _enum(value: object, allowed: set[str] | frozenset[str]) -> bool:
+    return isinstance(value, str) and value in allowed
 DOMAIN_WEIGHTS = {
     "visual": 15,
     "headline": 15,
@@ -452,7 +456,7 @@ def validate_analytics(value: object, known_evidence: set[str]) -> list[str]:
     if not isinstance(value, Mapping):
         return ["analytics must be an object"]
     state = value.get("state")
-    if state in {"not_requested", "unavailable"}:
+    if _enum(state, {"not_requested", "unavailable"}):
         row = _closed(value, "analytics", frozenset({"state", "reason"}), errors)
         if row is not None:
             _text(row.get("reason"), "analytics.reason", errors)
@@ -535,7 +539,7 @@ def validate_market_context(
     if state != "dated_vacancy_evidence":
         errors.append("market_context.state has invalid state")
     _text(row.get("geography"), "market_context.geography", errors, limit=120)
-    if row.get("arrangement") not in {"onsite", "hybrid", "remote", "flexible"}:
+    if not _enum(row.get("arrangement"), {"onsite", "hybrid", "remote", "flexible"}):
         errors.append("market_context.arrangement has invalid arrangement")
     research_date = _date(row.get("research_date"), "market_context.research_date", errors)
     if research_date is not None and research_date > evidence_as_of:
@@ -613,7 +617,7 @@ def _state_exceeds_references(
     references: Sequence[str],
     states: Mapping[str, str],
 ) -> bool:
-    if state not in EVIDENCE_STATE_STRENGTH:
+    if not _enum(state, EVIDENCE_STATE_STRENGTH):
         return False
     referenced_strengths = [
         EVIDENCE_STATE_STRENGTH[states[reference]]
@@ -630,7 +634,7 @@ def _validate_consumer_state(
     path: str,
     errors: list[str],
 ) -> None:
-    if state not in EVIDENCE_STATES:
+    if not _enum(state, EVIDENCE_STATES):
         errors.append(f"{path} has invalid evidence state")
     elif _state_exceeds_references(state, references, states):
         errors.append(f"{path} exceeds referenced evidence state")
@@ -1050,13 +1054,13 @@ def _validate_evidence(
             known.add(identifier)
             records[identifier] = row
         state = row.get("state")
-        if state not in EVIDENCE_STATES:
+        if not _enum(state, EVIDENCE_STATES):
             errors.append(f"{path}.state has invalid evidence state")
         elif isinstance(identifier, str):
             states[identifier] = state
-        if row.get("section") not in EVIDENCE_SECTIONS:
+        if not _enum(row.get("section"), EVIDENCE_SECTIONS):
             errors.append(f"{path}.section has invalid section")
-        if row.get("source_kind") not in EVIDENCE_SOURCE_KINDS:
+        if not _enum(row.get("source_kind"), EVIDENCE_SOURCE_KINDS):
             errors.append(f"{path}.source_kind has invalid source kind")
         capture_ref = row.get("capture_ref")
         if capture_ref is not None and (
@@ -1105,12 +1109,12 @@ def _validate_claims(value: object, evidence_ids: set[str], evidence_states: Map
         else:
             known.add(identifier)
         state = row.get("state")
-        if state not in EVIDENCE_STATES:
+        if not _enum(state, EVIDENCE_STATES):
             errors.append(f"{path}.state has invalid claim state")
         _text(row.get("paraphrase"), f"{path}.paraphrase", errors)
         references = _references(row.get("evidence_ids"), evidence_ids, f"{path}.evidence_ids", "E-", errors, minimum=1)
         use = row.get("public_use")
-        if use not in {"allowed", "confirmation_required", "blocked"}:
+        if not _enum(use, {"allowed", "confirmation_required", "blocked"}):
             errors.append(f"{path}.public_use has invalid public-use state")
         elif isinstance(identifier, str):
             public_use[identifier] = use
@@ -1118,7 +1122,7 @@ def _validate_claims(value: object, evidence_ids: set[str], evidence_states: Map
             claim_states[identifier] = state
         if _state_exceeds_references(state, references, evidence_states):
             errors.append(f"{path}.state exceeds referenced evidence state")
-        if state in {"unknown", "inferred"} and use == "allowed":
+        if _enum(state, {"unknown", "inferred"}) and use == "allowed":
             errors.append(f"{path} inferred or unknown claim cannot be allowed")
     return known, public_use, claim_states
 
@@ -1145,7 +1149,7 @@ def _validate_focus(
         "es": "Objetivo bajo revisión:",
         "en": "Target under review:",
     }
-    prefix = prefixes.get(locale)
+    prefix = prefixes.get(locale) if isinstance(locale, str) else None
     if not isinstance(statement, str) or prefix is None or not statement.startswith(prefix):
         errors.append("focus.statement must use the localized target-under-review prefix")
     _references(row.get("claim_ids"), claim_ids, "focus.claim_ids", "C-", errors)
@@ -1171,12 +1175,12 @@ def _validate_dimensions(
         if row is None:
             continue
         dimension = row.get("dimension")
-        if dimension not in DOMAIN_WEIGHTS:
+        if not _enum(dimension, set(DOMAIN_WEIGHTS)):
             errors.append(f"{path}.dimension has invalid dimension")
         elif isinstance(dimension, str):
             seen.append(dimension)
         state = row.get("state")
-        if state not in {"evaluated", "not_evaluated"}:
+        if not _enum(state, {"evaluated", "not_evaluated"}):
             errors.append(f"{path}.state has invalid state")
         score = row.get("score")
         if state == "evaluated" and (type(score) is not int or not 0 <= score <= 100):
@@ -1225,10 +1229,14 @@ def _validate_dimensions(
             ):
                 errors.append("dimensions.visual requires evaluated photo and banner evidence")
             capture_refs = {
-                scope.get("visual_capture_ref"),
-                visual_row.get("capture_ref"),
-                photo.get("capture_ref") if isinstance(photo, Mapping) else None,
-                banner.get("capture_ref") if isinstance(banner, Mapping) else None,
+                reference
+                for reference in (
+                    scope.get("visual_capture_ref"),
+                    visual_row.get("capture_ref"),
+                    photo.get("capture_ref") if isinstance(photo, Mapping) else None,
+                    banner.get("capture_ref") if isinstance(banner, Mapping) else None,
+                )
+                if isinstance(reference, str)
             }
             if len(capture_refs) != 1 or None in capture_refs:
                 errors.append("visual_review components must share the authorized visual capture")
@@ -1244,10 +1252,20 @@ def _validate_dimensions(
                     )
                     if visual_row.get("score") != aggregate:
                         errors.append("dimensions[0].score does not match visual component scores")
-                component_references = set(photo.get("evidence_ids", [])) | set(banner.get("evidence_ids", []))
-                if set(visual_row.get("evidence_ids", [])) != component_references:
+                component_references = {
+                    reference
+                    for component in (photo, banner)
+                    for reference in component.get("evidence_ids", [])
+                    if isinstance(reference, str)
+                }
+                visual_references = {
+                    reference
+                    for reference in visual_row.get("evidence_ids", [])
+                    if isinstance(reference, str)
+                }
+                if visual_references != component_references:
                     errors.append("dimensions[0].evidence_ids must match visual component evidence")
-        elif visual_row is not None and visual_state in {"unavailable", "structural_only", "partial_visual"}:
+        elif visual_row is not None and _enum(visual_state, {"unavailable", "structural_only", "partial_visual"}):
             if visual_row.get("state") != "not_evaluated" or visual_row.get("score") is not None:
                 errors.append("dimensions[0] partial or unavailable visual evidence must not be scored")
     return rows
@@ -1271,7 +1289,7 @@ def _validate_visual(
         if item is None:
             continue
         state = item.get("state")
-        if state not in {"evaluated", "not_evaluated"}:
+        if not _enum(state, {"evaluated", "not_evaluated"}):
             errors.append(f"visual_review.{name}.state has invalid state")
         _text(item.get("finding"), f"visual_review.{name}.finding", errors)
         _text(item.get("private_action"), f"visual_review.{name}.private_action", errors, nullable=True)
@@ -1361,7 +1379,7 @@ def _validate_priorities(
             errors,
         )
         dimensions = _string_list(row.get("dimensions"), f"{path}.dimensions", errors, minimum=1)
-        if any(dimension not in DOMAIN_WEIGHTS for dimension in dimensions):
+        if any(not _enum(dimension, set(DOMAIN_WEIGHTS)) for dimension in dimensions):
             errors.append(f"{path}.dimensions has invalid dimension")
     if ranks != [1, 2, 3]:
         errors.append("priorities must use ordered ranks 1, 2, 3")
@@ -1395,7 +1413,7 @@ def _validate_copies(
             continue
         categories.append(row.get("category"))
         state = row.get("state")
-        if state not in {"ready", "requires_confirmation", "omit"}:
+        if not _enum(state, {"ready", "requires_confirmation", "omit"}):
             errors.append(f"{path}.state has invalid state")
         copy = row.get("copy")
         if state == "omit":
@@ -1564,7 +1582,7 @@ def _validate_questions(value: object, evidence_ids: set[str], errors: list[str]
         for field in normalized_fields:
             normalized_fields[field].append(_normalize_decision_text(row.get(field)))
         linked = row.get("linked_copy_category")
-        if linked not in COPY_CATEGORIES + ("screen_bridge",):
+        if not _enum(linked, set(COPY_CATEGORIES + ("screen_bridge",))):
             errors.append(f"{path}.linked_copy_category has invalid decision")
         elif type(rank) is int:
             links[rank] = linked
@@ -1677,7 +1695,7 @@ def _validate_simple_sections(
     bridge = _closed(value.get("screen_bridge"), "screen_bridge", frozenset({"state", "copy", "why_it_works", "claim_ids", "evidence_ids", "claim_boundary", "evidence_state", "question_rank"}), errors)
     if bridge is not None:
         state = bridge.get("state")
-        if state not in {"ready", "requires_confirmation", "omit"}:
+        if not _enum(state, {"ready", "requires_confirmation", "omit"}):
             errors.append("screen_bridge.state has invalid state")
         _text(bridge.get("copy"), "screen_bridge.copy", errors, nullable=state == "omit")
         _text(bridge.get("why_it_works"), "screen_bridge.why_it_works", errors)
@@ -1725,7 +1743,7 @@ def _validate_plan(value: object, evidence_ids: set[str], errors: list[str]) -> 
             errors.append(f"{path}.day has invalid day")
         else:
             days.append(day)
-        if row.get("category") not in PRIVATE_PLAN_CATEGORIES:
+        if not _enum(row.get("category"), PRIVATE_PLAN_CATEGORIES):
             errors.append(f"{path}.category has invalid private category")
         _text(row.get("action"), f"{path}.action", errors)
         _text(row.get("done_when"), f"{path}.done_when", errors)
@@ -1739,22 +1757,22 @@ def _validate_plan(value: object, evidence_ids: set[str], errors: list[str]) -> 
 def _validate_fixed(value: Mapping[str, object], errors: list[str]) -> Mapping[str, object] | None:
     scope = _closed(value.get("evidence_scope"), "evidence_scope", frozenset({"inspection_mode", "captured_as_of", "inspected_sections", "unavailable_sections", "confidence", "visual_state", "visual_capture_ref"}), errors)
     if scope is not None:
-        if scope.get("inspection_mode") not in {"live_read_only", "provided_material", "mixed"}:
+        if not _enum(scope.get("inspection_mode"), {"live_read_only", "provided_material", "mixed"}):
             errors.append("evidence_scope.inspection_mode has invalid mode")
         _date(scope.get("captured_as_of"), "evidence_scope.captured_as_of", errors)
         inspected = _string_list(scope.get("inspected_sections"), "evidence_scope.inspected_sections", errors, minimum=1)
         unavailable = _string_list(scope.get("unavailable_sections"), "evidence_scope.unavailable_sections", errors)
-        if any(item not in SECTIONS for item in inspected + unavailable):
+        if any(not _enum(item, SECTIONS) for item in inspected + unavailable):
             errors.append("evidence_scope contains invalid section")
         if set(inspected) & set(unavailable):
             errors.append("evidence_scope inspected and unavailable sections must be disjoint")
-        if scope.get("confidence") not in {"low", "medium", "high"}:
+        if not _enum(scope.get("confidence"), {"low", "medium", "high"}):
             errors.append("evidence_scope.confidence has invalid confidence")
         visual_state = scope.get("visual_state")
         capture_ref = scope.get("visual_capture_ref")
-        if visual_state not in VISUAL_STATES:
+        if not _enum(visual_state, VISUAL_STATES):
             errors.append("evidence_scope.visual_state has invalid state")
-        if visual_state in {"partial_visual", "authorized_visual_visible"}:
+        if _enum(visual_state, {"partial_visual", "authorized_visual_visible"}):
             if not isinstance(capture_ref, str) or CAPTURE_REF_PATTERN.fullmatch(capture_ref) is None:
                 errors.append("evidence_scope.visual_capture_ref requires a local capture reference")
         elif capture_ref is not None:
@@ -1763,7 +1781,7 @@ def _validate_fixed(value: Mapping[str, object], errors: list[str]) -> Mapping[s
         errors.append("schema_version has invalid value")
     if value.get("dossier_kind") != DOSSIER_KIND:
         errors.append("dossier_kind has invalid value")
-    if value.get("locale") not in {"es", "en"}:
+    if not _enum(value.get("locale"), {"es", "en"}):
         errors.append("locale has invalid value")
     _date(value.get("evidence_as_of"), "evidence_as_of", errors)
     if value.get("case_scope") != "single_candidate":
@@ -1773,7 +1791,7 @@ def _validate_fixed(value: Mapping[str, object], errors: list[str]) -> Mapping[s
     if not isinstance(value.get("requested_technology_terms"), list):
         errors.append("requested_technology_terms must be a list")
     categories = _string_list(value.get("methodology_source_categories"), "methodology_source_categories", errors)
-    if any(category not in METHOD_CATEGORIES for category in categories):
+    if any(not _enum(category, METHOD_CATEGORIES) for category in categories):
         errors.append("methodology_source_categories has invalid category")
     try:
         LINKEDIN_SAFETY.resolve_methodology_sources(categories)
@@ -1813,9 +1831,8 @@ def _validate_evidence_isolation(
         return all(
             reference not in evidence_records
             or (
-                evidence_records[reference].get("section") in allowed_sections
-                and evidence_records[reference].get("source_kind")
-                in PROFILE_EVIDENCE_SOURCE_KINDS
+                _enum(evidence_records[reference].get("section"), allowed_sections)
+                and _enum(evidence_records[reference].get("source_kind"), PROFILE_EVIDENCE_SOURCE_KINDS)
             )
             for reference in references(row)
         )

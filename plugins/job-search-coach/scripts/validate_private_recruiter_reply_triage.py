@@ -45,6 +45,8 @@ STATE_NEXT_SAFE_ACTIONS = {
     "ready_for_private_prep": "manual_reenter_private_prep",
     "stop": "record_stop_decision",
 }
+def _enum(value: object, allowed: set[str] | frozenset[str]) -> bool:
+    return isinstance(value, str) and value in allowed
 FORBIDDEN_PROSE = {
     "raw": re.compile(r"\b(?:raw|verbatim|quoted|original|inbound)\s+(?:(?:recruiter\s+)?(?:reply|message|text)|content)\b|\b(?:texto|contenido|respuesta)\s+(?:crudo|original|citado)\b", re.IGNORECASE),
     "identity": re.compile(r"\b(?:recruiter|reclutador(?:a)?|contact|contacto)\s*(?::\s*|(?:is|es|named|llamad[oa])\s+)\S+|\b(?:my\s+name\s+is|me\s+llamo|nombre\s+(?:del\s+)?(?:reclutador|contacto))\b", re.IGNORECASE),
@@ -170,21 +172,21 @@ def validate_triage(value: object) -> list[str]:
         errors.remove("missing required field: handoff")
     if triage is None:
         return sorted(set(errors))
-    if triage.get("schema_version") not in {SCHEMA_VERSION, V2_SCHEMA_VERSION}:
+    if not _enum(triage.get("schema_version"), {SCHEMA_VERSION, V2_SCHEMA_VERSION}):
         errors.append("schema_version has invalid value")
     if triage.get("artifact_kind") != "private_recruiter_reply_triage":
         errors.append("artifact_kind has invalid value")
     if schema_version == V2_SCHEMA_VERSION:
-        if triage.get("ui_locale") not in {"es", "en"}:
+        if not _enum(triage.get("ui_locale"), {"es", "en"}):
             errors.append("ui_locale has invalid value")
-        if triage.get("content_locale") not in {"es", "en"}:
+        if not _enum(triage.get("content_locale"), {"es", "en"}):
             errors.append("content_locale has invalid value")
-    elif triage.get("locale") not in {"es", "en"}:
+    elif not _enum(triage.get("locale"), {"es", "en"}):
         errors.append("locale has invalid value")
     state = triage.get("state")
-    if state not in {"clarify_first", "ready_for_private_prep", "stop"}:
+    if not _enum(state, {"clarify_first", "ready_for_private_prep", "stop"}):
         errors.append("state has invalid value")
-    if triage.get("classification") not in CLASSIFICATIONS:
+    if not _enum(triage.get("classification"), CLASSIFICATIONS):
         errors.append("classification has invalid value")
     if state == "ready_for_private_prep" and triage.get("classification") == "decline":
         errors.append("ready_for_private_prep cannot use decline classification")
@@ -192,11 +194,11 @@ def validate_triage(value: object) -> list[str]:
     context = _closed(triage.get("safe_context"), "safe_context", frozenset({"stage", "role_context", "critical_constraints", "summary"}), errors)
     context_is_ready = False
     if context is not None:
-        if context.get("stage") not in {"recruiter_screen", "unknown", "not_applicable"}:
+        if not _enum(context.get("stage"), {"recruiter_screen", "unknown", "not_applicable"}):
             errors.append("safe_context.stage has invalid value")
-        if context.get("role_context") not in {"confirmed", "missing", "not_applicable"}:
+        if not _enum(context.get("role_context"), {"confirmed", "missing", "not_applicable"}):
             errors.append("safe_context.role_context has invalid value")
-        if context.get("critical_constraints") not in {"confirmed", "missing", "not_applicable"}:
+        if not _enum(context.get("critical_constraints"), {"confirmed", "missing", "not_applicable"}):
             errors.append("safe_context.critical_constraints has invalid value")
         _text(context.get("summary"), "safe_context.summary", errors, maximum=280)
         context_is_ready = (
@@ -216,7 +218,7 @@ def validate_triage(value: object) -> list[str]:
             fact_id = _identifier(fact.get("id"), "facts[0].id", "F", errors)
             if fact_id is not None:
                 known_fact_ids.add(fact_id)
-            if fact.get("state") not in {"verified", "candidate_reported"}:
+            if not _enum(fact.get("state"), {"verified", "candidate_reported"}):
                 errors.append("facts[0].state has invalid value")
             else:
                 supplied_fact_state = fact["state"]
@@ -237,9 +239,9 @@ def validate_triage(value: object) -> list[str]:
         if state == "ready_for_private_prep":
             kind = question.get("kind")
             question_kind = kind if isinstance(kind, str) else None
-            if kind not in QUESTION_KINDS:
+            if not _enum(kind, QUESTION_KINDS):
                 errors.append("question.kind has invalid value")
-            elif CLASSIFICATION_QUESTION_KINDS.get(triage.get("classification")) != kind:
+            elif isinstance(triage.get("classification"), str) and CLASSIFICATION_QUESTION_KINDS.get(triage.get("classification")) != kind:
                 errors.append("question.kind must match classification")
 
     blocked_claims = triage.get("blocked_claims")
@@ -268,9 +270,9 @@ def validate_triage(value: object) -> list[str]:
         errors.append("handoff_allowed is permitted only for ready_for_private_prep")
 
     next_safe_action = triage.get("next_safe_action")
-    if next_safe_action not in set(STATE_NEXT_SAFE_ACTIONS.values()):
+    if not _enum(next_safe_action, set(STATE_NEXT_SAFE_ACTIONS.values())):
         errors.append("next_safe_action has invalid value")
-    elif state in STATE_NEXT_SAFE_ACTIONS and next_safe_action != STATE_NEXT_SAFE_ACTIONS[state]:
+    elif _enum(state, set(STATE_NEXT_SAFE_ACTIONS)) and next_safe_action != STATE_NEXT_SAFE_ACTIONS[state]:
         errors.append("next_safe_action must match state")
 
     handoff = triage.get("handoff")
@@ -312,7 +314,7 @@ def validate_triage(value: object) -> list[str]:
                     if packet_question is not None and packet_question != question_id:
                         errors.append("handoff.packet.question_id must match the sole question")
                     scope = packet.get("prep_scope")
-                    if scope not in QUESTION_KINDS:
+                    if not _enum(scope, QUESTION_KINDS):
                         errors.append("handoff.packet.prep_scope has invalid value")
                     elif question_kind != scope:
                         errors.append("handoff.packet.prep_scope must match question.kind")
@@ -339,7 +341,7 @@ def validate_triage(value: object) -> list[str]:
                     if reentry_question is not None and reentry_question != question_id:
                         errors.append("handoff.reentry_packet.question_id must match the sole question")
                     reentry_scope = reentry.get("prep_scope")
-                    if reentry_scope not in QUESTION_KINDS:
+                    if not _enum(reentry_scope, QUESTION_KINDS):
                         errors.append("handoff.reentry_packet.prep_scope has invalid value")
                     elif question_kind != reentry_scope:
                         errors.append("handoff.reentry_packet.prep_scope must match question.kind")

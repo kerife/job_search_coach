@@ -27,6 +27,8 @@ DELIVERY = {
     "raw_event_retained": False,
     "local_save_mode": "disabled",
 }
+def _enum(value: object, allowed: set[str] | frozenset[str]) -> bool:
+    return isinstance(value, str) and value in allowed
 FORBIDDEN = re.compile(
     r"(?:raw|verbatim|quoted|original|inbound|texto\s+(?:crudo|original)|"
     r"[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}|https?://|www\.|linkedin\.com/|"
@@ -172,7 +174,7 @@ def validate_checkpoint(value: object, receipt: object, *, as_of: dt.date | None
         errors.append("schema_version has invalid value")
     if item.get("artifact_kind") != "private_recruiter_followthrough_checkpoint":
         errors.append("artifact_kind has invalid value")
-    if item.get("locale") not in {"en", "es"}:
+    if not _enum(item.get("locale"), {"en", "es"}):
         errors.append("locale has invalid value")
     source = _closed(item.get("source_receipt"), "source_receipt", SOURCE_FIELDS, errors)
     if source is not None:
@@ -180,18 +182,18 @@ def validate_checkpoint(value: object, receipt: object, *, as_of: dt.date | None
             errors.append("source_receipt.id must use the D-000 identifier format")
         if not isinstance(source.get("source_version"), str) or not re.fullmatch(r"[a-z0-9][a-z0-9.-]{0,31}", source.get("source_version", "")):
             errors.append("source_receipt.source_version has invalid value")
-        if source.get("event_type") not in validator.EVENTS:
+        if not _enum(source.get("event_type"), validator.EVENTS):
             errors.append("source_receipt.event_type has invalid value")
         for key in SOURCE_FIELDS:
             if source.get(key) != receipt.get({"id": "source_artifact_id", "source_version": "source_version", "event_type": "event_type"}[key]):
                 errors.append(f"source_receipt.{key} does not match receipt")
     state = item.get("action_state")
     event = item.get("next_measurement_event")
-    if state not in STATES:
+    if not _enum(state, STATES):
         errors.append("action_state has invalid value")
-    if event not in EVENTS:
+    if not _enum(event, EVENTS):
         errors.append("next_measurement_event has invalid value")
-    if state in {"accepted", "deferred", "declined"} and event != "unknown":
+    if _enum(state, {"accepted", "deferred", "declined"}) and event != "unknown":
         errors.append("non-completed action_state requires next_measurement_event=unknown")
     receipt_date = None
     try:
@@ -201,7 +203,7 @@ def validate_checkpoint(value: object, receipt: object, *, as_of: dt.date | None
     observed = _date(item.get("observed_date"), "observed_date", as_of or dt.date.today(), errors)
     if observed is not None and receipt_date is not None and observed < receipt_date:
         errors.append("observed_date cannot precede receipt date")
-    if receipt.get("event_type") == "stop_decision" and state not in {"declined", "completed"}:
+    if receipt.get("event_type") == "stop_decision" and not _enum(state, {"declined", "completed"}):
         errors.append("stop receipt requires declined or completed action_state")
     if _expected_action(state, event) != item.get("next_safe_action"):
         errors.append("next_safe_action does not match action_state and next_measurement_event")

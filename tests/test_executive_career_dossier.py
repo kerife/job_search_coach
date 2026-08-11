@@ -1439,6 +1439,15 @@ class ExecutiveCareerDossierRuntimeTests(unittest.TestCase):
         with self.assertRaisesRegex(self.validator.DossierLoadError, "duplicate JSON key"):
             self.validator.load_dossier(path)
 
+    def test_locale_enum_rejects_non_string_json_values_without_crashing(self) -> None:
+        dossier = load_fixture("scenario-a-es.json")
+        for value in ({}, []):
+            with self.subTest(value=value):
+                mutated = copy.deepcopy(dossier)
+                mutated["locale"] = value
+                errors = self.validator.validate_dossier(mutated)
+                self.assertTrue(any("locale has invalid value" in error for error in errors), value)
+
     def test_loader_rejects_symlink_input_but_accepts_regular_target(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

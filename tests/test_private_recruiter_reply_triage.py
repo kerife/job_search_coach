@@ -632,6 +632,14 @@ class PrivateRecruiterReplyTriageContractTests(unittest.TestCase):
             self.assertEqual(result.returncode, 3)
             self.assertIn("symlink", result.stderr)
 
+    def test_locale_enum_rejects_non_string_json_values_without_traceback(self) -> None:
+        for fixture_name in FIXTURE_NAMES:
+            for value in ({}, []):
+                with self.subTest(fixture=fixture_name, value=value):
+                    mutated = copy.deepcopy(self.fixtures[fixture_name])
+                    mutated["locale"] = value
+                    self.assert_rejected(mutated, "locale has invalid value")
+
     def test_cli_normalizes_parser_failures_and_help(self) -> None:
         fixture = FIXTURE_DIRECTORY / "clarify-en.json"
         invalid = subprocess.run([sys.executable, "-B", str(VALIDATOR_PATH), str(fixture), "--unknown"], capture_output=True, text=True)

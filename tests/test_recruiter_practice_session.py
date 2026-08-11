@@ -689,6 +689,13 @@ class RecruiterPracticeSessionContractTests(unittest.TestCase):
             self.assertEqual(result.returncode, 2, result.stderr)
             self.assertIn("fact_ids", result.stderr)
 
+    def test_locale_enum_rejects_non_string_json_values_without_traceback(self) -> None:
+        for value in ({}, []):
+            with self.subTest(value=value):
+                mutated = copy.deepcopy(self.awaiting_session)
+                mutated["locale"] = value
+                self.assert_rejected(mutated, "locale has invalid value")
+
     def test_cli_normalizes_parser_failures_and_help(self) -> None:
         invalid = subprocess.run([sys.executable, "-B", str(VALIDATOR_PATH), str(FIXTURE_PATH), "--unknown"], capture_output=True, text=True)
         self.assertEqual(invalid.returncode, 3)

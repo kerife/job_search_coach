@@ -71,6 +71,15 @@ class OutcomeContractTests(unittest.TestCase):
             bad=copy.deepcopy(item); bad['delivery'][key]=value; self.assertTrue(validate_outcome(bad),key)
         bad=copy.deepcopy(item); bad['candidate_id']='C-001'; self.assertTrue(validate_outcome(bad))
 
+    def test_locale_enum_rejects_non_string_json_values_without_crashing(self):
+        item = load_outcome(FIXTURES / "contact-received-en.json")
+        for value in ({}, []):
+            with self.subTest(value=value):
+                bad = copy.deepcopy(item)
+                bad["locale"] = value
+                errors = validate_outcome(bad, as_of=dt.date(2026, 8, 9))
+                self.assertTrue(any("locale has invalid value" in error for error in errors), value)
+
     def test_delivery_rejects_integer_boolean_coercion(self):
         item = load_outcome(FIXTURES/'stop-decision-en.json')
         for key, value in {'draft_only': 1, 'external_actions_authorized': 0,

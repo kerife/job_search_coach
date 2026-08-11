@@ -10,6 +10,8 @@ TOP_LEVEL_FIELDS = frozenset({"schema_version", "artifact_kind", "locale", "even
 EVENTS = frozenset({"contact_received", "reply_received", "referral_received", "screen_requested", "interview_requested", "stop_decision"})
 ACTION_BY_EVENT = {"contact_received": "clarify_context_before_reply", "reply_received": "clarify_context_before_reply", "referral_received": "prepare_fact_checked_summary", "screen_requested": "route_to_prepare-role-interviews", "interview_requested": "route_to_prepare-role-interviews", "stop_decision": "record_stop_decision"}
 DELIVERY = {"draft_only": True, "external_actions_authorized": False, "no_message_action": True, "no_calendar_action": True, "raw_event_retained": False, "local_save_mode": "disabled"}
+def _enum(value: object, allowed: set[str] | frozenset[str]) -> bool:
+    return isinstance(value, str) and value in allowed
 FORBIDDEN = re.compile(r"(?:raw|verbatim|quoted|original|inbound|texto\s+(?:crudo|original)|[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}|https?://|www\.|linkedin\.com/|\+?\d[\d .()\-]{7,}\d|(?:company|empresa|employer|recruiter|reclutador|contact|contacto)\s*(?::|is|es|named|llamad[oa])|\b(?:send|message|contact|reach out|apply|submit|schedule|book|confirm|accept|call|email|enviar|escribir|contactar|agendar|programar|reservar|confirmar|aceptar|llamar)\b|\b(?:interview|entrevista|offer|oferta|fit|encaje|guarantee|garantiz|score|puntaje|probability|probabilidad)\b)", re.I)
 
 class OutcomeLoadError(ValueError): pass
@@ -51,7 +53,7 @@ def validate_outcome(value: object, *, today: dt.date | None = None, as_of: dt.d
     if item is None: return sorted(set(errors))
     if item.get("schema_version") != SCHEMA_VERSION: errors.append("schema_version has invalid value")
     if item.get("artifact_kind") != "private_recruiter_conversion_outcome": errors.append("artifact_kind has invalid value")
-    if item.get("locale") not in {"en", "es"}: errors.append("locale has invalid value")
+    if not _enum(item.get("locale"), {"en", "es"}): errors.append("locale has invalid value")
     date=item.get("event_date")
     parsed=None
     if not isinstance(date,str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date): errors.append("event_date must use YYYY-MM-DD")
@@ -61,7 +63,7 @@ def validate_outcome(value: object, *, today: dt.date | None = None, as_of: dt.d
         reference_date = as_of or today or dt.date.today()
         if parsed and parsed > reference_date: errors.append("event_date cannot be in the future")
     event=item.get("event_type")
-    if event not in EVENTS: errors.append("event_type has invalid value")
+    if not _enum(event, EVENTS): errors.append("event_type has invalid value")
     elif item.get("next_safe_action") != ACTION_BY_EVENT[event]: errors.append("next_safe_action must match event_type")
     if not isinstance(item.get("source_artifact_id"),str) or not re.fullmatch(r"D-\d{3}", item.get("source_artifact_id","")): errors.append("source_artifact_id must use the D-000 identifier format")
     if not isinstance(item.get("source_version"),str) or not re.fullmatch(r"[a-z0-9][a-z0-9.-]{0,31}", item.get("source_version","")): errors.append("source_version must be a bounded version label")
@@ -73,7 +75,7 @@ def validate_outcome(value: object, *, today: dt.date | None = None, as_of: dt.d
     elif len(set(facts)) != len(facts):
         errors.append("fact_ids must contain one through three unique F-000 identifiers")
     if item.get("observation_state") != "observed_candidate_reported": errors.append("observation_state has immutable value")
-    if item.get("next_safe_action") not in set(ACTION_BY_EVENT.values()): errors.append("next_safe_action has invalid value")
+    if not _enum(item.get("next_safe_action"), set(ACTION_BY_EVENT.values())): errors.append("next_safe_action has invalid value")
     delivery=_closed(item.get("delivery"), "delivery", frozenset(DELIVERY), errors)
     if delivery is not None:
         for key, expected in DELIVERY.items():

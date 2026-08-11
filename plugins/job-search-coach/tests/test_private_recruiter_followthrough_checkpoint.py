@@ -148,6 +148,14 @@ class FollowthroughCheckpointContractTests(unittest.TestCase):
         help_result = subprocess.run([sys.executable, "-B", str(SCRIPT), "--help"], capture_output=True, text=True)
         self.assertEqual(help_result.returncode, 0)
 
+    def test_locale_enum_rejects_non_string_json_values_without_crashing(self):
+        for value in ({}, []):
+            with self.subTest(value=value):
+                item = copy.deepcopy(self.valid)
+                item["locale"] = value
+                errors = checkpoint.validate_checkpoint(item, self.receipt, as_of=dt.date(2026, 8, 8))
+                self.assertTrue(any("locale has invalid value" in error for error in errors), value)
+
     def test_schema_declares_cross_field_action_invariants(self):
         schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
         branches = schema.get("allOf", [])
