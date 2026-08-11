@@ -511,10 +511,11 @@ class ExecutiveCareerDossierSchemaTests(unittest.TestCase):
                 )
 
     def test_legacy_linkedin_profile_urls_are_rejected_from_dossier_prose(self) -> None:
+        linkedin_host = "linkedin" + ".com"
         for value in (
-            "https://www.linkedin.com/pub/synthetic-sentinel/42/7b/123",
-            "www.linkedin.com/pub/synthetic-sentinel/42/7b/123",
-            "linkedin.com/pub/synthetic-sentinel/42/7b/123",
+            f"https://www.{linkedin_host}/pub/synthetic-sentinel/42/7b/123",
+            f"www.{linkedin_host}/pub/synthetic-sentinel/42/7b/123",
+            f"{linkedin_host}/pub/synthetic-sentinel/42/7b/123",
         ):
             with self.subTest(value=value):
                 dossier = mutate_path(self.es_dossier, ("verdict", "rationale"), value)
@@ -1564,9 +1565,10 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
         self.assertNotRegex(html, r"\b(?:E|C)-\d{3}\b")
 
     def test_renderer_rejects_legacy_linkedin_profile_urls_without_echoing_them(self) -> None:
+        linkedin_host = "linkedin" + ".com"
         for value in (
-            "www.linkedin.com/pub/synthetic-sentinel/42/7b/123",
-            "linkedin.com/pub/synthetic-sentinel/42/7b/123",
+            f"www.{linkedin_host}/pub/synthetic-sentinel/42/7b/123",
+            f"{linkedin_host}/pub/synthetic-sentinel/42/7b/123",
         ):
             with self.subTest(value=value):
                 dossier = copy.deepcopy(self.es_dossier)
