@@ -140,6 +140,26 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
             rendered.index("@media (forced-colors: active)"),
         )
 
+    def test_dark_mode_is_explicit_and_screen_only(self):
+        for locale in ("en", "es"):
+            with self.subTest(locale=locale):
+                item = copy.deepcopy(self.item)
+                item["locale"] = locale
+                rendered = renderer.render_checkpoint_html(
+                    item, self.receipt, as_of=dt.date(2026, 8, 8)
+                )
+                self.assertRegex(
+                    rendered,
+                    r"(?s)@media screen and \(prefers-color-scheme: dark\).*?"
+                    r":root\s*\{[^}]*color-scheme:\s*dark;[^}]*--ink:\s*#f3f6ff;[^}]*--muted:\s*#b8c4d8;"
+                    r"[^}]*--surface:\s*#182235;[^}]*--accent:\s*#8eb2ff;"
+                    r"[^}]*--line:\s*#5f718e;",
+                )
+                self.assertLess(
+                    rendered.index("prefers-color-scheme: dark"),
+                    rendered.index("@media print"),
+                )
+
     def test_print_keeps_checkpoint_card_atomic(self):
         rendered = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
         self.assertRegex(

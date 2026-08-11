@@ -109,6 +109,25 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
             rendered.index("@media (forced-colors: active)"),
         )
 
+    def test_dark_mode_is_explicit_and_screen_only(self):
+        item = load_outcome(FIXTURES / "contact-received-en.json")
+        for locale in ("en", "es"):
+            with self.subTest(locale=locale):
+                localized = copy.deepcopy(item)
+                localized["locale"] = locale
+                rendered = render_outcome_html(localized, today=dt.date(2026, 8, 9))
+                self.assertRegex(
+                    rendered,
+                    r"(?s)@media screen and \(prefers-color-scheme: dark\).*?"
+                    r":root\s*\{[^}]*color-scheme:\s*dark;[^}]*--ink:\s*#f3f6ff;[^}]*--muted:\s*#b8c4d8;"
+                    r"[^}]*--surface:\s*#182235;[^}]*--accent:\s*#8eb2ff;"
+                    r"[^}]*--line:\s*#5f718e;",
+                )
+                self.assertLess(
+                    rendered.index("prefers-color-scheme: dark"),
+                    rendered.index("@media print"),
+                )
+
     def test_print_keeps_outcome_card_atomic(self):
         rendered = render_outcome_html(
             load_outcome(FIXTURES / "contact-received-en.json"), today=dt.date(2026, 8, 9)

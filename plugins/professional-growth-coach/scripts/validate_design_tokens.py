@@ -62,7 +62,21 @@ FAMILY_COLORS = {
         }
     ),
     "compact_receipt": frozenset(
-        {"#172033", "#315bd6", "#536174", "#d9dfeb", "#f4f6fa", "#ffffff"}
+        {
+            "#101521",
+            "#172033",
+            "#182235",
+            "#315bd6",
+            "#52637d",
+            "#536174",
+            "#5f718e",
+            "#8eb2ff",
+            "#b8c4d8",
+            "#d9dfeb",
+            "#f3f6ff",
+            "#f4f6fa",
+            "#ffffff",
+        }
     ),
 }
 
