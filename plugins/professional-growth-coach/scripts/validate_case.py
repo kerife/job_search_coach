@@ -186,9 +186,12 @@ def _open_case_parent(path: str, nofollow: int, directory_flag: int) -> tuple[in
                 base_flags | (0 if trusted_system_alias else nofollow),
                 dir_fd=descriptor,
             )
-            if not stat.S_ISDIR(os.fstat(next_descriptor).st_mode):
+            try:
+                if not stat.S_ISDIR(os.fstat(next_descriptor).st_mode):
+                    raise OSError("case input parent is not a directory")
+            except BaseException:
                 os.close(next_descriptor)
-                raise OSError("case input parent is not a directory")
+                raise
             os.close(descriptor)
             descriptor = next_descriptor
         return descriptor, Path(absolute).name

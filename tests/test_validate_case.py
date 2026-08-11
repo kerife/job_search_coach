@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -207,6 +209,40 @@ def load_validator_module():
 
 
 class ValidateCaseTests(unittest.TestCase):
+    def test_open_case_parent_closes_provisional_descriptor(self) -> None:
+        module = load_validator_module()
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            case_path = Path(temporary_directory) / "case.json"
+            case_path.write_text("{}", encoding="utf-8")
+            opened: list[int] = []
+            closed: list[int] = []
+            real_open = module.os.open
+            real_close = module.os.close
+
+            def recording_open(*args: object, **kwargs: object) -> int:
+                descriptor = real_open(*args, **kwargs)
+                opened.append(descriptor)
+                return descriptor
+
+            def recording_close(descriptor: int) -> None:
+                closed.append(descriptor)
+                real_close(descriptor)
+
+            def failing_fstat(_descriptor: int) -> object:
+                raise OSError("synthetic fstat failure")
+
+            with mock.patch.object(module.os, "open", side_effect=recording_open), \
+                mock.patch.object(module.os, "close", side_effect=recording_close), \
+                mock.patch.object(module.os, "fstat", side_effect=failing_fstat):
+                with self.assertRaises(OSError):
+                    module._open_case_parent(
+                        str(case_path), os.O_NOFOLLOW, os.O_DIRECTORY
+                    )
+
+            for descriptor in set(opened) - set(closed):
+                real_close(descriptor)
+            self.assertEqual(set(opened), set(closed))
+
     def test_accepts_a_valid_isolated_case(self) -> None:
         result = run_validator(valid_case())
 
