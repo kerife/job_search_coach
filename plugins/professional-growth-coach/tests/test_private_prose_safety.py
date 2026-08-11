@@ -43,6 +43,9 @@ class PrivateProseSafetyTests(unittest.TestCase):
             "extra": "extra",
             "person@example.invalid": "<redacted-field>",
             "/Users/synthetic/private-case.json": "<redacted-field>",
+            "~/synthetic/private-case.json": "<redacted-field>",
+            "www.example.invalid/profile": "<redacted-field>",
+            "linkedin.com/in/synthetic": "<redacted-field>",
             "token_sk_live_SYNTHETIC": "<redacted-field>",
         }
         for value, expected in cases.items():
