@@ -213,6 +213,41 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
             sourced_html,
         )
 
+    def test_next_action_forced_colors_uses_explicit_system_color_surface_in_both_locales(self):
+        session = {
+            "schema_version": "recruiter-practice-session-v1",
+            "session_kind": "private_recruiter_practice",
+            "locale": "es",
+            "state": "awaiting_answer",
+            "safe_context": {"stage": "recruiter_screen", "vacancy_state": "safe_summary_provided", "summary": "Contexto"},
+            "requirement": {"id": "R-001", "summary": "Liderazgo", "fact_ids": ["F-001"]},
+            "question": {"id": "Q-001", "kind": "proof_example", "text": "¿Cómo lo hiciste?", "requirement_id": "R-001", "fact_ids": ["F-001"]},
+            "facts": [{"id": "F-001", "state": "verified", "summary": "Resultado confirmado"}],
+            "observed_answer": None,
+            "rubric": {"id": "RB-001", "criterion": "Conecta acción y resultado observado."},
+            "feedback": {"score": "unknown", "score_state": "unknown", "observations": []},
+            "delivery": {"draft_only": True, "external_actions_authorized": False, "local_save_mode": "disabled", "raw_answer_retained": False},
+        }
+        expected_heading = {"es": "Siguiente paso", "en": "Next step"}
+        for locale, heading in expected_heading.items():
+            localized = copy.deepcopy(session)
+            localized["locale"] = locale
+            with self.subTest(locale=locale):
+                rendered = renderer.render_session_html(localized)
+                self.assertIn(heading, rendered)
+                self.assertRegex(
+                    rendered,
+                    r"(?s)@media \(forced-colors: active\).*?\.recruiter-practice-document \.practice-next-action \{[^}]*background: Canvas;[^}]*color: CanvasText;[^}]*border-color: CanvasText;",
+                )
+                self.assertRegex(
+                    rendered,
+                    r"(?s)@media \(forced-colors: active\).*?\.recruiter-practice-document \.practice-next-action h2 \{[^}]*color: CanvasText;",
+                )
+                self.assertRegex(
+                    rendered,
+                    r"(?s)@media \(forced-colors: active\).*?\.recruiter-practice-next-action--ready_to_practice,\s+\.recruiter-practice-document \.practice-next-action--awaiting_answer \{[^}]*border-left-color: CanvasText;",
+                )
+
     def test_sourced_session_hides_provenance_and_raw_answer_material(self):
         sourced = self._feedback_session([self._observation("confirm")])
         sourced["observed_answer"]["text"] = "SOURCE-RAW-ANSWER-SENTINEL"

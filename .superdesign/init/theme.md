@@ -797,6 +797,8 @@ html { color-scheme: light; background: var(--paper); }
 @media (forced-colors: active) {
   .recruiter-practice-document .practice-handoff { border: 1px dashed CanvasText; background: Canvas; color: CanvasText; }
   .recruiter-practice-document .practice-handoff h2 { color: CanvasText; }
+  .recruiter-practice-document .practice-next-action { background: Canvas; color: CanvasText; border-color: CanvasText; }
+  .recruiter-practice-document .practice-next-action h2 { color: CanvasText; }
   .recruiter-practice-document .practice-next-action--ready_to_practice,
   .recruiter-practice-document .practice-next-action--awaiting_answer { border-left-color: CanvasText; }
   .recruiter-practice-document .practice-feedback { border: 1px solid CanvasText; background: Canvas; color: CanvasText; }
