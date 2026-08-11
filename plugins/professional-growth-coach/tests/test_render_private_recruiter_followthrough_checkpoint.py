@@ -147,6 +147,10 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
             r"(?s)@media print.*?\.checkpoint-card\s*\{[^}]*break-inside:\s*avoid;[^}]*page-break-inside:\s*avoid;",
         )
 
+    def test_print_uses_deterministic_page_margins(self):
+        rendered = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
+        self.assertIn("@page { size: auto; margin: 14mm; }", rendered)
+
     def test_forced_colors_preserves_checkpoint_boundary_marker(self):
         rendered = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
         self.assertRegex(

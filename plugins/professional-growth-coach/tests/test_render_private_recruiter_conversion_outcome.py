@@ -118,6 +118,12 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
             r"(?s)@media print.*?\.outcome-card\s*\{[^}]*break-inside:\s*avoid;[^}]*page-break-inside:\s*avoid;",
         )
 
+    def test_print_uses_deterministic_page_margins(self):
+        rendered = render_outcome_html(
+            load_outcome(FIXTURES / "contact-received-en.json"), today=dt.date(2026, 8, 9)
+        )
+        self.assertIn("@page { size: auto; margin: 14mm; }", rendered)
+
     def test_forced_colors_preserves_outcome_boundary_marker(self):
         rendered = render_outcome_html(
             load_outcome(FIXTURES / "contact-received-en.json"), today=dt.date(2026, 8, 9)
