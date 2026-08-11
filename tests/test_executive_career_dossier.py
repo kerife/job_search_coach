@@ -982,6 +982,19 @@ class ExecutiveCareerDossierEvidenceModuleTests(unittest.TestCase):
             (("market_context", "reason"), "No es una recomendación, renuncia a tu empleo."),
             (("market_context", "reason"), "We do not advise you; leave your current job."),
             (("market_context", "reason"), "No es una recomendación: renuncia a tu empleo."),
+            (("market_context", "reason"), "You should resign from your job."),
+            (("market_context", "reason"), "You must quit your current role."),
+            (("market_context", "reason"), "Resign from your current job."),
+            (("market_context", "reason"), "Leave your role."),
+            (("market_context", "reason"), "Leave the company."),
+            (("market_context", "reason"), "Quit your employment."),
+            (("market_context", "reason"), "Reducir tu jornada laboral."),
+            (("market_context", "reason"), "Reducir tu horario."),
+            (("market_context", "reason"), "Reduce tu jornada."),
+            (("market_context", "reason"), "Reducir tus horas laborales."),
+            (("market_context", "reason"), "Crear una brecha voluntaria."),
+            (("market_context", "reason"), "Abandonar tu empleo."),
+            (("market_context", "reason"), "Abandona tu trabajo."),
         )
         for path, text in cases:
             with self.subTest(path=path):
@@ -1009,6 +1022,8 @@ class ExecutiveCareerDossierEvidenceModuleTests(unittest.TestCase):
         )
         dossier["priorities"][0]["problem"] = "No es un consejo para dejar tu empleo."
         dossier["priorities"][0]["done_when"] = "No se recomienda dejar tu empleo."
+        dossier["priorities"][0]["title"] = "No se aconseja dejar tu empleo."
+        dossier["priorities"][0]["action"] = "No aconsejamos dejar tu empleo."
         errors = self.validator.validate_dossier(dossier)
         self.assertFalse(
             any("must preserve current employment by default" in error for error in errors)

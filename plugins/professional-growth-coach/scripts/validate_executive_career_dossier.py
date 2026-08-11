@@ -87,21 +87,25 @@ EMPLOYMENT_CONTINUITY_NEGATED = re.compile(
     r"do\s+not\s+advise\b[^.!?,;:]{0,64}\b(?:resign|quit|leave)\b|"
     r"no\s+(?:es\s+un[ao]?\s+)?(?:recomendaci[oó]n|consejo)\b[^.!?,;:]{0,64}\b(?:renunci(?:ar|a)|dejar|deja)\b|"
     r"no\s+se\s+recomienda\b[^.!?,;:]{0,64}\b(?:dejar|renunciar)\b|"
+    r"no\s+(?:se\s+)?aconseja(?:mos)?\b[^.!?,;:]{0,64}\b(?:dejar|renunciar)\b|"
     r"sin\s+(?:recomendar|aconsejar)\b[^.!?,;:]{0,64}\b(?:dejar|renunciar)\b|"
     r"sin\s+(?:dejar|renunciar)\b)",
     re.I,
 )
 EMPLOYMENT_SEPARATION_IMPERATIVE = re.compile(
     r"\b(?:you\s+(?:should|must|need\s+to|have\s+to)\s+)?(?:resign|quit)\s+"
-    r"(?:now|today|your\s+(?:current\s+)?job|the\s+job)\b|"
+    r"(?:now|today|your\s+(?:current\s+)?(?:job|role|employment|company|employer)|the\s+(?:job|role|company)|"
+    r"from\s+(?:your\s+)?(?:current\s+)?(?:job|role|employment|company|employer))\b|"
     r"\b(?:you\s+(?:should|must|need\s+to|have\s+to)\s+)?leave\s+"
-    r"(?:your\s+)?(?:current\s+)?(?:job|employer|employment|company)\b|"
+    r"(?:your\s+|the\s+)?(?:current\s+)?(?:job|role|employer|employment|company)\b|"
     r"\b(?:renuncia|renunciar)\s+(?:ahora|hoy|a\s+tu\s+(?:empleo|trabajo))\b|"
     r"\b(?:deja|dejar)\s+(?:tu\s+)?(?:empleo|trabajo|empresa)\b|"
     r"\b(?:reduce|reducir)\s+(?:your\s+|tus\s+)?(?:working\s+)?hours\b|"
-    r"\breduce\s+tu\s+jornada\s+laboral\b|"
-    r"\b(?:crea|crear)\s+(?:una\s+)?brecha\s+(?:laboral|de\s+empleo)\b|"
+    r"\b(?:reduce|reducir)\s+tu\s+jornada(?:\s+laboral)?\b|"
+    r"\b(?:reduce|reducir)\s+(?:tu|tus)\s+(?:horario|horas\s+laborales)\b|"
+    r"\b(?:crea|crear)\s+(?:una\s+)?brecha\s+(?:voluntaria|laboral|de\s+empleo)\b|"
     r"\b(?:create|crear)\s+(?:a\s+)?(?:voluntary\s+)?(?:employment\s+)?gap\b|"
+    r"\b(?:abandona|abandonar)\s+(?:tu\s+)?(?:empleo|trabajo|empresa)\b|"
     r"\b(?:recommend(?:s|ed)?|recomiendo|recomienda)\s+(?:that\s+you\s+)?(?:resign|quit|renunciar)\b",
     re.I,
 )
