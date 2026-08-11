@@ -1817,13 +1817,13 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
         for dossier, expected, absent in (
             (
                 self.es_dossier,
+                "Este análisis evalúa opciones profesionales; no recomienda renunciar, dejar un empleo ni abandonar tu búsqueda; tú decides qué sigue.",
                 "Este análisis evalúa opciones y desarrollo profesional; no recomienda renunciar ni dejar tu empleo. Tú decides qué sigue.",
-                "This analysis evaluates professional options and development; it does not recommend resigning or leaving your job. You decide what comes next.",
             ),
             (
                 self.en_dossier,
+                "This analysis evaluates professional options; it does not recommend resigning, leaving a job, or stopping your job search; you decide what comes next.",
                 "This analysis evaluates professional options and development; it does not recommend resigning or leaving your job. You decide what comes next.",
-                "Este análisis evalúa opciones y desarrollo profesional; no recomienda renunciar ni dejar tu empleo. Tú decides qué sigue.",
             ),
         ):
             with self.subTest(locale=dossier["locale"]):
