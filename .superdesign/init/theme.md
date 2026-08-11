@@ -462,6 +462,9 @@ details summary {
   }
   html,
   .dossier-document { background: var(--paper); color: var(--ink); }
+  .dossier-document progress { background: var(--forest-soft); }
+  .dossier-document progress::-webkit-progress-bar { background: var(--forest-soft); }
+  .dossier-document progress::-moz-progress-bar { background: var(--forest); }
   .dossier-document .score-note,
   .dossier-document .label,
   .dossier-document .priority-body dt,

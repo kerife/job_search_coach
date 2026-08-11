@@ -101,3 +101,31 @@ class DarkModeAccessibilityTests(unittest.TestCase):
         self.assertIn(".dossier-document .label", dark_block)
         self.assertIn("color: var(--muted)", dark_block)
         self.assertGreaterEqual(_contrast("#b8c4d8", "#182235"), 4.5)
+
+    def test_dossier_progress_track_has_dark_non_text_contrast(self) -> None:
+        css = (ASSETS / "executive-career-dossier-v1.css").read_text(encoding="utf-8")
+        dark_start = css.index("@media screen and (prefers-color-scheme: dark)")
+        print_start = css.index("@media print")
+        dark_block = css[dark_start:print_start]
+        self.assertIn(".dossier-document progress", dark_block)
+        self.assertIn(
+            ".dossier-document progress::-webkit-progress-bar", dark_block
+        )
+        self.assertIn(".dossier-document progress::-moz-progress-bar", dark_block)
+        self.assertRegex(
+            dark_block,
+            r"\.dossier-document progress \{ background: var\(--forest-soft\); \}",
+        )
+        self.assertRegex(
+            dark_block,
+            r"\.dossier-document progress::-webkit-progress-bar \{ background: var\(--forest-soft\); \}",
+        )
+        self.assertRegex(
+            dark_block,
+            r"\.dossier-document progress::-moz-progress-bar \{ background: var\(--forest\); \}",
+        )
+        forest = re.search(r"--forest:\s*(#[0-9a-fA-F]{6});", dark_block)
+        forest_soft = re.search(r"--forest-soft:\s*(#[0-9a-fA-F]{6});", dark_block)
+        self.assertIsNotNone(forest)
+        self.assertIsNotNone(forest_soft)
+        self.assertGreaterEqual(_contrast(forest.group(1), forest_soft.group(1)), 3.0)
