@@ -569,6 +569,7 @@ details summary {
   --forest-soft: #dce5e0;
   --coral: #b9513a;
   --coral-soft: #f6e0da;
+  --decision-term: #dfbf70;
   --line: #b8c7c0;
   --measure: 72ch;
   --serif: Georgia, "Times New Roman", Times, serif;
@@ -687,7 +688,8 @@ html { color-scheme: light; background: var(--paper); }
 .recruiter-practice-document .practice-rehearsal,
 .recruiter-practice-document .practice-evidence,
 .recruiter-practice-document .practice-boundary,
-.recruiter-practice-document .practice-feedback {
+.recruiter-practice-document .practice-feedback,
+.recruiter-practice-document .practice-decision {
   padding: 1rem;
   border: 1px solid var(--line);
 }
@@ -700,7 +702,6 @@ html { color-scheme: light; background: var(--paper); }
 .recruiter-practice-document .practice-next-action p { max-width: var(--measure); margin: 0.45rem 0 0; }
 .recruiter-practice-document .practice-next-action--ready_to_practice { border-left: 4px solid #9fc4b4; }
 .recruiter-practice-document .practice-next-action--awaiting_answer { border-left: 4px solid #dfbf70; }
-.recruiter-practice-document .practice-next-action--feedback_available { border-left: 4px solid #e8a28e; }
 .recruiter-practice-document .practice-handoff { padding: 1rem; border: 1px dashed var(--forest); background: #f8f7f2; }
 .recruiter-practice-document .practice-handoff h2 { font-size: 1.25rem; }
 .recruiter-practice-document .practice-handoff p { max-width: var(--measure); margin: 0.45rem 0 0; }
@@ -714,6 +715,35 @@ html { color-scheme: light; background: var(--paper); }
 .recruiter-practice-document .practice-boundary { background: var(--coral-soft); border-color: var(--coral); }
 .recruiter-practice-document .practice-boundary p { margin: 0.45rem 0 0; }
 .recruiter-practice-document .practice-feedback { border-left: 4px solid var(--coral); }
+.recruiter-practice-document .practice-decision {
+  padding: 1rem;
+  border: 1px solid var(--forest);
+  border-left: 4px solid var(--decision-term);
+  background: var(--forest);
+  color: #fff;
+}
+.recruiter-practice-document .practice-decision h2 { color: #fff; }
+.recruiter-practice-document .practice-decision-explanation {
+  max-width: var(--measure);
+  margin: 0.45rem 0 0;
+}
+.recruiter-practice-document .practice-decision dl {
+  display: grid;
+  grid-template-columns: minmax(9rem, 0.35fr) minmax(0, 1fr);
+  gap: 0.5rem 1rem;
+  min-width: 0;
+  margin: 1rem 0 0;
+}
+.recruiter-practice-document .practice-decision dt {
+  min-width: 0;
+  color: var(--decision-term);
+  font-weight: 700;
+}
+.recruiter-practice-document .practice-decision dd {
+  min-width: 0;
+  margin: 0;
+  color: #fff;
+}
 .recruiter-practice-document .visually-hidden {
   position: absolute;
   width: 1px;
@@ -727,10 +757,10 @@ html { color-scheme: light; background: var(--paper); }
 }
 .recruiter-practice-document .practice-feedback ul { margin: 0.65rem 0 0; padding-left: 1.25rem; }
 .recruiter-practice-document .practice-feedback li + li { margin-top: 0.5rem; }
-.recruiter-practice-document .feedback-label { font-weight: 700; }
-.recruiter-practice-document .feedback-label--solid { color: var(--forest); }
-.recruiter-practice-document .feedback-label--confirm { color: #854117; }
-.recruiter-practice-document .feedback-label--do_not_assert { color: var(--coral); }
+.recruiter-practice-document .feedback-label { font-weight: 700; color: var(--ink); }
+.recruiter-practice-document .feedback-label--solid { color: var(--ink); }
+.recruiter-practice-document .feedback-label--confirm { color: var(--ink); }
+.recruiter-practice-document .feedback-label--do_not_assert { color: var(--ink); }
 .recruiter-practice-document .feedback-item { padding: 0.55rem 0.65rem; border-left: 3px solid var(--line); }
 .recruiter-practice-document .feedback-item--solid { border-left-color: var(--forest); background: var(--forest-soft); }
 .recruiter-practice-document .feedback-item--confirm { border-left-color: #854117; background: #f7ecd5; }
@@ -751,6 +781,7 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-shell { width: min(100% - 1rem, 920px); }
   .recruiter-practice-document .practice-header { align-items: start; flex-direction: column; }
   .recruiter-practice-document .state-chip { text-align: left; }
+  .recruiter-practice-document .practice-decision dl { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -767,14 +798,16 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-handoff { border: 1px dashed CanvasText; background: Canvas; color: CanvasText; }
   .recruiter-practice-document .practice-handoff h2 { color: CanvasText; }
   .recruiter-practice-document .practice-next-action--ready_to_practice,
-  .recruiter-practice-document .practice-next-action--awaiting_answer,
-  .recruiter-practice-document .practice-next-action--feedback_available { border-left-color: CanvasText; }
+  .recruiter-practice-document .practice-next-action--awaiting_answer { border-left-color: CanvasText; }
+  .recruiter-practice-document .practice-feedback { border: 1px solid CanvasText; background: Canvas; color: CanvasText; }
+  .recruiter-practice-document .feedback-item { border: 1px solid CanvasText; background: Canvas; color: CanvasText; }
+  .recruiter-practice-document .practice-decision { border: 1px solid CanvasText; background: Canvas; color: CanvasText; }
+  .recruiter-practice-document .practice-decision h2,
+  .recruiter-practice-document .practice-decision dt,
+  .recruiter-practice-document .practice-decision dd { color: CanvasText; }
   .recruiter-practice-document .feedback-label--solid,
   .recruiter-practice-document .feedback-label--confirm,
   .recruiter-practice-document .feedback-label--do_not_assert { color: CanvasText; }
-  .recruiter-practice-document .feedback-item--solid,
-  .recruiter-practice-document .feedback-item--confirm,
-  .recruiter-practice-document .feedback-item--do_not_assert { border-left-color: CanvasText; background: Canvas; }
 }
 
 @media (prefers-contrast: more) {
@@ -782,7 +815,8 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-next-action,
   .recruiter-practice-document .practice-handoff,
   .recruiter-practice-document .practice-feedback,
-  .recruiter-practice-document .feedback-item { border-width: 2px; }
+  .recruiter-practice-document .feedback-item,
+  .recruiter-practice-document .practice-decision { border-width: 2px; }
   .recruiter-practice-document .feedback-label { text-decoration: underline; text-decoration-thickness: 0.12em; }
 }
 
@@ -806,6 +840,22 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-handoff {
     break-inside: avoid;
     page-break-inside: avoid;
+  }
+  .recruiter-practice-document .practice-feedback {
+    break-after: avoid-page;
+  }
+  .recruiter-practice-document .practice-decision {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    break-before: avoid-page;
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--ink);
+  }
+  .recruiter-practice-document .practice-decision h2,
+  .recruiter-practice-document .practice-decision dt,
+  .recruiter-practice-document .practice-decision dd {
+    color: var(--ink);
   }
   .recruiter-practice-document .practice-session { box-shadow: none; }
 }
@@ -924,6 +974,26 @@ html { color-scheme: light; background: var(--paper); }
   .private-recruiter-triage-document .triage-handoff-receipt { border-color: CanvasText; }
   .private-recruiter-triage-document .triage-handoff-step-label { color: CanvasText; }
   .private-recruiter-triage-document .triage-handoff-sequence > li::before { border-color: CanvasText; background: Canvas; color: CanvasText; }
+}
+
+@media (prefers-contrast: more) {
+  .private-recruiter-triage-document .triage-state {
+    border: 2px solid currentColor;
+    text-decoration: underline;
+    text-decoration-thickness: 0.12em;
+    text-underline-offset: 0.15em;
+  }
+  .private-recruiter-triage-document .triage-next-safe-action,
+  .private-recruiter-triage-document .triage-blocked {
+    border: 2px solid currentColor;
+    border-left-width: 5px;
+  }
+  .private-recruiter-triage-document .triage-next-safe-action h2,
+  .private-recruiter-triage-document .triage-blocked h2 {
+    text-decoration: underline;
+    text-decoration-thickness: 0.12em;
+    text-underline-offset: 0.15em;
+  }
 }
 
 @media (max-width: 640px) {
