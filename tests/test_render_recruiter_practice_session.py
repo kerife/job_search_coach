@@ -1072,6 +1072,21 @@ class RecruiterPracticeSessionRendererTests(unittest.TestCase):
         self.assertIn("animation: none !important", rendered)
         self.assertIn("transition: none !important", rendered)
 
+    def test_print_keeps_next_action_ink_safe_and_freezes_entrance_motion(self) -> None:
+        rendered = self.renderer.render_session_html(self.awaiting_session)
+        self.assertRegex(
+            rendered,
+            r"(?s)@media print.*?\.practice-next-action\s*\{[^}]*background:\s*transparent;[^}]*color:\s*var\(--ink\);[^}]*border:\s*1px solid var\(--ink\);[^}]*border-left-width:\s*4px;",
+        )
+        self.assertRegex(
+            rendered,
+            r"(?s)@media print.*?\.practice-next-action h2\s*\{[^}]*color:\s*var\(--ink\);",
+        )
+        self.assertRegex(
+            rendered,
+            r"(?s)@media print.*?\.practice-session\s*\{[^}]*animation:\s*none !important;[^}]*transition:\s*none !important;[^}]*transform:\s*none !important;",
+        )
+
     def test_malformed_reference_types_fail_closed_without_renderer_crash(self) -> None:
         for field in ("requirement", "question"):
             invalid = copy.deepcopy(self.awaiting_session)

@@ -862,6 +862,18 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-decision dd {
     color: var(--ink);
   }
+  .recruiter-practice-document .practice-next-action {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--ink);
+    border-left-width: 4px;
+  }
+  .recruiter-practice-document .practice-next-action h2 { color: var(--ink); }
+  .recruiter-practice-document .practice-session {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
   .recruiter-practice-document .practice-session { box-shadow: none; }
 }
 ```
@@ -964,7 +976,12 @@ html { color-scheme: light; background: var(--paper); }
   .private-recruiter-triage-document .triage-handoff-reentry-cue { break-inside: avoid; page-break-inside: avoid; }
   .private-recruiter-triage-document .triage-handoff-receipt { break-inside: avoid; page-break-inside: avoid; }
   .private-recruiter-triage-document .triage-handoff-sequence > li { break-inside: avoid; page-break-inside: avoid; }
-  .private-recruiter-triage-document .triage-card { box-shadow: none; }
+  .private-recruiter-triage-document .triage-card {
+    box-shadow: none;
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
 }
 
 @media (forced-colors: active) {

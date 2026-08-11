@@ -234,6 +234,13 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
         self.assertIn("@media (max-width: 640px)", css)
         self.assertIn("@media (forced-colors: active)", css)
 
+    def test_print_freezes_triage_entrance_motion(self) -> None:
+        document = self.renderer.render_triage_html(self.fixtures["ready-en.json"])
+        self.assertRegex(
+            document,
+            r"(?s)@media print.*?\.triage-card\s*\{[^}]*animation:\s*none !important;[^}]*transition:\s*none !important;[^}]*transform:\s*none !important;",
+        )
+
     def test_triage_has_preferred_contrast_semantic_panel_hooks(self) -> None:
         css = (REPO_ROOT / "plugins" / "professional-growth-coach" / "assets" / "private-recruiter-reply-triage-v1.css").read_text(encoding="utf-8")
         self.assertIn("@media (prefers-contrast: more)", css)

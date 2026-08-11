@@ -93,7 +93,12 @@
   .private-recruiter-triage-document .triage-handoff-reentry-cue { break-inside: avoid; page-break-inside: avoid; }
   .private-recruiter-triage-document .triage-handoff-receipt { break-inside: avoid; page-break-inside: avoid; }
   .private-recruiter-triage-document .triage-handoff-sequence > li { break-inside: avoid; page-break-inside: avoid; }
-  .private-recruiter-triage-document .triage-card { box-shadow: none; }
+  .private-recruiter-triage-document .triage-card {
+    box-shadow: none;
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
 }
 
 @media (forced-colors: active) {
