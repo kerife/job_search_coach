@@ -93,6 +93,26 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
                 self.assertIn(expected[locale]["action"], rendered)
                 self.assertIn(expected[locale]["boundary"], rendered)
 
+        declined = copy.deepcopy(self.item)
+        declined.update(
+            action_state="declined",
+            next_measurement_event="unknown",
+            next_safe_action="record_stop_decision",
+            source_receipt={
+                "id": stop_receipt["source_artifact_id"],
+                "source_version": stop_receipt["source_version"],
+                "event_type": stop_receipt["event_type"],
+            },
+        )
+        for locale in ("en", "es"):
+            with self.subTest(locale=f"declined-{locale}"):
+                declined["locale"] = locale
+                rendered = renderer.render_checkpoint_html(
+                    declined, stop_receipt, as_of=dt.date(2026, 8, 8)
+                )
+                self.assertIn(expected[locale]["action"], rendered)
+                self.assertIn(expected[locale]["boundary"], rendered)
+
     def test_css_accessibility_hooks_and_deterministic_render(self):
         first = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
         second = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))

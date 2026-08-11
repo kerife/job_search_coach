@@ -54,6 +54,17 @@ LABELS = {
     },
 }
 
+STOP_COPY = {
+    "en": {
+        "action": "Record this recruiter-process outcome privately; do not continue this preparation path.",
+        "boundary": "Scope: this records one recruiter-process outcome only. It is not advice to resign, leave a job, or stop your job search; you decide what comes next.",
+    },
+    "es": {
+        "action": "Registra en privado el resultado de este proceso de reclutamiento; no continúes por esta vía de preparación.",
+        "boundary": "Alcance: esto solo registra un resultado de este proceso de reclutamiento. No es una recomendación de renunciar, dejar un empleo ni abandonar tu búsqueda; tú decides qué sigue.",
+    },
+}
+
 class CheckpointRenderValidationError(ValueError):
     def __init__(self, errors: Sequence[str]):
         self.errors = tuple(errors)
@@ -76,6 +87,8 @@ def render_checkpoint_html(item: Mapping[str, object], receipt: Mapping[str, obj
     value = _validated(item, receipt, as_of=as_of)
     locale = value["locale"]
     labels = LABELS[locale]
+    is_stop = value["next_measurement_event"] == "stop_decision" or value["source_receipt"]["event_type"] == "stop_decision"
+    stop_copy = STOP_COPY[locale] if is_stop else None
     template = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, TEMPLATE_PATH)
     css = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, CSS_PATH)
     replacements = {
@@ -84,8 +97,8 @@ def render_checkpoint_html(item: Mapping[str, object], receipt: Mapping[str, obj
         "{{STATE_LABEL}}": labels["state"], "{{STATE}}": labels["states"][value["action_state"]],
         "{{EVENT_LABEL}}": labels["event"], "{{EVENT}}": labels["events"][value["next_measurement_event"]],
         "{{DATE_LABEL}}": labels["date"], "{{DATE}}": html.escape(value["observed_date"]),
-        "{{ACTION_LABEL}}": labels["action"], "{{ACTION}}": labels["actions"][value["next_safe_action"]],
-        "{{BOUNDARY}}": labels["boundary"], "{{SAVE}}": labels["save"],
+        "{{ACTION_LABEL}}": labels["action"], "{{ACTION}}": stop_copy["action"] if stop_copy else labels["actions"][value["next_safe_action"]],
+        "{{BOUNDARY}}": stop_copy["boundary"] if stop_copy else labels["boundary"], "{{SAVE}}": labels["save"],
     }
     for token, replacement in replacements.items(): template = template.replace(token, replacement)
     if re.search(r"\{\{[A-Z_]+\}\}", template): raise RuntimeError("checkpoint template token contract is invalid")

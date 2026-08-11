@@ -37,7 +37,7 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
             "referral_received": "Prepare a fact-checked summary",
             "screen_requested": "Route to interview preparation",
             "interview_requested": "Route to interview preparation",
-            "stop_decision": "Record the stop decision",
+            "stop_decision": "Record this recruiter-process outcome privately; do not continue this preparation path.",
         }
         seen = set()
         for path in FIXTURES.glob("*.json"):
