@@ -861,7 +861,13 @@ def extract_market_volume_values(value: object) -> tuple[int | None, ...]:
         ):
             start -= 1
         if start < index:
-            values.append(parse_bounded_number(" ".join(tokens[start:index])))
+            phrase = " ".join(tokens[start:index])
+            parsed = parse_bounded_number(phrase)
+            # The article in ordinary prose ("a job") is not a count. Keep
+            # unparseable numeric-looking phrases (for example, >100) so
+            # those still fail reconciliation, but ignore article-only spans.
+            if parsed is not None or phrase != "a":
+                values.append(parsed)
     return tuple(values)
 
 
