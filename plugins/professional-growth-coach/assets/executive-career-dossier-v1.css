@@ -414,6 +414,40 @@ details summary {
   font-size: 0.875rem;
 }
 
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --paper: #101521;
+    --surface: #182235;
+    --ink: #f3f6ff;
+    --muted: #b8c4d8;
+    --line: #5f718e;
+    --forest: #8fc9b0;
+    --forest-soft: #223b35;
+    --coral: #ff9f8d;
+    --coral-soft: #3f282d;
+    --gold: #f2c970;
+    --gold-soft: #3b301f;
+  }
+  html,
+  .dossier-document { background: var(--paper); color: var(--ink); }
+  .dossier-document .score-note,
+  .dossier-document .priority-body dt,
+  .dossier-document .copy-status,
+  .dossier-document .boundary,
+  .dossier-document .footer { color: var(--muted); }
+  .dossier-document .section-block,
+  .dossier-document .metric-row + .metric-row,
+  .dossier-document .comparison-table { border-color: var(--line); }
+  .dossier-document .screen-preparation-state--requires-confirmation { color: var(--gold); background: var(--gold-soft); }
+  .dossier-document .screen-preparation-state--omit { color: var(--coral); background: var(--coral-soft); }
+  .dossier-document .screen-preparation-state--paused { color: var(--ink); background: var(--forest-soft); }
+  .dossier-document .screen-preparation-evidence,
+  .dossier-document .copy-text { background: var(--paper); }
+  .dossier-document .screen-preparation-manual-note { background: var(--gold-soft); }
+  .dossier-document .screen-preparation-manual-note h3 { color: var(--gold); }
+}
+
 @keyframes dossier-enter {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: none; }
@@ -522,6 +556,7 @@ details summary {
   .screen-preparation-handoff h3 { color: CanvasText; }
   .screen-preparation-manual-note { border: 1px solid CanvasText; border-left: 4px solid Highlight; background: Canvas; color: CanvasText; }
   .screen-preparation-manual-note h3 { color: CanvasText; }
+  .footer { color: CanvasText; border-color: CanvasText; }
 }
 
 @media (prefers-contrast: more) {

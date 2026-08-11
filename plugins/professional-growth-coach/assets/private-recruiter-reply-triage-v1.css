@@ -68,6 +68,31 @@
 .private-recruiter-triage-document .triage-handoff-preview dd { margin: 0; }
 .private-recruiter-triage-document .triage-footer { padding-block: 1rem 2rem; border-top: 1px solid var(--forest); color: var(--forest); }
 
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --paper: #101521;
+    --surface: #182235;
+    --ink: #f3f6ff;
+    --muted: #b8c4d8;
+    --line: #5f718e;
+    --forest: #8fc9b0;
+    --forest-soft: #223b35;
+    --coral: #ff9f8d;
+    --coral-soft: #3f282d;
+    --decision-term: #f5d68a;
+  }
+  html,
+  .private-recruiter-triage-document { background: var(--paper); color: var(--ink); }
+  .private-recruiter-triage-document .triage-state--stop { color: var(--decision-term); background: var(--forest-soft); }
+  .private-recruiter-triage-document .triage-next-safe-action { background: var(--surface); }
+  .private-recruiter-triage-document .triage-blocked { background: var(--coral-soft); }
+  .private-recruiter-triage-document .triage-handoff-readiness,
+  .private-recruiter-triage-document .triage-handoff-next-step,
+  .private-recruiter-triage-document .triage-handoff-receipt { background: var(--surface); }
+  .private-recruiter-triage-document .triage-footer { color: var(--muted); border-color: var(--forest); }
+}
+
 @keyframes triage-enter { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
 @media (max-width: 640px) {
@@ -117,6 +142,7 @@
   .private-recruiter-triage-document .triage-handoff-receipt { border-color: CanvasText; }
   .private-recruiter-triage-document .triage-handoff-step-label { color: CanvasText; }
   .private-recruiter-triage-document .triage-handoff-sequence > li::before { border-color: CanvasText; background: Canvas; color: CanvasText; }
+  .private-recruiter-triage-document .triage-footer { color: CanvasText; border-color: CanvasText; }
 }
 
 @media (prefers-contrast: more) {

@@ -2,14 +2,14 @@
 
 ## Compact token summary
 
-This plugin has **no shared Tailwind config, CSS module system, theme provider, or global stylesheet**. Each rendered offline artifact inlines exactly one co-located CSS file. There is no `.dark` selector; the compact receipt styles declare `color-scheme: light dark`, while the dossier/practice/triage styles are light documents.
+This plugin has **no shared Tailwind config, CSS module system, theme provider, or global stylesheet**. Each rendered offline artifact inlines exactly one co-located CSS file. There is no `.dark` selector; every surface now declares a screen-scoped `prefers-color-scheme: dark` contract while print remains light.
 
 ### Palette
 
 | Family | Tokens / values |
 | --- | --- |
-| Dossier | `--paper #f6f4ee`, `--forest #173e30`, `--ink #1a1a1a`, `--muted #e2ddd6`, `--coral #d96c52`, `--gold #be9338`, `--surface #ffffff`, `--forest-soft #dce5e0`, `--coral-soft #f7e4df`, `--gold-soft #f5ecd8` |
-| Practice / triage | `--paper #f6f4ee`, `--surface #ffffff`, `--ink #1b1c1a`, `--forest #173e30`, `--forest-soft #dce5e0`, `--coral #b9513a`, `--coral-soft #f6e0da`, `--line #b8c7c0` |
+| Dossier | light `--paper #f6f4ee`, `--forest #173e30`, `--ink #1a1a1a`, `--muted #e2ddd6`, `--coral #d96c52`, `--gold #be9338`, `--surface #ffffff`; dark `--paper #101521`, `--surface #182235`, `--ink #f3f6ff`, `--forest #8fc9b0`, `--coral #ff9f8d`, `--gold #f2c970`, `--line #5f718e` |
+| Practice / triage | light `--paper #f6f4ee`, `--surface #ffffff`, `--ink #1b1c1a`, `--forest #173e30`, `--forest-soft #dce5e0`, `--coral #b9513a`; dark `--paper #101521`, `--surface #182235`, `--ink #f3f6ff`, `--forest #8fc9b0`, `--coral #ff9f8d`, `--line #5f718e` |
 | Checkpoint / outcome | `--ink #172033`, `--muted #536174`, `--surface #fff`, `--accent #315bd6`, `--line #d9dfeb`; document background `#f4f6fa` |
 
 ### Typography and dimensions
@@ -445,6 +445,40 @@ details summary {
   font-size: 0.875rem;
 }
 
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --paper: #101521;
+    --surface: #182235;
+    --ink: #f3f6ff;
+    --muted: #b8c4d8;
+    --line: #5f718e;
+    --forest: #8fc9b0;
+    --forest-soft: #223b35;
+    --coral: #ff9f8d;
+    --coral-soft: #3f282d;
+    --gold: #f2c970;
+    --gold-soft: #3b301f;
+  }
+  html,
+  .dossier-document { background: var(--paper); color: var(--ink); }
+  .dossier-document .score-note,
+  .dossier-document .priority-body dt,
+  .dossier-document .copy-status,
+  .dossier-document .boundary,
+  .dossier-document .footer { color: var(--muted); }
+  .dossier-document .section-block,
+  .dossier-document .metric-row + .metric-row,
+  .dossier-document .comparison-table { border-color: var(--line); }
+  .dossier-document .screen-preparation-state--requires-confirmation { color: var(--gold); background: var(--gold-soft); }
+  .dossier-document .screen-preparation-state--omit { color: var(--coral); background: var(--coral-soft); }
+  .dossier-document .screen-preparation-state--paused { color: var(--ink); background: var(--forest-soft); }
+  .dossier-document .screen-preparation-evidence,
+  .dossier-document .copy-text { background: var(--paper); }
+  .dossier-document .screen-preparation-manual-note { background: var(--gold-soft); }
+  .dossier-document .screen-preparation-manual-note h3 { color: var(--gold); }
+}
+
 @keyframes dossier-enter {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: none; }
@@ -553,6 +587,7 @@ details summary {
   .screen-preparation-handoff h3 { color: CanvasText; }
   .screen-preparation-manual-note { border: 1px solid CanvasText; border-left: 4px solid Highlight; background: Canvas; color: CanvasText; }
   .screen-preparation-manual-note h3 { color: CanvasText; }
+  .footer { color: CanvasText; border-color: CanvasText; }
 }
 
 @media (prefers-contrast: more) {
@@ -779,6 +814,36 @@ html { color-scheme: light; background: var(--paper); }
   color: var(--forest);
 }
 
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --paper: #101521;
+    --surface: #182235;
+    --ink: #f3f6ff;
+    --muted: #b8c4d8;
+    --line: #5f718e;
+    --forest: #8fc9b0;
+    --forest-soft: #223b35;
+    --coral: #ff9f8d;
+    --coral-soft: #3f282d;
+    --decision-term: #f5d68a;
+  }
+  html,
+  .recruiter-practice-document { background: var(--paper); color: var(--ink); }
+  .recruiter-practice-document .state-chip--feedback_available { color: var(--coral); background: var(--coral-soft); }
+  .recruiter-practice-document .state-chip--awaiting_answer { color: var(--decision-term); background: var(--forest-soft); }
+  .recruiter-practice-document .practice-rehearsal,
+  .recruiter-practice-document .practice-handoff { background: var(--surface); }
+  .recruiter-practice-document .practice-rehearsal-hint { color: var(--muted); }
+  .recruiter-practice-document .practice-next-action,
+  .recruiter-practice-document .practice-decision { background: var(--forest-soft); color: var(--ink); }
+  .recruiter-practice-document .practice-next-action h2,
+  .recruiter-practice-document .practice-decision h2,
+  .recruiter-practice-document .practice-decision dd { color: var(--ink); }
+  .recruiter-practice-document .practice-boundary { background: var(--coral-soft); }
+  .recruiter-practice-document .practice-footer { color: var(--muted); border-color: var(--forest); }
+}
+
 @keyframes practice-enter {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
@@ -817,6 +882,7 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .feedback-label--solid,
   .recruiter-practice-document .feedback-label--confirm,
   .recruiter-practice-document .feedback-label--do_not_assert { color: CanvasText; }
+  .recruiter-practice-document .practice-footer { color: CanvasText; border-color: CanvasText; }
 }
 
 @media (prefers-contrast: more) {
@@ -959,6 +1025,31 @@ html { color-scheme: light; background: var(--paper); }
 .private-recruiter-triage-document .triage-handoff-preview dd { margin: 0; }
 .private-recruiter-triage-document .triage-footer { padding-block: 1rem 2rem; border-top: 1px solid var(--forest); color: var(--forest); }
 
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --paper: #101521;
+    --surface: #182235;
+    --ink: #f3f6ff;
+    --muted: #b8c4d8;
+    --line: #5f718e;
+    --forest: #8fc9b0;
+    --forest-soft: #223b35;
+    --coral: #ff9f8d;
+    --coral-soft: #3f282d;
+    --decision-term: #f5d68a;
+  }
+  html,
+  .private-recruiter-triage-document { background: var(--paper); color: var(--ink); }
+  .private-recruiter-triage-document .triage-state--stop { color: var(--decision-term); background: var(--forest-soft); }
+  .private-recruiter-triage-document .triage-next-safe-action { background: var(--surface); }
+  .private-recruiter-triage-document .triage-blocked { background: var(--coral-soft); }
+  .private-recruiter-triage-document .triage-handoff-readiness,
+  .private-recruiter-triage-document .triage-handoff-next-step,
+  .private-recruiter-triage-document .triage-handoff-receipt { background: var(--surface); }
+  .private-recruiter-triage-document .triage-footer { color: var(--muted); border-color: var(--forest); }
+}
+
 @keyframes triage-enter { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
 @media (max-width: 640px) {
@@ -1008,6 +1099,7 @@ html { color-scheme: light; background: var(--paper); }
   .private-recruiter-triage-document .triage-handoff-receipt { border-color: CanvasText; }
   .private-recruiter-triage-document .triage-handoff-step-label { color: CanvasText; }
   .private-recruiter-triage-document .triage-handoff-sequence > li::before { border-color: CanvasText; background: Canvas; color: CanvasText; }
+  .private-recruiter-triage-document .triage-footer { color: CanvasText; border-color: CanvasText; }
 }
 
 @media (prefers-contrast: more) {

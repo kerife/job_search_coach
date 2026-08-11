@@ -209,6 +209,36 @@ html { color-scheme: light; background: var(--paper); }
   color: var(--forest);
 }
 
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --paper: #101521;
+    --surface: #182235;
+    --ink: #f3f6ff;
+    --muted: #b8c4d8;
+    --line: #5f718e;
+    --forest: #8fc9b0;
+    --forest-soft: #223b35;
+    --coral: #ff9f8d;
+    --coral-soft: #3f282d;
+    --decision-term: #f5d68a;
+  }
+  html,
+  .recruiter-practice-document { background: var(--paper); color: var(--ink); }
+  .recruiter-practice-document .state-chip--feedback_available { color: var(--coral); background: var(--coral-soft); }
+  .recruiter-practice-document .state-chip--awaiting_answer { color: var(--decision-term); background: var(--forest-soft); }
+  .recruiter-practice-document .practice-rehearsal,
+  .recruiter-practice-document .practice-handoff { background: var(--surface); }
+  .recruiter-practice-document .practice-rehearsal-hint { color: var(--muted); }
+  .recruiter-practice-document .practice-next-action,
+  .recruiter-practice-document .practice-decision { background: var(--forest-soft); color: var(--ink); }
+  .recruiter-practice-document .practice-next-action h2,
+  .recruiter-practice-document .practice-decision h2,
+  .recruiter-practice-document .practice-decision dd { color: var(--ink); }
+  .recruiter-practice-document .practice-boundary { background: var(--coral-soft); }
+  .recruiter-practice-document .practice-footer { color: var(--muted); border-color: var(--forest); }
+}
+
 @keyframes practice-enter {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
@@ -247,6 +277,7 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .feedback-label--solid,
   .recruiter-practice-document .feedback-label--confirm,
   .recruiter-practice-document .feedback-label--do_not_assert { color: CanvasText; }
+  .recruiter-practice-document .practice-footer { color: CanvasText; border-color: CanvasText; }
 }
 
 @media (prefers-contrast: more) {

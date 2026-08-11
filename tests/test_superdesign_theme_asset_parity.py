@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 THEME = ROOT / ".superdesign" / "init" / "theme.md"
 ASSETS = ROOT / "plugins" / "professional-growth-coach" / "assets"
 ASSET_NAMES = (
+    "executive-career-dossier-v1.css",
     "recruiter-practice-session-v1.css",
     "private-recruiter-reply-triage-v1.css",
 )
