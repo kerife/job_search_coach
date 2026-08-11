@@ -148,6 +148,7 @@ COPY = {
         "reentry_scope": "Alcance de reingreso",
         "reentry_manual": "Reingreso manual requerido; la preparación permanece sin respuesta.",
         "footer": "No se realizó ninguna acción externa.",
+        "employment_boundary": "Este análisis evalúa opciones profesionales; no recomienda renunciar, dejar un empleo ni abandonar tu búsqueda; tú decides qué sigue.",
         "save_disabled": "El guardado local está deshabilitado (local_save_mode=disabled).",
         "sequence_conditions": "01 Condiciones",
         "sequence_focus": "02 Enfoque",
@@ -232,6 +233,7 @@ COPY = {
         "reentry_scope": "Re-entry scope",
         "reentry_manual": "Manual re-entry is required; preparation remains unanswered.",
         "footer": "No external action was taken.",
+        "employment_boundary": "This analysis evaluates professional options; it does not recommend resigning, leaving a job, or stopping your job search; you decide what comes next.",
         "save_disabled": "Local saving is disabled (local_save_mode=disabled).",
         "sequence_conditions": "01 Conditions",
         "sequence_focus": "02 Focus",
@@ -428,6 +430,7 @@ def _render_main(
         <h2 id="blocked-title">{labels["blocked"]}</h2>
         <ul>{blocked_items}</ul>
       </section>'''
+    employment_boundary = "" if state == "stop" else f'<p class="triage-employment-boundary">{labels["employment_boundary"]}</p>'
     return f'''<main id="main-content" class="triage-shell" tabindex="-1">
     <section class="triage-card" aria-labelledby="triage-title">
       <p class="triage-state triage-state--{html.escape(state)}">{labels[state]}</p>
@@ -458,7 +461,7 @@ def _render_main(
       </section>
     </section>
   </main>
-  <footer class="triage-footer triage-shell"><strong>{labels["footer"]}</strong><p>{labels["save_disabled"]}</p></footer>'''
+  <footer class="triage-footer triage-shell"><strong>{labels["footer"]}</strong>{employment_boundary}<p>{labels["save_disabled"]}</p></footer>'''
 
 
 def render_triage_html(triage: Mapping[str, object]) -> str:

@@ -282,6 +282,31 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
             with self.subTest(omitted=omitted):
                 self.assertNotIn(omitted, rendered)
 
+    def test_employment_continuity_boundary_is_visible_for_every_practice_state(self):
+        expected = {
+            "en": "This analysis evaluates professional options; it does not recommend resigning, leaving a job, or stopping your job search; you decide what comes next.",
+            "es": "Este análisis evalúa opciones profesionales; no recomienda renunciar, dejar un empleo ni abandonar tu búsqueda; tú decides qué sigue.",
+        }
+        for locale in ("en", "es"):
+            for state in ("ready_to_practice", "awaiting_answer", "feedback_available"):
+                session = self._feedback_session(
+                    [self._observation("solid"), self._observation("confirm"), self._observation("do_not_assert")]
+                )
+                session["locale"] = locale
+                session["state"] = state
+                if state != "feedback_available":
+                    session["observed_answer"] = None
+                    session["feedback"] = {
+                        "score": "unknown",
+                        "score_state": "unknown",
+                        "observations": [],
+                    }
+                with self.subTest(locale=locale, state=state):
+                    rendered = renderer.render_session_html(session)
+                    self.assertEqual(rendered.count(expected[locale]), 1)
+                    self.assertIn('class="practice-footer practice-shell"', rendered)
+                    self.assertNotIn("no-print", rendered.split("practice-footer", 1)[1])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -112,6 +112,7 @@ COPY = {
         "confirm": "Por confirmar",
         "do_not_assert": "No afirmar todavía",
         "footer": "No se realizó ninguna acción externa.",
+        "employment_boundary": "Este análisis evalúa opciones profesionales; no recomienda renunciar, dejar un empleo ni abandonar tu búsqueda; tú decides qué sigue.",
         "summary": "Práctica privada: ",
     },
     "en": {
@@ -156,6 +157,7 @@ COPY = {
         "confirm": "Confirm",
         "do_not_assert": "Do not assert yet",
         "footer": "No external action was taken.",
+        "employment_boundary": "This analysis evaluates professional options; it does not recommend resigning, leaving a job, or stopping your job search; you decide what comes next.",
         "summary": "Private practice: ",
     },
 }
@@ -534,7 +536,7 @@ def _render_main(
       </aside>
     </section>
   </main>
-  <footer class="practice-footer practice-shell"><strong>{labels["footer"]}</strong></footer>'''
+  <footer class="practice-footer practice-shell"><strong>{labels["footer"]}</strong><p class="practice-employment-boundary">{labels["employment_boundary"]}</p></footer>'''
 
 
 def render_session_html(session: Mapping[str, object]) -> str:
