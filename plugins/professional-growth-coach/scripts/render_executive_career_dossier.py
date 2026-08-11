@@ -1047,7 +1047,7 @@ def _render_main(dossier: Mapping[str, object], locale: str) -> str:
     {_render_questions(dossier, locale)}
     <div class="dossier-grid section-block">{_render_plan(dossier, locale)}{_render_details(dossier, locale)}</div>
   </main>
-  <footer class="shell footer"><strong>{labels['action_boundary']}</strong><span class="employment-boundary">{labels['employment_boundary']}</span></footer>"""
+  <footer class="shell footer"><strong>{labels['action_boundary']}</strong> <span class="employment-boundary">{labels['employment_boundary']}</span></footer>"""
 
 
 def build_chat_summary(dossier: Mapping[str, object]) -> str:
