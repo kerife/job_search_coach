@@ -16,6 +16,9 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+SCRIPTS_PATH = REPO_ROOT / "plugins" / "professional-growth-coach" / "scripts"
+if str(SCRIPTS_PATH) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_PATH))
 RENDERER_PATH = (
     REPO_ROOT
     / "plugins"
@@ -31,6 +34,10 @@ FIXTURE_PATH = (
     / "fixtures"
     / "recruiter-practice-session"
     / "session-es.json"
+)
+V2_TRIAGE_PHONE_LIKE_SNAPSHOT = (
+    "snap-triage-sha256-"
+    "9cfca8aaaeb249e38dbeee70bbbcd3189173398fea1c3f9baee95fa0e56b3af0"
 )
 
 
@@ -862,6 +869,21 @@ class RecruiterPracticeSessionRendererTests(unittest.TestCase):
         wrong_source = copy.deepcopy(session)
         wrong_source["handoff_context"]["source"] = "private_recruiter_reply_triage"
         self.assertIn("handoff_context.source_snapshot must match private_recruiter_reply_triage source", self.renderer.VALIDATOR.validate_session(wrong_source))
+
+    def test_v2_phone_like_snapshot_remains_hidden_in_rendered_practice_card(self) -> None:
+        session = copy.deepcopy(self.awaiting_session)
+        session["schema_version"] = "recruiter-practice-session-v2"
+        session["ui_locale"] = "en"
+        session["content_locale"] = "es"
+        del session["locale"]
+        session["handoff_context"]["source"] = "private_recruiter_reply_triage"
+        session["handoff_context"]["source_snapshot"] = V2_TRIAGE_PHONE_LIKE_SNAPSHOT
+        session["handoff_context"].pop("claim_ids")
+        session["handoff_context"].pop("evidence_ids")
+        self.assertEqual(self.renderer.VALIDATOR.validate_session(session), [])
+        rendered = self.renderer.render_session_html(session)
+        self.assertNotIn("source_snapshot", rendered)
+        self.assertNotIn(V2_TRIAGE_PHONE_LIKE_SNAPSHOT, rendered)
 
     def test_dossier_handoff_requires_claim_and_evidence_provenance(self) -> None:
         session = self.feedback_session()

@@ -48,6 +48,10 @@ V2_TRIAGE_SNAPSHOT = (
     "snap-triage-sha256-"
     "85ad96e9cab8b222315a01a85d4a6f61f0d5a38650a1286773bc8e1664c15ebd"
 )
+V2_TRIAGE_PHONE_LIKE_SNAPSHOT = (
+    "snap-triage-sha256-"
+    "9cfca8aaaeb249e38dbeee70bbbcd3189173398fea1c3f9baee95fa0e56b3af0"
+)
 
 
 def load_fixture() -> dict[str, object]:
@@ -307,6 +311,18 @@ class RecruiterPracticeSessionContractTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("handoff_context.source_snapshot", result.stderr)
         self.assertNotIn(malformed["handoff_context"]["source_snapshot"], result.stderr)
+
+    def test_v2_accepts_phone_like_hash_without_prose_false_positive(self) -> None:
+        v2 = copy.deepcopy(self.awaiting_session)
+        v2["schema_version"] = "recruiter-practice-session-v2"
+        v2["ui_locale"] = "en"
+        v2["content_locale"] = "es"
+        del v2["locale"]
+        v2["handoff_context"]["source"] = "private_recruiter_reply_triage"
+        v2["handoff_context"]["source_snapshot"] = V2_TRIAGE_PHONE_LIKE_SNAPSHOT
+        v2["handoff_context"].pop("claim_ids")
+        v2["handoff_context"].pop("evidence_ids")
+        self.assert_accepted(v2)
 
     def test_session_without_an_observed_answer_has_exactly_unknown_score(self) -> None:
         invalid = copy.deepcopy(self.awaiting_session)

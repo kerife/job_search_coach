@@ -189,13 +189,18 @@ def _references(
     return references
 
 
-def _walk_strings(value: object) -> Sequence[str]:
+def _walk_strings(value: object, *, path: tuple[str, ...] = ()) -> Sequence[str]:
     if isinstance(value, str):
         return (value,)
     if isinstance(value, Mapping):
-        return tuple(text for child in value.values() for text in _walk_strings(child))
+        return tuple(
+            text
+            for key, child in value.items()
+            if not (path == ("handoff_context",) and key == "source_snapshot")
+            for text in _walk_strings(child, path=path + (key,))
+        )
     if isinstance(value, list):
-        return tuple(text for child in value for text in _walk_strings(child))
+        return tuple(text for child in value for text in _walk_strings(child, path=path))
     return ()
 
 
