@@ -1722,6 +1722,7 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
         for landmark in ("<header", "<nav", '<main id="main-content"', "<aside", "<footer"):
             with self.subTest(landmark=landmark):
                 self.assertIn(landmark, rendered)
+        self.assertEqual(rendered.count('<main id="main-content" class="shell" tabindex="-1">'), 1)
         self.assertIn(
             '<meta name="robots" content="noindex,nofollow,noarchive">',
             rendered,

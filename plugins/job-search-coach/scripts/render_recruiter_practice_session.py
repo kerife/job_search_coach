@@ -491,7 +491,7 @@ def _render_main(session: Mapping[str, object], locale: str) -> str:
     else:
         next_action = _render_next_action(state, labels, sourced=sourced)
         practice_sequence = f"{rehearsal}{next_action}"
-    return f'''<main id="main-content" class="practice-shell">
+    return f'''<main id="main-content" class="practice-shell" tabindex="-1">
     <section class="practice-session" aria-labelledby="practice-session-title" aria-describedby="practice-session-state">
       <p id="practice-session-state" class="state-chip state-chip--{html.escape(state)}">{labels[state]}</p>
       <section class="practice-context" aria-labelledby="context-title">

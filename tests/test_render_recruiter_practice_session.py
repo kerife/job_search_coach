@@ -478,6 +478,7 @@ class RecruiterPracticeSessionRendererTests(unittest.TestCase):
             with self.subTest(sourced=sourced):
                 rendered = self.renderer.render_session_html(session)
                 self.assertEqual(rendered.count('href="#main-content"'), 1)
+                self.assertEqual(rendered.count('<main id="main-content" class="practice-shell" tabindex="-1">'), 1)
                 self.assertEqual(rendered.count("href="), 1)
                 for forbidden in (
                     "<form", "<input", "<textarea", "<button", "aria-live", 'role="status"'

@@ -1020,7 +1020,7 @@ def _render_main(dossier: Mapping[str, object], locale: str) -> str:
     opening = _render_verdict(dossier, locale) + _render_recruiter_scan(dossier, locale)
     bridge_holds = _render_holds(dossier, locale) + _render_screen_bridge(dossier, locale)
     return f"""
-  <main id="main-content" class="shell">
+  <main id="main-content" class="shell" tabindex="-1">
     <div class="dossier-grid">{opening}</div>
     {_render_priorities(dossier, locale)}
     <div class="dossier-grid section-block">{_render_analytics(dossier, locale)}</div>

@@ -410,7 +410,7 @@ def _render_main(triage: Mapping[str, object], locale: str) -> str:
         <h2 id="blocked-title">{labels["blocked"]}</h2>
         <ul>{blocked_items}</ul>
       </section>'''
-    return f'''<main id="main-content" class="triage-shell">
+    return f'''<main id="main-content" class="triage-shell" tabindex="-1">
     <section class="triage-card" aria-labelledby="triage-title">
       <p class="triage-state triage-state--{html.escape(state)}">{labels[state]}</p>
       <section class="triage-section" aria-labelledby="classification-title">

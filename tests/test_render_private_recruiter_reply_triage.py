@@ -88,6 +88,7 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
                 document = self.renderer.render_triage_html(triage)
                 state_label, known_label, third_label = expected[name]
                 self.assertIn(f'lang="{triage["locale"]}"', document)
+                self.assertEqual(document.count('<main id="main-content" class="triage-shell" tabindex="-1">'), 1)
                 self.assertIn(state_label, document)
                 self.assertIn(known_label, document)
                 self.assertIn(third_label, document)
