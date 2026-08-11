@@ -22,7 +22,7 @@ This plugin has **no shared Tailwind config, CSS module system, theme provider, 
 - **Spacing:** no named scale; repeated steps range from `.25rem` to `3rem`, with `.5rem`, `.75rem`, `1rem`, `1.5rem`, and `2rem` most common.
 - **Radius:** dossier/practice/triage remain square; compact receipt cards use `1rem`.
 - **Shadows:** dossier none; practice/triage `0 1px 0 rgb(23 62 48 / 10%)`; compact cards `0 .5rem 2rem rgb(23 32 51 / .08)`.
-- **Breakpoints:** dossier: 900px, 680px, 480px; practice/triage: 640px; compact receipts: `min-width: 40rem`. All families include print, reduced-motion, and forced-color handling; dossier/practice also include high-contrast adjustments.
+- **Breakpoints:** dossier: 900px, 680px, 480px; practice/triage: 640px; compact receipts: `min-width: 40rem`. All families include print, reduced-motion, forced-color, and high-contrast handling.
 
 ## Raw source dumps
 
@@ -956,6 +956,7 @@ dd { margin: .15rem 0 0; font-weight: 600; }
 @media (min-width: 40rem) { .checkpoint-facts { grid-template-columns: 1fr 1fr; } }
 @media print { html { background: #fff; } .checkpoint-card { box-shadow: none; } .skip-link { display: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
+@media (prefers-contrast: more) { .checkpoint-card { border: 2px solid var(--ink); box-shadow: none; } .checkpoint-facts div { border-top: 2px solid var(--ink); } .checkpoint-boundary { border-left-width: .5rem; color: var(--ink); } }
 @media (forced-colors: active) { .checkpoint-card, .checkpoint-boundary { border: 1px solid CanvasText; } .checkpoint-kicker { color: LinkText; } }
 ```
 
@@ -981,5 +982,6 @@ dd { margin: .15rem 0 0; font-weight: 600; }
 @media (min-width: 40rem) { .outcome-facts { grid-template-columns: 1fr 1fr; } }
 @media print { html { background: #fff; } .outcome-card { box-shadow: none; } .skip-link { display: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
+@media (prefers-contrast: more) { .outcome-card { border: 2px solid var(--ink); box-shadow: none; } .outcome-facts div { border-top: 2px solid var(--ink); } .outcome-boundary { border-left-width: .5rem; color: var(--ink); } }
 @media (forced-colors: active) { .outcome-card, .outcome-boundary { border: 1px solid CanvasText; } .outcome-kicker { color: LinkText; } }
 ```

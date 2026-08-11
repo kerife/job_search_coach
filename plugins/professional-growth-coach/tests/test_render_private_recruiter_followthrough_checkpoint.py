@@ -135,6 +135,10 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
             rendered,
             r"(?s)@media \(prefers-contrast: more\).*?\.checkpoint-boundary\s*\{[^}]*border-left-width:\s*\.5rem;[^}]*color:\s*var\(--ink\);",
         )
+        self.assertLess(
+            rendered.index("@media (prefers-contrast: more)"),
+            rendered.index("@media (forced-colors: active)"),
+        )
 
     def test_atomic_private_write_mode_and_no_overwrite(self):
         with tempfile.TemporaryDirectory() as directory:

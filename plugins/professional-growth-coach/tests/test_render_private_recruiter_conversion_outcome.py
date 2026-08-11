@@ -104,6 +104,10 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
             rendered,
             r"(?s)@media \(prefers-contrast: more\).*?\.outcome-boundary\s*\{[^}]*border-left-width:\s*\.5rem;[^}]*color:\s*var\(--ink\);",
         )
+        self.assertLess(
+            rendered.index("@media (prefers-contrast: more)"),
+            rendered.index("@media (forced-colors: active)"),
+        )
 
     def test_evidence_count_uses_natural_localized_singular_and_plural_copy(self):
         cases = (
