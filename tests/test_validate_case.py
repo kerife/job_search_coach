@@ -235,6 +235,26 @@ class ValidateCaseTests(unittest.TestCase):
         self.assertEqual(result.returncode, 2)
         self.assertIn("claims[0].evidence_label must be one of", result.stderr)
 
+    def test_rejects_linkedin_profile_url_without_scheme(self) -> None:
+        values = (
+            "https://www.linkedin.com/in/synthetic-sentinel/",
+            "www.linkedin.com/in/synthetic-sentinel/",
+            "linkedin.com/in/synthetic-sentinel/",
+        )
+        for value in values:
+            with self.subTest(value=value):
+                case = valid_case()
+                case["claims"][0]["text"] = value
+
+                result = run_validator(case)
+
+                self.assertEqual(result.returncode, 2)
+                self.assertIn(
+                    "case contains credential-shaped value at claims[0].text",
+                    result.stderr,
+                )
+                self.assertNotIn(value, result.stderr)
+
     def test_schema_version_must_be_exactly_one_point_zero(self) -> None:
         module = load_validator_module()
         for value in ("1.1", None):

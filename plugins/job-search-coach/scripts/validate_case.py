@@ -97,7 +97,7 @@ _PHONE_VALUE = re.compile(
     r"(?:\+\d{1,3}[ .-]?)?(?:\(?\d{3}\)?[ .-])\d{3}[ .-]\d{4})"
 )
 _LINKEDIN_PROFILE_VALUE = re.compile(
-    r"https?://(?:[a-z0-9-]+\.)?linkedin\.com/in/", re.I
+    r"(?<![a-z0-9.-])(?:https?://)?(?:[a-z0-9-]+\.)*linkedin\.com/in/", re.I
 )
 _LOCAL_PATH_VALUE = re.compile(
     r"(?<![A-Za-z0-9.])(?:/Users/|/home/|/private/|/var/tmp/|/tmp/|"
