@@ -32,7 +32,7 @@ source_file_count: `107`
 
 installed_file_count: `107`
 
-normalized_source_cache_sha256: `228b9722c10e9d84e644c8d885deb19c1c1d40ab0f48e190dae1936073a516c9`
+normalized_source_cache_sha256: `99cddf3f47f48652e2c4811192936249ddcc986cf4fd1982559f2cd4e44db38f`
 
 active_config: `canonical_only`
 
