@@ -259,6 +259,41 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
                     self.assertLess(len(error), 240)
                     self.assertNotIn(mutated["dossier_projection"]["fact_summary"], error)
 
+    def test_dossier_handoff_rejects_unlabelled_person_name_source_fact(self):
+        fixture = json.loads(
+            (ROOT / "tests/fixtures/dossier-recruiter-practice-handoff/valid-es.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        dossier = json.loads(
+            (
+                ROOT.parent.parent
+                / "tests/evals/with-skill/fixtures/executive-career-dossier"
+                / fixture["base_dossier_fixture"]
+            ).read_text(encoding="utf-8")
+        )
+        dossier["screen_bridge"] = fixture["dossier_overrides"]["screen_bridge"]
+        dossier["questions"][0]["linked_copy_category"] = fixture["dossier_overrides"]["question_linked_copy_category"]
+        dossier["copy_blocks"][1].update(fixture["dossier_overrides"]["about_opening"])
+        handoff = build_handoff(dossier, fixture["vacancy"], fixture["source_snapshot"])
+        practice = json.loads(
+            (
+                ROOT.parent.parent
+                / "tests/evals/with-skill/fixtures/recruiter-practice-session/session-es.json"
+            ).read_text(encoding="utf-8")
+        )
+        target = "Ana López reports Terraform experience."
+        mutated = copy.deepcopy(handoff)
+        mutated["dossier_projection"]["fact_summary"] = target
+        mutated["practice_projection"]["facts"][0]["summary"] = target
+        custom_errors = validate_handoff(mutated, dossier, fixture["vacancy"], practice)
+        schema_errors = validate_schema_instance(mutated, self._schema("dossier-recruiter-practice-handoff-v1.schema.json"))
+        self.assertTrue(custom_errors)
+        self.assertTrue(schema_errors)
+        for error in custom_errors + schema_errors:
+            self.assertLess(len(error), 240)
+            self.assertNotIn(target, error)
+
     def test_handoff_pair_rejects_an_unrelated_shape_valid_projection(self):
         fixture = json.loads(
             (ROOT / "tests/fixtures/dossier-recruiter-practice-handoff/valid-es.json").read_text(

@@ -44,6 +44,17 @@ _FORBIDDEN_NAME = re.compile(
 
 _FORBIDDEN_CONTROL = re.compile(r"[\u0000-\u001f\u007f-\u009f\u200b-\u200d\u2060\ufeff]")
 
+_UNLABELLED_PERSON_INTRO = re.compile(
+    r"(?:^|[:.!?]\s+)"
+    r"(?!(?i:senior|principal|lead|staff|software|platform|data|product|engineering|"
+    r"cloud|security|technical|solutions|project|program|people|talent|customer|"
+    r"account|enterprise|sales|marketing|finance|operations|strategy|user|ux|ui)\s+)"
+    r"[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑa-záéíóúñ'-]+\s+"
+    r"[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑa-záéíóúñ'-]+\s+"
+    r"(?i:reports?|describes?|works?|has|joined|explains?|reported|reporta|"
+    r"describe|trabaja|tiene|explica|menciona|coment[aoó]?)\b"
+)
+
 
 def is_safe_handoff_text(value: object, maximum: int) -> bool:
     """Return whether text is bounded, non-empty, and safe to project."""
@@ -56,3 +67,10 @@ def is_safe_handoff_text(value: object, maximum: int) -> bool:
         and _FORBIDDEN_TEXT.search(normalized) is None
         and _FORBIDDEN_NAME.search(normalized) is None
     )
+
+
+def is_identity_free_handoff_text(value: object, maximum: int) -> bool:
+    """Return whether projected source-fact prose contains no bare person intro."""
+    return is_safe_handoff_text(value, maximum) and _UNLABELLED_PERSON_INTRO.search(
+        unicodedata.normalize("NFKC", value)
+    ) is None

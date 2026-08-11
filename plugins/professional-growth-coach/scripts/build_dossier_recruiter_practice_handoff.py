@@ -53,6 +53,12 @@ def is_safe_handoff_text(value: object, maximum: int) -> bool:
     )
 
 
+def is_identity_free_handoff_text(value: object, maximum: int) -> bool:
+    return _load_sibling("dossier_practice_safe_text").is_identity_free_handoff_text(
+        value, maximum
+    )
+
+
 def validate_schema_instance(value: object, schema: Mapping[str, object]) -> list[str]:
     return _load_sibling("validate_json_schema_subset").validate_schema_instance(
         value, schema
@@ -197,7 +203,7 @@ def build_handoff(
     fact_summary = source_fact.get("paraphrase")
     if not isinstance(fact_summary, str) or not fact_summary.strip() or len(fact_summary) > 500:
         raise ValueError("source fact evidence must contain safe summary")
-    if not is_safe_handoff_text(fact_summary, 500):
+    if not is_identity_free_handoff_text(fact_summary, 500):
         raise ValueError("source fact evidence contains forbidden safe text")
     if source_snapshot != snapshot_for_dossier(dossier):
         raise ValueError("source_snapshot must match dossier content")

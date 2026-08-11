@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import build_dossier_recruiter_practice_handoff as handoff_builder
 from build_dossier_recruiter_practice_handoff import build_handoff
 from validate_dossier_recruiter_practice_handoff import validate_handoff
-from dossier_practice_safe_text import is_safe_handoff_text
+from dossier_practice_safe_text import is_identity_free_handoff_text, is_safe_handoff_text
 
 
 class DossierRecruiterPracticeHandoffTests(unittest.TestCase):
@@ -437,6 +437,28 @@ class DossierRecruiterPracticeHandoffTests(unittest.TestCase):
                     vacancy[field]["summary"] = value
                     with self.assertRaisesRegex(ValueError, "contains forbidden safe text"):
                         build_handoff(self.dossier, vacancy, self.fixture["source_snapshot"])
+
+    def test_builder_rejects_unlabelled_person_name_in_source_fact_projection(self):
+        dossier = copy.deepcopy(self.dossier)
+        dossier["evidence"][3]["paraphrase"] = "Ana López reports Terraform experience."
+        source_snapshot = handoff_builder.snapshot_for_dossier(dossier)
+        with self.assertRaisesRegex(ValueError, "contains forbidden safe text"):
+            build_handoff(dossier, self.fixture["vacancy"], source_snapshot)
+
+    def test_identity_free_guard_rejects_person_intros_but_preserves_role_prose(self):
+        for value in (
+            "Ana López reports Terraform experience.",
+            "Jordan Lee works at Acme Corporation.",
+            "Ana López reporta experiencia con Terraform.",
+        ):
+            with self.subTest(rejected=value):
+                self.assertFalse(is_identity_free_handoff_text(value, 500))
+        for value in (
+            "Senior Engineer leads incident response.",
+            "Platform Engineering covers incident response scope.",
+        ):
+            with self.subTest(accepted=value):
+                self.assertTrue(is_identity_free_handoff_text(value, 500))
 
     def test_rejects_every_uri_scheme_and_local_path_in_each_vacancy_field(self):
         private_values = {

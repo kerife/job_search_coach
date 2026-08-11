@@ -65,6 +65,12 @@ def _safe_text(value: object, maximum: int) -> bool:
     )
 
 
+def _identity_free_text(value: object, maximum: int) -> bool:
+    return _load_sibling("dossier_practice_safe_text").is_identity_free_handoff_text(
+        value, maximum
+    )
+
+
 def _validate_handoff_schema(value: object) -> list[str]:
     """Check the closed v1 sidecar without exposing its private prose."""
     errors: list[str] = []
@@ -99,7 +105,7 @@ def _validate_handoff_schema(value: object) -> list[str]:
             errors.append("handoff.dossier_projection.source_fact_evidence_id must use the E-000 identifier format")
         if dossier.get("fact_state") not in {"verified", "candidate_reported"}:
             errors.append("handoff.dossier_projection.fact_state has invalid value")
-        if not _safe_text(dossier.get("fact_summary"), 500):
+        if not _identity_free_text(dossier.get("fact_summary"), 500):
             errors.append("handoff.dossier_projection.fact_summary must be safe text")
 
     projection = _closed(
@@ -138,7 +144,7 @@ def _validate_handoff_schema(value: object) -> list[str]:
                 errors.append("handoff.practice_projection.facts[0].id must be F-001")
             if fact.get("state") not in {"verified", "candidate_reported"}:
                 errors.append("handoff.practice_projection.facts[0].state has invalid value")
-            if not _safe_text(fact.get("summary"), 500):
+            if not _identity_free_text(fact.get("summary"), 500):
                 errors.append("handoff.practice_projection.facts[0].summary must be safe text")
         source = _closed(projection.get("handoff_context"), "handoff.practice_projection.handoff_context", frozenset({"source", "source_snapshot", "question_rank", "question_id", "requirement_id", "fact_ids", "claim_ids", "evidence_ids", "draft_only", "external_actions_authorized"}), errors)
         if source is not None:
