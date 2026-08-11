@@ -106,6 +106,25 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
                 self.assertNotIn("<link ", document)
                 self.assertNotIn("<script", document)
 
+    def test_v2_uses_ui_locale_for_copy_and_content_locale_for_dynamic_prose(self) -> None:
+        triage = copy.deepcopy(self.fixtures["ready-es.json"])
+        triage["schema_version"] = "private-recruiter-reply-triage-v2"
+        triage["ui_locale"] = "en"
+        triage["content_locale"] = "es"
+        del triage["locale"]
+        document = self.renderer.render_triage_html(triage)
+        self.assertIn('<html lang="en">', document)
+        self.assertIn("Private triage", document)
+        self.assertIn('<p lang="es">', document)
+        self.assertIn('<dd lang="es">', document)
+        self.assertEqual(document.count('lang="es"'), 7)
+        self.assertEqual(document.count('<html lang="en">'), 1)
+        self.assertNotIn('<p lang="en">', document)
+
+    def test_v1_does_not_gain_fragment_language_attributes(self) -> None:
+        document = self.renderer.render_triage_html(self.fixtures["ready-es.json"])
+        self.assertEqual(document.count('lang="es"'), 1)
+
     def test_ready_is_the_only_state_that_renders_a_local_handoff_note(self) -> None:
         for name, triage in self.fixtures.items():
             with self.subTest(fixture=name):

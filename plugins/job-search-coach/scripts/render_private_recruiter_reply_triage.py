@@ -330,8 +330,11 @@ def _render_header(locale: str) -> str:
   </header>'''
 
 
-def _render_main(triage: Mapping[str, object], locale: str) -> str:
+def _render_main(
+    triage: Mapping[str, object], locale: str, content_locale: str | None = None
+) -> str:
     labels = COPY[locale]
+    dynamic_lang = "" if content_locale is None else f' lang="{content_locale}"'
     context = _mapping(triage["safe_context"])
     fact = _rows(triage["facts"])[0]
     state = _text(triage["state"])
@@ -341,7 +344,7 @@ def _render_main(triage: Mapping[str, object], locale: str) -> str:
     handoff_data = _mapping(triage.get("handoff", {}))
     reentry_packet: Mapping[str, object] = {}
     blocked = _texts(triage["blocked_claims"])
-    blocked_items = "".join(f"<li>{html.escape(_text(item))}</li>" for item in blocked)
+    blocked_items = "".join(f"<li{dynamic_lang}>{html.escape(_text(item))}</li>" for item in blocked)
     handoff = ""
     if triage["handoff_allowed"]:
         # The validator has already bound this closed packet to the canonical
@@ -379,15 +382,15 @@ def _render_main(triage: Mapping[str, object], locale: str) -> str:
               <h3 id="handoff-preview-title">{labels["handoff_preview"]}</h3>
               <dl>
                 <dt>{labels["identity_free_context"]}</dt>
-                <dd>{html.escape(_text(context["summary"]))}</dd>
+                <dd{dynamic_lang}>{html.escape(_text(context["summary"]))}</dd>
                 <dt>{labels["verified_fact"]}</dt>
-                <dd>{html.escape(_text(fact["summary"]))}</dd>
+                <dd{dynamic_lang}>{html.escape(_text(fact["summary"]))}</dd>
                 <dt>{labels["question_type"]}</dt>
                 <dd>{labels[QUESTION_TYPE_LABEL_KEYS[_text(question["kind"])]]}</dd>
                 <dt>{labels["question_purpose"]}</dt>
                 <dd>{labels[CLASSIFICATION_PURPOSE_KEYS[classification]]}</dd>
                 <dt>{labels["safe_question"]}</dt>
-                <dd>{html.escape(_text(question["text"]))}</dd>
+                <dd{dynamic_lang}>{html.escape(_text(question["text"]))}</dd>
                 <dt>{labels["packet_prep_scope"]}</dt>
                 <dd>{labels[PREP_SCOPE_LABEL_KEYS[_text(reentry_packet["prep_scope"])] ]}</dd>
               </dl>
@@ -443,12 +446,12 @@ def _render_main(triage: Mapping[str, object], locale: str) -> str:
       {handoff}
       <section class="triage-section" aria-labelledby="known-title">
         <h2 id="known-title">{labels["known"]}</h2>
-        <p>{html.escape(_text(context["summary"]))}</p>
-        <p><strong>{labels[_text(fact["state"])]}:</strong> {html.escape(_text(fact["summary"]))}</p>
+        <p{dynamic_lang}>{html.escape(_text(context["summary"]))}</p>
+        <p><strong>{labels[_text(fact["state"])]}:</strong> <span{dynamic_lang}>{html.escape(_text(fact["summary"]))}</span></p>
       </section>
       <section class="triage-section triage-missing" aria-labelledby="missing-title">
         <h2 id="missing-title">{labels["missing"]}</h2>
-        <p>{html.escape(_text(question["text"]))}</p>
+        <p{dynamic_lang}>{html.escape(_text(question["text"]))}</p>
       </section>
     </section>
   </main>
@@ -459,7 +462,9 @@ def render_triage_html(triage: Mapping[str, object]) -> str:
     """Return a deterministic, standalone decision card from validated triage."""
 
     validated = _validate(triage)
-    locale = _text(validated["locale"])
+    is_v2 = _text(validated["schema_version"]) == VALIDATOR.V2_SCHEMA_VERSION
+    locale = _text(validated["ui_locale"] if is_v2 else validated["locale"])
+    content_locale = _text(validated["content_locale"]) if is_v2 else None
     template = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, TEMPLATE_PATH)
     static_tokens = STATIC_TEMPLATE_TOKEN.findall(template)
     if sorted(static_tokens) != sorted(TEMPLATE_TOKENS):
@@ -469,14 +474,18 @@ def render_triage_html(triage: Mapping[str, object]) -> str:
         "{{TITLE}}": COPY[locale]["title"],
         "{{INLINE_CSS}}": ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, CSS_PATH),
         "{{HEADER}}": _render_header(locale),
-        "{{MAIN}}": _render_main(validated, locale),
+        "{{MAIN}}": _render_main(validated, locale, content_locale),
     }
     return STATIC_TEMPLATE_TOKEN.sub(lambda match: substitutions[match.group(0)], template)
 
 
 def build_chat_summary(triage: Mapping[str, object]) -> str:
     validated = _validate(triage)
-    locale = _text(validated["locale"])
+    locale = _text(
+        validated["ui_locale"]
+        if _text(validated["schema_version"]) == VALIDATOR.V2_SCHEMA_VERSION
+        else validated["locale"]
+    )
     labels = COPY[locale]
     return f'{labels["summary"]}{labels[_text(validated["state"])]}. {labels["footer"]}'
 
@@ -595,7 +604,11 @@ def write_triage_html(triage_path: Path, output_path: Path, *, force: bool = Fal
     return RenderReceipt(
         artifact_path=output,
         artifact_type="text/html",
-        locale=_text(validated["locale"]),
+        locale=_text(
+            validated["ui_locale"]
+            if _text(validated["schema_version"]) == VALIDATOR.V2_SCHEMA_VERSION
+            else validated["locale"]
+        ),
         chat_summary=build_chat_summary(validated),
     )
 

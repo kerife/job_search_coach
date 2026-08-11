@@ -116,6 +116,22 @@ class PrivateRecruiterReplyTriageContractTests(unittest.TestCase):
             with self.subTest(fixture=name):
                 self.assert_accepted(triage)
 
+    def test_v2_requires_separate_ui_and_content_locales_without_changing_v1(self) -> None:
+        v2 = copy.deepcopy(self.fixtures["clarify-es.json"])
+        v2["schema_version"] = "private-recruiter-reply-triage-v2"
+        v2["ui_locale"] = "en"
+        v2["content_locale"] = "es"
+        del v2["locale"]
+        self.assert_accepted(v2)
+
+        missing_content_locale = copy.deepcopy(v2)
+        del missing_content_locale["content_locale"]
+        self.assert_rejected(missing_content_locale, "missing required field: content_locale")
+
+        v1_with_v2_locales = copy.deepcopy(self.fixtures["clarify-es.json"])
+        v1_with_v2_locales.update({"ui_locale": "en", "content_locale": "es"})
+        self.assert_rejected(v1_with_v2_locales, "session has unsupported fields: content_locale, ui_locale")
+
     def test_schema_declares_closed_next_safe_action_values(self) -> None:
         schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
         self.assertEqual(

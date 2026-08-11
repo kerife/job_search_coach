@@ -14,8 +14,14 @@ from private_prose_safety import is_safe_prose_text
 
 
 SCHEMA_VERSION = "private-recruiter-reply-triage-v1"
+V2_SCHEMA_VERSION = "private-recruiter-reply-triage-v2"
 TOP_LEVEL_FIELDS = frozenset({
     "schema_version", "artifact_kind", "locale", "state", "classification",
+    "safe_context", "facts", "question", "blocked_claims", "handoff_allowed",
+    "delivery", "handoff", "next_safe_action",
+})
+V2_TOP_LEVEL_FIELDS = frozenset({
+    "schema_version", "artifact_kind", "ui_locale", "content_locale", "state", "classification",
     "safe_context", "facts", "question", "blocked_claims", "handoff_allowed",
     "delivery", "handoff", "next_safe_action",
 })
@@ -157,16 +163,23 @@ def validate_triage(value: object) -> list[str]:
     """Return deterministic errors; an empty list means the triage is safe."""
 
     errors: list[str] = []
-    triage = _closed(value, "", TOP_LEVEL_FIELDS, errors)
+    schema_version = value.get("schema_version") if isinstance(value, Mapping) else None
+    fields = V2_TOP_LEVEL_FIELDS if schema_version == V2_SCHEMA_VERSION else TOP_LEVEL_FIELDS
+    triage = _closed(value, "", fields, errors)
     if "missing required field: handoff" in errors:
         errors.remove("missing required field: handoff")
     if triage is None:
         return sorted(set(errors))
-    if triage.get("schema_version") != SCHEMA_VERSION:
+    if triage.get("schema_version") not in {SCHEMA_VERSION, V2_SCHEMA_VERSION}:
         errors.append("schema_version has invalid value")
     if triage.get("artifact_kind") != "private_recruiter_reply_triage":
         errors.append("artifact_kind has invalid value")
-    if triage.get("locale") not in {"es", "en"}:
+    if schema_version == V2_SCHEMA_VERSION:
+        if triage.get("ui_locale") not in {"es", "en"}:
+            errors.append("ui_locale has invalid value")
+        if triage.get("content_locale") not in {"es", "en"}:
+            errors.append("content_locale has invalid value")
+    elif triage.get("locale") not in {"es", "en"}:
         errors.append("locale has invalid value")
     state = triage.get("state")
     if state not in {"clarify_first", "ready_for_private_prep", "stop"}:

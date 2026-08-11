@@ -83,6 +83,22 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
                     validate_schema_instance(removed_alias, schema),
                 )
 
+    def test_triage_v2_schema_accepts_independent_ui_and_content_locales(self):
+        fixture = json.loads(
+            (ROOT.parent.parent / "tests/evals/with-skill/fixtures/private-recruiter-reply-triage/ready-es.json").read_text(encoding="utf-8")
+        )
+        fixture["schema_version"] = "private-recruiter-reply-triage-v2"
+        fixture["ui_locale"] = "en"
+        fixture["content_locale"] = "es"
+        del fixture["locale"]
+        schema = self._schema("private-recruiter-reply-triage-v2.schema.json")
+        self.assertEqual([], validate_triage(fixture))
+        self.assertEqual([], validate_schema_instance(fixture, schema))
+
+        missing = copy.deepcopy(fixture)
+        del missing["content_locale"]
+        self.assertTrue(validate_schema_instance(missing, schema))
+
     def test_practice_schema_binds_source_to_snapshot_prefix(self):
         schema = self._schema("recruiter-practice-session-v1.schema.json")
         fixture = json.loads((ROOT.parent.parent / "tests/evals/with-skill/fixtures/recruiter-practice-session/session-es.json").read_text(encoding="utf-8"))
