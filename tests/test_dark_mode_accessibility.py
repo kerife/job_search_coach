@@ -88,3 +88,12 @@ class DarkModeAccessibilityTests(unittest.TestCase):
         self.assertIn("border-left-color: var(--decision-term)", dark_block)
         self.assertIn(".feedback-label--confirm", dark_block)
         self.assertGreaterEqual(_contrast("#f3f6ff", "#3b301f"), 4.5)
+
+    def test_dossier_labels_have_dark_contrast(self) -> None:
+        css = (ASSETS / "executive-career-dossier-v1.css").read_text(encoding="utf-8")
+        dark_start = css.index("@media screen and (prefers-color-scheme: dark)")
+        print_start = css.index("@media print")
+        dark_block = css[dark_start:print_start]
+        self.assertIn(".dossier-document .label", dark_block)
+        self.assertIn("color: var(--muted)", dark_block)
+        self.assertGreaterEqual(_contrast("#b8c4d8", "#182235"), 4.5)

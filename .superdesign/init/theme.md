@@ -463,6 +463,7 @@ details summary {
   html,
   .dossier-document { background: var(--paper); color: var(--ink); }
   .dossier-document .score-note,
+  .dossier-document .label,
   .dossier-document .priority-body dt,
   .dossier-document .copy-status,
   .dossier-document .boundary,
