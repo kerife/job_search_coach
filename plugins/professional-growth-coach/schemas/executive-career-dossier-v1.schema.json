@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local.invalid/job-search-coach/executive-career-dossier-v1.schema.json",
+  "$id": "https://local.invalid/professional-growth-coach/executive-career-dossier-v1.schema.json",
   "title": "Executive Career Dossier v1",
   "type": "object",
   "required": ["schema_version", "dossier_kind", "locale", "evidence_as_of", "case_scope", "benchmarking", "requested_technology_terms", "focus", "evidence_scope", "evidence", "claims", "verdict", "coverage", "priorities", "recruiter_scan", "dimensions", "visual_review", "copy_blocks", "do_not_change", "screen_bridge", "questions", "seven_day_plan", "analytics", "market_context", "methodology_source_categories", "privacy", "authorization"],

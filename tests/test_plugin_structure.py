@@ -736,7 +736,7 @@ class JobSearchCoachPluginStructureTests(unittest.TestCase):
 
     def test_private_generated_output_paths_are_git_ignored(self) -> None:
         for relative_path in (
-            ".job-search-coach-artifacts/executive-career-dossier.html",
+            ".professional-growth-coach-artifacts/executive-career-dossier.html",
             ".superpowers/sdd/executive-career-dossier/render-qa/report.html",
         ):
             with self.subTest(relative_path=relative_path):

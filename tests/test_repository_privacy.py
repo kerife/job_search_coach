@@ -158,11 +158,11 @@ class RepositoryPrivacyTests(unittest.TestCase):
                 text=True,
             )
             (root / ".gitignore").write_text(
-                ".job-search-coach-artifacts/\n.superpowers/\n",
+                ".professional-growth-coach-artifacts/\n.superpowers/\n",
                 encoding="utf-8",
             )
             artifact_path = Path(
-                ".job-search-coach-artifacts/accidental-executive-dossier.json"
+                ".professional-growth-coach-artifacts/accidental-executive-dossier.json"
             )
             artifact = root / artifact_path
             artifact.parent.mkdir(parents=True)
@@ -208,10 +208,10 @@ class RepositoryPrivacyTests(unittest.TestCase):
             root = Path(temporary_directory)
             subprocess.run(["git", "init", "--quiet"], cwd=root, check=True)
             (root / ".gitignore").write_text(
-                ".job-search-coach-artifacts/\n",
+                ".professional-growth-coach-artifacts/\n",
                 encoding="utf-8",
             )
-            relative = Path(".job-search-coach-artifacts/private.json")
+            relative = Path(".professional-growth-coach-artifacts/private.json")
             artifact = root / relative
             artifact.parent.mkdir(parents=True)
             artifact.write_text(
@@ -242,7 +242,7 @@ class RepositoryPrivacyTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
             subprocess.run(["git", "init", "--quiet"], cwd=root, check=True)
-            relative = Path(".job-search-coach-artifacts/private.json")
+            relative = Path(".professional-growth-coach-artifacts/private.json")
             artifact = root / relative
             artifact.parent.mkdir(parents=True)
             artifact.write_text(

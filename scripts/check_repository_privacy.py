@@ -22,7 +22,7 @@ TEXT_SUFFIXES = frozenset(
     {".csv", ".html", ".json", ".md", ".tsv", ".txt", ".yaml", ".yml"}
 )
 STAGED_RELEASE_ARTIFACT_ROOTS = frozenset(
-    {Path(".job-search-coach-artifacts"), Path(".superpowers")}
+    {Path(".professional-growth-coach-artifacts"), Path(".superpowers")}
 )
 MAX_STAGED_ARTIFACT_BYTES = 1024 * 1024
 DOSSIER_SOURCE_INVENTORY_PATHS = (

@@ -48,8 +48,8 @@
     },
     {
       "case_id": "root-ready-linkedin",
-      "entrypoint": "job-search-coach",
-      "prompt": "Route and complete this ready synthetic LinkedIn audit through the job-search-coach skill using scenario-a.json. Return the normal Spanish client report. Do not inspect a real profile or perform an external action.",
+      "entrypoint": "professional-growth-coach",
+      "prompt": "Route and complete this ready synthetic LinkedIn audit through the professional-growth-coach skill using scenario-a.json. Return the normal Spanish client report. Do not inspect a real profile or perform an external action.",
       "locale": "es",
       "bundle": "scenario-a.json",
       "appendix_mode": "normal",
@@ -57,8 +57,8 @@
     },
     {
       "case_id": "root-multi-module-linkedin",
-      "entrypoint": "job-search-coach",
-      "prompt": "Route this ready synthetic multi-module case through job-search-coach. Deliver the normal English LinkedIn report from scenario-b.json first, then hand off to optimize-career-assets as the one later module. Do not perform an external action.",
+      "entrypoint": "professional-growth-coach",
+      "prompt": "Route this ready synthetic multi-module case through professional-growth-coach. Deliver the normal English LinkedIn report from scenario-b.json first, then hand off to optimize-career-assets as the one later module. Do not perform an external action.",
       "locale": "en",
       "bundle": "scenario-b.json",
       "appendix_mode": "normal",
@@ -66,8 +66,8 @@
     },
     {
       "case_id": "root-live-readonly-linkedin",
-      "entrypoint": "job-search-coach",
-      "prompt": "Route this ready synthetic LinkedIn audit through job-search-coach using scenario-c.json. Inspection of the supplied synthetic evidence is authorized read-only; no edit, message, connection, post, upload, application, share, scheduling, or other external action is authorized. Return the normal Spanish report.",
+      "entrypoint": "professional-growth-coach",
+      "prompt": "Route this ready synthetic LinkedIn audit through professional-growth-coach using scenario-c.json. Inspection of the supplied synthetic evidence is authorized read-only; no edit, message, connection, post, upload, application, share, scheduling, or other external action is authorized. Return the normal Spanish report.",
       "locale": "es",
       "bundle": "scenario-c.json",
       "appendix_mode": "normal",

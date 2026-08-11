@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local.invalid/job-search-coach/recruiter-practice-session-v2.schema.json",
+  "$id": "https://local.invalid/professional-growth-coach/recruiter-practice-session-v2.schema.json",
   "title": "Private Recruiter Practice Session v2",
   "type": "object",
   "additionalProperties": false,

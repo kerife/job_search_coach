@@ -29,7 +29,7 @@ the repository root:
 
 ```bash
 python3 -B -m unittest tests.test_plugin_structure tests.test_repository_privacy -v
-python3 -B plugins/job-search-coach/tests/run_static_checks.py
+python3 -B plugins/professional-growth-coach/tests/run_static_checks.py
 python3 -B scripts/check_repository_privacy.py
 ```
 

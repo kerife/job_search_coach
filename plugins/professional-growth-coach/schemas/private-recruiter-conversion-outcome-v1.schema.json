@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local.invalid/job-search-coach/private-recruiter-conversion-outcome-v1.schema.json",
+  "$id": "https://local.invalid/professional-growth-coach/private-recruiter-conversion-outcome-v1.schema.json",
   "title": "Private Recruiter Conversion Outcome v1",
   "type": "object",
   "additionalProperties": false,

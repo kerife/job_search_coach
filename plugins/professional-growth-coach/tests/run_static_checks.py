@@ -204,7 +204,7 @@ EXECUTIVE_DOSSIER_OFFLINE_TOKENS = (
     '<link rel="stylesheet"',
 )
 EXECUTIVE_DOSSIER_IGNORED_OUTPUTS = (
-    ".job-search-coach-artifacts/executive-career-dossier.html",
+    ".professional-growth-coach-artifacts/executive-career-dossier.html",
     ".superpowers/sdd/executive-career-dossier/render-qa/report.html",
 )
 EXECUTIVE_DOSSIER_CSP = (
@@ -15762,8 +15762,8 @@ def validate_eval_artifact(artifact: object, raw_output: str | None = None) -> l
     if missing:
         return [f"artifact missing fields: {', '.join(missing)}"]
 
-    if artifact["schema_version"] != "job-search-coach-eval-v1":
-        errors.append("schema_version must be job-search-coach-eval-v1")
+    if artifact["schema_version"] != "professional-growth-coach-eval-v1":
+        errors.append("schema_version must be professional-growth-coach-eval-v1")
     artifact_kind = artifact["artifact_kind"]
     if artifact_kind not in {"live-agent-transcript", "deterministic-regression-fixture"}:
         errors.append("artifact_kind must identify a live transcript or deterministic fixture")

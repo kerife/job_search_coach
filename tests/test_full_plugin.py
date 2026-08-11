@@ -233,7 +233,7 @@ class FullPluginIntegrationTests(unittest.TestCase):
 
         self.assertTrue(rubric_path.is_file(), f"Missing eval rubric: {rubric_path}")
         rubric = json.loads(rubric_path.read_text(encoding="utf-8"))
-        self.assertEqual("job-search-coach-final-eval", rubric["id"])
+        self.assertEqual("professional-growth-coach-final-eval", rubric["id"])
         categories = rubric["categories"]
         for category in RUBRIC_CATEGORIES:
             self.assertIn(category, categories)
@@ -3807,7 +3807,7 @@ wrong_section:
 
             for artifact_path in artifact_paths:
                 artifact = json.loads(artifact_path.read_text(encoding="utf-8"))
-                self.assertEqual("job-search-coach-eval-v1", artifact["schema_version"])
+                self.assertEqual("professional-growth-coach-eval-v1", artifact["schema_version"])
                 self.assertEqual(cycle, artifact["cycle"])
                 self.assertEqual(artifact_path.stem, artifact["case_id"])
                 self.assertRegex(artifact["source_commit"], r"^[0-9a-f]{40}$")
@@ -3882,7 +3882,7 @@ Action boundary: authorization required before action.
             "complete-prompt length gate while testing token-only output."
         )
         fake = {
-            "schema_version": "job-search-coach-eval-v1",
+            "schema_version": "professional-growth-coach-eval-v1",
             "artifact_kind": "deterministic-regression-fixture",
             "cycle": 1,
             "case_id": "junior",

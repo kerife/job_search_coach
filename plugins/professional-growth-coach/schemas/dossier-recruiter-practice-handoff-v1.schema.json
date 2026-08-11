@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://local.invalid/job-search-coach/dossier-recruiter-practice-handoff-v1.schema.json",
+  "$id": "https://local.invalid/professional-growth-coach/dossier-recruiter-practice-handoff-v1.schema.json",
   "title": "Dossier Recruiter Practice Handoff v1",
   "type": "object",
   "additionalProperties": false,

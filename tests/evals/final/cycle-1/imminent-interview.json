@@ -1,5 +1,5 @@
 {
-  "schema_version": "job-search-coach-eval-v1",
+  "schema_version": "professional-growth-coach-eval-v1",
   "artifact_kind": "deterministic-regression-fixture",
   "cycle": 1,
   "case_id": "imminent-interview",
