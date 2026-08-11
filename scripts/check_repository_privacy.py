@@ -26,11 +26,11 @@ STAGED_RELEASE_ARTIFACT_ROOTS = frozenset(
 )
 MAX_STAGED_ARTIFACT_BYTES = 1024 * 1024
 DOSSIER_SOURCE_INVENTORY_PATHS = (
-    Path("plugins/job-search-coach/schemas/executive-career-dossier-v1.schema.json"),
-    Path("plugins/job-search-coach/scripts/validate_executive_career_dossier.py"),
-    Path("plugins/job-search-coach/scripts/render_executive_career_dossier.py"),
-    Path("plugins/job-search-coach/assets/executive-career-dossier-v1.html"),
-    Path("plugins/job-search-coach/assets/executive-career-dossier-v1.css"),
+    Path("plugins/professional-growth-coach/schemas/executive-career-dossier-v1.schema.json"),
+    Path("plugins/professional-growth-coach/scripts/validate_executive_career_dossier.py"),
+    Path("plugins/professional-growth-coach/scripts/render_executive_career_dossier.py"),
+    Path("plugins/professional-growth-coach/assets/executive-career-dossier-v1.html"),
+    Path("plugins/professional-growth-coach/assets/executive-career-dossier-v1.css"),
     Path("tests/test_executive_career_dossier.py"),
 )
 INVENTORY_PATHS = (
@@ -102,12 +102,12 @@ NON_RECORD_SCHEMA_PATH = Path(
 DOSSIER_SCHEMA_VERSION = "executive-career-dossier-v1"
 DOSSIER_VALIDATOR_PATH = (
     Path(__file__).resolve().parents[1]
-    / "plugins/job-search-coach/scripts/validate_executive_career_dossier.py"
+    / "plugins/professional-growth-coach/scripts/validate_executive_career_dossier.py"
 )
 RECRUITER_PRACTICE_SCHEMA_VERSION = "recruiter-practice-session-v1"
 RECRUITER_PRACTICE_VALIDATOR_PATH = (
     Path(__file__).resolve().parents[1]
-    / "plugins/job-search-coach/scripts/validate_recruiter_practice_session.py"
+    / "plugins/professional-growth-coach/scripts/validate_recruiter_practice_session.py"
 )
 PUBLIC_MARKET_ROW_SCHEMAS = frozenset(
     {
