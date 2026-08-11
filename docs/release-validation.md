@@ -58,12 +58,15 @@ are both omitted from the ledger and never promoted as expertise cannot be recon
 later; the skill contract therefore requires every explicitly requested technology to be
 populated before validation.
 Identity labels, self-introductions, raw-copy indicators, contacts, profile URLs,
-and structured identity fields are rejected. Arbitrary bare proper names cannot
-be distinguished reliably from products, roles, or organizations without the
-original private profile or a per-candidate denylist, either of which would
-violate this identity-free package boundary. Therefore upstream evidence must
-still be paraphrased and redacted before dossier construction; the validator's
-fixed privacy booleans are not proof about undeclared external input.
+and structured identity fields are rejected. Contextual person/company
+disclosures (for example, a named person paired with `described` or a company
+paired with `works at`) are also rejected before triage rendering. A standalone
+proper name still cannot be distinguished reliably from a product, role, or
+organization without the original private profile or a per-candidate denylist,
+either of which would violate this identity-free package boundary. Therefore
+upstream evidence must still be paraphrased and redacted before construction;
+the validator's fixed privacy booleans are not proof about undeclared external
+input.
 
 Only after those gates and independent review pass may the source manifest move
 to the approved release version and describe evidence-backed private HTML

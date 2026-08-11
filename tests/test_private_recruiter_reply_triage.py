@@ -458,6 +458,42 @@ class PrivateRecruiterReplyTriageContractTests(unittest.TestCase):
                         f"session contains forbidden {violation} prose",
                     )
 
+    def test_rejects_contextual_unlabelled_person_and_company_prose(self) -> None:
+        mutations = {
+            "unlabelled_identity": "Jordan Lee described incident response experience.",
+            "unlabelled_company": "The candidate works at Acme Corporation.",
+        }
+        prose_fields = (
+            ("safe_context", "summary"),
+            ("facts", 0, "summary"),
+            ("question", "text"),
+            ("blocked_claims", 0),
+        )
+        for violation, phrase in mutations.items():
+            for path in prose_fields:
+                with self.subTest(violation=violation, path=path):
+                    triage = copy.deepcopy(self.fixtures["clarify-en.json"])
+                    target: object = triage
+                    for key in path[:-1]:
+                        target = target[key]  # type: ignore[index]
+                    target[path[-1]] = f"{phrase[:-1]}?" if path[0] == "question" else phrase  # type: ignore[index]
+                    result = self.run_cli(triage)
+                    self.assertEqual(result.returncode, 2, result.stderr)
+                    self.assertIn(f"session contains forbidden {violation} prose", result.stderr)
+                    self.assertNotIn("Jordan Lee", result.stderr)
+                    self.assertNotIn("Acme Corporation", result.stderr)
+
+    def test_accepts_role_focused_prose_without_identity_context(self) -> None:
+        for summary in (
+            "Platform engineering work includes incident response practice.",
+            "Site Reliability Engineering manages production reliability.",
+            "Platform Engineering works at scale across regions.",
+        ):
+            with self.subTest(summary=summary):
+                triage = copy.deepcopy(self.fixtures["clarify-en.json"])
+                triage["facts"][0]["summary"] = summary
+                self.assert_accepted(triage)
+
     def test_rejects_unicode_controls_in_every_prose_field(self) -> None:
         prose_fields = (
             ("safe_context", "summary"),

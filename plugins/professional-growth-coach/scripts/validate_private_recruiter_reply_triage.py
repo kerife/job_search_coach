@@ -51,6 +51,17 @@ FORBIDDEN_PROSE = {
     "raw": re.compile(r"\b(?:raw|verbatim|quoted|original|inbound)\s+(?:(?:recruiter\s+)?(?:reply|message|text)|content)\b|\b(?:texto|contenido|respuesta)\s+(?:crudo|original|citado)\b", re.IGNORECASE),
     "identity": re.compile(r"\b(?:recruiter|reclutador(?:a)?|contact|contacto)\s*(?::\s*|(?:is|es|named|llamad[oa])\s+)\S+|\b(?:my\s+name\s+is|me\s+llamo|nombre\s+(?:del\s+)?(?:reclutador|contacto))\b", re.IGNORECASE),
     "company": re.compile(r"\b(?:company|empresa|employer|empleador|organization|organizaci[oó]n)\s*(?::\s*|(?:is|es|named|llamad[oa])\s+)\S+", re.IGNORECASE),
+    "unlabelled_identity": re.compile(
+        r"\b[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñü'’-]{1,40}\s+"
+        r"[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñü'’-]{1,40}\s+"
+        r"(?:described|contacted|joined|emailed|describió|contactó|"
+        r"se\s+uni[oó]|escribió)\b"
+    ),
+    "unlabelled_company": re.compile(
+        r"\b(?:works?|worked|from|at|with|en|para)\s+"
+        r"(?:[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñü'’-]{1,40}\s+){1,3}"
+        r"[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñü'’-]{1,40}\b"
+    ),
     "contact": re.compile(r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b|\+?\d[\d .()-]{7,}\d|\b(?:https?://|www\.|linkedin\.com/)\S*", re.IGNORECASE),
     "action": re.compile(r"\b(?:send|message|contact|reach\s+out|apply|submit|schedule|book|confirm|accept|call|email|enviar|escribir|contactar|agendar|programar|reservar|confirmar|aceptar|llamar)\b[^.!?\n]{0,80}\b(?:extern(?:al|ally)|recruiter|reclutador(?:a)?|message|mensaje|reply|response|respuesta|interview|entrevista|calendar|calendario|meeting|reuni[oó]n)\b", re.IGNORECASE),
     "time": re.compile(r"\b(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo)\b|\b\d{1,2}:\d{2}\b|\b\d{1,2}\s*(?:a\.?m\.?|p\.?m\.?)\b|\b(?:calendar|calendario|meeting\s+time|hora\s+de\s+(?:la\s+)?reuni[oó]n)\b", re.IGNORECASE),
