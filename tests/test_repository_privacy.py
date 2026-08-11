@@ -8,6 +8,7 @@ import importlib.util
 import io
 import json
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -97,6 +98,16 @@ def invalid_dossier_with_private_analytics_container() -> dict[str, object]:
 
 
 class RepositoryPrivacyTests(unittest.TestCase):
+    def test_recruiter_practice_validator_loader_restores_sys_path(self) -> None:
+        scanner = load_scanner()
+        previous_path = list(sys.path)
+        scanner._load_recruiter_practice_validator.cache_clear()
+
+        validator = scanner._load_recruiter_practice_validator()
+
+        self.assertTrue(callable(validator))
+        self.assertEqual(previous_path, sys.path)
+
     def test_valid_recruiter_session_elides_only_its_exact_safe_schema_markers(self) -> None:
         scanner = load_scanner()
         path = RECRUITER_PRACTICE_FIXTURE_PATH.relative_to(REPO_ROOT)

@@ -338,10 +338,14 @@ def _load_recruiter_practice_validator() -> Callable[[object], list[str]] | None
     if specification is None or specification.loader is None:
         return None
     module = importlib.util.module_from_spec(specification)
+    previous_path = list(sys.path)
+    sys.path.insert(0, str(RECRUITER_PRACTICE_VALIDATOR_PATH.parent))
     try:
         specification.loader.exec_module(module)
     except Exception:
         return None
+    finally:
+        sys.path[:] = previous_path
     validate = getattr(module, "validate_session", None)
     return validate if callable(validate) else None
 
