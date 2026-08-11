@@ -18,4 +18,4 @@ dd { margin: .15rem 0 0; font-weight: 600; }
 @media print { html { background: #fff; } .checkpoint-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
 @media (prefers-contrast: more) { .checkpoint-card { border: 2px solid var(--ink); box-shadow: none; } .checkpoint-facts div { border-top: 2px solid var(--ink); } .checkpoint-boundary { border-left-width: .5rem; color: var(--ink); } }
-@media (forced-colors: active) { .checkpoint-card, .checkpoint-boundary { border: 1px solid CanvasText; } .checkpoint-kicker { color: LinkText; } }
+@media (forced-colors: active) { .checkpoint-card { border: 1px solid CanvasText; } .checkpoint-boundary { border: 1px solid CanvasText; border-left-width: .25rem; } .checkpoint-kicker { color: LinkText; } }

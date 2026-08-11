@@ -118,6 +118,15 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
             r"(?s)@media print.*?\.outcome-card\s*\{[^}]*break-inside:\s*avoid;[^}]*page-break-inside:\s*avoid;",
         )
 
+    def test_forced_colors_preserves_outcome_boundary_marker(self):
+        rendered = render_outcome_html(
+            load_outcome(FIXTURES / "contact-received-en.json"), today=dt.date(2026, 8, 9)
+        )
+        self.assertRegex(
+            rendered,
+            r"(?s)@media \(forced-colors: active\).*?\.outcome-boundary\s*\{[^}]*border:\s*1px solid CanvasText;[^}]*border-left-width:\s*\.25rem;",
+        )
+
     def test_evidence_count_uses_natural_localized_singular_and_plural_copy(self):
         cases = (
             ("contact-received-en.json", "en", "1 candidate-supplied fact"),
