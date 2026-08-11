@@ -301,7 +301,9 @@ def _validate_records(
             "interventions": "intervention_id",
             "outcomes": "outcome_id",
         }[field]
-        if provenance_field in record and (
+        if provenance_field not in record:
+            errors.append(f"{location}.{provenance_field} is required")
+        elif (
             not isinstance(record[provenance_field], str)
             or not record[provenance_field].strip()
         ):

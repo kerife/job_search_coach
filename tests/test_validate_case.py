@@ -132,6 +132,7 @@ def valid_case() -> dict[str, object]:
         "sources": [
             {
                 "candidate_id": "candidate-001",
+                "source_id": "source-001",
                 "kind": "cv",
                 "evidence_label": "candidate-reported",
             }
@@ -139,6 +140,7 @@ def valid_case() -> dict[str, object]:
         "claims": [
             {
                 "candidate_id": "candidate-001",
+                "claim_id": "claim-001",
                 "text": "Operates Kubernetes clusters.",
                 "evidence_label": "verified",
             }
@@ -702,6 +704,7 @@ class ValidateCaseTests(unittest.TestCase):
                 case["outcomes"] = [
                     {
                         "candidate_id": "candidate-001",
+                        "outcome_id": "outcome-001",
                         "benchmark_candidate_ids": value,
                     }
                 ]
@@ -716,6 +719,7 @@ class ValidateCaseTests(unittest.TestCase):
         case["sources"] = [
             {
                 "candidate_id": "candidate-002",
+                "source_id": "source-002",
                 "kind": "cv",
                 "evidence_label": "candidate-reported",
             }
@@ -734,7 +738,10 @@ class ValidateCaseTests(unittest.TestCase):
         del case["schema_version"]
         case["mode"] = "batch"
         case["claims"][0].pop("evidence_label")
-        case["interventions"] = [{"candidate_id": "candidate-002"}]
+        case["interventions"] = [{
+            "candidate_id": "candidate-002",
+            "intervention_id": "intervention-002",
+        }]
 
         result = run_validator(case)
 
@@ -765,9 +772,9 @@ class ValidateCaseTests(unittest.TestCase):
 
     def test_rejects_duplicate_top_level_key_without_echoing_hidden_content(self) -> None:
         contents = json.dumps(valid_case(), separators=(",", ":"))
-        needle = '"claims":[{"candidate_id":"candidate-001","text":"Operates Kubernetes clusters.","evidence_label":"verified"}]'
+        needle = '"claims":[{"candidate_id":"candidate-001","claim_id":"claim-001","text":"Operates Kubernetes clusters.","evidence_label":"verified"}]'
         replacement = (
-            '"claims":[{"candidate_id":"candidate-001","text":"https://www.linkedin.com/in/real-person/",'
+            '"claims":[{"candidate_id":"candidate-001","claim_id":"claim-001","text":"https://www.linkedin.com/in/real-person/",'
             '"evidence_label":"verified"}],'
             + needle
         )
@@ -781,8 +788,8 @@ class ValidateCaseTests(unittest.TestCase):
 
     def test_rejects_duplicate_nested_key_without_echoing_key_name(self) -> None:
         contents = json.dumps(valid_case(), separators=(",", ":"))
-        needle = '"candidate_id":"candidate-001","text":"Operates Kubernetes clusters."'
-        replacement = '"candidate_id":"candidate-leaked","candidate_id":"candidate-001","text":"Operates Kubernetes clusters."'
+        needle = '"candidate_id":"candidate-001","claim_id":"claim-001","text":"Operates Kubernetes clusters."'
+        replacement = '"candidate_id":"candidate-leaked","candidate_id":"candidate-001","claim_id":"claim-001","text":"Operates Kubernetes clusters."'
         self.assertIn(needle, contents)
 
         result = run_validator_contents(contents.replace(needle, replacement, 1))
@@ -813,6 +820,49 @@ class ValidateCaseTests(unittest.TestCase):
                     )
                     self.assertNotIn(str(value), result.stderr)
 
+    def test_rejects_missing_provenance_ids(self) -> None:
+        cases = (
+            ("sources", "source_id"),
+            ("claims", "claim_id"),
+            ("interventions", "intervention_id"),
+            ("outcomes", "outcome_id"),
+        )
+        for field, id_field in cases:
+            with self.subTest(field=field):
+                case = valid_case()
+                if field == "sources":
+                    case[field] = [{
+                        "candidate_id": "candidate-001",
+                        "kind": "cv",
+                        "evidence_label": "verified",
+                    }]
+                elif field == "claims":
+                    case[field] = [{
+                        "candidate_id": "candidate-001",
+                        "text": "Operates Kubernetes clusters.",
+                        "evidence_label": "verified",
+                    }]
+                elif field == "interventions":
+                    case[field] = [{
+                        "candidate_id": "candidate-001",
+                        "kind": "practice",
+                        "description": "Private rehearsal",
+                        "occurred_at": "2026-08-11",
+                    }]
+                else:
+                    case[field] = [{
+                        "candidate_id": "candidate-001",
+                        "kind": "screen",
+                        "value": "Observed",
+                        "observed_at": "2026-08-11",
+                    }]
+                result = run_validator(case)
+                self.assertEqual(result.returncode, 2)
+                self.assertIn(
+                    f"{field}[0].{id_field} is required",
+                    result.stderr,
+                )
+
     def test_cli_rejects_invalid_utf8_without_a_traceback(self) -> None:
         result = run_validator_bytes(b'{"candidate_id":"\xff"}')
 
@@ -840,6 +890,14 @@ class ValidateCaseTests(unittest.TestCase):
             with self.subTest(field=field):
                 case = valid_case()
                 record = {"candidate_id": "candidate-002"}
+                record[
+                    {
+                        "sources": "source_id",
+                        "claims": "claim_id",
+                        "interventions": "intervention_id",
+                        "outcomes": "outcome_id",
+                    }[field]
+                ] = f"{field[:-1]}-002"
                 if field in {"sources", "claims"}:
                     record["evidence_label"] = "candidate-reported"
                 case[field] = [record]
@@ -857,6 +915,7 @@ class ValidateCaseTests(unittest.TestCase):
         case["outcomes"] = [
             {
                 "candidate_id": "candidate-001",
+                "outcome_id": "outcome-001",
                 "benchmark_candidate_ids": ["candidate-002"],
             }
         ]
@@ -875,6 +934,7 @@ class ValidateCaseTests(unittest.TestCase):
         case["outcomes"] = [
             {
                 "candidate_id": "candidate-001",
+                "outcome_id": "outcome-001",
                 "benchmark_candidate_ids": ["candidate-002"],
             }
         ]
@@ -890,6 +950,7 @@ class ValidateCaseTests(unittest.TestCase):
         case["outcomes"] = [
             {
                 "candidate_id": "candidate-001",
+                "outcome_id": "outcome-001",
                 "benchmark_candidate_ids": ["candidate-002"],
             }
         ]
