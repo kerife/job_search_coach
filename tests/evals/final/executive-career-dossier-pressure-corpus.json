@@ -7,9 +7,9 @@
     "entrypoint": "skills/optimize-professional-profile/SKILL.md",
     "snapshot": {
       "kind": "immutable_checkout_snapshot",
-      "plugin_version_sha256": "6746b566f04d377017be5f6cb5b132652d395197383eae5b48e7cfffd2b0d122",
-      "source_commit": "2c4610b309f1616baf4a297f76a599829610de00",
-      "plugin_tree": "e869249bf415cb635af10fb72593762ec351d569"
+      "plugin_version_sha256": "178af806c6d9e81a5ecdc5adab98dac0e960814329ee812c6effa5342f568329",
+      "source_commit": "b04c2d09fb220683bb3de8634b765c6fa16d260e",
+      "plugin_tree": "dec0a2e0da481803cc16515a066e6f5ebaa6f901"
     },
     "hidden_acceptance": {
       "red_minimum_reproductions": 3,
