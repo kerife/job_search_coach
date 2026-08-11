@@ -7,12 +7,13 @@ import base64
 import binascii
 import json
 import math
+import os
 import re
+import stat
 import sys
 import unicodedata
 from collections.abc import Mapping
 from copy import deepcopy
-from pathlib import Path
 from typing import Any
 
 
@@ -31,6 +32,7 @@ EVIDENCE_LABELS = ("verified", "candidate-reported", "inferred", "unknown")
 CASE_RECORDS = ("sources", "claims", "interventions", "outcomes")
 BENCHMARK_CANDIDATE_ID_FIELDS = ("benchmark_candidate_ids",)
 MAX_CASE_NESTING_DEPTH = 100
+MAX_CASE_BYTES = 64_000
 CASE_FIELDS = frozenset(REQUIRED_CASE_KEYS)
 CONSENT_FIELDS = frozenset({"benchmark"})
 TARGET_FIELDS = frozenset({"roles", "geography", "compensation", "constraints"})
@@ -91,7 +93,9 @@ _SECRET_ASSIGNMENT = re.compile(
     r"secret[_. /-]?key|auth|session|cookie|private[_. /-]?key)\s*[:=]\s*\S+",
     re.I,
 )
-_EMAIL_VALUE = re.compile(r"[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}", re.I)
+_EMAIL_VALUE = re.compile(
+    r"[A-Z0-9._%+-]{1,254}@[A-Z0-9.-]{1,253}\.[A-Z]{2,63}", re.I
+)
 _PHONE_VALUE = re.compile(
     r"(?:\+\d{7,15}\b|\+\d{1,3}(?:[ .()-]*\d){7,14}\b|"
     r"(?:\+\d{1,3}[ .-]?)?(?:\(?\d{3}\)?[ .-])\d{3}[ .-]\d{4})"
@@ -118,6 +122,39 @@ _IDENTITY_KEY_ALIASES = frozenset(
 
 class _DuplicateJsonKeyError(ValueError):
     """Raised when a JSON object repeats a key before validation."""
+
+
+class _CaseInputTooLarge(ValueError):
+    """Raised before parsing when the bounded case input is too large."""
+
+
+def _read_case_input(path: str) -> str:
+    nofollow = getattr(os, "O_NOFOLLOW", None)
+    if not nofollow:
+        raise OSError("no-follow input opening is unavailable")
+
+    flags = os.O_RDONLY | nofollow
+    flags |= getattr(os, "O_CLOEXEC", 0)
+    flags |= getattr(os, "O_NONBLOCK", 0)
+    descriptor = os.open(path, flags)
+    try:
+        metadata = os.fstat(descriptor)
+        if not stat.S_ISREG(metadata.st_mode):
+            raise OSError("case input is not a regular file")
+        if metadata.st_size > MAX_CASE_BYTES:
+            raise _CaseInputTooLarge
+
+        contents = bytearray()
+        while True:
+            chunk = os.read(descriptor, min(8192, MAX_CASE_BYTES + 1 - len(contents)))
+            if not chunk:
+                break
+            contents.extend(chunk)
+            if len(contents) > MAX_CASE_BYTES:
+                raise _CaseInputTooLarge
+        return bytes(contents).decode("utf-8")
+    finally:
+        os.close(descriptor)
 
 
 def _unique_json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -385,20 +422,15 @@ def _has_sensitive_key_segment(key: object) -> bool:
 
 def _is_credential_shaped_value(value: str) -> bool:
     normalized = _normalized_classifier_text(value)
+    value_patterns = [_SECRET_ASSIGNMENT]
+    if "@" in normalized:
+        value_patterns.append(_EMAIL_VALUE)
+    value_patterns.extend((_PHONE_VALUE, _LINKEDIN_PROFILE_VALUE, _LOCAL_PATH_VALUE))
     return bool(
         _AUTHORIZATION_HEADER_VALUE.search(normalized)
         or _contains_basic_credential(normalized)
         or _contains_opaque_bearer(normalized)
-        or any(
-            pattern.search(normalized)
-            for pattern in (
-                _SECRET_ASSIGNMENT,
-                _EMAIL_VALUE,
-                _PHONE_VALUE,
-                _LINKEDIN_PROFILE_VALUE,
-                _LOCAL_PATH_VALUE,
-            )
-        )
+        or any(pattern.search(normalized) for pattern in value_patterns)
     )
 
 
@@ -593,11 +625,14 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     try:
         case = json.loads(
-            Path(arguments[0]).read_text(encoding="utf-8"),
+            _read_case_input(arguments[0]),
             object_pairs_hook=_unique_json_object,
         )
     except _DuplicateJsonKeyError:
         print("invalid case file: duplicate JSON key", file=sys.stderr)
+        return 2
+    except _CaseInputTooLarge:
+        print("invalid case file: input exceeds safe size limit", file=sys.stderr)
         return 2
     except OSError:
         print("invalid case file: unable to read input", file=sys.stderr)

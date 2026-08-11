@@ -784,6 +784,69 @@ class ValidateCaseTests(unittest.TestCase):
         self.assertEqual(result.stderr, "invalid case file: unable to read input\n")
         self.assertNotIn(sentinel, result.stderr)
 
+    def test_rejects_symlink_input_without_reading_target(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            directory = Path(temporary_directory)
+            target = directory / "target.json"
+            input_path = directory / "input.json"
+            target.write_text(json.dumps(valid_case()), encoding="utf-8")
+            input_path.symlink_to(target)
+
+            result = subprocess.run(
+                [sys.executable, "-B", str(VALIDATOR), str(input_path)],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(result.stderr, "invalid case file: unable to read input\n")
+        self.assertNotIn("target.json", result.stderr)
+
+    def test_rejects_case_input_over_safe_size_limit(self) -> None:
+        oversized = valid_case()
+        oversized["target"]["constraints"] = ["x" * 64_001]
+
+        result = run_validator_bytes(json.dumps(oversized).encode("utf-8"))
+
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(
+            result.stderr,
+            "invalid case file: input exceeds safe size limit\n",
+        )
+        self.assertNotIn("x" * 100, result.stderr)
+
+    def test_accepts_case_input_at_safe_size_limit(self) -> None:
+        validator = load_validator_module()
+        boundary_case = valid_case()
+        boundary_case["target"]["constraints"] = [""]
+        base_size = len(json.dumps(boundary_case).encode("utf-8"))
+        boundary_case["target"]["constraints"] = [
+            "x" * (validator.MAX_CASE_BYTES - base_size)
+        ]
+        encoded = json.dumps(boundary_case).encode("utf-8")
+
+        self.assertEqual(len(encoded), validator.MAX_CASE_BYTES)
+        result = run_validator_bytes(encoded)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_email_classifier_skips_values_without_at_sign(self) -> None:
+        validator = load_validator_module()
+
+        class UnexpectedEmailSearch:
+            def search(self, value: str) -> object:
+                raise AssertionError("email regex should not run without an at sign")
+
+        original = validator._EMAIL_VALUE
+        validator._EMAIL_VALUE = UnexpectedEmailSearch()
+        try:
+            self.assertFalse(validator._is_credential_shaped_value("a" * 64_000))
+        finally:
+            validator._EMAIL_VALUE = original
+
+        self.assertFalse(validator._is_credential_shaped_value("a" * 64_000 + "@x"))
+
     def test_rejects_duplicate_top_level_key_without_echoing_hidden_content(self) -> None:
         contents = json.dumps(valid_case(), separators=(",", ":"))
         needle = '"claims":[{"candidate_id":"candidate-001","claim_id":"claim-001","text":"Operates Kubernetes clusters.","evidence_label":"verified"}]'

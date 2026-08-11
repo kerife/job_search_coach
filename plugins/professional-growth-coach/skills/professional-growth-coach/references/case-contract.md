@@ -4,6 +4,10 @@ Use one JSON object for one candidate. Required keys are:
 
 `schema_version`, `candidate_id`, `mode`, `consent`, `target`, `sources`, `claims`, `interventions`, and `outcomes`.
 
+The named input file must be a regular, non-symlink file no larger than 64,000
+UTF-8 encoded bytes. Oversized, non-regular, or unreadable inputs are rejected
+before JSON validation and diagnostics do not echo paths or input contents.
+
 Schema version must equal `1.0` and is closed at every object boundary. The only allowed fields are:
 
 - `consent`: `benchmark`.
