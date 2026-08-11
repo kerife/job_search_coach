@@ -44,8 +44,11 @@ class PrivateProseSafetyTests(unittest.TestCase):
             "person@example.invalid": "<redacted-field>",
             "/Users/synthetic/private-case.json": "<redacted-field>",
             "~/synthetic/private-case.json": "<redacted-field>",
+            "../synthetic/profile.json": "<redacted-field>",
             "www.example.invalid/profile": "<redacted-field>",
             "linkedin.com/in/synthetic": "<redacted-field>",
+            "+52 55 1234 5678": "<redacted-field>",
+            "555-123-4567": "<redacted-field>",
             "token_sk_live_SYNTHETIC": "<redacted-field>",
         }
         for value, expected in cases.items():

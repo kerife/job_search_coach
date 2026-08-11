@@ -7,8 +7,10 @@ import unicodedata
 
 
 _SUSPICIOUS_DIAGNOSTIC_FIELD = re.compile(
-    r"@|://|~[\\/]|(?:^|[\\/])(?:users|private|tmp|home)[\\/]|"
+    r"@|://|~[\\/]|[.]{1,2}[\\/]|"
+    r"(?:^|[\\/])(?:users|private|tmp|home)[\\/]|"
     r"(?:www\.|linkedin\.com/)|"
+    r"(?<![A-Za-z])\+?\d[\d .()_-]{6,}\d|"
     r"(?:token|secret|password|credential|api[_-]?key|access[_-]?key|auth|cookie|private)",
     re.IGNORECASE,
 )
