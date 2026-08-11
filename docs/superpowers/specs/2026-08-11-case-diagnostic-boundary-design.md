@@ -21,6 +21,12 @@ If the next individual record cannot fit, omit it rather than splitting UTF-8
 or control sequences. The formatter must never interpolate paths or input
 content beyond the already-generated diagnostic text.
 
+Diagnostic path segments are also terminal-safe: C0 control characters and
+DEL are rendered as explicit `\\u00XX` escapes before they reach stderr. Other
+Unicode characters, including accents used in ordinary labels, remain
+unchanged. This protects terminal/log structure without rewriting legitimate
+user-facing text.
+
 ## Boundaries
 
 - No schema, validation semantics, renderer, or API list changes.
@@ -35,3 +41,5 @@ content beyond the already-generated diagnostic text.
 2. A single oversized diagnostic key is bounded and not echoed in full.
 3. A multibyte diagnostic is never split and output remains valid UTF-8.
 4. Existing short diagnostics remain unchanged and deterministic.
+5. A rejected key containing a newline or ANSI control byte is never emitted
+   literally; its diagnostic remains one line and deterministic.
