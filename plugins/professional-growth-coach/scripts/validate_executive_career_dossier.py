@@ -82,6 +82,29 @@ MARKET_CLAIM_LANGUAGE = re.compile(
     r"compiten\s+por\s+(?:este\s+)?talento)\b",
     re.I,
 )
+EMPLOYMENT_CONTINUITY_NEGATED = re.compile(
+    r"\b(?:not\s+(?:advice|a\s+recommendation)\b[^.!?,;:]{0,64}\b(?:resign|quit|leave)\b|"
+    r"do\s+not\s+advise\b[^.!?,;:]{0,64}\b(?:resign|quit|leave)\b|"
+    r"no\s+(?:es\s+un[ao]?\s+)?(?:recomendaci[oó]n|consejo)\b[^.!?,;:]{0,64}\b(?:renunci(?:ar|a)|dejar|deja)\b|"
+    r"no\s+se\s+recomienda\b[^.!?,;:]{0,64}\b(?:dejar|renunciar)\b|"
+    r"sin\s+(?:recomendar|aconsejar)\b[^.!?,;:]{0,64}\b(?:dejar|renunciar)\b|"
+    r"sin\s+(?:dejar|renunciar)\b)",
+    re.I,
+)
+EMPLOYMENT_SEPARATION_IMPERATIVE = re.compile(
+    r"\b(?:you\s+(?:should|must|need\s+to|have\s+to)\s+)?(?:resign|quit)\s+"
+    r"(?:now|today|your\s+(?:current\s+)?job|the\s+job)\b|"
+    r"\b(?:you\s+(?:should|must|need\s+to|have\s+to)\s+)?leave\s+"
+    r"(?:your\s+)?(?:current\s+)?(?:job|employer|employment|company)\b|"
+    r"\b(?:renuncia|renunciar)\s+(?:ahora|hoy|a\s+tu\s+(?:empleo|trabajo))\b|"
+    r"\b(?:deja|dejar)\s+(?:tu\s+)?(?:empleo|trabajo|empresa)\b|"
+    r"\b(?:reduce|reducir)\s+(?:your\s+|tus\s+)?(?:working\s+)?hours\b|"
+    r"\breduce\s+tu\s+jornada\s+laboral\b|"
+    r"\b(?:crea|crear)\s+(?:una\s+)?brecha\s+(?:laboral|de\s+empleo)\b|"
+    r"\b(?:create|crear)\s+(?:a\s+)?(?:voluntary\s+)?(?:employment\s+)?gap\b|"
+    r"\b(?:recommend(?:s|ed)?|recomiendo|recomienda)\s+(?:that\s+you\s+)?(?:resign|quit|renunciar)\b",
+    re.I,
+)
 UNRECONCILED_MARKET_STRENGTH = re.compile(
     r"\b(?:strong|high|active|abundant|plentiful|numerous|eager|widely\s+sought|"
     r"outpaces?\s+supply|difficult\s+for\s+employers?\s+to\s+fill|scarce|"
@@ -418,6 +441,22 @@ def _text(value: object, path: str, errors: list[str], *, nullable: bool = False
     return True
 
 
+def _validate_employment_continuity(value: object, path: str, errors: list[str]) -> None:
+    if not isinstance(value, str):
+        return
+    normalized = unicodedata.normalize("NFKD", value).casefold()
+    normalized = "".join(
+        character
+        for character in normalized
+        if unicodedata.category(character) not in {"Cf", "Mn"}
+    )
+    normalized = " ".join(normalized.split())
+    if EMPLOYMENT_CONTINUITY_NEGATED.search(normalized):
+        return
+    if EMPLOYMENT_SEPARATION_IMPERATIVE.search(normalized):
+        errors.append(f"{path} must preserve current employment by default")
+
+
 def _date(value: object, path: str, errors: list[str]) -> date | None:
     if not isinstance(value, str):
         errors.append(f"{path} must be an ISO date")
@@ -528,6 +567,7 @@ def validate_market_context(
         row = _closed(value, "market_context", frozenset({"state", "reason"}), errors)
         if row is not None:
             _text(row.get("reason"), "market_context.reason", errors)
+            _validate_employment_continuity(row.get("reason"), "market_context.reason", errors)
         return sorted(set(errors))
     fields = frozenset({
         "state", "geography", "arrangement", "research_date",
@@ -1363,6 +1403,8 @@ def _validate_priorities(
         ranks.append(row.get("rank"))
         for field in ("title", "problem", "why_now", "action", "done_when"):
             _text(row.get(field), f"{path}.{field}", errors)
+        for field in ("title", "problem", "why_now", "action", "done_when"):
+            _validate_employment_continuity(row.get(field), f"{path}.{field}", errors)
         _validate_private_action(row.get("action"), f"{path}.action", errors)
         _validate_private_action(row.get("done_when"), f"{path}.done_when", errors)
         for field in normalized_fields:
@@ -1747,6 +1789,8 @@ def _validate_plan(value: object, evidence_ids: set[str], errors: list[str]) -> 
             errors.append(f"{path}.category has invalid private category")
         _text(row.get("action"), f"{path}.action", errors)
         _text(row.get("done_when"), f"{path}.done_when", errors)
+        _validate_employment_continuity(row.get("action"), f"{path}.action", errors)
+        _validate_employment_continuity(row.get("done_when"), f"{path}.done_when", errors)
         _validate_private_action(row.get("action"), f"{path}.action", errors)
         _validate_private_action(row.get("done_when"), f"{path}.done_when", errors)
         _references(row.get("evidence_ids"), evidence_ids, f"{path}.evidence_ids", "E-", errors, minimum=1)

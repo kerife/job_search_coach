@@ -965,6 +965,55 @@ class ExecutiveCareerDossierEvidenceModuleTests(unittest.TestCase):
                 )
                 self.assertTrue(all("CANARY-" not in error for error in errors))
 
+    def test_employment_continuity_guard_rejects_separation_imperatives_without_echo(self) -> None:
+        cases = (
+            (("market_context", "reason"), "Resign now and leave your job."),
+            (("priorities", 0, "why_now"), "You should quit your current job."),
+            (("priorities", 0, "action"), "Leave your employer today."),
+            (("priorities", 0, "title"), "Create a voluntary gap."),
+            (("priorities", 0, "problem"), "Reduce your working hours."),
+            (("priorities", 0, "done_when"), "Leave your employer today."),
+            (("seven_day_plan", 0, "action"), "Renuncia ahora y deja tu empleo."),
+            (("seven_day_plan", 0, "done_when"), "Deja tu trabajo y crea una brecha laboral."),
+            (("seven_day_plan", 0, "action"), "Reduce tu jornada laboral."),
+            (("market_context", "reason"), "No es una recomendación. Renuncia a tu empleo."),
+            (("market_context", "reason"), "This is not a recommendation. Resign now."),
+            (("market_context", "reason"), "This is not a recommendation; resign now."),
+            (("market_context", "reason"), "No es una recomendación, renuncia a tu empleo."),
+            (("market_context", "reason"), "We do not advise you; leave your current job."),
+            (("market_context", "reason"), "No es una recomendación: renuncia a tu empleo."),
+        )
+        for path, text in cases:
+            with self.subTest(path=path):
+                errors = self.validator.validate_dossier(mutate_path(self.es_dossier, path, text))
+                error_path = ""
+                for part in path:
+                    error_path += f"[{part}]" if isinstance(part, int) else (f".{part}" if error_path else part)
+                self.assertIn(
+                    f"{error_path} must preserve current employment by default",
+                    errors,
+                )
+                self.assertTrue(all(text not in error for error in errors))
+
+    def test_employment_continuity_guard_allows_negated_boundary_copy(self) -> None:
+        dossier = copy.deepcopy(self.es_dossier)
+        dossier["market_context"]["reason"] = (
+            "No es una recomendación de renunciar; compara evidencia del mercado "
+            "mientras preservas tu empleo actual."
+        )
+        dossier["seven_day_plan"][0]["action"] = (
+            "Investiga opciones externas sin dejar tu empleo actual."
+        )
+        dossier["priorities"][0]["why_now"] = (
+            "We do not advise you to leave your current job; compare market evidence."
+        )
+        dossier["priorities"][0]["problem"] = "No es un consejo para dejar tu empleo."
+        dossier["priorities"][0]["done_when"] = "No se recomienda dejar tu empleo."
+        errors = self.validator.validate_dossier(dossier)
+        self.assertFalse(
+            any("must preserve current employment by default" in error for error in errors)
+        )
+
     def test_dated_market_context_requires_vacancy_provenance(self) -> None:
         cases = (
             ("zero sample", ("market_context", "vacancy_sample_count"), 0, "market_context.vacancy_sample_count must be greater than zero"),
