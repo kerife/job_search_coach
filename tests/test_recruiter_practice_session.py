@@ -346,8 +346,19 @@ class RecruiterPracticeSessionContractTests(unittest.TestCase):
         invalid["question"]["fact_ids"] = ["F-999"]
         self.assert_rejected(
             invalid,
-            "question.fact_ids references unknown identifier: F-999",
+            "question.fact_ids references unknown identifier",
         )
+
+    def test_unknown_fact_reference_rejects_without_echoing_private_value(self) -> None:
+        invalid = copy.deepcopy(self.awaiting_session)
+        sentinel = "person@example.com"
+        invalid["question"]["fact_ids"] = [sentinel]
+
+        result = self.run_cli(invalid)
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("question.fact_ids references unknown identifier", result.stderr)
+        self.assertNotIn(sentinel, result.stderr)
 
     def test_unsupported_claims_are_not_part_of_the_closed_contract(self) -> None:
         invalid = copy.deepcopy(self.awaiting_session)

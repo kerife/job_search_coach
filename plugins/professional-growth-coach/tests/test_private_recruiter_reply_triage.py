@@ -35,6 +35,22 @@ renderer = _load_script("render_private_recruiter_reply_triage")
 
 
 class PrivateRecruiterReplyTriageIdentityTests(unittest.TestCase):
+    def test_unknown_fact_reference_rejects_without_echoing_private_value(self):
+        triage = json.loads(FIXTURE.read_text(encoding="utf-8"))
+        sentinel = "person@example.com"
+        triage["question"]["fact_ids"] = [sentinel]
+
+        errors = validator.validate_triage(triage)
+
+        self.assertIn(
+            "question.fact_ids references unknown identifier",
+            errors,
+        )
+        self.assertNotIn(sentinel, "\n".join(errors))
+        with self.assertRaises(renderer.TriageValidationError) as raised:
+            renderer.render_triage_html(triage)
+        self.assertNotIn(sentinel, str(raised.exception))
+
     def test_candidate_identity_markers_are_rejected_before_render(self):
         baseline = json.loads(FIXTURE.read_text(encoding="utf-8"))
         mutations = {

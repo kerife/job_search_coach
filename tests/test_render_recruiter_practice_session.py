@@ -825,7 +825,7 @@ class RecruiterPracticeSessionRendererTests(unittest.TestCase):
 
         fact_mismatch = copy.deepcopy(session)
         fact_mismatch["handoff_context"]["fact_ids"] = ["F-999"]
-        self.assertTrue(any("handoff_context.fact_ids references unknown identifier: F-999" in error for error in self.renderer.VALIDATOR.validate_session(fact_mismatch)))
+        self.assertTrue(any("handoff_context.fact_ids references unknown identifier" in error for error in self.renderer.VALIDATOR.validate_session(fact_mismatch)))
 
     def test_handoff_context_source_is_closed_and_not_rendered(self) -> None:
         session = self.feedback_session()

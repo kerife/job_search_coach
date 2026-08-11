@@ -195,7 +195,7 @@ def _references(
         if allowed is not None and reference not in allowed:
             errors.append(f"{path} may reference only OBS-001 or RB-001")
         elif reference not in known:
-            errors.append(f"{path} references unknown identifier: {reference}")
+            errors.append(f"{path} references unknown identifier")
     return references
 
 

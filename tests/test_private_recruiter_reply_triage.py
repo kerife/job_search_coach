@@ -347,7 +347,7 @@ class PrivateRecruiterReplyTriageContractTests(unittest.TestCase):
 
         triage = copy.deepcopy(self.fixtures["clarify-en.json"])
         triage["question"]["fact_ids"] = ["F-999"]
-        self.assert_rejected(triage, "question.fact_ids references unknown identifier: F-999")
+        self.assert_rejected(triage, "question.fact_ids references unknown identifier")
 
     def test_question_text_allows_one_question_but_rejects_multiple_interrogatives(self) -> None:
         for locale, text in (("en", "Which role scope remains unconfirmed?"), ("es", "¿Qué alcance falta confirmar?")):

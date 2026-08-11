@@ -170,7 +170,7 @@ def _references(value: object, known: set[str], path: str, errors: list[str]) ->
         return
     reference = value[0]
     if reference not in known:
-        errors.append(f"{path} references unknown identifier: {reference}")
+        errors.append(f"{path} references unknown identifier")
 
 
 def _walk_strings(value: object, *, field: str | None = None) -> Sequence[str]:
