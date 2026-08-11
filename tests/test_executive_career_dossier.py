@@ -1942,6 +1942,19 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
         self.assertIn("animation: none !important", reduced_motion.group(1))
         self.assertIn("transition: none !important", reduced_motion.group(1))
 
+    def test_print_button_forced_colors_uses_explicit_system_colors_in_both_locales(self) -> None:
+        for dossier, label in (
+            (self.es_dossier, "Imprimir / Guardar PDF"),
+            (self.en_dossier, "Print / Save PDF"),
+        ):
+            with self.subTest(locale=dossier["locale"]):
+                rendered = self.renderer.render_dossier_html(dossier)
+                self.assertIn(label, rendered)
+                self.assertRegex(
+                    rendered,
+                    r"(?s)@media \(forced-colors: active\).*?button\s*\{[^}]*background: ButtonFace;[^}]*color: ButtonText;[^}]*border-color: ButtonText;",
+                )
+
     def test_print_css_delegates_paper_size_without_clipping_or_controls(self) -> None:
         rendered = self.renderer.render_dossier_html(self.es_dossier)
         style = re.search(r"<style>(.+)</style>", rendered, re.DOTALL)
