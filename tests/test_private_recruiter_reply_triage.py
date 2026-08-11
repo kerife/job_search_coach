@@ -488,11 +488,41 @@ class PrivateRecruiterReplyTriageContractTests(unittest.TestCase):
             "Platform engineering work includes incident response practice.",
             "Site Reliability Engineering manages production reliability.",
             "Platform Engineering works at scale across regions.",
+            "The company is hiring for a platform role.",
+            "The employer is seeking production experience.",
+            "١٢٣ candidate experience examples are supplied.",
         ):
             with self.subTest(summary=summary):
                 triage = copy.deepcopy(self.fixtures["clarify-en.json"])
                 triage["facts"][0]["summary"] = summary
                 self.assert_accepted(triage)
+
+    def test_rejects_identity_prose_in_unsupported_scripts(self) -> None:
+        mutations = {
+            "cyrillic": "Алексей Иванов described incident response experience.",
+            "cjk": "王伟 works at 株式会社青空.",
+            "ethiopic": "ሚካኤል ገብረ described incident response experience.",
+            "cherokee": "ᎠᎾᏘ ᎠᏂᏴ described incident response experience.",
+        }
+        prose_fields = (
+            ("safe_context", "summary"),
+            ("facts", 0, "summary"),
+            ("question", "text"),
+            ("blocked_claims", 0),
+        )
+        for script, phrase in mutations.items():
+            for path in prose_fields:
+                with self.subTest(script=script, path=path):
+                    triage = copy.deepcopy(self.fixtures["clarify-en.json"])
+                    target: object = triage
+                    for key in path[:-1]:
+                        target = target[key]  # type: ignore[index]
+                    target[path[-1]] = f"{phrase[:-1]}?" if path[0] == "question" else phrase  # type: ignore[index]
+                    result = self.run_cli(triage)
+                    self.assertEqual(result.returncode, 2, result.stderr)
+                    self.assertIn("session contains forbidden unsupported_script prose", result.stderr)
+                    for sentinel in ("Алексей", "王伟", "ሚካኤል", "ᎠᎾᏘ"):
+                        self.assertNotIn(sentinel, result.stderr)
 
     def test_rejects_unicode_controls_in_every_prose_field(self) -> None:
         prose_fields = (

@@ -13,7 +13,7 @@ Add a fail-closed prose guard for scripts outside the supported Latin locales.
 Inspect Unicode character names and reject prose containing letters from
 scripts such as Cyrillic, CJK, Japanese, Korean, Arabic, Hebrew, Greek, or
 Devanagari. Keep Latin letters (including Spanish accents), digits, punctuation,
-symbols, and ordinary technical terms accepted. The guard applies uniformly to
+emoji, non-letter symbols, and ordinary technical terms accepted. The guard applies uniformly to
 the four client-facing triage prose fields and the final recursive safety pass.
 
 The error is a stable category (`unsupported_script`) and never includes the
@@ -38,4 +38,3 @@ so rejected values cannot reach HTML.
 3. Run triage/renderer, plugin, privacy, static, release, and full suites.
 4. Consume one cachebuster, publish/install, compare source/cache byte identity,
    and run the installed guard smoke.
-

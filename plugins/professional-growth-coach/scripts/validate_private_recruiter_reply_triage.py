@@ -7,6 +7,7 @@ import argparse
 import json
 import re
 import sys
+import unicodedata
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 
@@ -45,12 +46,25 @@ STATE_NEXT_SAFE_ACTIONS = {
     "ready_for_private_prep": "manual_reenter_private_prep",
     "stop": "record_stop_decision",
 }
+
+def _contains_unsupported_script(value: str) -> bool:
+    normalized = unicodedata.normalize("NFKC", value)
+    return any(
+        character.isalpha() and "LATIN" not in unicodedata.name(character, "")
+        for character in normalized
+    )
+
+
 def _enum(value: object, allowed: set[str] | frozenset[str]) -> bool:
     return isinstance(value, str) and value in allowed
 FORBIDDEN_PROSE = {
     "raw": re.compile(r"\b(?:raw|verbatim|quoted|original|inbound)\s+(?:(?:recruiter\s+)?(?:reply|message|text)|content)\b|\b(?:texto|contenido|respuesta)\s+(?:crudo|original|citado)\b", re.IGNORECASE),
     "identity": re.compile(r"\b(?:recruiter|reclutador(?:a)?|contact|contacto)\s*(?::\s*|(?:is|es|named|llamad[oa])\s+)\S+|\b(?:my\s+name\s+is|me\s+llamo|nombre\s+(?:del\s+)?(?:reclutador|contacto))\b", re.IGNORECASE),
-    "company": re.compile(r"\b(?:company|empresa|employer|empleador|organization|organizaci[oó]n)\s*(?::\s*|(?:is|es|named|llamad[oa])\s+)\S+", re.IGNORECASE),
+    "company": re.compile(
+        r"(?i:\b(?:company|empresa|employer|empleador|organization|organizaci[oó]n)\s*"
+        r"(?::\s*|(?:is|es|named|llamad[oa])\s+))"
+        r"[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñü'’-]{1,40}"
+    ),
     "unlabelled_identity": re.compile(
         r"\b[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñü'’-]{1,40}\s+"
         r"[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñü'’-]{1,40}\s+"
@@ -166,7 +180,10 @@ def _walk_strings(value: object, *, field: str | None = None) -> Sequence[str]:
 
 
 def _validate_prose_safety(value: Mapping[str, object], errors: list[str]) -> None:
-    text = "\n".join(_walk_strings(value))
+    strings = _walk_strings(value)
+    if any(_contains_unsupported_script(text) for text in strings):
+        errors.append("session contains forbidden unsupported_script prose")
+    text = "\n".join(strings)
     for category, pattern in FORBIDDEN_PROSE.items():
         if pattern.search(text):
             errors.append(f"session contains forbidden {category} prose")

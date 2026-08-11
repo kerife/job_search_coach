@@ -64,9 +64,11 @@ paired with `works at`) are also rejected before triage rendering. A standalone
 proper name still cannot be distinguished reliably from a product, role, or
 organization without the original private profile or a per-candidate denylist,
 either of which would violate this identity-free package boundary. Therefore
-upstream evidence must still be paraphrased and redacted before construction;
-the validator's fixed privacy booleans are not proof about undeclared external
-input.
+upstream evidence must still be paraphrased and redacted before construction.
+Because the triage locale contract is limited to `en`/`es`, prose letters from
+unsupported writing systems are rejected as well; future multilingual support
+must replace that guard with an explicit locale-aware redaction policy. The
+validator's fixed privacy booleans are not proof about undeclared external input.
 
 Only after those gates and independent review pass may the source manifest move
 to the approved release version and describe evidence-backed private HTML

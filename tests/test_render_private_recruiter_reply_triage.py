@@ -447,6 +447,14 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
         self.assertIn("unlabelled_identity", str(captured.exception.errors))
         self.assertNotIn("Jordan Lee", str(captured.exception.errors))
 
+    def test_renderer_rejects_unsupported_script_before_embedding_prose(self) -> None:
+        triage = copy.deepcopy(self.fixtures["clarify-en.json"])
+        triage["facts"][0]["summary"] = "Алексей Иванов described incident response experience."
+        with self.assertRaises(self.renderer.TriageValidationError) as captured:
+            self.renderer.render_triage_html(triage)
+        self.assertIn("unsupported_script", str(captured.exception.errors))
+        self.assertNotIn("Алексей", str(captured.exception.errors))
+
     def test_ready_handoff_has_static_manual_next_step_after_focus_before_preview(self) -> None:
         document = self.renderer.render_triage_html(self.fixtures["ready-en.json"])
         focus_end = document.index("</section>", document.index('class="triage-handoff-focus"'))
