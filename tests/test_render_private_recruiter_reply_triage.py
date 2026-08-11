@@ -102,9 +102,9 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
                 self.assertIn(third_label, document)
                 self.assertIn("No external action was taken." if triage["locale"] == "en" else "No se realizó ninguna acción externa.", document)
                 self.assertIn(
-                    "Local saving is disabled (local_save_mode=disabled)."
+                    "Nothing is saved on this device."
                     if triage["locale"] == "en"
-                    else "El guardado local está deshabilitado (local_save_mode=disabled).",
+                    else "No se guarda nada en este dispositivo.",
                     document,
                 )
                 self.assertIn("Content-Security-Policy", document)
@@ -113,6 +113,25 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
                 self.assertNotIn("aria-live", document[state_start:state_end])
                 self.assertNotIn("<link ", document)
                 self.assertNotIn("<script", document)
+
+    def test_save_boundary_is_plain_localized_copy_without_exposing_internal_enum(self) -> None:
+        expected = {
+            "en": "Nothing is saved on this device.",
+            "es": "No se guarda nada en este dispositivo.",
+        }
+        old = {
+            "en": "Local saving is disabled (local_save_mode=disabled).",
+            "es": "El guardado local está deshabilitado (local_save_mode=disabled).",
+        }
+        for name, triage in self.fixtures.items():
+            with self.subTest(fixture=name):
+                self.assertEqual(triage["delivery"]["local_save_mode"], "disabled")
+                document = self.renderer.render_triage_html(triage)
+                self.assertEqual(document.count(expected[triage["locale"]]), 1)
+                self.assertNotIn("local_save_mode=", document)
+                self.assertNotIn(old[triage["locale"]], document)
+                save_start = document.index(expected[triage["locale"]])
+                self.assertNotIn("no-print", document[save_start - 300 : save_start + 300])
 
     def test_v2_uses_ui_locale_for_copy_and_content_locale_for_dynamic_prose(self) -> None:
         triage = copy.deepcopy(self.fixtures["ready-es.json"])
