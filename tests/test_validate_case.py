@@ -740,6 +740,34 @@ class ValidateCaseTests(unittest.TestCase):
         self.assertTrue(result.stderr.startswith("invalid case file: "))
         self.assertEqual(result.stderr.count("\n"), 1)
 
+    def test_rejects_duplicate_top_level_key_without_echoing_hidden_content(self) -> None:
+        contents = json.dumps(valid_case(), separators=(",", ":"))
+        needle = '"claims":[{"candidate_id":"candidate-001","text":"Operates Kubernetes clusters.","evidence_label":"verified"}]'
+        replacement = (
+            '"claims":[{"candidate_id":"candidate-001","text":"https://www.linkedin.com/in/real-person/",'
+            '"evidence_label":"verified"}],'
+            + needle
+        )
+        self.assertIn(needle, contents)
+
+        result = run_validator_contents(contents.replace(needle, replacement, 1))
+
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(result.stderr, "invalid case file: duplicate JSON key\n")
+        self.assertNotIn("real-person", result.stderr)
+
+    def test_rejects_duplicate_nested_key_without_echoing_key_name(self) -> None:
+        contents = json.dumps(valid_case(), separators=(",", ":"))
+        needle = '"candidate_id":"candidate-001","text":"Operates Kubernetes clusters."'
+        replacement = '"candidate_id":"candidate-leaked","candidate_id":"candidate-001","text":"Operates Kubernetes clusters."'
+        self.assertIn(needle, contents)
+
+        result = run_validator_contents(contents.replace(needle, replacement, 1))
+
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(result.stderr, "invalid case file: duplicate JSON key\n")
+        self.assertNotIn("candidate_id", result.stderr)
+
     def test_cli_rejects_invalid_utf8_without_a_traceback(self) -> None:
         result = run_validator_bytes(b'{"candidate_id":"\xff"}')
 

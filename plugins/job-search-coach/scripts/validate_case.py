@@ -116,6 +116,19 @@ _IDENTITY_KEY_ALIASES = frozenset(
 )
 
 
+class _DuplicateJsonKeyError(ValueError):
+    """Raised when a JSON object repeats a key before validation."""
+
+
+def _unique_json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise _DuplicateJsonKeyError("duplicate JSON key")
+        result[key] = value
+    return result
+
+
 def normalize_case(case: Mapping[str, Any]) -> dict[str, Any]:
     """Return a copy whose omitted benchmark consent is explicitly false."""
     normalized = deepcopy(dict(case))
@@ -543,7 +556,13 @@ def main(argv: list[str] | None = None) -> int:
         print("usage: validate_case.py CASE.json", file=sys.stderr)
         return 2
     try:
-        case = json.loads(Path(arguments[0]).read_text(encoding="utf-8"))
+        case = json.loads(
+            Path(arguments[0]).read_text(encoding="utf-8"),
+            object_pairs_hook=_unique_json_object,
+        )
+    except _DuplicateJsonKeyError:
+        print("invalid case file: duplicate JSON key", file=sys.stderr)
+        return 2
     except (OSError, UnicodeError, json.JSONDecodeError, RecursionError) as error:
         print(f"invalid case file: {error}", file=sys.stderr)
         return 2
