@@ -258,7 +258,7 @@ NORMALIZED_OUTCOME_GUARANTEE = re.compile(
     r"\b(?:an?\s+)?(?:interview|offer|job)\s+follows?\s+(?:this|the)\s+(?:change|revision)\b|"
     r"\b(?:this|the)\s+(?:change|revision|profile|headline)\b[^.!?]{0,32}\b"
     r"(?:guarantees?|lands?|leads?\s+to)\s+(?:interviews?|offers?|jobs?|recruiter\s+messages?)\b|"
-    r"\b(?:entrevista|oferta|empleo|trabajo)\b[^.!?]{0,24}\b(?:sigue|seguira)\b",
+    r"\b(?:entrevista|oferta|empleo|trabajo)\b[^.!?,;:]{0,24}\b(?:sigue|seguira)\b",
     re.I,
 )
 DOSSIER_OUTCOME_GUARANTEE = re.compile(
@@ -711,6 +711,21 @@ def normalize_candidate_text(value: object) -> str:
     return _normalize_decision_text(value)
 
 
+def _normalize_outcome_text(value: object) -> str:
+    """Normalize outcome prose without joining separate sentences or clauses."""
+
+    if not isinstance(value, str):
+        return ""
+    normalized = unicodedata.normalize("NFKD", value).casefold()
+    normalized = "".join(
+        character
+        for character in normalized
+        if unicodedata.category(character) not in {"Cf", "Mn"}
+    )
+    normalized = re.sub(r"[^\w.!?,;:]+", " ", normalized, flags=re.UNICODE)
+    return " ".join(normalized.split())
+
+
 def normalize_candidate_label_text(value: object) -> str:
     """Normalize obfuscation while preserving label punctuation for privacy cues."""
 
@@ -946,7 +961,7 @@ def candidate_text_has_external_action(value: object) -> bool:
 def candidate_text_has_outcome_guarantee(value: object) -> bool:
     if not isinstance(value, str):
         return False
-    normalized = normalize_candidate_text(value)
+    normalized = _normalize_outcome_text(value)
     return bool(
         DOSSIER_OUTCOME_GUARANTEE.search(value)
         or NORMALIZED_OUTCOME_GUARANTEE.search(normalized)

@@ -510,6 +510,16 @@ class ExecutiveCareerDossierSchemaTests(unittest.TestCase):
                     self.validate_dossier(dossier),
                 )
 
+    def test_employment_continuity_footer_is_not_an_outcome_guarantee(self) -> None:
+        for text in (
+            "No LinkedIn action was performed. This analysis evaluates professional options and development; "
+            "it does not recommend resigning or leaving your job. You decide what comes next.",
+            "No se realizó ninguna acción en LinkedIn. Este análisis evalúa opciones y desarrollo profesional; "
+            "no recomienda renunciar ni dejar tu empleo. Tú decides qué sigue.",
+        ):
+            with self.subTest(text=text):
+                self.assertFalse(self.validator.candidate_text_has_outcome_guarantee(text))
+
     def test_legacy_linkedin_profile_urls_are_rejected_from_dossier_prose(self) -> None:
         linkedin_host = "linkedin" + ".com"
         for value in (
