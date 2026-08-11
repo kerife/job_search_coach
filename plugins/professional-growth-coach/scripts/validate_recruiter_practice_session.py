@@ -33,6 +33,16 @@ V2_REQUIRED_TOP_LEVEL_FIELDS = V2_TOP_LEVEL_FIELDS - {"handoff_context"}
 
 def _enum(value: object, allowed: set[str] | frozenset[str]) -> bool:
     return isinstance(value, str) and value in allowed
+
+
+def _contains_unsupported_script(value: str) -> bool:
+    normalized = unicodedata.normalize("NFKC", value)
+    return any(
+        character.isalpha() and "LATIN" not in unicodedata.name(character, "")
+        for character in normalized
+    )
+
+
 IDENTITY_OR_RAW_CONTENT = re.compile(
     r"\b(?:candidate(?:\s+name)?|prepared\s+for|nombre(?:\s+del\s+candidat[oa])?|"
     r"my\s+name\s+is|me\s+llamo|company|empresa|compañ[ií]a|employer|empleador)\s*:|"
@@ -205,7 +215,10 @@ def _walk_strings(value: object, *, path: tuple[str, ...] = ()) -> Sequence[str]
 
 
 def _validate_prose_safety(value: Mapping[str, object], errors: list[str]) -> None:
-    text = "\n".join(_walk_strings(value))
+    strings = _walk_strings(value)
+    if any(_contains_unsupported_script(text) for text in strings):
+        errors.append("session contains forbidden unsupported_script prose")
+    text = "\n".join(strings)
     if IDENTITY_OR_RAW_CONTENT.search(text):
         errors.append("session contains forbidden identity or raw-content prose")
     if EXTERNAL_ACTION.search(text):

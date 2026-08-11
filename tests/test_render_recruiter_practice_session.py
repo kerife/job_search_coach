@@ -774,6 +774,14 @@ class RecruiterPracticeSessionRendererTests(unittest.TestCase):
         with self.assertRaises(self.renderer.SessionValidationError):
             self.renderer.render_session_html(invalid)
 
+    def test_renderer_rejects_unsupported_script_prose_without_echoing_content(self) -> None:
+        invalid = copy.deepcopy(self.awaiting_session)
+        invalid["facts"][0]["summary"] = "Алексей Иванов описал опыт."
+        with self.assertRaises(self.renderer.SessionValidationError) as captured:
+            self.renderer.render_session_html(invalid)
+        self.assertIn("session contains forbidden unsupported_script prose", captured.exception.errors)
+        self.assertNotIn("Алексей Иванов", str(captured.exception.errors))
+
     def test_awaiting_answer_renders_english_context_and_prompt(self) -> None:
         rendered = self.renderer.render_session_html(self.english_session())
 

@@ -363,6 +363,14 @@ class RecruiterPracticeSessionContractTests(unittest.TestCase):
         action["question"]["text"] = "Contacta al reclutador después de practicar."
         self.assert_rejected(action, "session contains external-action prose")
 
+    def test_unsupported_script_prose_is_rejected_without_echoing_content(self) -> None:
+        invalid = copy.deepcopy(self.awaiting_session)
+        invalid["facts"][0]["summary"] = "Алексей Иванов описал опыт."
+        result = self.run_cli(invalid)
+        self.assertEqual(result.returncode, 2, result.stderr)
+        self.assertIn("session contains forbidden unsupported_script prose", result.stderr)
+        self.assertNotIn("Алексей Иванов", result.stderr)
+
     def test_internal_question_requirement_and_fact_ids_are_rejected_in_prose(self) -> None:
         for section, field, prose in (
             ("question", "text", "Practica Q-001 en una respuesta breve."),
