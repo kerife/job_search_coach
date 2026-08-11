@@ -20,6 +20,19 @@ ASSET_ROOT = Path(__file__).resolve().parents[1] / "assets"
 TEMPLATE_PATH = ASSET_ROOT / "private-recruiter-followthrough-checkpoint-v1.html"
 CSS_PATH = ASSET_ROOT / "private-recruiter-followthrough-checkpoint-v1.css"
 
+
+def _load_asset_loader() -> Any:
+    path = Path(__file__).with_name("private_asset_loader.py")
+    specification = importlib.util.spec_from_file_location("private_renderer_asset_loader", path)
+    if specification is None or specification.loader is None:
+        raise RuntimeError("private renderer asset loader is unavailable")
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    return module
+
+
+ASSET_LOADER = _load_asset_loader()
+
 LABELS = {
     "en": {
         "title": "Private recruiter follow-through checkpoint", "skip": "Skip to checkpoint",
@@ -63,8 +76,8 @@ def render_checkpoint_html(item: Mapping[str, object], receipt: Mapping[str, obj
     value = _validated(item, receipt, as_of=as_of)
     locale = value["locale"]
     labels = LABELS[locale]
-    template = TEMPLATE_PATH.read_text(encoding="utf-8")
-    css = CSS_PATH.read_text(encoding="utf-8")
+    template = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, TEMPLATE_PATH)
+    css = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, CSS_PATH)
     replacements = {
         "{{LANG}}": html.escape(locale), "{{TITLE}}": labels["title"], "{{INLINE_CSS}}": css,
         "{{SKIP}}": labels["skip"], "{{KICKER}}": labels["kicker"], "{{HEADING}}": labels["heading"],

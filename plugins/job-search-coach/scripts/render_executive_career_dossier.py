@@ -31,6 +31,19 @@ TEMPLATE_TOKENS = (
     "{{INLINE_SCRIPT}}",
 )
 STATIC_TEMPLATE_TOKEN = re.compile(r"\{\{[A-Z_]+\}\}")
+
+
+def _load_asset_loader() -> Any:
+    path = Path(__file__).with_name("private_asset_loader.py")
+    specification = importlib.util.spec_from_file_location("private_renderer_asset_loader", path)
+    if specification is None or specification.loader is None:
+        raise RuntimeError("private renderer asset loader is unavailable")
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    return module
+
+
+ASSET_LOADER = _load_asset_loader()
 SUMMARY_MARKDOWN_ESCAPE = re.compile(r"[\\`*_{}\[\]#!|~]")
 SUMMARY_MARKDOWN_PREFIX = re.compile(r"(^|\s)([>+\-])(?=\s)")
 SUMMARY_ORDERED_PREFIX = re.compile(r"(^|\s)(\d+)([.)])(?=\s)")
@@ -1061,8 +1074,8 @@ def build_chat_summary(dossier: Mapping[str, object]) -> str:
 def render_dossier_html(dossier: Mapping[str, object]) -> str:
     frozen = _validate_and_freeze(dossier)
     locale = text(frozen["locale"])
-    template = TEMPLATE_PATH.read_text(encoding="utf-8")
-    css = CSS_PATH.read_text(encoding="utf-8")
+    template = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, TEMPLATE_PATH)
+    css = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, CSS_PATH)
     static_tokens = STATIC_TEMPLATE_TOKEN.findall(template)
     if sorted(static_tokens) != sorted(TEMPLATE_TOKENS):
         raise RuntimeError("dossier template token contract is invalid")

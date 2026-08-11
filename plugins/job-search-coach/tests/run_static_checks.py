@@ -16413,6 +16413,18 @@ def validate_design_token_palette() -> list[str]:
     return checker.validate_palette_assets(PLUGIN_ROOT)
 
 
+def validate_renderer_asset_paths() -> list[str]:
+    checker_path = PLUGIN_ROOT / "scripts" / "private_asset_loader.py"
+    if not checker_path.is_file():
+        return ["missing private renderer asset loader"]
+    spec = importlib.util.spec_from_file_location("private_asset_loader", checker_path)
+    if spec is None or spec.loader is None:
+        return ["could not load private renderer asset loader"]
+    checker = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(checker)
+    return checker.validate_asset_paths(PLUGIN_ROOT)
+
+
 def main() -> int:
     errors: list[str] = []
     harness = PLUGIN_ROOT / "tests" / "test_private_schema_conformance.py"
@@ -16444,6 +16456,7 @@ def main() -> int:
     errors.extend(
         validate_executive_dossier_package(PLUGIN_ROOT, PLUGIN_ROOT.parents[1])
     )
+    errors.extend(validate_renderer_asset_paths())
     errors.extend(validate_design_token_palette())
     manifest_path = PLUGIN_ROOT / ".codex-plugin" / "plugin.json"
     if not manifest_path.is_file():

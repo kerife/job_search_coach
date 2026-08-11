@@ -25,6 +25,19 @@ TEMPLATE_TOKENS = ("{{LANG}}", "{{TITLE}}", "{{INLINE_CSS}}", "{{HEADER}}", "{{M
 STATIC_TEMPLATE_TOKEN = re.compile(r"\{\{[A-Z_]+\}\}")
 
 
+def _load_asset_loader() -> Any:
+    path = Path(__file__).with_name("private_asset_loader.py")
+    specification = importlib.util.spec_from_file_location("private_renderer_asset_loader", path)
+    if specification is None or specification.loader is None:
+        raise RuntimeError("private renderer asset loader is unavailable")
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    return module
+
+
+ASSET_LOADER = _load_asset_loader()
+
+
 def _load_validator() -> Any:
     path = Path(__file__).with_name("validate_recruiter_practice_session.py")
     specification = importlib.util.spec_from_file_location(
@@ -523,14 +536,14 @@ def _render_main(session: Mapping[str, object], locale: str) -> str:
 def render_session_html(session: Mapping[str, object]) -> str:
     validated = _validate(session)
     locale = _text(validated["locale"])
-    template = TEMPLATE_PATH.read_text(encoding="utf-8")
+    template = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, TEMPLATE_PATH)
     static_tokens = STATIC_TEMPLATE_TOKEN.findall(template)
     if sorted(static_tokens) != sorted(TEMPLATE_TOKENS):
         raise RuntimeError("recruiter practice template token contract is invalid")
     substitutions = {
         "{{LANG}}": locale,
         "{{TITLE}}": COPY[locale]["title"],
-        "{{INLINE_CSS}}": CSS_PATH.read_text(encoding="utf-8"),
+        "{{INLINE_CSS}}": ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, CSS_PATH),
         "{{HEADER}}": _render_header(locale),
         "{{MAIN}}": _render_main(validated, locale),
     }

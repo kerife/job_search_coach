@@ -11,6 +11,19 @@ ASSET_ROOT = Path(__file__).resolve().parents[1] / "assets"
 TEMPLATE_PATH = ASSET_ROOT / "private-recruiter-conversion-outcome-v1.html"
 CSS_PATH = ASSET_ROOT / "private-recruiter-conversion-outcome-v1.css"
 
+
+def _load_asset_loader() -> Any:
+    path = Path(__file__).with_name("private_asset_loader.py")
+    specification = importlib.util.spec_from_file_location("private_renderer_asset_loader", path)
+    if specification is None or specification.loader is None:
+        raise RuntimeError("private renderer asset loader is unavailable")
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    return module
+
+
+ASSET_LOADER = _load_asset_loader()
+
 EVENT_LABELS = {
     "en": {"contact_received": "Contact received", "reply_received": "Reply received", "referral_received": "Referral received", "screen_requested": "Screen requested", "interview_requested": "Interview requested", "stop_decision": "Stop decision"},
     "es": {"contact_received": "Recibimos un contacto", "reply_received": "Recibimos una respuesta", "referral_received": "Recibimos una referencia", "screen_requested": "Solicitaron un filtro", "interview_requested": "Solicitaron una entrevista", "stop_decision": "Decisión de detenerse"},
@@ -57,8 +70,8 @@ def render_outcome_html(item: Mapping[str, object], *, today: dt.date | None = N
     value = _validated(item, today=today)
     locale = value["locale"]
     labels, event, action = COPY[locale], value["event_type"], value["next_safe_action"]
-    template = TEMPLATE_PATH.read_text(encoding="utf-8")
-    css = CSS_PATH.read_text(encoding="utf-8")
+    template = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, TEMPLATE_PATH)
+    css = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, CSS_PATH)
     replacements = {
         "{{LANG}}": html.escape(locale), "{{TITLE}}": labels["title"], "{{SKIP}}": labels["skip"], "{{INLINE_CSS}}": css,
         "{{KICKER}}": labels["kicker"], "{{HEADING}}": labels["heading"], "{{EVENT_LABEL}}": labels["event"],
