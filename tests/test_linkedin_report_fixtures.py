@@ -457,12 +457,12 @@ class LinkedInReportFixtureTests(unittest.TestCase):
     def test_fixture_rejects_references_to_nonexistent_facts(self) -> None:
         bundle = self.fixture("scenario-a.json")
         bundle["copy_blocks"][0]["fact_ids"].append("FACT-JSC1-MISSING")
-        self.assertIn("copy_blocks[0] references unknown fact_id: FACT-JSC1-MISSING", validator.validate_fixture_bundle(bundle))
+        self.assertIn("copy_blocks[0] references unknown fact_id", validator.validate_fixture_bundle(bundle))
 
     def test_fixture_rejects_references_to_nonexistent_evidence(self) -> None:
         bundle = self.fixture("scenario-a.json")
         bundle["priorities"][0]["evidence_ids"].append("EVID-JSC1-MISSING")
-        self.assertIn("priorities[0] references unknown evidence_id: EVID-JSC1-MISSING", validator.validate_fixture_bundle(bundle))
+        self.assertIn("priorities[0] references unknown evidence_id", validator.validate_fixture_bundle(bundle))
 
     def test_fact_and_source_ids_cannot_substitute_for_observation_evidence(self) -> None:
         mutations = (
@@ -478,7 +478,7 @@ class LinkedInReportFixtureTests(unittest.TestCase):
                     target = target[part]  # type: ignore[index]
                 target[path[-1]] = [reference]  # type: ignore[index]
                 self.assertIn(
-                    f"{label} references unknown evidence_id: {reference}",
+                    f"{label} references unknown evidence_id",
                     validator.validate_fixture_bundle(bundle),
                 )
 

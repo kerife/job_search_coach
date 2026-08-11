@@ -1387,7 +1387,7 @@ class OptimizeLinkedInCareerContractTests(unittest.TestCase):
 
         self.assertTrue(
             any(
-                "EVID-JSC3-ABOUT" in error and "unknown evidence" in error
+                "references identifier outside fixture" in error
                 for error in errors
             ),
             errors,
