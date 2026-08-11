@@ -33,6 +33,7 @@ CASE_RECORDS = ("sources", "claims", "interventions", "outcomes")
 BENCHMARK_CANDIDATE_ID_FIELDS = ("benchmark_candidate_ids",)
 MAX_CASE_NESTING_DEPTH = 100
 MAX_CASE_BYTES = 64_000
+MAX_DIAGNOSTIC_BYTES = 16_384
 CASE_FIELDS = frozenset(REQUIRED_CASE_KEYS)
 CONSENT_FIELDS = frozenset({"benchmark"})
 TARGET_FIELDS = frozenset({"roles", "geography", "compensation", "constraints"})
@@ -155,6 +156,21 @@ def _read_case_input(path: str) -> str:
         return bytes(contents).decode("utf-8")
     finally:
         os.close(descriptor)
+
+
+def _format_diagnostics(errors: list[str]) -> str:
+    marker = "validation diagnostics truncated; additional errors omitted\n"
+    marker_bytes = len(marker.encode("utf-8"))
+    lines: list[str] = []
+    used_bytes = 0
+    for error in errors:
+        line = f"{error}\n"
+        line_bytes = len(line.encode("utf-8"))
+        if used_bytes + line_bytes + marker_bytes > MAX_DIAGNOSTIC_BYTES:
+            return "".join(lines) + marker
+        lines.append(line)
+        used_bytes += line_bytes
+    return "".join(lines)
 
 
 def _unique_json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -643,7 +659,7 @@ def main(argv: list[str] | None = None) -> int:
 
     errors = validate_case(case)
     if errors:
-        print("\n".join(errors), file=sys.stderr)
+        sys.stderr.write(_format_diagnostics(errors))
         return 2
     return 0
 

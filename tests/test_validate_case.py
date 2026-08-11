@@ -831,6 +831,49 @@ class ValidateCaseTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_caps_cli_diagnostics_for_many_unsupported_keys(self) -> None:
+        case = valid_case()
+        case.update({f"u{index:04d}": "x" for index in range(3_000)})
+
+        result = run_validator(case)
+
+        self.assertEqual(result.returncode, 2)
+        self.assertLessEqual(len(result.stderr.encode("utf-8")), 16_384)
+        self.assertIn(
+            "validation diagnostics truncated; additional errors omitted\n",
+            result.stderr,
+        )
+        self.assertNotIn("u2999", result.stderr)
+
+    def test_caps_cli_diagnostic_for_one_long_key(self) -> None:
+        case = valid_case()
+        sentinel = "Z" * 60_000
+        case[sentinel] = "x"
+
+        result = run_validator(case)
+
+        self.assertEqual(result.returncode, 2)
+        self.assertLessEqual(len(result.stderr.encode("utf-8")), 16_384)
+        self.assertEqual(
+            result.stderr,
+            "validation diagnostics truncated; additional errors omitted\n",
+        )
+        self.assertNotIn(sentinel, result.stderr)
+
+    def test_cli_diagnostic_cap_preserves_utf8_boundaries(self) -> None:
+        case = valid_case()
+        case.update({f"campo-ñ-{index:04d}": "x" for index in range(1_000)})
+
+        result = run_validator(case)
+
+        self.assertEqual(result.returncode, 2)
+        result.stderr.encode("utf-8").decode("utf-8")
+        self.assertTrue(
+            result.stderr.endswith(
+                "validation diagnostics truncated; additional errors omitted\n"
+            )
+        )
+
     def test_email_classifier_skips_values_without_at_sign(self) -> None:
         validator = load_validator_module()
 
