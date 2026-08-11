@@ -798,6 +798,26 @@ class ValidateCaseTests(unittest.TestCase):
         self.assertEqual(result.stderr, "invalid case file: duplicate JSON key\n")
         self.assertNotIn("candidate_id", result.stderr)
 
+    def test_rejects_sensitive_unsupported_keys_without_echoing_sentinels(self) -> None:
+        cases = (
+            (("jane@example.invalid",), "jane@example.invalid", "safe"),
+            (("target", "contact_jane@example.invalid"), "contact_jane@example.invalid", "safe"),
+            (("sources", 0, "token_sk_live_SENTINEL_12345678901234567890"), "token_sk_live_SENTINEL_12345678901234567890", "safe"),
+            (("claims", 0, "jane@example.invalid"), "jane@example.invalid", "safe"),
+            (("interventions",), "contact_jane@example.invalid", [{"candidate_id": "candidate-001", "contact_jane@example.invalid": "safe"}]),
+            (("outcomes",), "token_sk_live_SENTINEL_12345678901234567890", [{"candidate_id": "candidate-001", "token_sk_live_SENTINEL_12345678901234567890": "safe"}]),
+        )
+        for path, sentinel, value in cases:
+            with self.subTest(path=path):
+                case = valid_case()
+                set_path(case, path, value)
+
+                result = run_validator(case)
+
+                self.assertEqual(result.returncode, 2)
+                self.assertNotIn(sentinel, result.stderr)
+                self.assertTrue(result.stderr.strip(), result.stderr)
+
     def test_rejects_non_string_optional_provenance_ids(self) -> None:
         cases = (
             ("sources", "source_id"),

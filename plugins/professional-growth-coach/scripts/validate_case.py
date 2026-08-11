@@ -212,9 +212,20 @@ def _closed_mapping(
 ) -> list[str]:
     """Return path-specific errors for unsupported fields without changing input."""
     return [
-        f"{location} has unsupported field: {field}"
+        f"{location} has unsupported field: {_safe_path_key(field)}"
         for field in sorted(set(value) - allowed_fields)
     ]
+
+
+def _safe_path_key(key: object) -> str:
+    """Keep diagnostics path-specific without echoing sensitive key material."""
+    if not isinstance(key, str):
+        return str(key)
+    if _normalized_key(key) in _SENSITIVE_KEY_ALIASES:
+        return key
+    if _has_sensitive_key_segment(key) or _is_credential_shaped_value(key):
+        return "<redacted-key>"
+    return key
 
 
 def _walk_json_domain(
@@ -247,7 +258,8 @@ def _walk_json_domain(
                 for key_type in sorted(non_string_key_types)
             )
             for key, nested in sorted(string_items, key=lambda item: item[0]):
-                child_path = f"{path}.{key}" if path else key
+                safe_key = _safe_path_key(key)
+                child_path = f"{path}.{safe_key}" if path else safe_key
                 errors.extend(
                     _walk_json_domain(nested, child_path, active, depth + 1)
                 )
@@ -447,7 +459,8 @@ def _walk_sensitive_data(
         active.add(identity)
         try:
             for key, nested in value.items():
-                child_path = f"{path}.{key}" if path else str(key)
+                safe_key = _safe_path_key(key)
+                child_path = f"{path}.{safe_key}" if path else safe_key
                 if _has_sensitive_key_segment(key):
                     errors.append(f"case contains sensitive key segment at {child_path}")
                 errors.extend(
@@ -518,7 +531,8 @@ def _walk_identity_fields(
         active.add(identity)
         try:
             for key, nested in value.items():
-                child_path = f"{path}.{key}" if path else str(key)
+                safe_key = _safe_path_key(key)
+                child_path = f"{path}.{safe_key}" if path else safe_key
                 if _has_identity_semantics(key):
                     if key == "benchmark_candidate_ids":
                         if _is_nonempty_string_list(nested) and not benchmark_consent:
