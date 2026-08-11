@@ -87,7 +87,11 @@ class DarkModeAccessibilityTests(unittest.TestCase):
         self.assertIn("background: var(--gold-soft)", dark_block)
         self.assertIn("border-left-color: var(--decision-term)", dark_block)
         self.assertIn(".feedback-label--confirm", dark_block)
-        self.assertGreaterEqual(_contrast("#f3f6ff", "#3b301f"), 4.5)
+        ink = re.search(r"--ink:\s*(#[0-9a-fA-F]{6});", dark_block)
+        gold_soft = re.search(r"--gold-soft:\s*(#[0-9a-fA-F]{6});", dark_block)
+        self.assertIsNotNone(ink)
+        self.assertIsNotNone(gold_soft)
+        self.assertGreaterEqual(_contrast(ink.group(1), gold_soft.group(1)), 4.5)
 
     def test_dossier_labels_have_dark_contrast(self) -> None:
         css = (ASSETS / "executive-career-dossier-v1.css").read_text(encoding="utf-8")

@@ -221,6 +221,7 @@ html { color-scheme: light; background: var(--paper); }
     --forest-soft: #223b35;
     --coral: #ff9f8d;
     --coral-soft: #3f282d;
+    --gold-soft: #3b301f;
     --decision-term: #f5d68a;
   }
   html,
