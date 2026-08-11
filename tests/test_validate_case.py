@@ -911,6 +911,20 @@ class ValidateCaseTests(unittest.TestCase):
             )
         )
 
+    def test_cli_escapes_control_characters_in_unknown_field_diagnostics(self) -> None:
+        case = valid_case()
+        case["ordinary\nINJECTED\x1b[31m\x7f"] = "x"
+
+        result = run_validator(case)
+
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(
+            result.stderr,
+            "case has unsupported field: ordinary\\u000aINJECTED\\u001b[31m\\u007f\n",
+        )
+        self.assertNotIn("\nINJECTED", result.stderr)
+        self.assertNotIn("\x1b", result.stderr)
+
     def test_email_classifier_skips_values_without_at_sign(self) -> None:
         validator = load_validator_module()
 

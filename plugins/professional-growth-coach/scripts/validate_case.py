@@ -312,12 +312,23 @@ def _closed_mapping(
 def _safe_path_key(key: object) -> str:
     """Keep diagnostics path-specific without echoing sensitive key material."""
     if not isinstance(key, str):
-        return str(key)
+        return _escape_diagnostic_controls(str(key))
+    safe_key = _escape_diagnostic_controls(key)
     if _normalized_key(key) in _SENSITIVE_KEY_ALIASES:
-        return key
+        return safe_key
     if _has_sensitive_key_segment(key) or _is_credential_shaped_value(key):
         return "<redacted-key>"
-    return key
+    return safe_key
+
+
+def _escape_diagnostic_controls(value: str) -> str:
+    """Render C0/DEL controls literally so diagnostics cannot inject records."""
+    return "".join(
+        f"\\u{ord(character):04x}"
+        if unicodedata.category(character) == "Cc"
+        else character
+        for character in value
+    )
 
 
 def _walk_json_domain(
