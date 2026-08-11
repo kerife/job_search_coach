@@ -4,9 +4,11 @@ Use one JSON object for one candidate. Required keys are:
 
 `schema_version`, `candidate_id`, `mode`, `consent`, `target`, `sources`, `claims`, `interventions`, and `outcomes`.
 
-The named input file must be a regular, non-symlink file no larger than 64,000
-UTF-8 encoded bytes. Oversized, non-regular, or unreadable inputs are rejected
-before JSON validation and diagnostics do not echo paths or input contents.
+The input path must traverse regular directory components without symlinks
+(except the exact macOS `/tmp` and `/var` system aliases), and its final named
+file must be regular and non-symlinked, no larger than 64,000 UTF-8 encoded
+bytes. Oversized, non-regular, or unreadable inputs are rejected before JSON
+validation and diagnostics do not echo paths or input contents.
 CLI diagnostics preserve complete UTF-8 error lines up to 16,384 bytes and then
 emit a fixed truncation notice; short diagnostics remain unchanged.
 

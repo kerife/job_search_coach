@@ -803,6 +803,43 @@ class ValidateCaseTests(unittest.TestCase):
         self.assertEqual(result.stderr, "invalid case file: unable to read input\n")
         self.assertNotIn("target.json", result.stderr)
 
+    def test_rejects_intermediate_parent_symlink_without_reading_target(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            external = root / "external"
+            alias = root / "alias"
+            external.mkdir()
+            target = external / "case.json"
+            target.write_text(json.dumps(valid_case()), encoding="utf-8")
+            alias.symlink_to(external, target_is_directory=True)
+
+            result = subprocess.run(
+                [sys.executable, "-B", str(VALIDATOR), str(alias / "case.json")],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(result.stderr, "invalid case file: unable to read input\n")
+        self.assertNotIn("candidate-001", result.stderr)
+
+    def test_accepts_relative_regular_case_path(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            directory = Path(temporary_directory)
+            (directory / "case.json").write_text(
+                json.dumps(valid_case()), encoding="utf-8"
+            )
+            result = subprocess.run(
+                [sys.executable, "-B", str(VALIDATOR), "case.json"],
+                cwd=directory,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_rejects_case_input_over_safe_size_limit(self) -> None:
         oversized = valid_case()
         oversized["target"]["constraints"] = ["x" * 64_001]

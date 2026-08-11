@@ -14,6 +14,7 @@ import sys
 import unicodedata
 from collections.abc import Mapping
 from copy import deepcopy
+from pathlib import Path
 from typing import Any
 
 
@@ -131,13 +132,19 @@ class _CaseInputTooLarge(ValueError):
 
 def _read_case_input(path: str) -> str:
     nofollow = getattr(os, "O_NOFOLLOW", None)
-    if not nofollow:
+    directory_flag = getattr(os, "O_DIRECTORY", None)
+    if not nofollow or not directory_flag:
         raise OSError("no-follow input opening is unavailable")
 
-    flags = os.O_RDONLY | nofollow
-    flags |= getattr(os, "O_CLOEXEC", 0)
-    flags |= getattr(os, "O_NONBLOCK", 0)
-    descriptor = os.open(path, flags)
+    parent_descriptor, filename = _open_case_parent(path, nofollow, directory_flag)
+    try:
+        flags = os.O_RDONLY | nofollow
+        flags |= getattr(os, "O_CLOEXEC", 0)
+        flags |= getattr(os, "O_NONBLOCK", 0)
+        descriptor = os.open(filename, flags, dir_fd=parent_descriptor)
+    finally:
+        os.close(parent_descriptor)
+
     try:
         metadata = os.fstat(descriptor)
         if not stat.S_ISREG(metadata.st_mode):
@@ -156,6 +163,38 @@ def _read_case_input(path: str) -> str:
         return bytes(contents).decode("utf-8")
     finally:
         os.close(descriptor)
+
+
+def _open_case_parent(path: str, nofollow: int, directory_flag: int) -> tuple[int, str]:
+    absolute = os.path.abspath(path)
+    parent = Path(absolute).parent
+    base_flags = os.O_RDONLY | directory_flag | getattr(os, "O_CLOEXEC", 0)
+    descriptor = os.open(os.sep, base_flags)
+    try:
+        for index, component in enumerate(parent.parts[1:]):
+            if component in {"", ".", ".."}:
+                raise OSError("case input parent is unsafe")
+            candidate = os.path.join(os.sep, component)
+            trusted_system_alias = (
+                index == 0
+                and component in {"tmp", "var"}
+                and os.path.islink(candidate)
+                and os.path.realpath(candidate) == os.path.join(os.sep, "private", component)
+            )
+            next_descriptor = os.open(
+                component,
+                base_flags | (0 if trusted_system_alias else nofollow),
+                dir_fd=descriptor,
+            )
+            if not stat.S_ISDIR(os.fstat(next_descriptor).st_mode):
+                os.close(next_descriptor)
+                raise OSError("case input parent is not a directory")
+            os.close(descriptor)
+            descriptor = next_descriptor
+        return descriptor, Path(absolute).name
+    except BaseException:
+        os.close(descriptor)
+        raise
 
 
 def _format_diagnostics(errors: list[str]) -> str:
