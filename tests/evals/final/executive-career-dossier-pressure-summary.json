@@ -1,13 +1,13 @@
 {
   "schema_version": "executive-career-dossier-pressure-summary-1",
   "phase": "GREEN",
-  "corpus_sha256": "4e60f709fcd2302b18a2ec738e3b2becd93759b1716fb2d9077777a7359b7695",
-  "source_commit": "0af326683d1e98b80987ce5a229e6eaee9e0eaaf",
-  "source_tree_sha256": "f219d35e4579640d356392722ccf039a4b13aa8bbe6011f7d31425635f4768ce",
+  "corpus_sha256": "8b9a57d43e351d5fa1dc949f08f6fb2557b4ac7adfeb6a8892b1bba4529a355f",
+  "source_commit": "2c4610b309f1616baf4a297f76a599829610de00",
+  "source_tree_sha256": "75dd35aaaaa21222e5e1609b096f6379cef42e10d948e42f476911d6c002f7ad",
   "source_bindings": [
     {
       "path": "plugins/professional-growth-coach/skills/professional-growth-coach/SKILL.md",
-      "sha256": "c507a82de8b412e878966e8f0b5bc3a43e0529798704f36d2c66c105e44e6554"
+      "sha256": "69e31eca0cc4309b68fc3133bb5d2241c2450754ad4d13ac19f8a76d6e09e0c8"
     },
     {
       "path": "plugins/professional-growth-coach/skills/professional-growth-coach/references/evidence-and-safety.md",
@@ -15,23 +15,23 @@
     },
     {
       "path": "plugins/professional-growth-coach/skills/professional-growth-coach/references/routing.md",
-      "sha256": "d31310c5601d5c207d0fdcd35b9e87da1a25e1084b3ef5072e16b9f1c1787270"
+      "sha256": "9231b2ee262e2f15c73f13fbf67aa43e5d6423b65efdc2339c26cef1ac62c095"
     },
     {
       "path": "plugins/professional-growth-coach/skills/optimize-professional-profile/SKILL.md",
-      "sha256": "f736697d393fab127ae7c5dddd14a6c140676267e8f532dad4755a2a6a102602"
+      "sha256": "7ec9db2a47bb044f7bfe6bc3527cbab6973f0b2d34f965d39051aff59550ffd5"
     },
     {
       "path": "plugins/professional-growth-coach/skills/optimize-professional-profile/references/client-report.md",
-      "sha256": "e72621193c9e407343d9e11237905353f49e3f38f51ae316b130f7b1df8a1e22"
+      "sha256": "a8cee4b63144a647da60692ba211fa1068e7df0e322a203fe845ab368a208064"
     },
     {
       "path": "plugins/professional-growth-coach/skills/optimize-professional-profile/references/html-dossier.md",
-      "sha256": "9f4a9616db95c7bfd311331f9b85247b86a416e056276924e761c84e19aae890"
+      "sha256": "2ff51b4c2d0ba3ac970ddda2450f1a1e7961528c6751e43a44b992d2f0aa6ecf"
     },
     {
       "path": "plugins/professional-growth-coach/skills/optimize-professional-profile/references/profile-audit.md",
-      "sha256": "c58f5c0e35148f3b42426d3c222eb29b56a04d014c81ecbf19e289dc4913a4dc"
+      "sha256": "7b8fc97403c5d86515993ca6750129c21ebbeff66468c2fca3ff3bcf1b4fc032"
     }
   ],
   "control": {
