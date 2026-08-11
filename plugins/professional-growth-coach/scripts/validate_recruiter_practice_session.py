@@ -124,6 +124,8 @@ def load_session(path: Path) -> dict[str, object]:
         raw = path.read_text(encoding="utf-8")
     except OSError as error:
         raise SessionLoadError("session input is unavailable") from error
+    except UnicodeError as error:
+        raise SessionLoadError("session input is not valid JSON") from error
     if len(raw.encode("utf-8")) > 64_000:
         raise SessionLoadError("session input exceeds safe size limit")
     try:

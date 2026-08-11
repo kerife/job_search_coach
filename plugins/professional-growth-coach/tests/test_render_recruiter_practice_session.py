@@ -1,7 +1,9 @@
 import copy
 import importlib.util
 import re
+import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -22,6 +24,21 @@ validator_spec.loader.exec_module(validator)
 
 
 class RecruiterPracticeRendererTests(unittest.TestCase):
+    def test_invalid_utf8_input_is_reported_without_traceback(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "invalid.json"
+            path.write_bytes(b"\xff")
+
+            result = subprocess.run(
+                [sys.executable, "-B", str(VALIDATOR_SCRIPT), str(path)],
+                capture_output=True,
+                text=True,
+            )
+
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.stderr, "session input is not valid JSON\n")
+        self.assertNotIn("Traceback", result.stderr)
+
     def _feedback_session(self, observations):
         return {
             "schema_version": "recruiter-practice-session-v1",

@@ -71,6 +71,8 @@ def _load_json(path: Path, label: str) -> dict[str, object]:
         raw = path.read_text(encoding="utf-8")
     except OSError as error:
         raise CheckpointLoadError(f"{label} input is unavailable") from error
+    except UnicodeError as error:
+        raise CheckpointLoadError(f"{label} input is not valid JSON") from error
     if len(raw.encode("utf-8")) > 64_000:
         raise CheckpointLoadError(f"{label} input exceeds safe size limit")
     try:

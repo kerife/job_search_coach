@@ -7,6 +7,22 @@ from validate_private_recruiter_conversion_outcome import validate_outcome, load
 FIXTURES=ROOT/'tests/fixtures/private-recruiter-conversion-outcome'
 SCHEMA=ROOT/'schemas/private-recruiter-conversion-outcome-v1.schema.json'
 class OutcomeContractTests(unittest.TestCase):
+    def test_invalid_utf8_input_is_reported_without_traceback(self):
+        script = ROOT / 'scripts' / 'validate_private_recruiter_conversion_outcome.py'
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'invalid.json'
+            path.write_bytes(b'\xff')
+
+            result = subprocess.run(
+                [sys.executable, '-B', str(script), str(path), '--as-of', '2026-08-08'],
+                capture_output=True,
+                text=True,
+            )
+
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.stderr, 'outcome input is not valid JSON\n')
+        self.assertNotIn('Traceback', result.stderr)
+
     def test_all_event_mappings_and_locales_are_valid(self):
         expected={'contact_received':'clarify_context_before_reply','reply_received':'clarify_context_before_reply','referral_received':'prepare_fact_checked_summary','screen_requested':'route_to_prepare-role-interviews','interview_requested':'route_to_prepare-role-interviews','stop_decision':'record_stop_decision'}
         seen={}

@@ -1,7 +1,9 @@
 import copy
 import importlib.util
 import json
+import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -35,6 +37,21 @@ renderer = _load_script("render_private_recruiter_reply_triage")
 
 
 class PrivateRecruiterReplyTriageIdentityTests(unittest.TestCase):
+    def test_invalid_utf8_input_is_reported_without_traceback(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "invalid.json"
+            path.write_bytes(b"\xff")
+
+            result = subprocess.run(
+                [sys.executable, "-B", str(SCRIPTS / "validate_private_recruiter_reply_triage.py"), str(path)],
+                capture_output=True,
+                text=True,
+            )
+
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.stderr, "triage input is not valid JSON\n")
+        self.assertNotIn("Traceback", result.stderr)
+
     def test_unknown_fact_reference_rejects_without_echoing_private_value(self):
         triage = json.loads(FIXTURE.read_text(encoding="utf-8"))
         sentinel = "person@example.com"

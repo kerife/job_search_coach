@@ -31,6 +31,7 @@ def load_outcome(path: Path) -> dict:
     if path.is_symlink(): raise OutcomeLoadError("outcome input must not be a symlink")
     try: raw = path.read_text(encoding="utf-8")
     except OSError as e: raise OutcomeLoadError("outcome input is unavailable") from e
+    except UnicodeError as e: raise OutcomeLoadError("outcome input is not valid JSON") from e
     if len(raw.encode("utf-8")) > 32_000: raise OutcomeLoadError("outcome input exceeds safe size limit")
     try: value = json.loads(raw, object_pairs_hook=_unique)
     except (json.JSONDecodeError, OutcomeLoadError) as e: raise OutcomeLoadError("outcome input is not valid JSON") from e

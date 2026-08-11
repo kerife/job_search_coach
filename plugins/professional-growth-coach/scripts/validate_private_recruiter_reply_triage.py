@@ -125,6 +125,8 @@ def load_triage(path: Path) -> dict[str, object]:
         raw = path.read_text(encoding="utf-8")
     except OSError as error:
         raise TriageLoadError("triage input is unavailable") from error
+    except UnicodeError as error:
+        raise TriageLoadError("triage input is not valid JSON") from error
     if len(raw.encode("utf-8")) > 64_000:
         raise TriageLoadError("triage input exceeds safe size limit")
     try:

@@ -49,6 +49,30 @@ class FollowthroughCheckpointContractTests(unittest.TestCase):
             },
         }
 
+    def test_invalid_utf8_input_is_reported_without_traceback(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "invalid.json"
+            path.write_bytes(b"\xff")
+
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-B",
+                    str(SCRIPT),
+                    str(path),
+                    "--receipt",
+                    str(FIXTURES / "screen-requested-en.json"),
+                    "--as-of",
+                    "2026-08-08",
+                ],
+                capture_output=True,
+                text=True,
+            )
+
+        self.assertEqual(result.returncode, 3)
+        self.assertEqual(result.stderr, "checkpoint input is not valid JSON\n")
+        self.assertNotIn("Traceback", result.stderr)
+
     def test_valid_en_and_es_and_all_mapping_branches(self):
         for state, event, action in [
             ("accepted", "unknown", "manual_reenter_private_prep"),
