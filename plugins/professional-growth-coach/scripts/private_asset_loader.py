@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import stat
 from pathlib import Path
 from typing import Iterable
 
@@ -43,7 +44,11 @@ def _regular_package_path(plugin_root: Path, asset_path: Path) -> Path:
         current = current / component
         if current.is_symlink():
             raise PrivateAssetError("renderer asset input must be a regular file")
-    if not current.is_file():
+    try:
+        status = current.stat(follow_symlinks=False)
+    except OSError as exc:
+        raise PrivateAssetError("renderer asset input must be a regular file") from exc
+    if not stat.S_ISREG(status.st_mode) or status.st_nlink != 1:
         raise PrivateAssetError("renderer asset input must be a regular file")
     return current
 
