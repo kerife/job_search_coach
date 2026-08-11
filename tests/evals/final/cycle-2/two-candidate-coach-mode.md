@@ -8,7 +8,7 @@ Evidence
 - unknown: all person-linked fields remain intentionally absent from this counterfactual
 case_state: needs_intake
 evidence_gaps: The counterfactual evidence table is deliberately non-identifying; confirm only the missing capability state before reuse.
-selected_module: research-target-job-market
+selected_module: research-professional-market
 next_action: Build a role-family comparison using only the JSC-FACT-A ledger and request missing evidence.
 authorization_required: false
 - inferred: privacy_boundary=no_real_profile_mapping; isolation=single_candidate
@@ -22,7 +22,7 @@ Evidence
 - unknown: all person-linked fields remain intentionally absent from this counterfactual
 case_state: needs_intake
 evidence_gaps: The counterfactual evidence table is deliberately non-identifying; confirm only the missing capability state before reuse.
-selected_module: research-target-job-market
+selected_module: research-professional-market
 next_action: Map transferable capabilities using only the JSC-FACT-B ledger and request missing evidence.
 authorization_required: false
 - inferred: benchmark=disabled_without_consent

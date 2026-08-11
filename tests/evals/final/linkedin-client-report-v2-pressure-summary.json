@@ -10,7 +10,7 @@
   "reasoning_effort": "medium",
   "fork_turns": "none",
   "appendix_mode": "normal",
-  "validator": "plugins/job-search-coach/scripts/validate_linkedin_client_report.py",
+  "validator": "plugins/professional-growth-coach/scripts/validate_linkedin_client_report.py",
   "word_count_method": "whitespace-delimited tokens, matching the RED summary",
   "contract_token_method": "canonical evidence-label prefixes plus validator legacy assignment and canonical-row markers",
   "advisory_prompt_version": "linkedin-client-report-advisory-prompt-1",

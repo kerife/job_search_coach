@@ -8,7 +8,7 @@ Evidence
 - unknown: identity-bearing and profile-derived attributes were not supplied
 case_state: needs_intake
 evidence_gaps: The fabricated ledger omits identity-bearing sources and requires bounded confirmation before public use.
-selected_module: research-target-job-market
+selected_module: research-professional-market
 next_action: Compare controlled role-family requirements with JSC-FACT-A evidence before drafting positioning language.
 authorization_required: false
 - inferred: privacy_boundary=no_real_profile_mapping; isolation=single_candidate

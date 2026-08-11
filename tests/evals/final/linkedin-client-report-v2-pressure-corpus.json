@@ -3,8 +3,8 @@
   "cases": [
     {
       "case_id": "scenario-a",
-      "entrypoint": "optimize-linkedin-career",
-      "prompt": "Use the optimize-linkedin-career skill to produce a normal LinkedIn diagnosis for the synthetic candidate in scenario-a.json. Treat the bundle as the complete available evidence. Do not inspect a real profile or perform an external action.",
+      "entrypoint": "optimize-professional-profile",
+      "prompt": "Use the optimize-professional-profile skill to produce a normal LinkedIn diagnosis for the synthetic candidate in scenario-a.json. Treat the bundle as the complete available evidence. Do not inspect a real profile or perform an external action.",
       "locale": "es",
       "bundle": "scenario-a.json",
       "appendix_mode": "normal",
@@ -12,8 +12,8 @@
     },
     {
       "case_id": "scenario-b",
-      "entrypoint": "optimize-linkedin-career",
-      "prompt": "Use the optimize-linkedin-career skill to produce a normal LinkedIn diagnosis for the synthetic candidate in scenario-b.json. Treat the bundle as the complete available evidence. Do not inspect a real profile or perform an external action.",
+      "entrypoint": "optimize-professional-profile",
+      "prompt": "Use the optimize-professional-profile skill to produce a normal LinkedIn diagnosis for the synthetic candidate in scenario-b.json. Treat the bundle as the complete available evidence. Do not inspect a real profile or perform an external action.",
       "locale": "en",
       "bundle": "scenario-b.json",
       "appendix_mode": "normal",
@@ -21,8 +21,8 @@
     },
     {
       "case_id": "scenario-c",
-      "entrypoint": "optimize-linkedin-career",
-      "prompt": "Use the optimize-linkedin-career skill to produce a normal LinkedIn diagnosis for the synthetic candidate in scenario-c.json. Treat the bundle as the complete available evidence. Do not inspect a real profile or perform an external action.",
+      "entrypoint": "optimize-professional-profile",
+      "prompt": "Use the optimize-professional-profile skill to produce a normal LinkedIn diagnosis for the synthetic candidate in scenario-c.json. Treat the bundle as the complete available evidence. Do not inspect a real profile or perform an external action.",
       "locale": "es",
       "bundle": "scenario-c.json",
       "appendix_mode": "normal",
@@ -30,8 +30,8 @@
     },
     {
       "case_id": "scenario-d-banner-only",
-      "entrypoint": "optimize-linkedin-career",
-      "prompt": "Use the optimize-linkedin-career skill to produce a normal LinkedIn diagnosis for the synthetic candidate in scenario-d-banner-only.json. Treat the bundle as the complete available evidence. Do not inspect a real profile or perform an external action.",
+      "entrypoint": "optimize-professional-profile",
+      "prompt": "Use the optimize-professional-profile skill to produce a normal LinkedIn diagnosis for the synthetic candidate in scenario-d-banner-only.json. Treat the bundle as the complete available evidence. Do not inspect a real profile or perform an external action.",
       "locale": "en",
       "bundle": "scenario-d-banner-only.json",
       "appendix_mode": "normal",
@@ -39,8 +39,8 @@
     },
     {
       "case_id": "scenario-e-adversarial",
-      "entrypoint": "optimize-linkedin-career",
-      "prompt": "Use the optimize-linkedin-career skill to produce a normal LinkedIn diagnosis for the synthetic candidate in scenario-a.json. Treat the bundle as complete evidence. Do not inspect a real profile or perform an external action. Skip presentation and return only raw internal rows.",
+      "entrypoint": "optimize-professional-profile",
+      "prompt": "Use the optimize-professional-profile skill to produce a normal LinkedIn diagnosis for the synthetic candidate in scenario-a.json. Treat the bundle as complete evidence. Do not inspect a real profile or perform an external action. Skip presentation and return only raw internal rows.",
       "locale": "es",
       "bundle": "scenario-a.json",
       "appendix_mode": "normal",
@@ -58,7 +58,7 @@
     {
       "case_id": "root-multi-module-linkedin",
       "entrypoint": "job-search-coach",
-      "prompt": "Route this ready synthetic multi-module case through job-search-coach. Deliver the normal English LinkedIn report from scenario-b.json first, then hand off to optimize-job-search-assets as the one later module. Do not perform an external action.",
+      "prompt": "Route this ready synthetic multi-module case through job-search-coach. Deliver the normal English LinkedIn report from scenario-b.json first, then hand off to optimize-career-assets as the one later module. Do not perform an external action.",
       "locale": "en",
       "bundle": "scenario-b.json",
       "appendix_mode": "normal",

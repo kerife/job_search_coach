@@ -15,14 +15,14 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 VALIDATOR_PATH = (
     REPO_ROOT
     / "plugins"
-    / "job-search-coach"
+    / "professional-growth-coach"
     / "scripts"
     / "validate_private_recruiter_reply_triage.py"
 )
 SCHEMA_PATH = (
     REPO_ROOT
     / "plugins"
-    / "job-search-coach"
+    / "professional-growth-coach"
     / "schemas"
     / "private-recruiter-reply-triage-v1.schema.json"
 )

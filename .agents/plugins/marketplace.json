@@ -1,14 +1,14 @@
 {
-  "name": "job-search-coach-local",
+  "name": "professional-growth-coach-local",
   "interface": {
-    "displayName": "Job Search Coach Local"
+    "displayName": "Professional Growth Coach Local"
   },
   "plugins": [
     {
-      "name": "job-search-coach",
+      "name": "professional-growth-coach",
       "source": {
         "source": "local",
-        "path": "./plugins/job-search-coach"
+        "path": "./plugins/professional-growth-coach"
       },
       "policy": {
         "installation": "AVAILABLE",

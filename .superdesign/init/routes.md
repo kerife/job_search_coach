@@ -6,11 +6,11 @@ This plugin exposes no HTTP routes, SPA routes, framework page files, or router 
 
 | Logical artifact | Renderer entry | Template | Layout |
 | --- | --- | --- | --- |
-| `/executive-career-dossier` | `plugins/job-search-coach/scripts/render_executive_career_dossier.py` | `plugins/job-search-coach/assets/executive-career-dossier-v1.html` | `ExecutiveCareerDossierDocument` |
-| `/recruiter-practice-session` | `plugins/job-search-coach/scripts/render_recruiter_practice_session.py` | `plugins/job-search-coach/assets/recruiter-practice-session-v1.html` | `RecruiterPracticeSessionDocument` |
-| `/private-recruiter-reply-triage` | `plugins/job-search-coach/scripts/render_private_recruiter_reply_triage.py` | `plugins/job-search-coach/assets/private-recruiter-reply-triage-v1.html` | `PrivateRecruiterReplyTriageDocument` |
-| `/private-recruiter-followthrough-checkpoint` | `plugins/job-search-coach/scripts/render_private_recruiter_followthrough_checkpoint.py` | `plugins/job-search-coach/assets/private-recruiter-followthrough-checkpoint-v1.html` | `PrivateRecruiterFollowthroughCheckpointDocument` |
-| `/private-recruiter-conversion-outcome` | `plugins/job-search-coach/scripts/render_private_recruiter_conversion_outcome.py` | `plugins/job-search-coach/assets/private-recruiter-conversion-outcome-v1.html` | `PrivateRecruiterConversionOutcomeDocument` |
+| `/executive-career-dossier` | `plugins/professional-growth-coach/scripts/render_executive_career_dossier.py` | `plugins/professional-growth-coach/assets/executive-career-dossier-v1.html` | `ExecutiveCareerDossierDocument` |
+| `/recruiter-practice-session` | `plugins/professional-growth-coach/scripts/render_recruiter_practice_session.py` | `plugins/professional-growth-coach/assets/recruiter-practice-session-v1.html` | `RecruiterPracticeSessionDocument` |
+| `/private-recruiter-reply-triage` | `plugins/professional-growth-coach/scripts/render_private_recruiter_reply_triage.py` | `plugins/professional-growth-coach/assets/private-recruiter-reply-triage-v1.html` | `PrivateRecruiterReplyTriageDocument` |
+| `/private-recruiter-followthrough-checkpoint` | `plugins/professional-growth-coach/scripts/render_private_recruiter_followthrough_checkpoint.py` | `plugins/professional-growth-coach/assets/private-recruiter-followthrough-checkpoint-v1.html` | `PrivateRecruiterFollowthroughCheckpointDocument` |
+| `/private-recruiter-conversion-outcome` | `plugins/professional-growth-coach/scripts/render_private_recruiter_conversion_outcome.py` | `plugins/professional-growth-coach/assets/private-recruiter-conversion-outcome-v1.html` | `PrivateRecruiterConversionOutcomeDocument` |
 
 ## Key artifact summaries
 

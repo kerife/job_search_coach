@@ -51,11 +51,11 @@ RECRUITER_PRACTICE_FIXTURE_PATH = (
     / "session-es.json"
 )
 DOSSIER_SOURCE_INVENTORY_PATHS = (
-    Path("plugins/job-search-coach/schemas/executive-career-dossier-v1.schema.json"),
-    Path("plugins/job-search-coach/scripts/validate_executive_career_dossier.py"),
-    Path("plugins/job-search-coach/scripts/render_executive_career_dossier.py"),
-    Path("plugins/job-search-coach/assets/executive-career-dossier-v1.html"),
-    Path("plugins/job-search-coach/assets/executive-career-dossier-v1.css"),
+    Path("plugins/professional-growth-coach/schemas/executive-career-dossier-v1.schema.json"),
+    Path("plugins/professional-growth-coach/scripts/validate_executive_career_dossier.py"),
+    Path("plugins/professional-growth-coach/scripts/render_executive_career_dossier.py"),
+    Path("plugins/professional-growth-coach/assets/executive-career-dossier-v1.html"),
+    Path("plugins/professional-growth-coach/assets/executive-career-dossier-v1.css"),
     Path("tests/test_executive_career_dossier.py"),
 )
 
@@ -542,7 +542,7 @@ class RepositoryPrivacyTests(unittest.TestCase):
             'contact_email = "person@private.example"\n'
         )
         violations = scanner.scan_repository_source_text(
-            Path("plugins/job-search-coach/scripts/example.py"),
+            Path("plugins/professional-growth-coach/scripts/example.py"),
             private_source,
         )
         self.assertIn("NAME_FIELD", violations)

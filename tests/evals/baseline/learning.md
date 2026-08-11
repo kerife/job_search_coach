@@ -1,6 +1,6 @@
 # Task 8 baseline: career-learning recommendations without the skill
 
-Fresh isolated evaluation run on 2026-08-06 with `fork_turns=none` and no repository or Job Search Coach skill access. Browsed: yes, because both prompts requested current price and provider details.
+Fresh isolated evaluation run on 2026-08-06 with `fork_turns=none` and no repository or Professional Growth Coach skill access. Browsed: yes, because both prompts requested current price and provider details.
 
 ## Senior Kubernetes/SRE
 

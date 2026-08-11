@@ -1,0 +1,4 @@
+interface:
+  display_name: "Explore Career Options"
+  short_description: "Compare realistic career paths safely"
+  default_prompt: "Use $explore-career-options to compare realistic career paths from my evidence."

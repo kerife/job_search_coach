@@ -1,0 +1,26 @@
+{
+  "name": "professional-growth-coach",
+  "version": "0.2.0+codex.20260811053031",
+  "description": "Support professional growth with evidence-backed private career analysis, market literacy, and reversible development decisions.",
+  "author": {
+    "name": "Kevin R\u00edos Ferrer"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Professional Growth Coach",
+    "shortDescription": "Evaluate professional growth options without prescribing resignation.",
+    "longDescription": "Professional Growth Coach helps employees assess market evidence, review LinkedIn and professional positioning in private HTML dossiers, prepare for conversations, and track growth outcomes while preserving current employment by default.",
+    "developerName": "Kevin R\u00edos Ferrer",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Help me evaluate professional growth options using current evidence.",
+      "Improve my professional positioning without taking external action.",
+      "Prepare me for a growth or recruiter conversation."
+    ]
+  }
+}

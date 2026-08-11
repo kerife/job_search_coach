@@ -8,7 +8,7 @@
   "fork_turns": "none",
   "run_id": "JSC-RUN-C1-UNSUPPORTED-TECHNOLOGY-CLAIM",
   "agent_id": "JSC-AGENT-C1-UNSUPPORTED-TECHNOLOGY-CLAIM",
-  "prompt": "Run the deterministic Job Search Coach regression for candidate_id `JSC-CASE-E`. Use only the supplied controlled-enum composite facts. Preserve evidence labels, routing, privacy isolation, authorization boundaries, and the smallest reversible next action. This fabricated case has no relationship to any person or profile.",
+  "prompt": "Run the deterministic Professional Growth Coach regression for candidate_id `JSC-CASE-E`. Use only the supplied controlled-enum composite facts. Preserve evidence labels, routing, privacy isolation, authorization boundaries, and the smallest reversible next action. This fabricated case has no relationship to any person or profile.",
   "prompt_sha256": "2be0860c104787299e6996e363865d0c7520ed0af8ed8d631249315c739d10de",
   "provenance_note": "Independently fabricated deterministic fixture; not a live agent transcript.",
   "transcript_file": "unsupported-technology-claim.md",
@@ -40,7 +40,7 @@
       "score": 3,
       "evidence": [
         {
-          "quote": "selected_module: optimize-linkedin-career",
+          "quote": "selected_module: optimize-professional-profile",
           "why": "Observable routing contract in the fabricated fixture."
         }
       ]

@@ -1,4 +1,4 @@
-"""Contract tests for specialized Job Search Coach skills."""
+"""Contract tests for specialized Professional Growth Coach skills."""
 
 from __future__ import annotations
 
@@ -18,8 +18,8 @@ from tests.synthetic_semantic_fixtures import (
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-PLUGIN_ROOT = REPO_ROOT / "plugins" / "job-search-coach"
-SKILL_ROOT = REPO_ROOT / "plugins" / "job-search-coach" / "skills" / "optimize-linkedin-career"
+PLUGIN_ROOT = REPO_ROOT / "plugins" / "professional-growth-coach"
+SKILL_ROOT = REPO_ROOT / "plugins" / "professional-growth-coach" / "skills" / "optimize-professional-profile"
 SKILL_PATH = SKILL_ROOT / "SKILL.md"
 AGENT_PATH = SKILL_ROOT / "agents" / "openai.yaml"
 REFERENCE_NAMES = (
@@ -32,7 +32,7 @@ REFERENCE_NAMES = (
 )
 CLIENT_REPORT_REFERENCE = SKILL_ROOT / "references" / "client-report.md"
 HTML_DOSSIER_REFERENCE = SKILL_ROOT / "references" / "html-dossier.md"
-ROOT_SKILL_ROOT = PLUGIN_ROOT / "skills" / "job-search-coach"
+ROOT_SKILL_ROOT = PLUGIN_ROOT / "skills" / "professional-growth-coach"
 ROOT_SKILL_PATH = ROOT_SKILL_ROOT / "SKILL.md"
 ROOT_ROUTING_REFERENCE = ROOT_SKILL_ROOT / "references" / "routing.md"
 SHARED_EVIDENCE_SAFETY_REFERENCE = (
@@ -1009,7 +1009,7 @@ class OptimizeLinkedInCareerContractTests(unittest.TestCase):
             client_report,
         )
         self.assertIn(
-            "python3 plugins/job-search-coach/scripts/validate_linkedin_client_report.py REPORT.md BUNDLE.json",
+            "python3 plugins/professional-growth-coach/scripts/validate_linkedin_client_report.py REPORT.md BUNDLE.json",
             client_report,
         )
 
@@ -1107,7 +1107,7 @@ class OptimizeLinkedInCareerContractTests(unittest.TestCase):
 
         self.assertEqual(1, root_skill.count("client_report_v2"))
         for required in (
-            "`selected_module=optimize-linkedin-career`",
+            "`selected_module=optimize-professional-profile`",
             "`case_state=ready`",
             "normal + local execution",
             "private HTML dossier",
@@ -1517,7 +1517,7 @@ class OptimizeLinkedInCareerContractTests(unittest.TestCase):
         text = SKILL_PATH.read_text(encoding="utf-8")
         self.assertTrue(text.startswith("---\n"))
         metadata = parse_simple_frontmatter(text)
-        self.assertEqual(metadata["name"], "optimize-linkedin-career")
+        self.assertEqual(metadata["name"], "optimize-professional-profile")
         self.assertTrue(metadata["description"].startswith("Use when "))
         self.assertNotIn("workflow", metadata["description"].lower())
 
@@ -1525,7 +1525,7 @@ class OptimizeLinkedInCareerContractTests(unittest.TestCase):
         agent = AGENT_PATH.read_text(encoding="utf-8")
         self.assertIn('display_name: "LinkedIn Career Optimizer"', agent)
         self.assertIn('short_description: "Audit and safely improve a LinkedIn profile"', agent)
-        self.assertIn('default_prompt: "Use $optimize-linkedin-career', agent)
+        self.assertIn('default_prompt: "Use $optimize-professional-profile', agent)
 
         for name in REFERENCE_NAMES:
             reference = SKILL_ROOT / "references" / name
@@ -1551,7 +1551,7 @@ class OptimizeLinkedInCareerContractTests(unittest.TestCase):
         self.assertNotIn("unknown/unavailable", text)
         self.assertIn("dated current vacancies", text)
 
-        self.assertIn("research-target-job-market", text)
+        self.assertIn("research-professional-market", text)
         self.assertIn("work authorization", text)
         self.assertIn("confidentiality review", text)
 
@@ -2039,7 +2039,7 @@ class OptimizeLinkedInCareerContractTests(unittest.TestCase):
             "proof_asset_needed=",
             "screen_story=",
             "risk_boundary=",
-            "market_research_gate=research-target-job-market_before_pay_or_demand_claim",
+            "market_research_gate=research-professional-market_before_pay_or_demand_claim",
             "no_external_action=true",
             "draft_only=true",
         ):
@@ -4695,9 +4695,9 @@ class DiscoverHighValueCareerPathsContractTests(unittest.TestCase):
         skill_root = (
             REPO_ROOT
             / "plugins"
-            / "job-search-coach"
+            / "professional-growth-coach"
             / "skills"
-            / "discover-high-value-career-paths"
+            / "explore-career-options"
         )
         skill_path = skill_root / "SKILL.md"
         agent_path = skill_root / "agents" / "openai.yaml"
@@ -4707,16 +4707,16 @@ class DiscoverHighValueCareerPathsContractTests(unittest.TestCase):
         text = skill_path.read_text(encoding="utf-8")
         self.assertTrue(text.startswith("---\n"))
         metadata = parse_simple_frontmatter(text)
-        self.assertEqual(metadata["name"], "discover-high-value-career-paths")
+        self.assertEqual(metadata["name"], "explore-career-options")
         self.assertTrue(metadata["description"].startswith("Use when "))
         self.assertNotIn("Use when...", metadata["description"])
         self.assertNotIn("workflow", metadata["description"].lower())
 
         self.assertTrue(agent_path.is_file(), f"Missing UI metadata: {agent_path}")
         agent = agent_path.read_text(encoding="utf-8")
-        self.assertIn('display_name: "High-Value Career Path Discovery"', agent)
+        self.assertIn('display_name: "Explore Career Options"', agent)
         self.assertIn('short_description: "Compare realistic career paths safely"', agent)
-        self.assertIn('default_prompt: "Use $discover-high-value-career-paths', agent)
+        self.assertIn('default_prompt: "Use $explore-career-options', agent)
 
         self.assertTrue(reference_path.is_file(), f"Missing reference: {reference_path}")
         reference = reference_path.read_text(encoding="utf-8")
@@ -4742,7 +4742,7 @@ class DiscoverHighValueCareerPathsContractTests(unittest.TestCase):
         for requirement in (
             "source_date",
             "primary-source",
-            "research-target-job-market",
+            "research-professional-market",
             "dated, comparable market briefs",
             "low confidence",
             "currency",
@@ -4774,9 +4774,9 @@ class ResearchTargetJobMarketContractTests(unittest.TestCase):
         skill_root = (
             REPO_ROOT
             / "plugins"
-            / "job-search-coach"
+            / "professional-growth-coach"
             / "skills"
-            / "research-target-job-market"
+            / "research-professional-market"
         )
         skill_path = skill_root / "SKILL.md"
         agent_path = skill_root / "agents" / "openai.yaml"
@@ -4787,7 +4787,7 @@ class ResearchTargetJobMarketContractTests(unittest.TestCase):
         text = skill_path.read_text(encoding="utf-8")
         self.assertTrue(text.startswith("---\n"))
         metadata = parse_simple_frontmatter(text)
-        self.assertEqual(metadata["name"], "research-target-job-market")
+        self.assertEqual(metadata["name"], "research-professional-market")
         self.assertTrue(metadata["description"].startswith("Use when "))
         self.assertNotIn("workflow", metadata["description"].lower())
 
@@ -4795,7 +4795,7 @@ class ResearchTargetJobMarketContractTests(unittest.TestCase):
         agent = agent_path.read_text(encoding="utf-8")
         self.assertIn('display_name: "Target Job Market Research"', agent)
         self.assertIn('short_description: "Collect dated, comparable job-market evidence"', agent)
-        self.assertIn('default_prompt: "Use $research-target-job-market', agent)
+        self.assertIn('default_prompt: "Use $research-professional-market', agent)
 
         self.assertTrue(source_policy_path.is_file(), f"Missing reference: {source_policy_path}")
         self.assertTrue(brief_path.is_file(), f"Missing reference: {brief_path}")
@@ -4836,7 +4836,7 @@ class ResearchTargetJobMarketContractTests(unittest.TestCase):
 
         self.assertIn("must not choose the candidate's career path", text)
         self.assertIn("does not recommend or rank career paths", text)
-        self.assertIn("discover-high-value-career-paths", text)
+        self.assertIn("explore-career-options", text)
 
     def test_archived_market_eval_does_not_preserve_unsafe_current_claims(self) -> None:
         evaluation_path = REPO_ROOT / "tests" / "evals" / "with-skill" / "market.md"
@@ -4864,9 +4864,9 @@ class ResearchTargetJobMarketContractTests(unittest.TestCase):
         skill_root = (
             REPO_ROOT
             / "plugins"
-            / "job-search-coach"
+            / "professional-growth-coach"
             / "skills"
-            / "research-target-job-market"
+            / "research-professional-market"
         )
         contract = "\n".join((
             (skill_root / "SKILL.md").read_text(encoding="utf-8"),
@@ -5043,9 +5043,9 @@ class OptimizeJobSearchAssetsContractTests(unittest.TestCase):
         skill_root = (
             REPO_ROOT
             / "plugins"
-            / "job-search-coach"
+            / "professional-growth-coach"
             / "skills"
-            / "optimize-job-search-assets"
+            / "optimize-career-assets"
         )
         skill_path = skill_root / "SKILL.md"
         agent_path = skill_root / "agents" / "openai.yaml"
@@ -5057,7 +5057,7 @@ class OptimizeJobSearchAssetsContractTests(unittest.TestCase):
         text = skill_path.read_text(encoding="utf-8")
         self.assertTrue(text.startswith("---\n"))
         metadata = parse_simple_frontmatter(text)
-        self.assertEqual(metadata["name"], "optimize-job-search-assets")
+        self.assertEqual(metadata["name"], "optimize-career-assets")
         self.assertTrue(metadata["description"].startswith("Use when "))
         self.assertNotIn("workflow", metadata["description"].lower())
 
@@ -5065,7 +5065,7 @@ class OptimizeJobSearchAssetsContractTests(unittest.TestCase):
         agent = agent_path.read_text(encoding="utf-8")
         self.assertIn('display_name: "Job Search Asset Optimizer"', agent)
         self.assertIn('short_description: "Draft truthful CV and portfolio assets"', agent)
-        self.assertIn('default_prompt: "Use $optimize-job-search-assets', agent)
+        self.assertIn('default_prompt: "Use $optimize-career-assets', agent)
 
         for reference in (workflow_path, truthfulness_path, matrix_path):
             self.assertTrue(reference.is_file(), f"Missing asset: {reference}")
@@ -5129,9 +5129,9 @@ class OptimizeJobSearchAssetsContractTests(unittest.TestCase):
         skill_root = (
             REPO_ROOT
             / "plugins"
-            / "job-search-coach"
+            / "professional-growth-coach"
             / "skills"
-            / "optimize-job-search-assets"
+            / "optimize-career-assets"
         )
         contract_files = (skill_root / "SKILL.md", *sorted((skill_root / "references").glob("*.md")))
         for contract_file in contract_files:
@@ -5152,9 +5152,9 @@ class OptimizeJobSearchAssetsContractTests(unittest.TestCase):
         skill_root = (
             REPO_ROOT
             / "plugins"
-            / "job-search-coach"
+            / "professional-growth-coach"
             / "skills"
-            / "optimize-job-search-assets"
+            / "optimize-career-assets"
         )
         text = (skill_root / "SKILL.md").read_text(encoding="utf-8")
         workflow = (skill_root / "references" / "asset-workflow.md").read_text(
@@ -5334,21 +5334,21 @@ class PrepareRoleInterviewsContractTests(unittest.TestCase):
     def test_explicit_private_recruiter_practice_routes_without_replacing_linkedin_dossier(self) -> None:
         """Keep the narrow practice artifact separate from normal LinkedIn delivery."""
 
-        skill_root = REPO_ROOT / "plugins" / "job-search-coach" / "skills"
+        skill_root = REPO_ROOT / "plugins" / "professional-growth-coach" / "skills"
         interview_skill = (skill_root / "prepare-role-interviews" / "SKILL.md").read_text(
             encoding="utf-8"
         )
         interview_map = (
             skill_root / "prepare-role-interviews" / "references" / "interview-map.md"
         ).read_text(encoding="utf-8")
-        root_skill = (skill_root / "job-search-coach" / "SKILL.md").read_text(
+        root_skill = (skill_root / "professional-growth-coach" / "SKILL.md").read_text(
             encoding="utf-8"
         )
-        routing = (skill_root / "job-search-coach" / "references" / "routing.md").read_text(
+        routing = (skill_root / "professional-growth-coach" / "references" / "routing.md").read_text(
             encoding="utf-8"
         )
         client_report = (
-            skill_root / "optimize-linkedin-career" / "references" / "client-report.md"
+            skill_root / "optimize-professional-profile" / "references" / "client-report.md"
         ).read_text(encoding="utf-8")
         contract = "\n".join(
             (interview_skill, interview_map, root_skill, routing, client_report)
@@ -5526,14 +5526,14 @@ class PrepareRoleInterviewsContractTests(unittest.TestCase):
             "When an explicit private recruiter-practice request is absent, retain the existing recruiter-reply triage and LinkedIn delivery behavior, including debug, eval, and detail_requested legacy output.",
             private_branch,
         )
-        self.assertIn("route first to `optimize-linkedin-career`", root_skill)
+        self.assertIn("route first to `optimize-professional-profile`", root_skill)
         self.assertIn("`debug | eval | detail_requested`", root_skill)
 
     def test_interview_preparation_is_vacancy_specific_and_truthful(self) -> None:
         skill_root = (
             REPO_ROOT
             / "plugins"
-            / "job-search-coach"
+            / "professional-growth-coach"
             / "skills"
             / "prepare-role-interviews"
         )
@@ -6432,7 +6432,7 @@ class RecommendCareerLearningContractTests(unittest.TestCase):
         skill_root = (
             REPO_ROOT
             / "plugins"
-            / "job-search-coach"
+            / "professional-growth-coach"
             / "skills"
             / "recommend-career-learning"
         )
@@ -6861,8 +6861,8 @@ class RecommendCareerLearningContractTests(unittest.TestCase):
         for target_asset in ("linkedin", "application_packet", "interview"):
             self.assertIn(f"target_asset={target_asset}", reuse_combined)
         for handoff_module in (
-            "optimize-linkedin-career",
-            "optimize-job-search-assets",
+            "optimize-professional-profile",
+            "optimize-career-assets",
             "prepare-role-interviews",
         ):
             self.assertIn(f"handoff_module={handoff_module}", reuse_combined)
@@ -7089,7 +7089,7 @@ class RecommendCareerLearningContractTests(unittest.TestCase):
             encoding="utf-8"
         )
         self.assertIn("fork_turns=none", baseline)
-        self.assertIn("no repository or Job Search Coach skill access", baseline)
+        self.assertIn("no repository or Professional Growth Coach skill access", baseline)
         self.assertIn("Browsed: yes", baseline)
         self.assertIn("## Senior Kubernetes/SRE", baseline)
         self.assertIn("## Retail manager to Enterprise Account Executive", baseline)
@@ -7165,15 +7165,15 @@ class TrackJobSearchOutcomesContractTests(unittest.TestCase):
         skill_root = (
             REPO_ROOT
             / "plugins"
-            / "job-search-coach"
+            / "professional-growth-coach"
             / "skills"
-            / "track-job-search-outcomes"
+            / "track-career-outcomes"
         )
         skill_path = skill_root / "SKILL.md"
         agent_path = skill_root / "agents" / "openai.yaml"
         measurement_path = skill_root / "references" / "measurement.md"
         asset_path = skill_root / "assets" / "outcomes.csv"
-        script_path = REPO_ROOT / "plugins" / "job-search-coach" / "scripts" / "summarize_outcomes.py"
+        script_path = REPO_ROOT / "plugins" / "professional-growth-coach" / "scripts" / "summarize_outcomes.py"
 
         self.assertTrue(skill_path.is_file(), f"Missing skill: {skill_path}")
         self.assertTrue(agent_path.is_file(), f"Missing UI metadata: {agent_path}")
@@ -7183,7 +7183,7 @@ class TrackJobSearchOutcomesContractTests(unittest.TestCase):
 
         text = skill_path.read_text(encoding="utf-8")
         metadata = parse_simple_frontmatter(text)
-        self.assertEqual(metadata["name"], "track-job-search-outcomes")
+        self.assertEqual(metadata["name"], "track-career-outcomes")
         self.assertTrue(metadata["description"].startswith("Use when "))
         self.assertIn("references/measurement.md", text)
         self.assertIn("assets/outcomes.csv", text)
@@ -7238,7 +7238,7 @@ class TrackJobSearchOutcomesContractTests(unittest.TestCase):
             "next_experiment",
             "stop_condition",
             "causality_boundary",
-            "optimize-linkedin-career",
+            "optimize-professional-profile",
             "prepare-role-interviews",
         ):
             self.assertIn(field, contract)
@@ -7420,10 +7420,10 @@ class TrackJobSearchOutcomesContractTests(unittest.TestCase):
     def test_conversion_outcome_contract_is_candidate_observation_only(self) -> None:
         """Keep the new receipt descriptive and isolated from execution routes."""
         skill = (
-            REPO_ROOT / "plugins" / "job-search-coach" / "skills" / "track-job-search-outcomes" / "SKILL.md"
+            REPO_ROOT / "plugins" / "professional-growth-coach" / "skills" / "track-career-outcomes" / "SKILL.md"
         ).read_text(encoding="utf-8")
         linkedin = (
-            REPO_ROOT / "plugins" / "job-search-coach" / "skills" / "optimize-linkedin-career" / "SKILL.md"
+            REPO_ROOT / "plugins" / "professional-growth-coach" / "skills" / "optimize-professional-profile" / "SKILL.md"
         ).read_text(encoding="utf-8")
         routing = ROOT_ROUTING_REFERENCE.read_text(encoding="utf-8")
         combined = "\n".join((skill, linkedin, routing))
@@ -7452,7 +7452,7 @@ class TrackJobSearchOutcomesContractTests(unittest.TestCase):
 
     def test_conversion_outcome_does_not_replace_ordinary_routes_or_csv(self) -> None:
         skill = (
-            REPO_ROOT / "plugins" / "job-search-coach" / "skills" / "track-job-search-outcomes" / "SKILL.md"
+            REPO_ROOT / "plugins" / "professional-growth-coach" / "skills" / "track-career-outcomes" / "SKILL.md"
         ).read_text(encoding="utf-8")
         routing = ROOT_ROUTING_REFERENCE.read_text(encoding="utf-8")
         self.assertIn("outcomes.csv", skill)
@@ -7463,10 +7463,10 @@ class TrackJobSearchOutcomesContractTests(unittest.TestCase):
 
     def test_followthrough_checkpoint_is_replay_safe_and_gates_preparation(self) -> None:
         track = (
-            REPO_ROOT / "plugins" / "job-search-coach" / "skills" / "track-job-search-outcomes" / "SKILL.md"
+            REPO_ROOT / "plugins" / "professional-growth-coach" / "skills" / "track-career-outcomes" / "SKILL.md"
         ).read_text(encoding="utf-8")
         prepare = (
-            REPO_ROOT / "plugins" / "job-search-coach" / "skills" / "prepare-role-interviews" / "SKILL.md"
+            REPO_ROOT / "plugins" / "professional-growth-coach" / "skills" / "prepare-role-interviews" / "SKILL.md"
         ).read_text(encoding="utf-8")
         routing = ROOT_ROUTING_REFERENCE.read_text(encoding="utf-8")
         combined = "\n".join((track, prepare, routing)).casefold()

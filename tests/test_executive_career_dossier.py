@@ -19,7 +19,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 VALIDATOR_PATH = (
     REPO_ROOT
     / "plugins"
-    / "job-search-coach"
+    / "professional-growth-coach"
     / "scripts"
     / "validate_executive_career_dossier.py"
 )
@@ -34,7 +34,7 @@ FIXTURE_ROOT = (
 MARKDOWN_VALIDATOR_PATH = (
     REPO_ROOT
     / "plugins"
-    / "job-search-coach"
+    / "professional-growth-coach"
     / "scripts"
     / "validate_linkedin_client_report.py"
 )
@@ -42,7 +42,7 @@ PRIVACY_SCANNER_PATH = REPO_ROOT / "scripts" / "check_repository_privacy.py"
 RENDERER_PATH = (
     REPO_ROOT
     / "plugins"
-    / "job-search-coach"
+    / "professional-growth-coach"
     / "scripts"
     / "render_executive_career_dossier.py"
 )

@@ -2,7 +2,7 @@
 
 ## Exact prompt
 
-Use `optimize-job-search-assets` to draft the seven required response sections for the Platform Engineer vacancy below. Use only the exact candidate facts and document states supplied here. Draft locally; do not edit, upload, publish, share, export, or apply anywhere.
+Use `optimize-career-assets` to draft the seven required response sections for the Platform Engineer vacancy below. Use only the exact candidate facts and document states supplied here. Draft locally; do not edit, upload, publish, share, export, or apply anywhere.
 
 ## Exact target vacancy
 

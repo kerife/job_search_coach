@@ -18,7 +18,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 RENDERER_PATH = (
     REPO_ROOT
     / "plugins"
-    / "job-search-coach"
+    / "professional-growth-coach"
     / "scripts"
     / "render_private_recruiter_reply_triage.py"
 )
@@ -80,8 +80,8 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
             "clarify-en.json": ("Clarify first", "What we know", "Confirm next"),
             "ready-es.json": ("Lista para preparación privada", "Traspaso local", "Falta confirmar"),
             "ready-en.json": ("Ready for private preparation", "Local handoff", "Confirm next"),
-            "stop-es.json": ("Detener", "Qué sabemos", "No afirmar"),
-            "stop-en.json": ("Stop", "What we know", "Do not assert"),
+            "stop-es.json": ("Detener este proceso de reclutamiento", "Qué sabemos", "No afirmar"),
+            "stop-en.json": ("Stop this recruiter process", "What we know", "Do not assert"),
         }
         for name, triage in self.fixtures.items():
             with self.subTest(fixture=name):
@@ -138,8 +138,8 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
             "clarify-es.json": "Aclara el contexto del filtro inicial antes de la preparación privada.",
             "ready-en.json": "Re-enter private preparation manually.",
             "ready-es.json": "Vuelve a entrar manualmente a la preparación privada.",
-            "stop-en.json": "Record the stop decision privately; do not continue.",
-            "stop-es.json": "Registra la decisión de detenerse en privado; no continúes.",
+            "stop-en.json": "Record this recruiter-process outcome privately; do not continue this preparation path.",
+            "stop-es.json": "Registra en privado el resultado de este proceso; no continúes por esta vía de preparación.",
         }
         for name, phrase in expected.items():
             with self.subTest(fixture=name):
@@ -150,6 +150,30 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
                 self.assertNotIn("<a ", action)
                 self.assertNotIn("<button", action)
                 self.assertNotIn("<form", action)
+
+    def test_stop_copy_is_recruiter_scoped_and_preserves_candidate_agency_in_both_locales(self) -> None:
+        expected = {
+            "stop-en.json": {
+                "action": "Record this recruiter-process outcome privately; do not continue this preparation path.",
+                "scope": "Scope: this records one recruiter-process outcome only. It is not advice to resign, leave a job, or stop your job search; you decide what comes next.",
+            },
+            "stop-es.json": {
+                "action": "Registra en privado el resultado de este proceso; no continúes por esta vía de preparación.",
+                "scope": "Alcance: esto solo registra un resultado de este proceso de reclutamiento. No es una recomendación de renunciar, dejar un empleo ni abandonar tu búsqueda; tú decides qué sigue.",
+            },
+        }
+        for name, copy in expected.items():
+            with self.subTest(fixture=name):
+                document = self.renderer.render_triage_html(self.fixtures[name])
+                action = document.split('triage-next-safe-action"', 1)[1].split("</section>", 1)[0]
+                self.assertIn(copy["action"], action)
+                self.assertIn(copy["scope"], document)
+                self.assertNotIn(
+                    "Record the stop decision privately; do not continue.", action
+                )
+                self.assertNotIn(
+                    "Registra la decisión de detenerse en privado; no continúes.", action
+                )
 
     def test_next_safe_action_precedes_state_specific_sections(self) -> None:
         for name, triage in self.fixtures.items():
@@ -181,7 +205,7 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
                 self.assertNotIn('class="triage-section triage-handoff"', document)
 
     def test_next_safe_action_has_print_mobile_and_forced_colors_hooks(self) -> None:
-        css = (REPO_ROOT / "plugins" / "job-search-coach" / "assets" / "private-recruiter-reply-triage-v1.css").read_text(encoding="utf-8")
+        css = (REPO_ROOT / "plugins" / "professional-growth-coach" / "assets" / "private-recruiter-reply-triage-v1.css").read_text(encoding="utf-8")
         self.assertIn(".triage-next-safe-action", css)
         self.assertIn("@media print", css)
         self.assertIn("@media (max-width: 640px)", css)

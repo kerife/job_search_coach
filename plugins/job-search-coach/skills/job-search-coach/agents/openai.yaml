@@ -1,4 +1,0 @@
-interface:
-  display_name: "Job Search Coach"
-  short_description: "Route isolated job-search cases safely"
-  default_prompt: "Use $job-search-coach to analyze my LinkedIn case and deliver a brief conclusion plus a complete private HTML dossier; no invented data and no external actions."

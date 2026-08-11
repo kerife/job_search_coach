@@ -15,7 +15,7 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-VALIDATOR_PATH = REPO_ROOT / "plugins" / "job-search-coach" / "scripts" / "validate_linkedin_client_report.py"
+VALIDATOR_PATH = REPO_ROOT / "plugins" / "professional-growth-coach" / "scripts" / "validate_linkedin_client_report.py"
 FIXTURE_ROOT = REPO_ROOT / "tests" / "evals" / "with-skill" / "fixtures" / "linkedin-report-v2"
 
 specification = importlib.util.spec_from_file_location("validate_linkedin_client_report", VALIDATOR_PATH)
@@ -3679,7 +3679,7 @@ class LinkedInClientReportSafetyTests(unittest.TestCase):
         )
 
     def test_advisory_rubric_is_versioned_and_cannot_override_validation(self) -> None:
-        rubric_path = REPO_ROOT / "plugins" / "job-search-coach" / "tests" / "linkedin-client-report-advisory-rubric.json"
+        rubric_path = REPO_ROOT / "plugins" / "professional-growth-coach" / "tests" / "linkedin-client-report-advisory-rubric.json"
         rubric = json.loads(rubric_path.read_text(encoding="utf-8"))
         self.assertFalse(rubric["blocking"])
         self.assertTrue(rubric["cannot_override_deterministic_failure"])

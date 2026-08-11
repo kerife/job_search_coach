@@ -8,7 +8,7 @@ Evidence
 - unknown: all person-linked fields remain intentionally absent from this counterfactual
 case_state: needs_intake
 evidence_gaps: The counterfactual evidence table is deliberately non-identifying; confirm only the missing capability state before reuse.
-selected_module: optimize-linkedin-career
+selected_module: optimize-professional-profile
 next_action: Request a role-family choice and controlled project evidence before producing a draft-only profile audit.
 authorization_required: false
 - inferred: privacy_boundary=no_real_profile_mapping; isolation=single_candidate

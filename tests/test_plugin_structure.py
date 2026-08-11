@@ -1,4 +1,4 @@
-"""Structural contract for the Job Search Coach plugin scaffold."""
+"""Structural contract for the Professional Growth Coach plugin scaffold."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-PLUGIN_ROOT = REPO_ROOT / "plugins" / "job-search-coach"
+PLUGIN_ROOT = REPO_ROOT / "plugins" / "professional-growth-coach"
 MANIFEST_PATH = PLUGIN_ROOT / ".codex-plugin" / "plugin.json"
 EXPECTED_SKILLS_PATH = PLUGIN_ROOT / "tests" / "fixtures" / "expected-skills.json"
 RELEASE_REQUIREMENTS_PATH = REPO_ROOT / "requirements" / "release-validation.txt"
@@ -37,7 +37,7 @@ DOSSIER_FIXTURE_PATH = (
 )
 MARKET_DOSSIER_FIXTURE_PATH = DOSSIER_FIXTURE_PATH.with_name("scenario-market-en.json")
 EXPECTED_MARKETPLACE_SHA256 = (
-    "34356523262885c9a872d2a76638d1033b4a6dbf9780f092e14a969d2b9a89a3"
+    "5508bf5e16a3b44ad9c2301562249475d95b84c9beb24d41e15f6771db325c57"
 )
 EXPECTED_RELEASE_REQUIREMENT = (
     "PyYAML==6.0.3 "
@@ -50,19 +50,19 @@ EXPECTED_PLUGIN_VALIDATOR_SHA256 = (
     "ebda00d55d7518b127f675f062fb5c6e7a1ffdc0a99df1a55ac594400d7d3228"
 )
 EXPECTED_SKILLS: tuple[str, ...] = (
-    "job-search-coach",
-    "optimize-linkedin-career",
-    "discover-high-value-career-paths",
-    "research-target-job-market",
-    "optimize-job-search-assets",
+    "professional-growth-coach",
+    "optimize-professional-profile",
+    "explore-career-options",
+    "research-professional-market",
+    "optimize-career-assets",
     "prepare-role-interviews",
     "recommend-career-learning",
-    "track-job-search-outcomes",
+    "track-career-outcomes",
 )
 EXPECTED_STARTER_PROMPTS: tuple[str, ...] = (
-    "Audit my LinkedIn profile for my target role.",
-    "Help me discover high-value career paths to pursue.",
-    "Prepare me for an interview for this vacancy.",
+    "Help me evaluate professional growth options using current evidence.",
+    "Improve my professional positioning without taking external action.",
+    "Prepare me for a growth or recruiter conversation.",
 )
 SKILL_NAME_PATTERN = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 INSTALLABLE_VERSION_PATTERN = re.compile(
@@ -450,7 +450,7 @@ class JobSearchCoachPluginStructureTests(unittest.TestCase):
         )
 
         with tempfile.TemporaryDirectory() as temporary_directory:
-            incomplete_plugin = Path(temporary_directory) / "job-search-coach"
+            incomplete_plugin = Path(temporary_directory) / "professional-growth-coach"
             shutil.copytree(PLUGIN_ROOT, incomplete_plugin)
             (incomplete_plugin / "assets" / "executive-career-dossier-v1.css").unlink()
             errors = checker.validate_executive_dossier_package(
@@ -465,7 +465,7 @@ class JobSearchCoachPluginStructureTests(unittest.TestCase):
     def test_executive_dossier_package_rejects_invalid_registry_and_network_assets(self) -> None:
         checker = load_static_checker()
         with tempfile.TemporaryDirectory() as temporary_directory:
-            plugin = Path(temporary_directory) / "job-search-coach"
+            plugin = Path(temporary_directory) / "professional-growth-coach"
             shutil.copytree(PLUGIN_ROOT, plugin)
             registry = plugin / "scripts" / "linkedin_source_registry.json"
             registry.write_text("{", encoding="utf-8")
@@ -491,7 +491,7 @@ class JobSearchCoachPluginStructureTests(unittest.TestCase):
             cases = ("direct", "broken", "intermediate")
             for case in cases:
                 with self.subTest(case=case):
-                    plugin = root / case / "job-search-coach"
+                    plugin = root / case / "professional-growth-coach"
                     shutil.copytree(PLUGIN_ROOT, plugin)
                     css = plugin / "assets" / "executive-career-dossier-v1.css"
                     if case == "direct":
@@ -516,7 +516,7 @@ class JobSearchCoachPluginStructureTests(unittest.TestCase):
         checker = load_static_checker()
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
-            plugin = root / "job-search-coach"
+            plugin = root / "professional-growth-coach"
             shutil.copytree(PLUGIN_ROOT, plugin)
             template = plugin / "assets" / "executive-career-dossier-v1.html"
             template.write_text(
@@ -552,7 +552,7 @@ class JobSearchCoachPluginStructureTests(unittest.TestCase):
             root = Path(temporary_directory)
             for index, (injection, expected) in enumerate(mutations):
                 with self.subTest(injection=injection):
-                    plugin = root / str(index) / "job-search-coach"
+                    plugin = root / str(index) / "professional-growth-coach"
                     shutil.copytree(PLUGIN_ROOT, plugin)
                     template = plugin / "assets" / "executive-career-dossier-v1.html"
                     text = template.read_text(encoding="utf-8")
@@ -573,7 +573,7 @@ class JobSearchCoachPluginStructureTests(unittest.TestCase):
         checker = load_static_checker()
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
-            plugin = root / "job-search-coach"
+            plugin = root / "professional-growth-coach"
             shutil.copytree(PLUGIN_ROOT, plugin)
             validator = plugin / "scripts" / "validate_executive_career_dossier.py"
             validator.write_text(
@@ -595,7 +595,7 @@ class JobSearchCoachPluginStructureTests(unittest.TestCase):
     def test_html_dossier_skill_contract_populates_bound_requested_technology_terms(self) -> None:
         reference = (
             PLUGIN_ROOT
-            / "skills/optimize-linkedin-career/references/html-dossier.md"
+            / "skills/optimize-professional-profile/references/html-dossier.md"
         ).read_text(encoding="utf-8")
         self.assertIn("requested_technology_terms", reference)
         self.assertRegex(reference, r"(?is)every explicitly requested technology.+claim_ids")
@@ -608,7 +608,7 @@ class JobSearchCoachPluginStructureTests(unittest.TestCase):
         checker = load_static_checker()
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
-            plugin = root / "job-search-coach"
+            plugin = root / "professional-growth-coach"
             shutil.copytree(PLUGIN_ROOT, plugin)
             validator = plugin / "scripts" / "validate_executive_career_dossier.py"
             validator.write_text(
@@ -630,7 +630,7 @@ class JobSearchCoachPluginStructureTests(unittest.TestCase):
         checker = load_static_checker()
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
-            plugin = root / "job-search-coach"
+            plugin = root / "professional-growth-coach"
             shutil.copytree(PLUGIN_ROOT, plugin)
             renderer = plugin / "scripts" / "render_executive_career_dossier.py"
             renderer.write_text(
@@ -652,7 +652,7 @@ class JobSearchCoachPluginStructureTests(unittest.TestCase):
     def test_executive_dossier_scripts_resolve_installed_files_outside_repository_cwd(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
-            installed_plugin = root / "installed" / "job-search-coach"
+            installed_plugin = root / "installed" / "professional-growth-coach"
             shutil.copytree(PLUGIN_ROOT, installed_plugin)
             installed_css_marker = "installed-relative-css-marker"
             installed_template_marker = "installed-relative-template-marker"
@@ -968,7 +968,7 @@ raise SystemExit(64)
 
         manifest_text = MANIFEST_PATH.read_text(encoding="utf-8")
         manifest = json.loads(manifest_text)
-        self.assertEqual(manifest["name"], "job-search-coach")
+        self.assertEqual(manifest["name"], "professional-growth-coach")
         self.assertRegex(manifest["version"], INSTALLABLE_VERSION_PATTERN)
         self.assertIsInstance(manifest["description"], str)
         self.assertTrue(manifest["description"].strip())
@@ -979,7 +979,7 @@ raise SystemExit(64)
         self.assertNotIn("[TODO:", manifest_text)
 
         interface = manifest["interface"]
-        self.assertEqual(interface["displayName"], "Job Search Coach")
+        self.assertEqual(interface["displayName"], "Professional Growth Coach")
         self.assertIsInstance(interface["shortDescription"], str)
         self.assertTrue(interface["shortDescription"].strip())
         self.assertIsInstance(interface["longDescription"], str)

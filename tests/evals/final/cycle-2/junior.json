@@ -8,7 +8,7 @@
   "fork_turns": "none",
   "run_id": "JSC-RUN-C2-JUNIOR",
   "agent_id": "JSC-AGENT-C2-JUNIOR",
-  "prompt": "Run the deterministic Job Search Coach regression for candidate_id `JSC-CASE-C`. Use only the supplied controlled-enum composite facts. Preserve evidence labels, routing, privacy isolation, authorization boundaries, and the smallest reversible next action. This fabricated case has no relationship to any person or profile.",
+  "prompt": "Run the deterministic Professional Growth Coach regression for candidate_id `JSC-CASE-C`. Use only the supplied controlled-enum composite facts. Preserve evidence labels, routing, privacy isolation, authorization boundaries, and the smallest reversible next action. This fabricated case has no relationship to any person or profile.",
   "prompt_sha256": "01eb1375d05b6b89c0a52fac8f90c84baae7d02240f359bb64ddadb479a03aea",
   "provenance_note": "Independently fabricated deterministic fixture; not a live agent transcript.",
   "transcript_file": "junior.md",
@@ -40,7 +40,7 @@
       "score": 3,
       "evidence": [
         {
-          "quote": "selected_module: optimize-linkedin-career",
+          "quote": "selected_module: optimize-professional-profile",
           "why": "Observable routing contract in the fabricated fixture."
         }
       ]

@@ -9,8 +9,8 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-HELPER_PATH = REPO_ROOT / "plugins" / "job-search-coach" / "scripts" / "private_asset_loader.py"
-TRIAGE_RENDERER_PATH = REPO_ROOT / "plugins" / "job-search-coach" / "scripts" / "render_private_recruiter_reply_triage.py"
+HELPER_PATH = REPO_ROOT / "plugins" / "professional-growth-coach" / "scripts" / "private_asset_loader.py"
+TRIAGE_RENDERER_PATH = REPO_ROOT / "plugins" / "professional-growth-coach" / "scripts" / "render_private_recruiter_reply_triage.py"
 TRIAGE_FIXTURE = REPO_ROOT / "tests" / "evals" / "with-skill" / "fixtures" / "private-recruiter-reply-triage" / "ready-es.json"
 
 
@@ -23,7 +23,7 @@ def load_helper():
 
 
 def load_triage_renderer():
-    scripts_root = str(REPO_ROOT / "plugins" / "job-search-coach" / "scripts")
+    scripts_root = str(REPO_ROOT / "plugins" / "professional-growth-coach" / "scripts")
     if scripts_root not in sys.path:
         sys.path.insert(0, scripts_root)
     specification = importlib.util.spec_from_file_location("asset_boundary_triage_renderer", TRIAGE_RENDERER_PATH)
@@ -45,15 +45,15 @@ class PrivateAssetBoundaryTests(unittest.TestCase):
 
         self.assertEqual(
             [],
-            helper.validate_asset_paths(REPO_ROOT / "plugins" / "job-search-coach"),
+            helper.validate_asset_paths(REPO_ROOT / "plugins" / "professional-growth-coach"),
         )
 
     def test_regular_canonical_asset_is_read(self) -> None:
         helper = load_helper()
 
         content = helper.read_private_asset(
-            REPO_ROOT / "plugins" / "job-search-coach",
-            REPO_ROOT / "plugins" / "job-search-coach" / "assets" / "recruiter-practice-session-v1.css",
+            REPO_ROOT / "plugins" / "professional-growth-coach",
+            REPO_ROOT / "plugins" / "professional-growth-coach" / "assets" / "recruiter-practice-session-v1.css",
             "renderer asset",
         )
 

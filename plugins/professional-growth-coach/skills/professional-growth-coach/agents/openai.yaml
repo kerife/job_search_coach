@@ -1,0 +1,4 @@
+interface:
+  display_name: "Professional Growth Coach"
+  short_description: "Route isolated professional-growth cases safely"
+  default_prompt: "Use $professional-growth-coach to evaluate my professional growth options and deliver a brief conclusion plus a complete private HTML dossier; preserve current employment by default, no invented data, and no external actions."

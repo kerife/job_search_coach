@@ -19,7 +19,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 RENDERER_PATH = (
     REPO_ROOT
     / "plugins"
-    / "job-search-coach"
+    / "professional-growth-coach"
     / "scripts"
     / "render_recruiter_practice_session.py"
 )

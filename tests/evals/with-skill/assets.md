@@ -1,6 +1,6 @@
 # Task 6 with-skill forward evaluations
 
-Read-only synthetic evaluations of `optimize-job-search-assets`. No application, profile edit, upload, message, export, or publication was performed.
+Read-only synthetic evaluations of `optimize-career-assets`. No application, profile edit, upload, message, export, or publication was performed.
 
 ## Technical: Terraform and Argo CD vacancy
 

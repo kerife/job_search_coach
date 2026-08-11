@@ -26,7 +26,7 @@ This plugin has **no shared Tailwind config, CSS module system, theme provider, 
 
 ## Raw source dumps
 
-### `plugins/job-search-coach/assets/executive-career-dossier-v1.css`
+### `plugins/professional-growth-coach/assets/executive-career-dossier-v1.css`
 
 ```css
 :root {
@@ -558,7 +558,7 @@ details summary {
 }
 ```
 
-### `plugins/job-search-coach/assets/recruiter-practice-session-v1.css`
+### `plugins/professional-growth-coach/assets/recruiter-practice-session-v1.css`
 
 ```css
 :root {
@@ -811,7 +811,7 @@ html { color-scheme: light; background: var(--paper); }
 }
 ```
 
-### `plugins/job-search-coach/assets/private-recruiter-reply-triage-v1.css`
+### `plugins/professional-growth-coach/assets/private-recruiter-reply-triage-v1.css`
 
 ```css
 :root {
@@ -934,7 +934,7 @@ html { color-scheme: light; background: var(--paper); }
 }
 ```
 
-### `plugins/job-search-coach/assets/private-recruiter-followthrough-checkpoint-v1.css`
+### `plugins/professional-growth-coach/assets/private-recruiter-followthrough-checkpoint-v1.css`
 
 ```css
 :root { color-scheme: light dark; --ink: #172033; --muted: #536174; --surface: #fff; --accent: #315bd6; --line: #d9dfeb; }
@@ -959,7 +959,7 @@ dd { margin: .15rem 0 0; font-weight: 600; }
 @media (forced-colors: active) { .checkpoint-card, .checkpoint-boundary { border: 1px solid CanvasText; } .checkpoint-kicker { color: LinkText; } }
 ```
 
-### `plugins/job-search-coach/assets/private-recruiter-conversion-outcome-v1.css`
+### `plugins/professional-growth-coach/assets/private-recruiter-conversion-outcome-v1.css`
 
 ```css
 :root { color-scheme: light dark; --ink: #172033; --muted: #536174; --surface: #fff; --accent: #315bd6; --line: #d9dfeb; }

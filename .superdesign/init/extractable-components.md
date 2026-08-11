@@ -6,7 +6,7 @@ These are **candidate** DraftComponent extractions from repeated static HTML/CSS
 
 ## DocumentShell
 
-- Source: `plugins/job-search-coach/assets/executive-career-dossier-v1.html`; `plugins/job-search-coach/assets/recruiter-practice-session-v1.html`; `plugins/job-search-coach/assets/private-recruiter-reply-triage-v1.html`
+- Source: `plugins/professional-growth-coach/assets/executive-career-dossier-v1.html`; `plugins/professional-growth-coach/assets/recruiter-practice-session-v1.html`; `plugins/professional-growth-coach/assets/private-recruiter-reply-triage-v1.html`
 - Category: layout
 - Description: Offline document frame that supplies document metadata, restrictive CSP, an inline stylesheet placeholder, and renderer-owned header/main slots.
 - Extractable props: `lang` (string), `title` (string), `headerHtml` (HTML), `mainHtml` (HTML); dossier only: `inlineScript` (HTML).
@@ -14,7 +14,7 @@ These are **candidate** DraftComponent extractions from repeated static HTML/CSS
 
 ## PrivateReceiptShell
 
-- Source: `plugins/job-search-coach/assets/private-recruiter-followthrough-checkpoint-v1.html`; `plugins/job-search-coach/assets/private-recruiter-conversion-outcome-v1.html`
+- Source: `plugins/professional-growth-coach/assets/private-recruiter-followthrough-checkpoint-v1.html`; `plugins/professional-growth-coach/assets/private-recruiter-conversion-outcome-v1.html`
 - Category: layout
 - Description: Compact private receipt with skip link, single article, facts list, boundary, and local-saving footer.
 - Extractable props: `title` (string), `kicker` (string), `heading` (string), `facts` (list), `boundary` (string), `footerText` (string).
@@ -24,7 +24,7 @@ These are **candidate** DraftComponent extractions from repeated static HTML/CSS
 
 ## SkipLink
 
-- Source: `plugins/job-search-coach/assets/private-recruiter-followthrough-checkpoint-v1.html`; `plugins/job-search-coach/assets/private-recruiter-conversion-outcome-v1.html`. The dossier, practice-session, and reply-triage skip links are renderer-generated markup rather than static template source.
+- Source: `plugins/professional-growth-coach/assets/private-recruiter-followthrough-checkpoint-v1.html`; `plugins/professional-growth-coach/assets/private-recruiter-conversion-outcome-v1.html`. The dossier, practice-session, and reply-triage skip links are renderer-generated markup rather than static template source.
 - Category: basic
 - Description: Keyboard-visible jump link to the main artifact content.
 - Extractable props: `targetId` (string, default: `main-content`), `label` (string).
@@ -32,7 +32,7 @@ These are **candidate** DraftComponent extractions from repeated static HTML/CSS
 
 ## StatusChip
 
-- Source: `plugins/job-search-coach/assets/recruiter-practice-session-v1.css`; `plugins/job-search-coach/assets/private-recruiter-reply-triage-v1.css`; `plugins/job-search-coach/assets/executive-career-dossier-v1.css`
+- Source: `plugins/professional-growth-coach/assets/recruiter-practice-session-v1.css`; `plugins/professional-growth-coach/assets/private-recruiter-reply-triage-v1.css`; `plugins/professional-growth-coach/assets/executive-career-dossier-v1.css`
 - Category: basic
 - Description: Bordered state/status label used for practice state, triage state, and dossier privacy/confidence signals.
 - Extractable props: `state` (string), `label` (string).
@@ -40,7 +40,7 @@ These are **candidate** DraftComponent extractions from repeated static HTML/CSS
 
 ## PrivateInformationCard
 
-- Source: `plugins/job-search-coach/assets/recruiter-practice-session-v1.css`; `plugins/job-search-coach/assets/private-recruiter-reply-triage-v1.css`; `plugins/job-search-coach/assets/executive-career-dossier-v1.css`
+- Source: `plugins/professional-growth-coach/assets/recruiter-practice-session-v1.css`; `plugins/professional-growth-coach/assets/private-recruiter-reply-triage-v1.css`; `plugins/professional-growth-coach/assets/executive-career-dossier-v1.css`
 - Category: basic
 - Description: White document card with a strong forest top or left edge for a private decision, prompt, boundary, or evidence section.
 - Extractable props: `tone` (string: forest/coral/gold), `heading` (string), `bodyHtml` (HTML), `isPrintSafe` (boolean, default: true).
@@ -48,7 +48,7 @@ These are **candidate** DraftComponent extractions from repeated static HTML/CSS
 
 ## FactList
 
-- Source: `plugins/job-search-coach/assets/private-recruiter-followthrough-checkpoint-v1.html`; `plugins/job-search-coach/assets/private-recruiter-conversion-outcome-v1.html`
+- Source: `plugins/professional-growth-coach/assets/private-recruiter-followthrough-checkpoint-v1.html`; `plugins/professional-growth-coach/assets/private-recruiter-conversion-outcome-v1.html`
 - Category: basic
 - Description: Definition-list rows for a small, localized observation receipt.
 - Extractable props: `items` (list of label/value pairs), `columnsAtWideViewport` (number, default: 2).
@@ -56,7 +56,7 @@ These are **candidate** DraftComponent extractions from repeated static HTML/CSS
 
 ## ManualHandoffSequence
 
-- Source: `plugins/job-search-coach/assets/private-recruiter-reply-triage-v1.css`
+- Source: `plugins/professional-growth-coach/assets/private-recruiter-reply-triage-v1.css`
 - Category: basic
 - Description: Numbered, read-only sequence for a manual re-entry into private recruiter preparation.
 - Extractable props: `steps` (list), `readinessRows` (list), `nextStep` (string), `showPreview` (boolean, default: false).

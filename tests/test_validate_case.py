@@ -1,4 +1,4 @@
-"""Behavioral contract for the isolated Job Search Coach case validator."""
+"""Behavioral contract for the isolated Professional Growth Coach case validator."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-VALIDATOR = REPO_ROOT / "plugins" / "job-search-coach" / "scripts" / "validate_case.py"
+VALIDATOR = REPO_ROOT / "plugins" / "professional-growth-coach" / "scripts" / "validate_case.py"
 
 
 CASE_ISOLATION_MUTATIONS = (

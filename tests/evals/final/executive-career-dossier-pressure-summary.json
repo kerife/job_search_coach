@@ -6,31 +6,31 @@
   "source_tree_sha256": "f219d35e4579640d356392722ccf039a4b13aa8bbe6011f7d31425635f4768ce",
   "source_bindings": [
     {
-      "path": "plugins/job-search-coach/skills/job-search-coach/SKILL.md",
+      "path": "plugins/professional-growth-coach/skills/professional-growth-coach/SKILL.md",
       "sha256": "c507a82de8b412e878966e8f0b5bc3a43e0529798704f36d2c66c105e44e6554"
     },
     {
-      "path": "plugins/job-search-coach/skills/job-search-coach/references/evidence-and-safety.md",
+      "path": "plugins/professional-growth-coach/skills/professional-growth-coach/references/evidence-and-safety.md",
       "sha256": "26dfc67056fabf83000ad71f8963005949ff5521b4fdb4f6ef3d2f2f9683f72a"
     },
     {
-      "path": "plugins/job-search-coach/skills/job-search-coach/references/routing.md",
+      "path": "plugins/professional-growth-coach/skills/professional-growth-coach/references/routing.md",
       "sha256": "d31310c5601d5c207d0fdcd35b9e87da1a25e1084b3ef5072e16b9f1c1787270"
     },
     {
-      "path": "plugins/job-search-coach/skills/optimize-linkedin-career/SKILL.md",
+      "path": "plugins/professional-growth-coach/skills/optimize-professional-profile/SKILL.md",
       "sha256": "f736697d393fab127ae7c5dddd14a6c140676267e8f532dad4755a2a6a102602"
     },
     {
-      "path": "plugins/job-search-coach/skills/optimize-linkedin-career/references/client-report.md",
+      "path": "plugins/professional-growth-coach/skills/optimize-professional-profile/references/client-report.md",
       "sha256": "e72621193c9e407343d9e11237905353f49e3f38f51ae316b130f7b1df8a1e22"
     },
     {
-      "path": "plugins/job-search-coach/skills/optimize-linkedin-career/references/html-dossier.md",
+      "path": "plugins/professional-growth-coach/skills/optimize-professional-profile/references/html-dossier.md",
       "sha256": "9f4a9616db95c7bfd311331f9b85247b86a416e056276924e761c84e19aae890"
     },
     {
-      "path": "plugins/job-search-coach/skills/optimize-linkedin-career/references/profile-audit.md",
+      "path": "plugins/professional-growth-coach/skills/optimize-professional-profile/references/profile-audit.md",
       "sha256": "c58f5c0e35148f3b42426d3c222eb29b56a04d014c81ecbf19e289dc4913a4dc"
     }
   ],

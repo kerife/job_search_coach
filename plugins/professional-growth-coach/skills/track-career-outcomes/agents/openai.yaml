@@ -1,0 +1,4 @@
+interface:
+  display_name: "Job Search Outcome Tracking"
+  short_description: "Measure search funnel outcomes safely"
+  default_prompt: "Use $track-career-outcomes to summarize my applications, responses, interviews, offers, and experiment warnings."

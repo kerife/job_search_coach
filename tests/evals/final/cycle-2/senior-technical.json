@@ -8,7 +8,7 @@
   "fork_turns": "none",
   "run_id": "JSC-RUN-C2-SENIOR-TECHNICAL",
   "agent_id": "JSC-AGENT-C2-SENIOR-TECHNICAL",
-  "prompt": "Run the deterministic Job Search Coach regression for candidate_id `JSC-CASE-A`. Use only the supplied controlled-enum composite facts. Preserve evidence labels, routing, privacy isolation, authorization boundaries, and the smallest reversible next action. This fabricated case has no relationship to any person or profile.",
+  "prompt": "Run the deterministic Professional Growth Coach regression for candidate_id `JSC-CASE-A`. Use only the supplied controlled-enum composite facts. Preserve evidence labels, routing, privacy isolation, authorization boundaries, and the smallest reversible next action. This fabricated case has no relationship to any person or profile.",
   "prompt_sha256": "c857e3b19e61e96dd6c5528d8a24d3cf99989556afd3cdd3a5bcd32c7248f211",
   "provenance_note": "Independently fabricated deterministic fixture; not a live agent transcript.",
   "transcript_file": "senior-technical.md",
@@ -40,7 +40,7 @@
       "score": 3,
       "evidence": [
         {
-          "quote": "selected_module: research-target-job-market",
+          "quote": "selected_module: research-professional-market",
           "why": "Observable routing contract in the fabricated fixture."
         }
       ]

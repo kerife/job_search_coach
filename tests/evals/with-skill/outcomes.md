@@ -9,7 +9,7 @@ Fixture: [fixtures/outcomes-sparse.csv](fixtures/outcomes-sparse.csv)
 Exact command:
 
 ```bash
-python3 plugins/job-search-coach/scripts/summarize_outcomes.py tests/evals/with-skill/fixtures/outcomes-sparse.csv --window 30 --as-of 2026-08-06
+python3 plugins/professional-growth-coach/scripts/summarize_outcomes.py tests/evals/with-skill/fixtures/outcomes-sparse.csv --window 30 --as-of 2026-08-06
 ```
 
 Exit: `0`
@@ -35,7 +35,7 @@ Fixture: [fixtures/outcomes-confounded.csv](fixtures/outcomes-confounded.csv)
 Exact command:
 
 ```bash
-python3 plugins/job-search-coach/scripts/summarize_outcomes.py tests/evals/with-skill/fixtures/outcomes-confounded.csv --window 30 --as-of 2026-08-06
+python3 plugins/professional-growth-coach/scripts/summarize_outcomes.py tests/evals/with-skill/fixtures/outcomes-confounded.csv --window 30 --as-of 2026-08-06
 ```
 
 Exit: `0`
@@ -61,7 +61,7 @@ Fixture: [fixtures/outcomes-linkedin-outreach.csv](fixtures/outcomes-linkedin-ou
 Exact command:
 
 ```bash
-python3 plugins/job-search-coach/scripts/summarize_outcomes.py tests/evals/with-skill/fixtures/outcomes-linkedin-outreach.csv --window 30 --as-of 2026-08-06
+python3 plugins/professional-growth-coach/scripts/summarize_outcomes.py tests/evals/with-skill/fixtures/outcomes-linkedin-outreach.csv --window 30 --as-of 2026-08-06
 ```
 
 Exit: `0`
@@ -81,7 +81,7 @@ weekly_strategy_decision: inferred: candidate_id=candidate-001; weekly_strategy_
 weekly_strategy_branch: inferred: weekly_strategy_branch=next_cycle_decision_rule; branch=continue; trigger_signal=clean comparable window shows stable qualified replies and recruiter screens while the current strategy remains unchanged; minimum_evidence=ten comparable rows with stable role geography source asset and no new confounders; next_safe_action=keep the current candidate reviewed sequence unchanged for one more measurement window; blocked_action=do not introduce new copy assets or new target segments in the same window; metric_to_log=qualified_replies,recruiter_screens,known_stage; review_gate=next weekly outcome review after the window closes; privacy_boundary=single_candidate_only_no_benchmark_without_consent; authorization_gate=exact_action_and_target_required_before_external_action; causality_boundary=descriptive_only_no_causal_claim; draft_only=true; no_external_action=true.
 weekly_strategy_branch: inferred: weekly_strategy_branch=next_cycle_decision_rule; branch=revise; trigger_signal=one clear funnel bottleneck appears while source role geography and asset version are stable; minimum_evidence=observed bottleneck plus named candidate proof and no conflicting external action; next_safe_action=change exactly one reversible element and record the new intervention id; blocked_action=do not increase volume and edit multiple assets in the same measurement window; metric_to_log=intervention_id,bottleneck_resolution_signal,next_stage_count; review_gate=after the revised asset has candidate review and a complete logging row; privacy_boundary=single_candidate_only_no_benchmark_without_consent; authorization_gate=exact_action_and_target_required_before_external_action; causality_boundary=descriptive_only_no_causal_claim; draft_only=true; no_external_action=true.
 weekly_strategy_branch: inferred: weekly_strategy_branch=next_cycle_decision_rule; branch=pause; trigger_signal=sample is too small logging is incomplete or simultaneous changes make the readout noisy; minimum_evidence=data quality warning or fewer than ten comparable records or explicit confounders; next_safe_action=repair logging stage labels consent and intervention isolation before choosing a funnel change; blocked_action=do not treat observed rates as strategy evidence while the window is noisy; metric_to_log=missing_fields,confounders,comparable_application_count; review_gate=resume only after the next window has clean comparable records; privacy_boundary=single_candidate_only_no_benchmark_without_consent; authorization_gate=exact_action_and_target_required_before_external_action; causality_boundary=descriptive_only_no_causal_claim; draft_only=true; no_external_action=true.
-weekly_strategy_branch: inferred: weekly_strategy_branch=next_cycle_decision_rule; branch=research; trigger_signal=target role source market or recruiter segment assumption is not evidenced enough to select a funnel fix; minimum_evidence=unknown role demand or missing target vacancy or unclear recruiter segment; next_safe_action=route to research-target-job-market or recruiter discovery before changing applications or outreach; blocked_action=do not optimize messages for a target segment that has not been evidenced; metric_to_log=target_vacancy_selected,market_evidence_id,recruiter_segment_context; review_gate=after dated market evidence and target vacancy constraints are recorded; privacy_boundary=single_candidate_only_no_benchmark_without_consent; authorization_gate=exact_action_and_target_required_before_external_action; causality_boundary=descriptive_only_no_causal_claim; draft_only=true; no_external_action=true.
+weekly_strategy_branch: inferred: weekly_strategy_branch=next_cycle_decision_rule; branch=research; trigger_signal=target role source market or recruiter segment assumption is not evidenced enough to select a funnel fix; minimum_evidence=unknown role demand or missing target vacancy or unclear recruiter segment; next_safe_action=route to research-professional-market or recruiter discovery before changing applications or outreach; blocked_action=do not optimize messages for a target segment that has not been evidenced; metric_to_log=target_vacancy_selected,market_evidence_id,recruiter_segment_context; review_gate=after dated market evidence and target vacancy constraints are recorded; privacy_boundary=single_candidate_only_no_benchmark_without_consent; authorization_gate=exact_action_and_target_required_before_external_action; causality_boundary=descriptive_only_no_causal_claim; draft_only=true; no_external_action=true.
 weekly_strategy_branch: inferred: weekly_strategy_branch=next_cycle_decision_rule; branch=stop; trigger_signal=consent safety confidentiality fit or candidate interest boundary blocks the next action; minimum_evidence=missing exact authorization or unsafe proof or declined recipient or withdrawn candidate interest; next_safe_action=record the stop reason and ask for a new safe target or close the experiment; blocked_action=do not send edit upload apply schedule or contact anyone without exact action and target authorization; metric_to_log=stop_reason,authorization_state,candidate_interest_state; review_gate=restart only with fresh candidate approval and safe evidence; privacy_boundary=single_candidate_only_no_benchmark_without_consent; authorization_gate=exact_action_and_target_required_before_external_action; causality_boundary=descriptive_only_no_causal_claim; draft_only=true; no_external_action=true.
 warnings: verified: the CLI reports small sample, intervention, and LinkedIn outreach measurement warnings; no recruiter-screen outcome is observed.
 next_measurement_step: inferred: keep the same role/geography/source/asset_version, log the matching LinkedIn `outreach_funnel` row, and collect at least ten comparable LinkedIn outreach rows before treating rates as directional.
@@ -93,7 +93,7 @@ Fixture: [fixtures/outcomes-currency.csv](fixtures/outcomes-currency.csv)
 Exact command:
 
 ```bash
-python3 plugins/job-search-coach/scripts/summarize_outcomes.py tests/evals/with-skill/fixtures/outcomes-currency.csv --window 30 --as-of 2026-08-06
+python3 plugins/professional-growth-coach/scripts/summarize_outcomes.py tests/evals/with-skill/fixtures/outcomes-currency.csv --window 30 --as-of 2026-08-06
 ```
 
 Exit: `0`
@@ -119,7 +119,7 @@ Fixture: [fixtures/outcomes-two-candidate-consented.csv](fixtures/outcomes-two-c
 Exact command:
 
 ```bash
-python3 plugins/job-search-coach/scripts/summarize_outcomes.py tests/evals/with-skill/fixtures/outcomes-two-candidate-consented.csv --window 30 --as-of 2026-08-06
+python3 plugins/professional-growth-coach/scripts/summarize_outcomes.py tests/evals/with-skill/fixtures/outcomes-two-candidate-consented.csv --window 30 --as-of 2026-08-06
 ```
 
 Exit: `0`
@@ -145,7 +145,7 @@ Fixture: [fixtures/outcomes-two-candidate-no-consent.csv](fixtures/outcomes-two-
 Exact command:
 
 ```bash
-python3 plugins/job-search-coach/scripts/summarize_outcomes.py tests/evals/with-skill/fixtures/outcomes-two-candidate-no-consent.csv --window 30 --as-of 2026-08-06
+python3 plugins/professional-growth-coach/scripts/summarize_outcomes.py tests/evals/with-skill/fixtures/outcomes-two-candidate-no-consent.csv --window 30 --as-of 2026-08-06
 ```
 
 Exit: `0`
@@ -169,7 +169,7 @@ next_measurement_step: inferred: run the two exact candidate-isolated commands b
 Exact command:
 
 ```bash
-python3 plugins/job-search-coach/scripts/summarize_outcomes.py tests/evals/with-skill/fixtures/outcomes-two-candidate-no-consent.csv --window 30 --as-of 2026-08-06 --candidate-id candidate-001
+python3 plugins/professional-growth-coach/scripts/summarize_outcomes.py tests/evals/with-skill/fixtures/outcomes-two-candidate-no-consent.csv --window 30 --as-of 2026-08-06 --candidate-id candidate-001
 ```
 
 Exit: `0`
@@ -185,7 +185,7 @@ Raw JSON:
 Exact command:
 
 ```bash
-python3 plugins/job-search-coach/scripts/summarize_outcomes.py tests/evals/with-skill/fixtures/outcomes-two-candidate-no-consent.csv --window 30 --as-of 2026-08-06 --candidate-id candidate-002
+python3 plugins/professional-growth-coach/scripts/summarize_outcomes.py tests/evals/with-skill/fixtures/outcomes-two-candidate-no-consent.csv --window 30 --as-of 2026-08-06 --candidate-id candidate-002
 ```
 
 Exit: `0`

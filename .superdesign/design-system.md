@@ -1,8 +1,8 @@
-# Job Search Coach private artifact design system
+# Professional Growth Coach private artifact design system
 
 ## Product context
 
-Job Search Coach produces private, offline, candidate-facing HTML artifacts for
+Professional Growth Coach produces private, offline, candidate-facing HTML artifacts for
 career diagnosis, recruiter-reply triage, recruiter-screen practice,
 follow-through checkpoints, and observed outcomes. The UI helps a candidate
 decide what is supported, what remains unknown, what to rehearse, and what the

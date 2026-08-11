@@ -14,8 +14,8 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-VALIDATOR_PATH = REPO_ROOT / "plugins" / "job-search-coach" / "scripts" / "validate_linkedin_client_report.py"
-SOURCE_REGISTRY_PATH = REPO_ROOT / "plugins" / "job-search-coach" / "scripts" / "linkedin_source_registry.json"
+VALIDATOR_PATH = REPO_ROOT / "plugins" / "professional-growth-coach" / "scripts" / "validate_linkedin_client_report.py"
+SOURCE_REGISTRY_PATH = REPO_ROOT / "plugins" / "professional-growth-coach" / "scripts" / "linkedin_source_registry.json"
 FIXTURE_ROOT = REPO_ROOT / "tests" / "evals" / "with-skill" / "fixtures" / "linkedin-report-v2"
 
 specification = importlib.util.spec_from_file_location("validate_linkedin_client_report", VALIDATOR_PATH)

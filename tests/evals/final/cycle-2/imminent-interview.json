@@ -8,7 +8,7 @@
   "fork_turns": "none",
   "run_id": "JSC-RUN-C2-IMMINENT-INTERVIEW",
   "agent_id": "JSC-AGENT-C2-IMMINENT-INTERVIEW",
-  "prompt": "Run the deterministic Job Search Coach regression for candidate_id `JSC-CASE-D`. Use only the supplied controlled-enum composite facts. Preserve evidence labels, routing, privacy isolation, authorization boundaries, and the smallest reversible next action. This fabricated case has no relationship to any person or profile.",
+  "prompt": "Run the deterministic Professional Growth Coach regression for candidate_id `JSC-CASE-D`. Use only the supplied controlled-enum composite facts. Preserve evidence labels, routing, privacy isolation, authorization boundaries, and the smallest reversible next action. This fabricated case has no relationship to any person or profile.",
   "prompt_sha256": "24d86058bb92a6d797e1f0c8a0804b2186001ba5abf49d550fe3dc07ebc7af21",
   "provenance_note": "Independently fabricated deterministic fixture; not a live agent transcript.",
   "transcript_file": "imminent-interview.md",

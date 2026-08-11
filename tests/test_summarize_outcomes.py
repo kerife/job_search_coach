@@ -12,7 +12,7 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-SCRIPT = REPO_ROOT / "plugins" / "job-search-coach" / "scripts" / "summarize_outcomes.py"
+SCRIPT = REPO_ROOT / "plugins" / "professional-growth-coach" / "scripts" / "summarize_outcomes.py"
 CSV_FIELDS = (
     "application_id",
     "candidate_id",
@@ -714,9 +714,9 @@ class SummarizeOutcomesTests(unittest.TestCase):
         paths = [
             REPO_ROOT
             / "plugins"
-            / "job-search-coach"
+            / "professional-growth-coach"
             / "skills"
-            / "track-job-search-outcomes"
+            / "track-career-outcomes"
             / "assets"
             / "outcomes.csv",
             *sorted(

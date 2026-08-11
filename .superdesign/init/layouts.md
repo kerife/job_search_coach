@@ -8,7 +8,7 @@ The templates below are the complete layout sources. They are listed here once (
 
 ## ExecutiveCareerDossierDocument
 
-- Source: `plugins/job-search-coach/assets/executive-career-dossier-v1.html`
+- Source: `plugins/professional-growth-coach/assets/executive-career-dossier-v1.html`
 - Renders: document body with renderer-supplied header, main content, and a page-specific inline script.
 
 ```html
@@ -33,7 +33,7 @@ The templates below are the complete layout sources. They are listed here once (
 
 ## RecruiterPracticeSessionDocument
 
-- Source: `plugins/job-search-coach/assets/recruiter-practice-session-v1.html`
+- Source: `plugins/professional-growth-coach/assets/recruiter-practice-session-v1.html`
 - Renders: private recruiter practice document with renderer-supplied header and main content.
 
 ```html
@@ -57,7 +57,7 @@ The templates below are the complete layout sources. They are listed here once (
 
 ## PrivateRecruiterReplyTriageDocument
 
-- Source: `plugins/job-search-coach/assets/private-recruiter-reply-triage-v1.html`
+- Source: `plugins/professional-growth-coach/assets/private-recruiter-reply-triage-v1.html`
 - Renders: private reply-triage document with renderer-supplied header and main content.
 
 ```html
@@ -81,7 +81,7 @@ The templates below are the complete layout sources. They are listed here once (
 
 ## PrivateRecruiterFollowthroughCheckpointDocument
 
-- Source: `plugins/job-search-coach/assets/private-recruiter-followthrough-checkpoint-v1.html`
+- Source: `plugins/professional-growth-coach/assets/private-recruiter-followthrough-checkpoint-v1.html`
 - Renders: compact checkpoint document with a skip link, one facts card, and a footer.
 
 ```html
@@ -115,7 +115,7 @@ The templates below are the complete layout sources. They are listed here once (
 
 ## PrivateRecruiterConversionOutcomeDocument
 
-- Source: `plugins/job-search-coach/assets/private-recruiter-conversion-outcome-v1.html`
+- Source: `plugins/professional-growth-coach/assets/private-recruiter-conversion-outcome-v1.html`
 - Renders: compact conversion receipt with a skip link, one facts card, and a footer.
 
 ```html

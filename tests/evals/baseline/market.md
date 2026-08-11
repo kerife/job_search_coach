@@ -100,7 +100,7 @@ Both responses are superseded by the with-skill evaluation; the verbatim outputs
 
 ### Scenario
 
-On 2026-08-06, compare the current Senior DevOps Engineer market for a Mexico-based candidate across Mexico, US, and remote international roles. Include compensation, demand, and common requirements. Use current web results where available, but do not use the `research-target-job-market` skill or its source policy.
+On 2026-08-06, compare the current Senior DevOps Engineer market for a Mexico-based candidate across Mexico, US, and remote international roles. Include compensation, demand, and common requirements. Use current web results where available, but do not use the `research-professional-market` skill or its source policy.
 
 ### Verbatim output
 

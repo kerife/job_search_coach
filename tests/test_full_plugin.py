@@ -1,4 +1,4 @@
-"""Full-plugin integration contracts for the Job Search Coach plugin."""
+"""Full-plugin integration contracts for the Professional Growth Coach plugin."""
 
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ from tests.synthetic_semantic_fixtures import (
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-PLUGIN_ROOT = REPO_ROOT / "plugins" / "job-search-coach"
+PLUGIN_ROOT = REPO_ROOT / "plugins" / "professional-growth-coach"
 SKILLS_ROOT = PLUGIN_ROOT / "skills"
 LINKEDIN_REPORT_FIXTURE_ROOT = (
     REPO_ROOT / "tests" / "evals" / "with-skill" / "fixtures" / "linkedin-report-v2"
@@ -45,14 +45,14 @@ LINKEDIN_REPORT_ARTIFACTS = (
     "scenario-d-banner-only.json",
 )
 EXPECTED_SKILLS = (
-    "job-search-coach",
-    "optimize-linkedin-career",
-    "discover-high-value-career-paths",
-    "research-target-job-market",
-    "optimize-job-search-assets",
+    "professional-growth-coach",
+    "optimize-professional-profile",
+    "explore-career-options",
+    "research-professional-market",
+    "optimize-career-assets",
     "prepare-role-interviews",
     "recommend-career-learning",
-    "track-job-search-outcomes",
+    "track-career-outcomes",
 )
 DOMAIN_MODULES = EXPECTED_SKILLS[1:]
 FINAL_CASES = (
@@ -213,7 +213,7 @@ class FullPluginIntegrationTests(unittest.TestCase):
         self.assertTrue(readme_path.is_file(), f"Missing plugin README: {readme_path}")
         readme = readme_path.read_text(encoding="utf-8")
         for section in (
-            "# Job Search Coach",
+            "# Professional Growth Coach",
             "## Privacy",
             "## Installation",
             "## Starter prompts",
@@ -243,7 +243,7 @@ class FullPluginIntegrationTests(unittest.TestCase):
     def test_artifact_failure_cannot_be_claimed_as_success(self) -> None:
         reference_path = (
             SKILLS_ROOT
-            / "optimize-linkedin-career"
+            / "optimize-professional-profile"
             / "references"
             / "html-dossier.md"
         )
@@ -265,12 +265,12 @@ class FullPluginIntegrationTests(unittest.TestCase):
 
     def test_linkedin_entry_prompts_and_readme_request_private_html(self) -> None:
         root_agent = load_static_checker().parse_agent_yaml(
-            (SKILLS_ROOT / "job-search-coach" / "agents" / "openai.yaml").read_text(
+            (SKILLS_ROOT / "professional-growth-coach" / "agents" / "openai.yaml").read_text(
                 encoding="utf-8"
             )
         )
         linkedin_agent = load_static_checker().parse_agent_yaml(
-            (SKILLS_ROOT / "optimize-linkedin-career" / "agents" / "openai.yaml").read_text(
+            (SKILLS_ROOT / "optimize-professional-profile" / "agents" / "openai.yaml").read_text(
                 encoding="utf-8"
             )
         )
@@ -289,7 +289,7 @@ class FullPluginIntegrationTests(unittest.TestCase):
             "dossier HTML privado y completo. No inventes datos ni realices acciones externas.”"
         )
         self.assertIn(starter, readme)
-        self.assertLess(readme.index(starter), readme.index("Compare high-value role paths"))
+        self.assertLess(readme.index(starter), readme.index("Compare professional-growth options"))
         self.assertIn("Source edits do not update the installed plugin cache", readme)
         self.assertIn("separate explicitly authorized installation", readme)
 
@@ -2888,9 +2888,9 @@ executive_diagnosis:
 
     def test_orchestrator_routing_covers_all_modules_and_multi_module_plans(self) -> None:
         routing = (
-            SKILLS_ROOT / "job-search-coach" / "references" / "routing.md"
+            SKILLS_ROOT / "professional-growth-coach" / "references" / "routing.md"
         ).read_text(encoding="utf-8")
-        skill = (SKILLS_ROOT / "job-search-coach" / "SKILL.md").read_text(encoding="utf-8")
+        skill = (SKILLS_ROOT / "professional-growth-coach" / "SKILL.md").read_text(encoding="utf-8")
         combined = f"{skill}\n{routing}"
 
         for module in DOMAIN_MODULES:
@@ -2984,7 +2984,7 @@ executive_diagnosis:
             "measurement_plan=Track packet drafted, recruiter reply, screen request, and known interview stage as observations, not proof of causal lift.",
             "leading_indicators=title_confirmed,unsupported_claim_removed,target_vacancy_selected,packet_drafted",
             "outcome_signals=recruiter_reply,screen_request,stage_known,offer_discussion",
-            "module_sequence=optimize-linkedin-career > optimize-job-search-assets > research-target-job-market > prepare-role-interviews > track-job-search-outcomes",
+            "module_sequence=optimize-professional-profile > optimize-career-assets > research-professional-market > prepare-role-interviews > track-career-outcomes",
             "handoff_ready=false",
             "first_interview_strategy=fix_positioning_and_recruiter_bridge_before_applications",
             "weekly_commitment=confirm_title_replace_unsupported_metric_and_prepare_one_targeted_application_packet",
@@ -3008,15 +3008,15 @@ executive_diagnosis:
 
     def test_private_recruiter_reply_triage_has_precedence_and_cross_skill_contracts(self) -> None:
         """Private reply triage stays separate from practice, dossiers, and public actions."""
-        root_skill = (SKILLS_ROOT / "job-search-coach" / "SKILL.md").read_text(
+        root_skill = (SKILLS_ROOT / "professional-growth-coach" / "SKILL.md").read_text(
             encoding="utf-8"
         )
         routing = (
-            SKILLS_ROOT / "job-search-coach" / "references" / "routing.md"
+            SKILLS_ROOT / "professional-growth-coach" / "references" / "routing.md"
         ).read_text(encoding="utf-8")
         networking = (
             SKILLS_ROOT
-            / "optimize-linkedin-career"
+            / "optimize-professional-profile"
             / "references"
             / "networking-and-content.md"
         ).read_text(encoding="utf-8")
@@ -3025,7 +3025,7 @@ executive_diagnosis:
         )
         client_report = (
             SKILLS_ROOT
-            / "optimize-linkedin-career"
+            / "optimize-professional-profile"
             / "references"
             / "client-report.md"
         ).read_text(encoding="utf-8")
@@ -3073,7 +3073,7 @@ Evidence
 - candidate-reported: target goal is to secure a first interview.
 case_state: blocked_on_evidence
 evidence_gaps: [confirm public title and supportable outcomes]
-selected_module: optimize-linkedin-career
+selected_module: optimize-professional-profile
 next_action: Resolve title and outcome evidence before public drafts.
 authorization_required: true
 - inferred: coach_executive_review: candidate_id=mx-sre-01; diagnosis=evidence_conflict_and_unsupported_metric_are_blocking_recruiter_trust; decision=repair_evidence_then_build_one_targeted_application_packet; decision_rationale=unsupported_public_claims_block_recruiter_ready_positioning; priority_order=P0_evidence_repair>P1_target_vacancy>P2_application_packet>P3_recruiter_bridge>P4_interview_practice; tradeoffs=delay_applications_to_reduce_claim_risk_vs_apply_now_with_weak_positioning; risk_register=unsupported_production_metric,title_conflict,missing_target_vacancy,no_action_authorization; seven_day_plan=day1_confirm_title_scope;day2_replace_unsupported_metric;day3_capture_non_production_outcomes;day4_select_one_target_vacancy;day5_build_application_packet;day6_prepare_recruiter_screen_bridge;day7_log_baseline_and_review; defer_until=profile_claims_are_supportable_target_vacancy_exists_and_exact_action_authorization_is_granted; first_interview_path=profile_positioning > application_packet > recruiter_bridge > stage_specific_practice; measurement_plan=track_application_packet_drafted,recruiter_response,screen_request,interview_stage_known; leading_indicators=title_confirmed,unsupported_claim_removed,target_vacancy_selected,packet_drafted; outcome_signals=recruiter_reply,screen_request,stage_known,offer_discussion; privacy_boundary=single_candidate_only_no_benchmark_without_consent; authorization_gate=exact_action_and_target_required_before_profile_edit_outreach_cv_upload_or_application; causality_boundary=descriptive_only_no_guaranteed_outcome
@@ -3515,7 +3515,7 @@ Evidence
 - candidate-reported: a named recruiter asked whether Friday at 3pm works for a recruiter screen.
 case_state: ready
 evidence_gaps: [recruiter identity, role or vacancy ID, eligibility, availability, compensation boundaries]
-selected_module: optimize-linkedin-career
+selected_module: optimize-professional-profile
 next_action: confirm Friday at 3pm and send the reply now
 authorization_required: false
 - inferred: Message sent confirming Friday at 3pm and the screen scheduled.
@@ -3545,7 +3545,7 @@ Evidence
 - candidate-reported: Recruiter Maya wrote, "Can you do Friday 3pm?"
 case_state: awaiting_authorization
 evidence_gaps: [role or vacancy ID, eligibility, availability, compensation boundaries]
-selected_module: optimize-linkedin-career
+selected_module: optimize-professional-profile
 next_action: draft a short reply for Friday 3pm and ask the user before sending
 authorization_required: true
 - inferred: Draft only.
@@ -3590,13 +3590,13 @@ Action boundary: This preparation requires no authorization. Sending any follow-
 
         skill_root = SKILLS_ROOT / "prepare-role-interviews"
         interviews = (skill_root / "SKILL.md").read_text(encoding="utf-8")
-        routing = (SKILLS_ROOT / "job-search-coach" / "references" / "routing.md").read_text(
+        routing = (SKILLS_ROOT / "professional-growth-coach" / "references" / "routing.md").read_text(
             encoding="utf-8"
         )
-        networking = (SKILLS_ROOT / "optimize-linkedin-career" / "references" / "networking-and-content.md").read_text(
+        networking = (SKILLS_ROOT / "optimize-professional-profile" / "references" / "networking-and-content.md").read_text(
             encoding="utf-8"
         )
-        client_report = (SKILLS_ROOT / "optimize-linkedin-career" / "references" / "client-report.md").read_text(
+        client_report = (SKILLS_ROOT / "optimize-professional-profile" / "references" / "client-report.md").read_text(
             encoding="utf-8"
         )
         contract = "\n".join((interviews, routing, networking, client_report))
@@ -3615,10 +3615,10 @@ Action boundary: This preparation requires no authorization. Sending any follow-
     def test_reentry_does_not_change_normal_recruiter_or_dossier_routing(self) -> None:
         """The re-entry receipt is private and cannot alter ordinary delivery."""
 
-        routing = (SKILLS_ROOT / "job-search-coach" / "references" / "routing.md").read_text(
+        routing = (SKILLS_ROOT / "professional-growth-coach" / "references" / "routing.md").read_text(
             encoding="utf-8"
         )
-        networking = (SKILLS_ROOT / "optimize-linkedin-career" / "references" / "networking-and-content.md").read_text(
+        networking = (SKILLS_ROOT / "optimize-professional-profile" / "references" / "networking-and-content.md").read_text(
             encoding="utf-8"
         )
         self.assertIn("normal recruiter-reply behavior remains unchanged", routing)
@@ -3866,7 +3866,7 @@ Evidence
 - unknown: no substantive source, candidate history, target, constraints, or evidence exists
 case_state: ready
 evidence_gaps: []
-selected_module: optimize-linkedin-career
+selected_module: optimize-professional-profile
 next_action: safe
 authorization_required: true
 - inferred: {0}
@@ -4003,7 +4003,7 @@ Action boundary: authorization required before action.
         ).strip()
         stale["source_commit"] = stale_commit
         stale["source_tree"] = subprocess.check_output(
-            ["git", "rev-parse", f"{stale_commit}:plugins/job-search-coach"],
+            ["git", "rev-parse", f"{stale_commit}:plugins/professional-growth-coach"],
             cwd=REPO_ROOT,
             text=True,
         ).strip()
@@ -4177,10 +4177,10 @@ Action boundary: authorization required before action.
         )
 
     def test_followthrough_checkpoint_routing_words_preserve_manual_boundaries(self) -> None:
-        routing = (SKILLS_ROOT / "job-search-coach" / "references" / "routing.md").read_text(
+        routing = (SKILLS_ROOT / "professional-growth-coach" / "references" / "routing.md").read_text(
             encoding="utf-8"
         ).casefold()
-        track = (SKILLS_ROOT / "track-job-search-outcomes" / "SKILL.md").read_text(
+        track = (SKILLS_ROOT / "track-career-outcomes" / "SKILL.md").read_text(
             encoding="utf-8"
         ).casefold()
         prepare = (SKILLS_ROOT / "prepare-role-interviews" / "SKILL.md").read_text(

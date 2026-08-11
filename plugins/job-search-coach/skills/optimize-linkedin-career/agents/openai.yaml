@@ -1,4 +1,0 @@
-interface:
-  display_name: "LinkedIn Career Optimizer"
-  short_description: "Audit and safely improve a LinkedIn profile"
-  default_prompt: "Use $optimize-linkedin-career to analyze my available LinkedIn evidence and deliver a brief conclusion plus a complete private HTML dossier; no invented data and no external actions."
