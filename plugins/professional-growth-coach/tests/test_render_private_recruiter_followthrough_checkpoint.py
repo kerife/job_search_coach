@@ -158,6 +158,17 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
             r"(?s)@media \(forced-colors: active\).*?\.checkpoint-boundary\s*\{[^}]*border:\s*1px solid CanvasText;[^}]*border-left-width:\s*\.25rem;",
         )
 
+    def test_forced_colors_uses_explicit_system_color_surfaces(self):
+        rendered = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
+        self.assertRegex(
+            rendered,
+            r"(?s)@media \(forced-colors: active\).*?\.checkpoint-card\s*\{[^}]*background:\s*Canvas;[^}]*color:\s*CanvasText;",
+        )
+        self.assertRegex(
+            rendered,
+            r"(?s)@media \(forced-colors: active\).*?\.checkpoint-boundary\s*\{[^}]*color:\s*CanvasText;",
+        )
+
     def test_atomic_private_write_mode_and_no_overwrite(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "checkpoint.html"
