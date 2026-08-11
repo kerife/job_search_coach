@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Reject scheme-less LinkedIn `/in/` profile URLs in case ingestion without changing the public validator interface or diagnostic.
+**Goal:** Reject LinkedIn `/in/` and legacy `/pub/` profile URLs in case ingestion without changing the public validator interface or diagnostic.
 
 **Architecture:** Extend the existing `_LINKEDIN_PROFILE_VALUE` regex in
 `validate_case.py`; keep recursive privacy scanning and error construction
@@ -15,7 +15,7 @@ plugin manifest/marketplace.
 ## Global Constraints
 
 - Preserve the existing error text and do not echo sensitive values.
-- Reject only LinkedIn `/in/` profile URLs; `/pub/` remains out of scope.
+- Reject LinkedIn `/in/` and legacy `/pub/` profile URLs while preserving host boundaries.
 - Do not add dependencies, network calls, schemas, renderers, or UI changes.
 - Use TDD: observe RED before production code, then GREEN and full gates.
 
@@ -39,6 +39,9 @@ Add a test that mutates `claims[0].text` for each of these values:
     "https://www.linkedin.com/in/synthetic-sentinel/",
     "www.linkedin.com/in/synthetic-sentinel/",
     "linkedin.com/in/synthetic-sentinel/",
+    "https://www.linkedin.com/pub/synthetic-sentinel/42/7b/123",
+    "www.linkedin.com/pub/synthetic-sentinel/42/7b/123",
+    "linkedin.com/pub/synthetic-sentinel/42/7b/123",
 )
 ```
 
@@ -54,13 +57,13 @@ PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest \
   tests.test_validate_case.ValidateCaseTests.test_rejects_linkedin_profile_url_without_scheme -q
 ```
 
-Expected: the new bare and `www` cases fail with return code `0` before the
-production regex changes; the scheme case remains green.
+Expected: the new `/pub/` cases fail with return code `0` before the production
+regex changes; the existing `/in/` cases remain green.
 
 ### Task 2: Implement the bounded regex change
 
 **Files:**
-- Modify: `plugins/job-search-coach/scripts/validate_case.py:99-101`.
+- Modify: `plugins/professional-growth-coach/scripts/validate_case.py:99-101`.
 
 **Interfaces:**
 - Consumes: the existing recursive `_scan_value` privacy rule list.
@@ -72,10 +75,11 @@ production regex changes; the scheme case remains green.
 Use a case-insensitive pattern equivalent to:
 
 ```python
-r"(?<![a-z0-9.-])(?:https?://)?(?:[a-z0-9-]+\.)*linkedin\.com/in/"
+r"(?<![a-z0-9.-])(?:https?://)?(?:[a-z0-9-]+\.)*linkedin\.com/(?:in|pub)/"
 ```
 
-Keep the matcher scoped to the host and `/in/` path; do not add `/pub/`.
+Keep the matcher scoped to the host and profile paths; do not broaden it to
+arbitrary LinkedIn URLs.
 
 - [ ] **Step 2: Run the focused test and verify GREEN**
 

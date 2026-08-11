@@ -240,6 +240,9 @@ class ValidateCaseTests(unittest.TestCase):
             "https://www.linkedin.com/in/synthetic-sentinel/",
             "www.linkedin.com/in/synthetic-sentinel/",
             "linkedin.com/in/synthetic-sentinel/",
+            "https://www.linkedin.com/pub/synthetic-sentinel/42/7b/123",
+            "www.linkedin.com/pub/synthetic-sentinel/42/7b/123",
+            "linkedin.com/pub/synthetic-sentinel/42/7b/123",
         )
         for value in values:
             with self.subTest(value=value):
