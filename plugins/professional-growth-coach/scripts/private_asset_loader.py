@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import os
 import stat
 from pathlib import Path
 from typing import Iterable
@@ -62,10 +63,64 @@ def read_private_asset(
 
     del label
     path = _regular_package_path(plugin_root, asset_path)
+    root = Path(plugin_root)
     try:
-        return path.read_text(encoding="utf-8")
+        relative = path.relative_to(root)
+    except ValueError as exc:
+        raise PrivateAssetError("renderer asset input must be a regular file") from exc
+    if not relative.parts:
+        raise PrivateAssetError("renderer asset input must be a regular file")
+
+    no_follow = getattr(os, "O_NOFOLLOW", 0)
+    directory_flag = getattr(os, "O_DIRECTORY", 0)
+    if not no_follow or not directory_flag:
+        raise PrivateAssetError("renderer asset input must be a regular file")
+    current_fd: int | None = None
+    leaf_fd: int | None = None
+    try:
+        # Open each directory component and retain its descriptor.  This keeps
+        # the final read anchored to the package even if a pathname is swapped
+        # after _regular_package_path() has returned.
+        current_fd = os.open(
+            os.fspath(root),
+            os.O_RDONLY | directory_flag | no_follow,
+        )
+        for component in relative.parts[:-1]:
+            next_fd = os.open(
+                component,
+                os.O_RDONLY | directory_flag | no_follow,
+                dir_fd=current_fd,
+            )
+            old_fd = current_fd
+            current_fd = next_fd
+            os.close(old_fd)
+
+        leaf_fd = os.open(
+            relative.parts[-1],
+            os.O_RDONLY | no_follow,
+            dir_fd=current_fd,
+        )
+        status = os.fstat(leaf_fd)
+        if not stat.S_ISREG(status.st_mode) or status.st_nlink != 1:
+            raise PrivateAssetError("renderer asset input must be a regular file")
+
+        stream = os.fdopen(leaf_fd, "rb")
+        leaf_fd = None
+        with stream:
+            return stream.read().decode("utf-8")
     except (OSError, UnicodeError) as exc:
         raise PrivateAssetError("renderer asset input must be a regular file") from exc
+    finally:
+        if leaf_fd is not None:
+            try:
+                os.close(leaf_fd)
+            except OSError:
+                pass
+        if current_fd is not None:
+            try:
+                os.close(current_fd)
+            except OSError:
+                pass
 
 
 def validate_asset_paths(
