@@ -8,8 +8,8 @@
     "snapshot": {
       "kind": "immutable_checkout_snapshot",
       "plugin_version_sha256": "178af806c6d9e81a5ecdc5adab98dac0e960814329ee812c6effa5342f568329",
-      "source_commit": "b04c2d09fb220683bb3de8634b765c6fa16d260e",
-      "plugin_tree": "dec0a2e0da481803cc16515a066e6f5ebaa6f901"
+      "source_commit": "fa1b9e6dcabd90616840e460d270ede681151813",
+      "plugin_tree": "c1345ad0913901674905b235719c03e401873c58"
     },
     "hidden_acceptance": {
       "red_minimum_reproductions": 3,
