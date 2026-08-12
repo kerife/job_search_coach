@@ -585,6 +585,7 @@ details summary {
   button { background: ButtonFace; color: ButtonText; border-color: ButtonText; }
   button:hover { background: Highlight; color: HighlightText; }
   button:focus-visible { outline-color: Highlight; }
+  main:focus-visible { outline-color: Highlight; }
   .screen-preparation-question {
     border: 1px solid CanvasText;
     border-left: 4px solid Highlight;
@@ -883,6 +884,7 @@ html { color-scheme: light; background: var(--paper); }
 }
 
 @media (forced-colors: active) {
+  .recruiter-practice-document main:focus-visible { outline-color: Highlight; }
   .recruiter-practice-document .practice-handoff { border: 1px dashed CanvasText; background: Canvas; color: CanvasText; }
   .recruiter-practice-document .practice-handoff h2 { color: CanvasText; }
   .recruiter-practice-document .practice-next-action { background: Canvas; color: CanvasText; border-color: CanvasText; }
@@ -1104,6 +1106,7 @@ html { color-scheme: light; background: var(--paper); }
 }
 
 @media (forced-colors: active) {
+  .private-recruiter-triage-document main:focus-visible { outline-color: Highlight; }
   .private-recruiter-triage-document .triage-handoff-sequence > li,
   .private-recruiter-triage-document .triage-handoff-step-label,
   .private-recruiter-triage-document .triage-handoff-readiness,
@@ -1177,7 +1180,7 @@ dd { margin: .15rem 0 0; font-weight: 600; }
 @media print { html { background: #fff; } .checkpoint-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .checkpoint-footer { break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
 @media (prefers-contrast: more) { .checkpoint-card { border: 2px solid var(--ink); box-shadow: none; } .checkpoint-facts div { border-top: 2px solid var(--ink); } .checkpoint-boundary { border-left-width: .5rem; color: var(--ink); } }
-@media (forced-colors: active) { .checkpoint-card { background: Canvas; color: CanvasText; border: 1px solid CanvasText; } .checkpoint-boundary { color: CanvasText; border: 1px solid CanvasText; border-left-width: .25rem; } .checkpoint-kicker { color: LinkText; } }
+@media (forced-colors: active) { .checkpoint-card { background: Canvas; color: CanvasText; border: 1px solid CanvasText; } .checkpoint-boundary { color: CanvasText; border: 1px solid CanvasText; border-left-width: .25rem; } .checkpoint-kicker { color: LinkText; } main:focus-visible { outline-color: Highlight; } }
 ```
 
 ### `plugins/professional-growth-coach/assets/private-recruiter-conversion-outcome-v1.css`
@@ -1211,5 +1214,5 @@ dd { margin: .15rem 0 0; font-weight: 600; }
 @media print { html { background: #fff; } .outcome-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .outcome-footer { break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
 @media (prefers-contrast: more) { .outcome-card { border: 2px solid var(--ink); box-shadow: none; } .outcome-facts div { border-top: 2px solid var(--ink); } .outcome-boundary { border-left-width: .5rem; color: var(--ink); } }
-@media (forced-colors: active) { .outcome-card { background: Canvas; color: CanvasText; border: 1px solid CanvasText; } .outcome-boundary { color: CanvasText; border: 1px solid CanvasText; border-left-width: .25rem; } .outcome-kicker { color: LinkText; } }
+@media (forced-colors: active) { .outcome-card { background: Canvas; color: CanvasText; border: 1px solid CanvasText; } .outcome-boundary { color: CanvasText; border: 1px solid CanvasText; border-left-width: .25rem; } .outcome-kicker { color: LinkText; } main:focus-visible { outline-color: Highlight; } }
 ```

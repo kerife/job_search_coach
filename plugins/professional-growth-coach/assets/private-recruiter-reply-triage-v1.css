@@ -131,6 +131,7 @@
 }
 
 @media (forced-colors: active) {
+  .private-recruiter-triage-document main:focus-visible { outline-color: Highlight; }
   .private-recruiter-triage-document .triage-handoff-sequence > li,
   .private-recruiter-triage-document .triage-handoff-step-label,
   .private-recruiter-triage-document .triage-handoff-readiness,
