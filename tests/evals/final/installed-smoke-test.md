@@ -16,11 +16,11 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-11T20:46:28-06:00`
+release_timestamp: `2026-08-12T00:18:48-06:00`
 
-source_commit: `f26a642e7ab0c9913bba0a1672ba9021af172aba`
+source_commit: `e1578432f84960a2fd81593025fd918b3111b97c`
 
-source_tree: `8aefbafdceb037770fe8c7cf2f4c6e1fcb51fad2`
+source_tree: `1fc1d0ebd80344ec2e659b0c9aa943af61226370`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
@@ -28,11 +28,11 @@ installed_cache_version: `release_version_prefix + release_timestamp`
 
 installed_enabled: `true`
 
-source_file_count: `107`
+source_file_count: `109`
 
-installed_file_count: `107`
+installed_file_count: `109`
 
-normalized_source_cache_sha256: `eece4b4a7de72c626381fdaf53dea824569c8ae34dc8f82b42454f101aedafdd`
+normalized_source_cache_sha256: `67027dcaac053659fbb4c707298e0a6a7e349ce8056e9a9753920c7413e0b19b`
 
 active_config: `canonical_only`
 
@@ -41,6 +41,8 @@ source_cache_equivalence: `diff_qr_silent`
 installed_renderer_smokes: `5/5`
 
 installed_diagnostic_redaction_smoke: `6/6`
+
+installed_descriptor_boundary_smoke: `6/6`
 
 fresh_agent_smoke: `green`
 
