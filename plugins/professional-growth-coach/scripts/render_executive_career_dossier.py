@@ -591,10 +591,10 @@ def _render_header(locale: str) -> str:
       <p class="eyebrow">{labels['eyebrow']}</p>
       <h1 class="report-title">{labels['report_title']}</h1>
     </div>
-    <nav class="utility-actions no-print" aria-label="{labels['private']}">
+    <div class="utility-actions no-print" role="group" aria-label="{labels['private']}">
       <span class="privacy-chip">{labels['private']}</span>
       <button type="button" data-print>{labels['print']}</button>
-    </nav>
+    </div>
   </header>"""
 
 

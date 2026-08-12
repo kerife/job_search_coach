@@ -1882,9 +1882,10 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
             '<a class="skip-link" href="#main-content">Saltar al contenido principal</a>',
             rendered,
         )
-        for landmark in ("<header", "<nav", '<main id="main-content"', "<aside", "<footer"):
+        for landmark in ("<header", '<div class="utility-actions no-print" role="group"', '<main id="main-content"', "<aside", "<footer"):
             with self.subTest(landmark=landmark):
                 self.assertIn(landmark, rendered)
+        self.assertNotIn("<nav", rendered)
         self.assertEqual(rendered.count('<main id="main-content" class="shell" tabindex="-1">'), 1)
         self.assertIn(
             '<meta name="robots" content="noindex,nofollow,noarchive">',
