@@ -82,6 +82,11 @@ summary:focus-visible {
 
 .skip-link:focus { transform: none; }
 
+main:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 4px;
+}
+
 .shell {
   width: min(1160px, calc(100% - 2rem));
   margin-inline: auto;
@@ -1150,6 +1155,7 @@ html { font: 100%/1.5 system-ui, sans-serif; background: #f4f6fa; color: var(--i
 body { margin: 0; }
 .skip-link { position: absolute; left: -10000px; top: auto; }
 .skip-link:focus { left: 1rem; top: 1rem; padding: .5rem; background: var(--surface); color: var(--ink); }
+main:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
 .checkpoint-shell { max-width: 48rem; margin: 0 auto; padding: clamp(1rem, 4vw, 3rem); }
 .checkpoint-card { background: var(--surface); border: 1px solid var(--line); border-radius: 1rem; padding: clamp(1.25rem, 4vw, 2.5rem); box-shadow: 0 .5rem 2rem rgb(23 32 51 / .08); }
 .checkpoint-kicker { color: var(--accent); font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
@@ -1183,6 +1189,7 @@ html { font: 100%/1.5 system-ui, sans-serif; background: #f4f6fa; color: var(--i
 body { margin: 0; }
 .skip-link { position: absolute; left: -10000px; top: auto; }
 .skip-link:focus { left: 1rem; top: 1rem; padding: .5rem; background: var(--surface); color: var(--ink); }
+main:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
 .outcome-shell { max-width: 48rem; margin: 0 auto; padding: clamp(1rem, 4vw, 3rem); }
 .outcome-card { background: var(--surface); border: 1px solid var(--line); border-radius: 1rem; padding: clamp(1.25rem, 4vw, 2.5rem); box-shadow: 0 .5rem 2rem rgb(23 32 51 / .08); }
 .outcome-kicker { color: var(--accent); font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }

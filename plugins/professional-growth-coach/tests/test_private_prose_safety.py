@@ -8,6 +8,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from private_prose_safety import (
     contains_unicode_controls,
+    format_bounded_diagnostics,
     is_safe_prose_text,
     safe_diagnostic_field_name,
 )
@@ -54,6 +55,21 @@ class PrivateProseSafetyTests(unittest.TestCase):
         for value, expected in cases.items():
             with self.subTest(value=value):
                 self.assertEqual(expected, safe_diagnostic_field_name(value))
+
+    def test_format_bounded_diagnostics_preserves_short_messages(self):
+        self.assertEqual(
+            "first diagnostic\nsecond diagnostic\n",
+            format_bounded_diagnostics(["first diagnostic", "second diagnostic"]),
+        )
+        message = "x" * 20
+        marker = "validation diagnostics truncated; additional errors omitted\n"
+        budget = len(marker.encode("utf-8")) + len(message)
+        self.assertEqual(message + "\n", format_bounded_diagnostics([message], max_bytes=budget))
+
+    def test_format_bounded_diagnostics_caps_utf8_output_with_marker(self):
+        rendered = format_bounded_diagnostics(["campo-ñ-" + ("x" * 100) for _ in range(400)])
+        self.assertLessEqual(len(rendered.encode("utf-8")), 16_384)
+        self.assertTrue(rendered.endswith("validation diagnostics truncated; additional errors omitted\n"))
 
 
 if __name__ == "__main__":

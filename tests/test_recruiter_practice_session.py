@@ -800,6 +800,21 @@ class RecruiterPracticeSessionContractTests(unittest.TestCase):
         help_result = subprocess.run([sys.executable, "-B", str(VALIDATOR_PATH), "--help"], capture_output=True, text=True)
         self.assertEqual(help_result.returncode, 0)
 
+    def test_cli_caps_many_unknown_field_diagnostics_and_preserves_short_output(self) -> None:
+        many_unknown = copy.deepcopy(self.awaiting_session)
+        many_unknown.update({f"unknown_field_{index:04d}_long": True for index in range(1200)})
+        result = self.run_cli(many_unknown)
+        self.assertEqual(result.returncode, 2)
+        self.assertLessEqual(len(result.stderr.encode("utf-8")), 16_384)
+        self.assertIn("validation diagnostics truncated; additional errors omitted\n", result.stderr)
+        self.assertNotIn("unknown_field_1199_long", result.stderr)
+
+        short = copy.deepcopy(self.awaiting_session)
+        short["extra"] = True
+        short_result = self.run_cli(short)
+        self.assertEqual(short_result.returncode, 2)
+        self.assertEqual(short_result.stderr, "session has unsupported fields: extra\n")
+
 
 if __name__ == "__main__":
     unittest.main()

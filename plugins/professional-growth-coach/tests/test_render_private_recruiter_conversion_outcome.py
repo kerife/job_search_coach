@@ -116,6 +116,12 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
             anchor = rendered.split('<a class="skip-link"', 1)[1].split("</a>", 1)[0]
             self.assertNotIn(kicker, anchor)
 
+    def test_skip_target_has_visible_keyboard_focus_contract(self):
+        rendered = render_outcome_html(
+            load_outcome(FIXTURES / "contact-received-en.json"), today=dt.date(2026, 8, 9)
+        )
+        self.assertIn("main:focus-visible", rendered)
+
     def test_prefers_contrast_more_reinforces_card_facts_and_boundary(self):
         rendered = render_outcome_html(
             load_outcome(FIXTURES / "contact-received-en.json"), today=dt.date(2026, 8, 9)

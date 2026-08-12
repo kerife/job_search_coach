@@ -45,6 +45,38 @@ class OutcomeContractTests(unittest.TestCase):
         self.assertEqual(unknown.returncode, 3)
         help_result = subprocess.run([sys.executable, '-B', str(script), '--help'], capture_output=True, text=True)
         self.assertEqual(help_result.returncode, 0)
+
+    def test_cli_caps_many_unknown_field_diagnostics(self):
+        item = load_outcome(FIXTURES / 'reply-received-en.json')
+        item.update({f'unknown_field_{index:04d}_long': True for index in range(900)})
+        script = ROOT / 'scripts' / 'validate_private_recruiter_conversion_outcome.py'
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'unknown-fields.json'
+            path.write_text(json.dumps(item), encoding='utf-8')
+            result = subprocess.run(
+                [sys.executable, '-B', str(script), str(path), '--as-of', '2026-08-09'],
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 2)
+        self.assertLessEqual(len(result.stderr.encode('utf-8')), 16_384)
+        self.assertIn('validation diagnostics truncated; additional errors omitted\n', result.stderr)
+        self.assertNotIn('unknown_field_0899_long', result.stderr)
+
+    def test_cli_preserves_short_diagnostic_output(self):
+        item = load_outcome(FIXTURES / 'reply-received-en.json')
+        item['extra'] = True
+        script = ROOT / 'scripts' / 'validate_private_recruiter_conversion_outcome.py'
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'extra.json'
+            path.write_text(json.dumps(item), encoding='utf-8')
+            result = subprocess.run(
+                [sys.executable, '-B', str(script), str(path), '--as-of', '2026-08-09'],
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(result.stderr, 'outcome has unsupported fields: extra\n')
     def test_schema_dates_declare_format_date(self):
         schema = json.loads(SCHEMA.read_text(encoding='utf-8'))
         self.assertEqual('date', schema['properties']['event_date']['format'])

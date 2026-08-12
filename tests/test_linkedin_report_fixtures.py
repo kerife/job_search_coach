@@ -346,6 +346,34 @@ class LinkedInReportFixtureTests(unittest.TestCase):
         bundle["profile_name"] = "Synthetic Person"
         self.assertIn("fixture has unsupported field: profile_name", validator.validate_fixture_bundle(bundle))
 
+    def test_unsupported_field_diagnostics_redact_sensitive_names_and_escape_controls(self) -> None:
+        cases = {
+            "person@example.invalid": "<redacted-field>",
+            "/Users/synthetic/private-case.json": "<redacted-field>",
+            "authorization_token": "<redacted-field>",
+            "www.example.invalid/profile": "<redacted-field>",
+            "linkedin.com/in/synthetic": "<redacted-field>",
+            "line\nbreak": r"line\u000abreak",
+        }
+        for field, expected in cases.items():
+            with self.subTest(field=repr(field)):
+                bundle = self.fixture("scenario-a.json")
+                bundle[field] = "SENTINEL"
+                errors = validator.validate_fixture_bundle(bundle)
+                self.assertIn(f"fixture has unsupported field: {expected}", errors)
+                self.assertNotIn(field, "\n".join(errors))
+
+    def test_source_catalog_unsupported_field_diagnostics_redact_sensitive_names(self) -> None:
+        bundle = self.fixture("scenario-a.json")
+        field = "/Users/synthetic/private-source.json"
+        bundle["source_catalog"][0][field] = "SENTINEL"
+        errors = validator.validate_fixture_bundle(bundle)
+        self.assertIn(
+            f"source_catalog[0] has unsupported field: <redacted-field>",
+            errors,
+        )
+        self.assertNotIn(field, "\n".join(errors))
+
     def test_fixture_rejects_profile_derived_private_field(self) -> None:
         errors = self.errors_after(("structural_state_fixture",), "profile_url", "https://www.linkedin.com/in/synthetic-sentinel/")
         self.assertIn("structural_state_fixture has unsupported field: profile_url", errors)

@@ -12,7 +12,7 @@ import unicodedata
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 
-from private_prose_safety import is_safe_prose_text, safe_diagnostic_field_name
+from private_prose_safety import format_bounded_diagnostics, is_safe_prose_text, safe_diagnostic_field_name
 try:
     from private_input_loader import PrivateInputError, read_bounded_bytes
 except ModuleNotFoundError:
@@ -456,8 +456,7 @@ def _cli(argv: list[str] | None = None) -> int:
         return 3
     errors = validate_triage(triage)
     if errors:
-        for error in errors:
-            print(error, file=sys.stderr)
+        sys.stderr.write(format_bounded_diagnostics(errors))
         return 2
     print("valid private recruiter reply triage")
     return 0

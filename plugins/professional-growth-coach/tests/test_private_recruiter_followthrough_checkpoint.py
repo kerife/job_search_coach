@@ -182,6 +182,54 @@ class FollowthroughCheckpointContractTests(unittest.TestCase):
         help_result = subprocess.run([sys.executable, "-B", str(SCRIPT), "--help"], capture_output=True, text=True)
         self.assertEqual(help_result.returncode, 0)
 
+    def test_cli_caps_many_unknown_field_diagnostics(self):
+        item = copy.deepcopy(self.valid)
+        item.update({f"unknown_field_{index:04d}_long": True for index in range(1200)})
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "unknown-fields.json"
+            path.write_text(json.dumps(item), encoding="utf-8")
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-B",
+                    str(SCRIPT),
+                    str(path),
+                    "--receipt",
+                    str(FIXTURES / "screen-requested-en.json"),
+                    "--as-of",
+                    "2026-08-08",
+                ],
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 2)
+        self.assertLessEqual(len(result.stderr.encode("utf-8")), 16_384)
+        self.assertIn("validation diagnostics truncated; additional errors omitted\n", result.stderr)
+        self.assertNotIn("unknown_field_1199_long", result.stderr)
+
+    def test_cli_preserves_short_diagnostic_output(self):
+        item = copy.deepcopy(self.valid)
+        item["extra"] = True
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "extra.json"
+            path.write_text(json.dumps(item), encoding="utf-8")
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-B",
+                    str(SCRIPT),
+                    str(path),
+                    "--receipt",
+                    str(FIXTURES / "screen-requested-en.json"),
+                    "--as-of",
+                    "2026-08-08",
+                ],
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(result.stderr, "checkpoint has unsupported fields: extra\n")
+
     def test_locale_enum_rejects_non_string_json_values_without_crashing(self):
         for value in ({}, []):
             with self.subTest(value=value):

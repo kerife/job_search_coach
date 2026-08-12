@@ -1942,6 +1942,7 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
         )
         self.assertIn("button:focus-visible", rendered)
         self.assertIn("summary:focus-visible", rendered)
+        self.assertIn("main:focus-visible", rendered)
         reduced_motion = re.search(
             r"@media \(prefers-reduced-motion: reduce\)\s*\{(.+?)\n\}",
             rendered,
@@ -2443,6 +2444,26 @@ class ExecutiveCareerDossierCliTests(unittest.TestCase):
             capture_output=True,
             check=False,
         )
+
+    def run_validator_cli(self, dossier: object) -> subprocess.CompletedProcess[str]:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "dossier.json"
+            path.write_text(json.dumps(dossier), encoding="utf-8")
+            return subprocess.run(
+                [sys.executable, "-B", str(VALIDATOR_PATH), str(path)],
+                cwd=REPO_ROOT,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+
+    def test_validator_cli_preserves_short_diagnostic_output(self) -> None:
+        baseline = load_fixture("scenario-c-en.json")
+        short = copy.deepcopy(baseline)
+        short["extra"] = True
+        short_result = self.run_validator_cli(short)
+        self.assertEqual(short_result.returncode, 2)
+        self.assertEqual(short_result.stderr, "dossier has unsupported fields\n")
 
     def test_success_emits_one_json_receipt_and_private_artifact(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

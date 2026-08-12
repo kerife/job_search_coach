@@ -51,6 +51,11 @@ summary:focus-visible {
 
 .skip-link:focus { transform: none; }
 
+main:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 4px;
+}
+
 .shell {
   width: min(1160px, calc(100% - 2rem));
   margin-inline: auto;

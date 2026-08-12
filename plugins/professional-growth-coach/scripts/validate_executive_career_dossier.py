@@ -14,6 +14,17 @@ from datetime import date
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
 try:
+    from private_prose_safety import format_bounded_diagnostics
+except ModuleNotFoundError:
+    _prose_spec = importlib.util.spec_from_file_location(
+        "_pgc_private_prose_safety", Path(__file__).with_name("private_prose_safety.py")
+    )
+    if _prose_spec is None or _prose_spec.loader is None:
+        raise
+    _prose_module = importlib.util.module_from_spec(_prose_spec)
+    _prose_spec.loader.exec_module(_prose_module)
+    format_bounded_diagnostics = _prose_module.format_bounded_diagnostics
+try:
     from private_input_loader import PrivateInputError, read_bounded_bytes
 except ModuleNotFoundError:
     _loader_spec = importlib.util.spec_from_file_location("_pgc_private_input_loader", Path(__file__).with_name("private_input_loader.py"))
@@ -2331,7 +2342,7 @@ def _cli(argv: list[str] | None = None) -> int:
         return 2
     errors = validate_dossier(dossier)
     if errors:
-        print("\n".join(errors), file=sys.stderr)
+        sys.stderr.write(format_bounded_diagnostics(errors))
         return 2
     return 0
 

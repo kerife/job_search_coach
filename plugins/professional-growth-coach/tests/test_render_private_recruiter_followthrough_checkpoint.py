@@ -155,6 +155,7 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
         second = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
         self.assertEqual(first, second)
         self.assertIn('<main id="main-content" class="checkpoint-shell" tabindex="-1">', first)
+        self.assertIn("main:focus-visible", first)
         for hook in ("@media print", "prefers-reduced-motion", "forced-colors", "@media (min-width"):
             self.assertIn(hook, first)
 

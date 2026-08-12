@@ -52,6 +52,46 @@ class PrivateRecruiterReplyTriageIdentityTests(unittest.TestCase):
         self.assertEqual(result.stderr, "triage input is not valid JSON\n")
         self.assertNotIn("Traceback", result.stderr)
 
+    def test_cli_caps_many_unknown_field_diagnostics(self):
+        triage = json.loads(FIXTURE.read_text(encoding="utf-8"))
+        triage.update({f"unknown_field_{index:04d}_long": True for index in range(1200)})
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "unknown-fields.json"
+            path.write_text(json.dumps(triage), encoding="utf-8")
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-B",
+                    str(SCRIPTS / "validate_private_recruiter_reply_triage.py"),
+                    str(path),
+                ],
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 2)
+        self.assertLessEqual(len(result.stderr.encode("utf-8")), 16_384)
+        self.assertIn("validation diagnostics truncated; additional errors omitted\n", result.stderr)
+        self.assertNotIn("unknown_field_1199_long", result.stderr)
+
+    def test_cli_preserves_short_diagnostic_output(self):
+        triage = json.loads(FIXTURE.read_text(encoding="utf-8"))
+        triage["extra"] = True
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "extra.json"
+            path.write_text(json.dumps(triage), encoding="utf-8")
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-B",
+                    str(SCRIPTS / "validate_private_recruiter_reply_triage.py"),
+                    str(path),
+                ],
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(result.stderr, "session has unsupported fields: extra\n")
+
     def test_unknown_fact_reference_rejects_without_echoing_private_value(self):
         triage = json.loads(FIXTURE.read_text(encoding="utf-8"))
         sentinel = "person@example.com"

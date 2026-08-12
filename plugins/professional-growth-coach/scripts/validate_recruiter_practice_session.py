@@ -13,7 +13,19 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
-from private_prose_safety import is_safe_prose_text, safe_diagnostic_field_name
+try:
+    from private_prose_safety import format_bounded_diagnostics, is_safe_prose_text, safe_diagnostic_field_name
+except ModuleNotFoundError:
+    _prose_spec = importlib.util.spec_from_file_location(
+        "_pgc_private_prose_safety", Path(__file__).with_name("private_prose_safety.py")
+    )
+    if _prose_spec is None or _prose_spec.loader is None:
+        raise
+    _prose_module = importlib.util.module_from_spec(_prose_spec)
+    _prose_spec.loader.exec_module(_prose_module)
+    format_bounded_diagnostics = _prose_module.format_bounded_diagnostics
+    is_safe_prose_text = _prose_module.is_safe_prose_text
+    safe_diagnostic_field_name = _prose_module.safe_diagnostic_field_name
 try:
     from private_input_loader import PrivateInputError, read_bounded_bytes
 except ModuleNotFoundError:
@@ -537,8 +549,7 @@ def _cli(argv: list[str] | None = None) -> int:
         return 3
     errors = validate_session(session)
     if errors:
-        for error in errors:
-            print(error, file=sys.stderr)
+        sys.stderr.write(format_bounded_diagnostics(errors))
         return 2
     print("valid recruiter practice session")
     return 0

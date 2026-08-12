@@ -147,6 +147,14 @@ _SENSITIVE_COMPACT_KEY_PARTS = (
     "accesstoken", "apikey", "authorization", "bearer", "clientsecret", "cookie",
     "credential", "password", "passwd", "privatekey", "secret", "session", "token",
 )
+_SUSPICIOUS_DIAGNOSTIC_FIELD = re.compile(
+    r"@|://|~[\\/]|[.]{1,2}[\\/]|"
+    r"(?:^|[\\/])(?:users|private|tmp|home)[\\/]|"
+    r"(?:www\.|linkedin\.com/)|"
+    r"(?<![A-Za-z])\+?\d[\d .()_-]{6,}\d|"
+    r"(?:token|secret|password|credential|api[_-]?key|access[_-]?key|auth|cookie|private)",
+    re.IGNORECASE,
+)
 FORBIDDEN_PLACEHOLDERS = frozenset({"x", "criteria", "generic", "tbd"})
 SAFETY_TOKEN_CLASSES = {
     "visual": frozenset({"banner", "foto", "imagen", "image", "photo", "visual"}),
@@ -2655,9 +2663,30 @@ def _validate_fields(
     missing_phrase: str = "missing required field",
 ) -> None:
     for field in sorted(set(value) - fields):
-        errors.append(f"{label} has unsupported field: {field}")
+        errors.append(
+            f"{label} has unsupported field: {_safe_diagnostic_field_name(field)}"
+        )
     for field in sorted(fields - set(value)):
         errors.append(f"{label} {missing_phrase}: {field}")
+
+
+def _safe_diagnostic_field_name(value: object) -> str:
+    """Redact sensitive field names and keep control characters single-line."""
+    if not isinstance(value, str):
+        return _escape_diagnostic_controls(str(value))
+    if _SUSPICIOUS_DIAGNOSTIC_FIELD.search(value):
+        return "<redacted-field>"
+    return _escape_diagnostic_controls(value)
+
+
+def _escape_diagnostic_controls(value: str) -> str:
+    """Render control, format, surrogate, and line-separator characters literally."""
+    return "".join(
+        f"\\u{ord(character):04x}"
+        if unicodedata.category(character) in {"Cc", "Cf", "Cs", "Zl", "Zp"}
+        else character
+        for character in value
+    )
 
 
 def _closed_object(
@@ -3293,7 +3322,9 @@ def _validate_sources(
         unsupported_fields = set(raw) - SOURCE_FIELDS
         missing_fields = SOURCE_REQUIRED_FIELDS - set(raw)
         for field in sorted(unsupported_fields):
-            errors.append(f"{label} has unsupported field: {field}")
+            errors.append(
+                f"{label} has unsupported field: {_safe_diagnostic_field_name(field)}"
+            )
         for field in sorted(missing_fields):
             errors.append(f"{label} missing required field: {field}")
         if unsupported_fields or missing_fields:
