@@ -84,22 +84,21 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
 
     def test_renders_each_locale_and_state_as_a_self_contained_decision_card(self) -> None:
         expected = {
-            "clarify-es.json": ("Aclarar primero", "Qué sabemos", "Falta confirmar"),
-            "clarify-en.json": ("Clarify first", "What we know", "Confirm next"),
-            "ready-es.json": ("Lista para preparación privada", "Traspaso local", "Falta confirmar"),
-            "ready-en.json": ("Ready for private preparation", "Local handoff", "Confirm next"),
-            "stop-es.json": ("Detener este proceso de reclutamiento", "Qué sabemos", "No afirmar"),
-            "stop-en.json": ("Stop this recruiter process", "What we know", "Do not assert"),
+            "clarify-es.json": ("Aclarar primero", "Qué sabemos"),
+            "clarify-en.json": ("Clarify first", "What we know"),
+            "ready-es.json": ("Lista para preparación privada", "Traspaso local"),
+            "ready-en.json": ("Ready for private preparation", "Local handoff"),
+            "stop-es.json": ("Detener este proceso de reclutamiento", "Qué sabemos"),
+            "stop-en.json": ("Stop this recruiter process", "What we know"),
         }
         for name, triage in self.fixtures.items():
             with self.subTest(fixture=name):
                 document = self.renderer.render_triage_html(triage)
-                state_label, known_label, third_label = expected[name]
+                state_label, known_label = expected[name]
                 self.assertIn(f'lang="{triage["locale"]}"', document)
                 self.assertEqual(document.count('<main id="main-content" class="triage-shell" tabindex="-1">'), 1)
                 self.assertIn(state_label, document)
                 self.assertIn(known_label, document)
-                self.assertIn(third_label, document)
                 self.assertIn("No external action was taken." if triage["locale"] == "en" else "No se realizó ninguna acción externa.", document)
                 self.assertIn(
                     "Nothing is saved on this device."
@@ -113,6 +112,25 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
                 self.assertNotIn("aria-live", document[state_start:state_end])
                 self.assertNotIn("<link ", document)
                 self.assertNotIn("<script", document)
+
+    def test_question_surface_matches_decision_state_without_duplicate_prompts(self) -> None:
+        for name, triage in self.fixtures.items():
+            with self.subTest(fixture=name):
+                document = self.renderer.render_triage_html(triage)
+                question_text = triage["question"]["text"]
+                section_count = document.count('class="triage-section triage-missing"')
+                question_count = document.count(question_text)
+                if triage["state"] == "clarify_first":
+                    self.assertEqual(section_count, 1)
+                    self.assertEqual(question_count, 1)
+                elif triage["state"] == "ready_for_private_prep":
+                    self.assertEqual(section_count, 0)
+                    self.assertEqual(question_count, 1)
+                    self.assertIn('class="triage-handoff-preview"', document)
+                else:
+                    self.assertEqual(triage["state"], "stop")
+                    self.assertEqual(section_count, 0)
+                    self.assertEqual(question_count, 0)
 
     def test_save_boundary_is_plain_localized_copy_without_exposing_internal_enum(self) -> None:
         expected = {
@@ -146,7 +164,7 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
         self.assertIn("Private triage", document)
         self.assertIn('<p lang="es">', document)
         self.assertIn('<dd lang="es">', document)
-        self.assertEqual(document.count('lang="es"'), 7)
+        self.assertEqual(document.count('lang="es"'), 6)
         self.assertEqual(document.count('<html lang="en">'), 1)
         self.assertNotIn('<p lang="en">', document)
 
@@ -329,7 +347,7 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
         self.assertIn("The candidate confirmed relevant experience for private preparation.", document)
         self.assertIn("Which supported example should be practiced first for this conversation?", document)
         self.assertEqual(document.count("The candidate confirmed relevant experience for private preparation."), 2)
-        self.assertEqual(document.count("Which supported example should be practiced first for this conversation?"), 2)
+        self.assertEqual(document.count("Which supported example should be practiced first for this conversation?"), 1)
         self.assertIn("<dl", document)
         self.assertIn("<dt>Verified fact</dt>", document)
         self.assertIn("<dt>Safe question</dt>", document)

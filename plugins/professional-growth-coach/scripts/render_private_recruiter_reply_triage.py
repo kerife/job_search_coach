@@ -430,6 +430,12 @@ def _render_main(
         <h2 id="blocked-title">{labels["blocked"]}</h2>
         <ul>{blocked_items}</ul>
       </section>'''
+    question_section = ""
+    if state == "clarify_first":
+        question_section = f'''<section class="triage-section triage-missing" aria-labelledby="missing-title">
+        <h2 id="missing-title">{labels["missing"]}</h2>
+        <p{dynamic_lang}>{html.escape(_text(question["text"]))}</p>
+      </section>'''
     employment_boundary = "" if state == "stop" else f'<p class="triage-employment-boundary">{labels["employment_boundary"]}</p>'
     return f'''<main id="main-content" class="triage-shell" tabindex="-1">
     <section class="triage-card" aria-labelledby="triage-title">
@@ -455,10 +461,7 @@ def _render_main(
         <p{dynamic_lang}>{html.escape(_text(context["summary"]))}</p>
         <p><strong>{labels[_text(fact["state"])]}:</strong> <span{dynamic_lang}>{html.escape(_text(fact["summary"]))}</span></p>
       </section>
-      <section class="triage-section triage-missing" aria-labelledby="missing-title">
-        <h2 id="missing-title">{labels["missing"]}</h2>
-        <p{dynamic_lang}>{html.escape(_text(question["text"]))}</p>
-      </section>
+      {question_section}
     </section>
   </main>
   <footer class="triage-footer triage-shell"><strong>{labels["footer"]}</strong>{employment_boundary}<p>{labels["save_disabled"]}</p></footer>'''
