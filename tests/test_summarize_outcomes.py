@@ -257,7 +257,7 @@ class SummarizeOutcomesTests(unittest.TestCase):
 
         self.assert_invalid(
             run_path(missing_path),
-            f"CSV file not found: {missing_path}",
+            "CSV file is unavailable",
         )
         self.assert_invalid(
             run_summary([], window="0"),
@@ -267,6 +267,43 @@ class SummarizeOutcomesTests(unittest.TestCase):
             run_summary([], window="thirty"),
             "--window must be a positive integer; got 'thirty'",
         )
+
+    def test_csv_input_rejects_direct_and_intermediate_symlinks(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            external = root / "external"
+            external.mkdir()
+            target = external / "outcomes.csv"
+            with target.open("w", newline="", encoding="utf-8") as handle:
+                csv.DictWriter(handle, fieldnames=CSV_FIELDS).writeheader()
+
+            parent_alias = root / "alias"
+            parent_alias.symlink_to(external, target_is_directory=True)
+            direct_alias = root / "direct.csv"
+            direct_alias.symlink_to(target)
+
+            for path in (parent_alias / "outcomes.csv", direct_alias):
+                with self.subTest(path=path):
+                    self.assert_invalid(run_path(path), "CSV file is unavailable")
+
+    def test_csv_input_rejects_oversized_and_invalid_utf8_before_parse(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            oversized = root / "oversized.csv"
+            header = ",".join(CSV_FIELDS) + "\n"
+            valid_row = ",".join(["x"] * len(CSV_FIELDS)) + "\n"
+            oversized.write_bytes((header + valid_row).encode("utf-8") * 20000)
+            invalid_utf8 = root / "invalid.csv"
+            invalid_utf8.write_bytes(b"application_id,candidate_id\n\xff")
+
+            self.assert_invalid(run_path(oversized), "CSV file exceeds safe size limit")
+            self.assert_invalid(run_path(invalid_utf8), "CSV file is not valid UTF-8")
+
+    def test_csv_input_errors_do_not_echo_path_or_candidate_identifier(self) -> None:
+        missing_path = Path("/tmp/private-candidate-outcomes.csv")
+        result = run_path(missing_path, candidate_id="private-candidate-123")
+        self.assert_invalid(result, "CSV file is unavailable")
+        self.assertNotIn(str(missing_path), result.stderr)
 
     def test_windows_beyond_the_as_of_date_range_are_invalid_without_tracebacks(self) -> None:
         expected_error = (

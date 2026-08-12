@@ -5,12 +5,29 @@ from __future__ import annotations
 
 import argparse
 import csv
+import io
 import json
 import sys
 from collections import Counter
 from datetime import date, timedelta
 from decimal import Decimal
 from pathlib import Path
+
+try:
+    from private_input_loader import PrivateInputError, read_bounded_bytes
+except ModuleNotFoundError:
+    import importlib.util
+
+    _LOADER_PATH = Path(__file__).with_name("private_input_loader.py")
+    _LOADER_SPEC = importlib.util.spec_from_file_location(
+        "summarize_outcomes_private_input_loader", _LOADER_PATH
+    )
+    if _LOADER_SPEC is None or _LOADER_SPEC.loader is None:
+        raise
+    _LOADER_MODULE = importlib.util.module_from_spec(_LOADER_SPEC)
+    _LOADER_SPEC.loader.exec_module(_LOADER_MODULE)
+    PrivateInputError = _LOADER_MODULE.PrivateInputError
+    read_bounded_bytes = _LOADER_MODULE.read_bounded_bytes
 
 
 CSV_FIELDS = (
@@ -46,6 +63,7 @@ SUMMARY_FIELDS = (
     "days_to_first_interview",
     "warnings",
 )
+MAX_PRIVATE_INPUT_BYTES = 256 * 1024
 
 
 class InputError(ValueError):
@@ -135,14 +153,21 @@ def read_rows(
     candidate_id: str | None = None,
 ) -> list[dict[str, object]]:
     try:
-        handle = path.open(newline="", encoding="utf-8-sig")
-    except FileNotFoundError as error:
-        raise InputError(f"CSV file not found: {path}") from error
+        raw = read_bounded_bytes(path, MAX_PRIVATE_INPUT_BYTES)
+    except PrivateInputError as error:
+        if error.reason == "too_large":
+            raise InputError("CSV file exceeds safe size limit") from error
+        raise InputError("CSV file is unavailable") from error
     except OSError as error:
-        raise InputError(f"cannot read CSV file {path}: {error.strerror or error}") from error
+        raise InputError("CSV file is unavailable") from error
 
     try:
-        with handle:
+        text = raw.decode("utf-8-sig")
+    except UnicodeError as error:
+        raise InputError("CSV file is not valid UTF-8") from error
+
+    try:
+        with io.StringIO(text, newline="") as handle:
             reader = csv.DictReader(handle, strict=True)
             headers = reader.fieldnames or []
             duplicate_headers = sorted(
@@ -222,8 +247,6 @@ def read_rows(
                 row.update(parsed_dates)
                 row.update(parsed_booleans)
                 rows.append(row)
-    except UnicodeError as error:
-        raise InputError(f"CSV file must be UTF-8: {path}") from error
     except csv.Error as error:
         raise InputError(f"malformed CSV: {error}") from error
 

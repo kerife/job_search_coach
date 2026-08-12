@@ -7136,7 +7136,7 @@ class RecommendCareerLearningContractTests(unittest.TestCase):
                 "<!-- BASELINE RAW A END -->",
                 "Current prices as of August 6, 2026. All amounts are USD; taxes may be added at checkout.",
                 "- https://training.linuxfoundation.org/certification/certified-kubernetes-administrator-cka/",
-                "6534acb1cc67b10069f368578756f15a27a05a3fc3c16493022b95f8dbd6c351",
+                "514bdee32f2dd97b16899a73249ef8e4e5a73646ca47c579ff4598738ae02603",
             ),
             (
                 "Retail manager to Enterprise Account Executive",
