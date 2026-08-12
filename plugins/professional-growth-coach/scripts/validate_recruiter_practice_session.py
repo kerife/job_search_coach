@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import re
 import sys
@@ -13,7 +14,16 @@ from pathlib import Path
 from typing import Any
 
 from private_prose_safety import is_safe_prose_text, safe_diagnostic_field_name
-from private_input_loader import PrivateInputError, read_bounded_bytes
+try:
+    from private_input_loader import PrivateInputError, read_bounded_bytes
+except ModuleNotFoundError:
+    _loader_spec = importlib.util.spec_from_file_location("_pgc_private_input_loader", Path(__file__).with_name("private_input_loader.py"))
+    if _loader_spec is None or _loader_spec.loader is None:
+        raise
+    _loader_module = importlib.util.module_from_spec(_loader_spec)
+    _loader_spec.loader.exec_module(_loader_module)
+    PrivateInputError = _loader_module.PrivateInputError
+    read_bounded_bytes = _loader_module.read_bounded_bytes
 
 
 SCHEMA_VERSION = "recruiter-practice-session-v1"

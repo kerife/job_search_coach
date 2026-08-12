@@ -1,12 +1,21 @@
 #!/usr/bin/env python3
 """Fail-closed validation for a candidate-supplied recruiter event."""
 from __future__ import annotations
-import argparse, datetime as dt, json, re, sys
+import argparse, datetime as dt, importlib.util, json, re, sys
 from collections.abc import Mapping
 from pathlib import Path
 
 from private_prose_safety import safe_diagnostic_field_name
-from private_input_loader import PrivateInputError, read_bounded_bytes
+try:
+    from private_input_loader import PrivateInputError, read_bounded_bytes
+except ModuleNotFoundError:
+    _loader_spec = importlib.util.spec_from_file_location("_pgc_private_input_loader", Path(__file__).with_name("private_input_loader.py"))
+    if _loader_spec is None or _loader_spec.loader is None:
+        raise
+    _loader_module = importlib.util.module_from_spec(_loader_spec)
+    _loader_spec.loader.exec_module(_loader_module)
+    PrivateInputError = _loader_module.PrivateInputError
+    read_bounded_bytes = _loader_module.read_bounded_bytes
 
 SCHEMA_VERSION = "private-recruiter-conversion-outcome-v1"
 TOP_LEVEL_FIELDS = frozenset({"schema_version", "artifact_kind", "locale", "event_date", "event_type", "source_artifact_id", "source_version", "fact_ids", "observation_state", "next_safe_action", "delivery"})
