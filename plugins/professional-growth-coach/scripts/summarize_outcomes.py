@@ -267,7 +267,7 @@ def summarize(
     if candidate_id is not None:
         candidate_ids = distinct(rows, "candidate_id")
         if candidate_id not in candidate_ids:
-            raise InputError(f"candidate_id not found: {candidate_id!r}")
+            raise InputError("candidate_id not found")
         rows = [row for row in rows if row["candidate_id"] == candidate_id]
 
     missing_application_dates = sum(

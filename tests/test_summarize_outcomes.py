@@ -680,7 +680,14 @@ class SummarizeOutcomesTests(unittest.TestCase):
     def test_unknown_candidate_selection_is_invalid_without_traceback(self) -> None:
         result = run_summary([outcome_row(candidate_id="c-1")], candidate_id="c-missing")
 
-        self.assert_invalid(result, "candidate_id not found: 'c-missing'")
+        self.assert_invalid(result, "candidate_id not found")
+
+    def test_unknown_candidate_path_is_not_echoed_in_diagnostics(self) -> None:
+        private_identifier = "/private/candidate/profile"
+        result = run_summary([outcome_row(candidate_id="c-1")], candidate_id=private_identifier)
+
+        self.assert_invalid(result, "candidate_id not found")
+        self.assertNotIn(private_identifier, result.stdout + result.stderr)
 
     def test_unknown_candidate_does_not_validate_or_reveal_other_candidates(self) -> None:
         private_b_values = (
@@ -702,7 +709,7 @@ class SummarizeOutcomesTests(unittest.TestCase):
         for result in (first, second):
             self.assert_invalid(
                 result,
-                "candidate_id not found: 'candidate-missing'",
+                "candidate_id not found",
             )
             combined_output = result.stdout + result.stderr
             for private_value in private_b_values:
