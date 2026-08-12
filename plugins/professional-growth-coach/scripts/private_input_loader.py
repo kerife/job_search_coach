@@ -52,7 +52,7 @@ def _open_parent(path: Path, nofollow: int, directory_flag: int) -> tuple[int, s
             except OSError as error:
                 if error.errno == errno.ELOOP:
                     raise PrivateInputError("symlink") from error
-                raise
+                raise PrivateInputError("unavailable") from error
             finally:
                 if next_descriptor is not None:
                     try:

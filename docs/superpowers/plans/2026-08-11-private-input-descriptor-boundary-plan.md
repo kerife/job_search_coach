@@ -3,7 +3,8 @@
 1. Add RED tests covering intermediate parent symlinks for all six loaders,
    preserving direct symlink rejection and regular-file acceptance.
 2. Add the shared descriptor reader with reason-coded failures and bounded
-   reads; keep each validator's current error wording and JSON semantics.
+   reads; map regular-file parent components to the same safe unavailable
+   reason and keep each validator's current error wording and JSON semantics.
 3. Run focused loader tests, the plugin suite, root/static/privacy/official
    gates, and a race-safe installed smoke against the canonical cache.
 4. Bump the plugin once, reinstall from the local marketplace, recompute the
