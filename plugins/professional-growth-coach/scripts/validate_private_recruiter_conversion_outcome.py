@@ -6,6 +6,7 @@ from collections.abc import Mapping
 from pathlib import Path
 
 from private_prose_safety import safe_diagnostic_field_name
+from private_input_loader import PrivateInputError, read_bounded_bytes
 
 SCHEMA_VERSION = "private-recruiter-conversion-outcome-v1"
 TOP_LEVEL_FIELDS = frozenset({"schema_version", "artifact_kind", "locale", "event_date", "event_type", "source_artifact_id", "source_version", "fact_ids", "observation_state", "next_safe_action", "delivery"})
@@ -30,11 +31,15 @@ def _assert_max_depth(value, maximum=12, depth=0):
     elif isinstance(value, list):
         for child in value: _assert_max_depth(child, maximum, depth + 1)
 def load_outcome(path: Path) -> dict:
-    if path.is_symlink(): raise OutcomeLoadError("outcome input must not be a symlink")
-    try: raw = path.read_text(encoding="utf-8")
-    except OSError as e: raise OutcomeLoadError("outcome input is unavailable") from e
-    except UnicodeError as e: raise OutcomeLoadError("outcome input is not valid JSON") from e
-    if len(raw.encode("utf-8")) > 32_000: raise OutcomeLoadError("outcome input exceeds safe size limit")
+    try:
+        raw_bytes = read_bounded_bytes(path, 32_000)
+    except PrivateInputError as error:
+        message = {"symlink": "outcome input must not be a symlink", "too_large": "outcome input exceeds safe size limit"}.get(error.reason, "outcome input is unavailable")
+        raise OutcomeLoadError(message) from error
+    try:
+        raw = raw_bytes.decode("utf-8")
+    except UnicodeError as error:
+        raise OutcomeLoadError("outcome input is not valid JSON") from error
     try: value = json.loads(raw, object_pairs_hook=_unique)
     except (json.JSONDecodeError, OutcomeLoadError) as e: raise OutcomeLoadError("outcome input is not valid JSON") from e
     _assert_max_depth(value)

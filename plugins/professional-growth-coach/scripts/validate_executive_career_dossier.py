@@ -13,6 +13,7 @@ from collections.abc import Mapping, Sequence
 from datetime import date
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
+from private_input_loader import PrivateInputError, read_bounded_bytes
 from typing import Any
 
 
@@ -378,14 +379,14 @@ def _assert_max_depth(value: object, maximum: int, depth: int = 0) -> None:
 
 
 def load_dossier(path: Path) -> dict[str, object]:
-    if path.is_symlink():
-        raise DossierLoadError("dossier input must not be a symlink")
     try:
-        raw = path.read_bytes()
-    except OSError as error:
-        raise DossierLoadError("cannot read dossier") from error
-    if len(raw) > 256 * 1024:
-        raise DossierLoadError("dossier exceeds 256 KiB")
+        raw = read_bounded_bytes(path, 256 * 1024)
+    except PrivateInputError as error:
+        message = {
+            "symlink": "dossier input must not be a symlink",
+            "too_large": "dossier exceeds 256 KiB",
+        }.get(error.reason, "cannot read dossier")
+        raise DossierLoadError(message) from error
     try:
         value = json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_object)
     except (UnicodeDecodeError, json.JSONDecodeError, DossierLoadError) as error:

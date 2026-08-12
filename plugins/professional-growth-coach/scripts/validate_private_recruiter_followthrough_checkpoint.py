@@ -12,6 +12,7 @@ from collections.abc import Mapping
 from pathlib import Path
 
 from private_prose_safety import safe_diagnostic_field_name
+from private_input_loader import PrivateInputError, read_bounded_bytes
 
 SCHEMA_VERSION = "private-recruiter-followthrough-checkpoint-v1"
 TOP_LEVEL_FIELDS = frozenset({
@@ -67,16 +68,18 @@ def _assert_max_depth(value: object, maximum: int = 12, depth: int = 0) -> None:
 
 
 def _load_json(path: Path, label: str) -> dict[str, object]:
-    if path.is_symlink():
-        raise CheckpointLoadError(f"{label} input must not be a symlink")
     try:
-        raw = path.read_text(encoding="utf-8")
-    except OSError as error:
-        raise CheckpointLoadError(f"{label} input is unavailable") from error
+        raw_bytes = read_bounded_bytes(path, 64_000)
+    except PrivateInputError as error:
+        message = {
+            "symlink": f"{label} input must not be a symlink",
+            "too_large": f"{label} input exceeds safe size limit",
+        }.get(error.reason, f"{label} input is unavailable")
+        raise CheckpointLoadError(message) from error
+    try:
+        raw = raw_bytes.decode("utf-8")
     except UnicodeError as error:
         raise CheckpointLoadError(f"{label} input is not valid JSON") from error
-    if len(raw.encode("utf-8")) > 64_000:
-        raise CheckpointLoadError(f"{label} input exceeds safe size limit")
     try:
         value = json.loads(raw, object_pairs_hook=_unique)
     except (json.JSONDecodeError, CheckpointLoadError) as error:

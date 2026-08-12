@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from private_prose_safety import is_safe_prose_text, safe_diagnostic_field_name
+from private_input_loader import PrivateInputError, read_bounded_bytes
 
 
 SCHEMA_VERSION = "recruiter-practice-session-v1"
@@ -118,16 +119,18 @@ def _assert_max_depth(value: object, maximum: int = 12, depth: int = 0) -> None:
 
 
 def load_session(path: Path) -> dict[str, object]:
-    if path.is_symlink():
-        raise SessionLoadError("session input must not be a symlink")
     try:
-        raw = path.read_text(encoding="utf-8")
-    except OSError as error:
-        raise SessionLoadError("session input is unavailable") from error
+        raw_bytes = read_bounded_bytes(path, 64_000)
+    except PrivateInputError as error:
+        message = {
+            "symlink": "session input must not be a symlink",
+            "too_large": "session input exceeds safe size limit",
+        }.get(error.reason, "session input is unavailable")
+        raise SessionLoadError(message) from error
+    try:
+        raw = raw_bytes.decode("utf-8")
     except UnicodeError as error:
         raise SessionLoadError("session input is not valid JSON") from error
-    if len(raw.encode("utf-8")) > 64_000:
-        raise SessionLoadError("session input exceeds safe size limit")
     try:
         value = json.loads(raw, object_pairs_hook=_unique_object)
     except (json.JSONDecodeError, SessionLoadError) as error:
