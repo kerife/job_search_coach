@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import ipaddress
 import json
 import math
@@ -17,6 +18,20 @@ from types import MappingProxyType
 from typing import Any, NamedTuple
 from urllib.parse import unquote, urlsplit
 
+try:
+    from private_input_loader import PrivateInputError, read_bounded_bytes
+except ModuleNotFoundError:
+    _loader_spec = importlib.util.spec_from_file_location(
+        "_pgc_private_input_loader",
+        Path(__file__).with_name("private_input_loader.py"),
+    )
+    if _loader_spec is None or _loader_spec.loader is None:
+        raise
+    _loader_module = importlib.util.module_from_spec(_loader_spec)
+    _loader_spec.loader.exec_module(_loader_module)
+    PrivateInputError = _loader_module.PrivateInputError
+    read_bounded_bytes = _loader_module.read_bounded_bytes
+
 
 REQUIRED_BUNDLE_FIELDS = frozenset({
     "schema_version", "fixture_id", "origin_class", "derivation",
@@ -25,6 +40,7 @@ REQUIRED_BUNDLE_FIELDS = frozenset({
     "score_ledger", "priorities", "copy_blocks", "blocked_claims",
     "source_catalog", "authorization_state", "eval_expectations",
 })
+MAX_PRIVATE_INPUT_BYTES = 256 * 1024
 STRUCTURAL_STATE_FIELDS = frozenset({"observations"})
 OBSERVATION_FIELDS = frozenset({"evidence_id", "section", "state"})
 FACT_FIELDS = frozenset({"fact_id", "evidence_state", "fact_type", "role_family", "capability_family", "scope_bucket", "claim_tokens"})
@@ -815,12 +831,17 @@ class LegacyAppendixSection(NamedTuple):
 
 def load_bundle(path: Path) -> dict[str, object]:
     """Load a fixture bundle and require a JSON object at the file boundary."""
-    if path.is_symlink():
-        raise ValueError("fixture bundle input must not be a symlink")
-    value = json.loads(
-        path.read_text(encoding="utf-8"),
-        object_pairs_hook=_unique_json_object,
-    )
+    try:
+        raw = read_bounded_bytes(path, MAX_PRIVATE_INPUT_BYTES).decode("utf-8")
+    except UnicodeError as error:
+        raise ValueError("fixture bundle input is not valid JSON") from error
+    except (PrivateInputError, OSError) as error:
+        message = {
+            "symlink": "fixture bundle input must not be a symlink",
+            "too_large": "fixture bundle input exceeds safe size limit",
+        }.get(getattr(error, "reason", ""), "fixture bundle input is unavailable")
+        raise ValueError(message) from error
+    value = json.loads(raw, object_pairs_hook=_unique_json_object)
     if not isinstance(value, dict):
         raise ValueError("fixture must be a JSON object")
     return value
@@ -3556,6 +3577,19 @@ def _deduplicate(errors: list[str]) -> list[str]:
     return list(dict.fromkeys(errors))
 
 
+def _read_private_text(path: Path, label: str) -> str:
+    try:
+        return read_bounded_bytes(path, MAX_PRIVATE_INPUT_BYTES).decode("utf-8")
+    except UnicodeError as error:
+        raise ValueError(f"{label} input is not valid UTF-8") from error
+    except (PrivateInputError, OSError) as error:
+        message = {
+            "symlink": f"{label} input must not be a symlink",
+            "too_large": f"{label} input exceeds safe size limit",
+        }.get(getattr(error, "reason", ""), f"{label} input is unavailable")
+        raise ValueError(message) from error
+
+
 def _cli(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Validate a LinkedIn client report fixture pair.")
     parser.add_argument("report", type=Path)
@@ -3568,24 +3602,16 @@ def _cli(argv: list[str] | None = None) -> int:
     arguments = parser.parse_args(argv)
 
     errors: list[str] = []
-    if arguments.report.is_symlink():
-        errors.append("report input must not be a symlink")
+    try:
+        markdown = _read_private_text(arguments.report, "report")
+    except ValueError as error:
+        errors.append(str(error))
         markdown = ""
-    else:
-        try:
-            markdown = arguments.report.read_text(encoding="utf-8")
-        except (OSError, UnicodeError):
-            errors.append("cannot read report file as UTF-8")
-            markdown = ""
-    if arguments.bundle.is_symlink():
-        errors.append("bundle input must not be a symlink")
+    try:
+        raw_bundle = _read_private_text(arguments.bundle, "bundle")
+    except ValueError as error:
+        errors.append(str(error))
         raw_bundle = ""
-    else:
-        try:
-            raw_bundle = arguments.bundle.read_text(encoding="utf-8")
-        except (OSError, UnicodeError):
-            errors.append("cannot read bundle file as UTF-8")
-            raw_bundle = ""
     bundle: object = None
     if raw_bundle:
         try:

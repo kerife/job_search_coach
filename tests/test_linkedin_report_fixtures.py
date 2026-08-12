@@ -135,6 +135,34 @@ class LinkedInReportFixtureTests(unittest.TestCase):
                 validator.load_bundle(link)
         self.assertNotIn(str(target), str(raised.exception))
 
+    def test_load_bundle_rejects_intermediate_parent_symlink(self) -> None:
+        source = (FIXTURE_ROOT / "scenario-a.json").read_bytes()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            external = root / "external"
+            alias = root / "alias"
+            external.mkdir()
+            (external / "bundle.json").write_bytes(source)
+            alias.symlink_to(external, target_is_directory=True)
+            with self.assertRaisesRegex(ValueError, "symlink|unavailable") as raised:
+                validator.load_bundle(alias / "bundle.json")
+        self.assertNotIn("FIXTURE-JSC1-TECHNICAL-SIGNAL-DISPERSED", str(raised.exception))
+
+    def test_load_bundle_rejects_oversized_input_before_json_parse(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "oversized.json"
+            path.write_bytes(b" " * (256 * 1024 + 1))
+            with self.assertRaisesRegex(ValueError, "safe size|too large|unavailable"):
+                validator.load_bundle(path)
+
+    def test_load_bundle_rejects_invalid_utf8_without_decoder_payload(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "invalid.json"
+            path.write_bytes(b"{\xff}")
+            with self.assertRaisesRegex(ValueError, "valid JSON|UTF-8|unavailable") as raised:
+                validator.load_bundle(path)
+        self.assertNotIn("UnicodeDecodeError", str(raised.exception))
+
     def test_cli_rejects_duplicate_bundle_without_echoing_hidden_value(self) -> None:
         source = (FIXTURE_ROOT / "scenario-a.json").read_text(encoding="utf-8")
         duplicate = source.replace(
@@ -173,6 +201,38 @@ class LinkedInReportFixtureTests(unittest.TestCase):
                 self.assertNotIn("valid", stdout.getvalue().lower())
                 self.assertNotIn(str(report), stderr.getvalue())
                 self.assertNotIn(str(bundle), stderr.getvalue())
+
+    def test_cli_rejects_intermediate_parent_symlink_inputs(self) -> None:
+        report = FIXTURE_ROOT / "scenario-a-es.md"
+        bundle = FIXTURE_ROOT / "scenario-a.json"
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            external = root / "external"
+            alias = root / "alias"
+            external.mkdir()
+            (external / "report.md").write_bytes(report.read_bytes())
+            (external / "bundle.json").write_bytes(bundle.read_bytes())
+            alias.symlink_to(external, target_is_directory=True)
+            stdout = io.StringIO()
+            stderr = io.StringIO()
+            with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+                result = validator._cli([str(alias / "report.md"), str(alias / "bundle.json")])
+        self.assertNotEqual(0, result)
+        self.assertNotIn("valid", stdout.getvalue().lower())
+        self.assertNotIn("FIXTURE-JSC1-TECHNICAL-SIGNAL-DISPERSED", stderr.getvalue())
+        self.assertNotIn(str(external), stderr.getvalue())
+
+    def test_cli_rejects_oversized_bundle_without_traceback(self) -> None:
+        report = FIXTURE_ROOT / "scenario-a-es.md"
+        with tempfile.TemporaryDirectory() as temporary:
+            bundle = Path(temporary) / "oversized.json"
+            bundle.write_bytes(b" " * (256 * 1024 + 1))
+            stdout = io.StringIO()
+            stderr = io.StringIO()
+            with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+                result = validator._cli([str(report), str(bundle)])
+        self.assertNotEqual(0, result)
+        self.assertNotIn("Traceback", stderr.getvalue())
 
     def test_official_source_registry_matches_the_eight_reviewed_locators(self) -> None:
         self.assertTrue(SOURCE_REGISTRY_PATH.is_file())
