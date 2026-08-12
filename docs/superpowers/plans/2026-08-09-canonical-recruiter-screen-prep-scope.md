@@ -59,7 +59,7 @@ rg -n "recruiter_screen_opening" . \
   --glob '!docs/superpowers/specs/2026-08-09-canonical-recruiter-screen-prep-scope-design.md' \
   --glob '!docs/superpowers/plans/2026-08-09-canonical-recruiter-screen-prep-scope.md'
 active_version=$(python3 -B -c 'import json, pathlib; print(json.loads(pathlib.Path("plugins/job-search-coach/.codex-plugin/plugin.json").read_text())["version"])')
-active_plugin="/Users/kevinriosferrer/.codex/plugins/cache/job-search-coach-local/job-search-coach/$active_version"
+active_plugin="$HOME/.codex/plugins/cache/job-search-coach-local/job-search-coach/$active_version"
 test -d "$active_plugin"
 rg -n "recruiter_screen_opening" "$active_plugin"
 ```
@@ -338,7 +338,7 @@ full-plugin integration suite pass before cachebusting.
 Run once:
 
 ```bash
-python3 -B /Users/kevinriosferrer/.codex/skills/.system/plugin-creator/scripts/update_plugin_cachebuster.py plugins/job-search-coach
+python3 -B $HOME/.codex/skills/.system/plugin-creator/scripts/update_plugin_cachebuster.py plugins/job-search-coach
 ```
 
 Expected: one new `0.2.0+codex.<timestamp>` version in `plugin.json`. Do not rerun this command in the increment.
@@ -377,7 +377,7 @@ python3 -B -m unittest tests.test_full_plugin -q
 python3 -B -m unittest discover -s plugins/job-search-coach/tests -p 'test*.py' -q
 python3 -B plugins/job-search-coach/tests/run_static_checks.py
 installed_version=$(python3 -B -c 'import json, pathlib; print(json.loads(pathlib.Path("plugins/job-search-coach/.codex-plugin/plugin.json").read_text())["version"])')
-diff -qr plugins/job-search-coach "/Users/kevinriosferrer/.codex/plugins/cache/job-search-coach-local/job-search-coach/$installed_version"
+diff -qr plugins/job-search-coach "$HOME/.codex/plugins/cache/job-search-coach-local/job-search-coach/$installed_version"
 git diff --check
 git status --porcelain=v1
 ```

@@ -185,7 +185,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest \
 - [ ] **Step 3: Run the locked validator and focused report suite**
 
 ```bash
-PYTHON=/Users/kevinriosferrer/projects/job_search_coach/.release-validation-venv/bin/python
+PYTHON=$REPO_ROOT/.release-validation-venv/bin/python
 $PYTHON -B -m unittest tests.test_linkedin_report_fixtures tests.test_linkedin_client_report -q
 ```
 

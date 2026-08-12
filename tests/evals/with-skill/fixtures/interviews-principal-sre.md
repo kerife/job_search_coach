@@ -14,13 +14,13 @@ Synthetic Principal SRE requirements: V-701 production Kubernetes; V-702 inciden
 
 ## Exact candidate facts
 
-- `candidate-reported: F-001` Administer 29 dev/test clusters.
-- `candidate-reported: F-002` Perform weekend maintenance, incident response when an incident falls in the candidate's time zone, and daily RCA support.
-- `candidate-reported: F-003` Automated RCA and new-cluster configuration.
-- `candidate-reported: F-004` Managed two people for two years.
-- `candidate-reported: F-005` Can read and debug basic Ansible but have not manually written a complete playbook.
-- `candidate-reported: F-006` Terraform experience is limited to personal projects.
-- `candidate-reported: F-007` No production SLO/MTTR metrics and no Argo CD experience.
+- `candidate-reported: F-001` Administer non-production platform environments.
+- `candidate-reported: F-002` Performs maintenance and troubleshooting support; exact incidents and scope are not supplied.
+- `candidate-reported: F-003` Automated parts of troubleshooting and environment setup.
+- `candidate-reported: F-004` Has some small-team management experience; scope and dates are unconfirmed.
+- `candidate-reported: F-005` Can read and debug common automation, but authoring depth is unconfirmed.
+- `candidate-reported: F-006` Terraform experience is unconfirmed.
+- `candidate-reported: F-007` Production reliability metrics and GitOps experience are not supplied.
 
 ## Exact parameterized stage requests
 

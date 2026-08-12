@@ -103,7 +103,7 @@ Run static checks, repository privacy, release validation, plugin-local discover
 - [ ] **Step 2: Consume the cachebuster exactly once**
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python3 -B /Users/kevinriosferrer/.codex/skills/.system/plugin-creator/scripts/update_plugin_cachebuster.py plugins/professional-growth-coach
+PYTHONDONTWRITEBYTECODE=1 python3 -B $HOME/.codex/skills/.system/plugin-creator/scripts/update_plugin_cachebuster.py plugins/professional-growth-coach
 ```
 
 - [ ] **Step 3: Bind final-evaluation provenance**

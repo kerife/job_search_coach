@@ -13,11 +13,11 @@ I am targeting senior Kubernetes/SRE roles. Use only the evidence below to compa
 
 ## Exact candidate facts
 
-- `candidate-reported: [F-801]` Administers 29 development and test clusters.
-- `candidate-reported: [F-802]` Automates RCA and cluster configuration.
-- `candidate-reported: [F-803]` Terraform use is limited to personal projects.
-- `candidate-reported: [F-804]` Has no Argo CD experience.
-- `candidate-reported: [F-805]` Has no production SLO ownership evidence.
+- `candidate-reported: [F-801]` Supports non-production platform environments.
+- `candidate-reported: [F-802]` Automates troubleshooting and environment configuration.
+- `candidate-reported: [F-803]` Infrastructure-as-code experience is unconfirmed.
+- `candidate-reported: [F-804]` GitOps evidence is unconfirmed.
+- `candidate-reported: [F-805]` Production reliability metrics are not supplied.
 
 ## Exact budget and time
 

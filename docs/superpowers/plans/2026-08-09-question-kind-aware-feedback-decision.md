@@ -977,7 +977,7 @@ only eval changes.
 Run once and increment an explicit local invocation counter from 0 to 1:
 
 ```bash
-python3 -B /Users/kevinriosferrer/.codex/skills/.system/plugin-creator/scripts/update_plugin_cachebuster.py plugins/job-search-coach
+python3 -B $HOME/.codex/skills/.system/plugin-creator/scripts/update_plugin_cachebuster.py plugins/job-search-coach
 ```
 
 Require one new manifest version starting `0.2.0+codex.`. Never rerun the helper

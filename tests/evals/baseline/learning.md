@@ -27,9 +27,9 @@ Use the 72 available hours this way:
 - Weeks 9–10: 8 hours on Helm and the SkillCred.
 - Weeks 11–12: 18 hours documenting the project, adding a synthetic SLO/error-budget dashboard, rehearsing interview stories and applying.
 
-Your portfolio README should explicitly distinguish production facts from lab evidence: “Administer 29 dev/test clusters professionally; implemented Terraform, Argo CD and SLO instrumentation in this reproducible lab.” Do not imply production experience you lack.
+Your portfolio README should distinguish professional evidence from lab evidence and should not include personal profile details. Do not imply production experience you lack.
 
-Do not buy CKA during this window. The current exam-only price is **$445**, its exam lasts two hours, and only one vacancy prefers it. Because you already administer 29 clusters, its incremental return is lower than closing the Terraform and Argo gaps. Pursue it later with employer funding.
+Do not buy CKA during this window. The current exam-only price is **$445**, its exam lasts two hours, and only one vacancy prefers it. Its incremental return is lower than closing the evidence gaps identified for the target role. Pursue it later with employer funding.
 
 Hiring-speed prediction: there is no defensible exact number without your location, compensation target, application volume and baseline search duration. My low-confidence planning estimate is **10–25% faster**, roughly **2–6 weeks sooner in a four-to-six-month search**, provided the credentials are accompanied by the public project and targeted applications. The plausible downside is zero improvement; certificates alone do not replace production Terraform, Argo CD or SLO evidence.
 

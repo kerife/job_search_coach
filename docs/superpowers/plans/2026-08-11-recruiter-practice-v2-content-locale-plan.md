@@ -108,7 +108,7 @@
 
 - [ ] **Step 3: Consume the official cachebuster once**
 
-  `python3 -B /Users/kevinriosferrer/.codex/skills/.system/plugin-creator/scripts/update_plugin_cachebuster.py plugins/job-search-coach`
+  `python3 -B $HOME/.codex/skills/.system/plugin-creator/scripts/update_plugin_cachebuster.py plugins/job-search-coach`
 
 - [ ] **Step 4: Run post-cachebuster gates and publish**
 

@@ -17,12 +17,12 @@ the plugin itself lives at `plugins/professional-growth-coach/`.
 Clone this repository, then add its marketplace root to Codex:
 
 ```bash
-codex plugin marketplace add /Users/kevinriosferrer/projects/job_search_coach
+codex plugin marketplace add .
 ```
 
-For a cloned checkout, replace the path with the local repository path. The
-catalog points to `./plugins/professional-growth-coach`, so the plugin remains portable
-when the repository is shared by Git.
+Run the command from the repository root. The catalog points to
+`./plugins/professional-growth-coach`, so the plugin remains portable when the
+repository is shared by Git.
 
 ## Validate locally
 

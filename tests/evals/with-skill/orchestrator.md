@@ -11,11 +11,11 @@ Fresh read-only evaluators read only the orchestrator skill and the references i
 ~~~~text
 Evidence
 
-- candidate-reported: Candidate ID is \`mx-sre-01\`; target is Principal SRE.
-- unknown: Your current-role title conflicts: LinkedIn says “Site Reliability Engineer,” while HR/CV say “Principal Application Software Engineer IC4.” Confirm the canonical title before changing the current-role section.
-- candidate-reported: You operate 20 virtual OpenStack, 5 bare-metal, 2 OKE, and 2 OpenShift dev/test clusters.
-- candidate-reported: You previously supervised two people and now cover the infrastructure function alone.
-- unknown: The claimed 60% production-incident MTTR reduction is unsupported and conflicts with your stated non-production scope; do not use it.
+- candidate-reported: Synthetic candidate case; target is a senior platform and reliability role.
+- unknown: Public profile and internal records use different role descriptions. Confirm the canonical title before changing the current-role section.
+- candidate-reported: You operate non-production infrastructure environments.
+- candidate-reported: Management scope and current ownership are unconfirmed.
+- unknown: An unsupported production reliability metric conflicts with the stated non-production scope; do not use it.
 - unknown: Location, work authorization, compensation constraints, and target-job criteria are missing.
 
 case_state: blocked_on_evidence
@@ -26,7 +26,7 @@ authorization_required: true
 
 Draft positioning (not an edit):
 
-“Infrastructure & Reliability Engineer | OpenStack, OKE, and OpenShift dev/test platform operations | Targeting Principal SRE roles”
+“Infrastructure & Reliability Engineer | non-production platform operations | Targeting senior platform and reliability roles”
 
 Use evidence-backed bullets such as cluster/platform scope, reliability practices, automation, ownership, and team leadership—without calling dev/test work production responsibility or claiming unverified MTTR impact.
 
@@ -49,9 +49,9 @@ I can’t apply to jobs or edit LinkedIn yet. After the evidence is resolved, ex
 ## Candidate A — \`tech-042\`
 
 **LinkedIn headline draft**
-Senior Infrastructure Engineer | Kubernetes, OpenStack, OCI & OpenShift | Platform / SRE | Mexico-based, US-remote | English C1
+Senior Platform / Reliability Engineer | non-production platform operations | location and language unconfirmed
 
-- **Candidate-reported:** senior infrastructure experience; Kubernetes, OpenStack, OCI, OpenShift; C1 English; Mexico location; US-remote Platform/SRE target; Terraform is personal-project work only.
+- **Candidate-reported:** synthetic platform/reliability experience; location, language, arrangement, target role, and tooling depth are unconfirmed.
 - **Inferred:** this wording positions the stated background toward Platform/SRE roles. Terraform is intentionally excluded to avoid implying professional or production experience.
 - **Verified:** none; no inspectable CV, LinkedIn profile, or work evidence was supplied.
 
@@ -109,14 +109,14 @@ The following fresh read-only outputs supersede the earlier coach-mode run for r
 ### Self-service verbatim output
 
 ~~~~text
-candidate_id: mx-sre-01
+candidate_id: synthetic-platform-case
 
 Evidence
 
-- unknown: Your LinkedIn current title (“Site Reliability Engineer”) conflicts with your HR title and CV (“Principal Application Software Engineer IC4”).
-- candidate-reported: You operate 20 virtual OpenStack, 5 bare-metal, 2 OKE, and 2 OpenShift clusters for dev/test.
-- candidate-reported: You previously supervised two people and now cover the infrastructure function alone.
-- candidate-reported: The draft bio’s “60% production MTTR reduction” is unsupported; you report no production metrics and non-production scope.
+- unknown: Public profile and internal records use different role descriptions.
+- candidate-reported: You operate non-production infrastructure environments for dev/test.
+- candidate-reported: Management scope and current ownership are unconfirmed.
+- candidate-reported: The draft bio includes an unsupported production reliability metric; no production metrics are supplied.
 
 case_state: blocked_on_evidence
 evidence_gaps: [Confirm the accurate current-title/profile framing; identify supportable reliability outcomes and scope for each claimed achievement; target location and job constraints.]
@@ -124,7 +124,7 @@ selected_module: optimize-professional-profile
 next_action: Complete a positioning evidence check: confirm the title to present and replace the unsupported MTTR claim with factual, non-production platform scope and outcomes.
 authorization_required: true
 
-Profile positioning should not claim production incident ownership or a 60% MTTR reduction. After title confirmation, frame your experience around ownership of internal dev/test infrastructure across OpenStack, bare metal, OKE, and OpenShift—not as production SRE responsibility.
+Profile positioning should not claim production incident ownership or an unsupported reliability metric. After evidence confirmation, frame the work around non-production platform operations and automation—not as production SRE responsibility.
 
 I can’t apply to roles yet: that would require your explicit authorization for each specific application and target job, after the profile conflict is resolved.
 ~~~~
@@ -145,8 +145,8 @@ Candidate: tech-042
 Evidence
 
 - verified: none; no inspectable source supplied.
-- candidate-reported: senior infrastructure engineer in Mexico; Kubernetes, OpenStack, OCI, and OpenShift experience; English C1; seeks US-remote Platform/SRE roles.
-- candidate-reported: Terraform is a personal project only, so it is excluded from professional positioning.
+- candidate-reported: synthetic platform/reliability experience; location, language, arrangement, and target role are unconfirmed.
+- candidate-reported: tooling depth is unconfirmed, so it is excluded from professional positioning.
 - inferred: a concise infrastructure/platform headline fits the stated goal, but production scope and outcomes are unknown.
 
 ```text
@@ -157,7 +157,7 @@ next_action: Review this draft against the candidate’s actual experience and c
 authorization_required: false
 ```
 
-- inferred: LinkedIn headline draft—not an edit: “Senior Infrastructure Engineer | Kubernetes, OpenStack, OCI & OpenShift | Platform / SRE Roles | US Remote”
+- inferred: LinkedIn headline draft—not an edit: “Senior Platform / Reliability Engineer | non-production platform operations”
 - inferred: Explicit authorization is required immediately before editing this LinkedIn profile, messaging any recruiter, or submitting any application; each action and target must be named.
 
 Candidate: ops-017
@@ -165,7 +165,7 @@ Candidate: ops-017
 Evidence
 
 - verified: none; no inspectable source supplied.
-- candidate-reported: Mexico-based operations manager with eight years in retail operations; seeks a higher-paid remote role.
+- candidate-reported: location unconfirmed operations manager with eight years in retail operations; seeks a higher-paid remote role.
 - candidate-reported: no technical or cloud background.
 - candidate-reported: consented to minimal, anonymized benchmarking only.
 - inferred: transferable operations experience may support adjacent remote operations roles; compensation potential and role fit require further intake and market validation.
@@ -203,30 +203,30 @@ Do **Profile Positioning & Evidence Audit** next—before applications.
 
 Position yourself as:
 
-“Principal-level SRE / platform infrastructure engineer managing the reliability, automation, and lifecycle of 29 non-production cloud clusters at Oracle: 20 virtual OpenStack, 5 bare-metal, 2 OKE, and 2 OpenShift. Sole infrastructure owner, with prior people-supervision experience.”
+“Senior platform and reliability engineer with non-production experience, automation, and a clear boundary around unconfirmed production ownership.”
 
 Update LinkedIn’s current role to:
 
-“Principal Application Software Engineer (IC4) | Site Reliability Engineer”
+“Senior Platform / Reliability Engineer | non-production platform operations”
 
-This aligns the official HR/CV title with the functional SRE role. Do not claim a 60% production-incident MTTR reduction; remove it unless you can document production scope and metrics. Replace it with verified outcomes such as cluster fleet scale, automation delivered, upgrade reliability, availability improvements, recovery-time improvements, or reduced manual operations.
+Use the confirmed formal title only after reconciling the records. Do not claim an unsupported production reliability metric; remove it unless you can document production scope and metrics. Replace it with verified outcomes such as automation delivered, upgrade reliability, availability improvements, recovery-time improvements, or reduced manual operations.
 
-Your target should be Principal SRE roles that explicitly value Kubernetes, private cloud/OpenStack, platform engineering, non-production infrastructure, and hands-on ownership. I would not apply immediately: first complete the evidence audit and a Principal-SRE résumé version so applications do not carry title inconsistencies or unsupported production claims.
+Your target should be senior platform and reliability roles that explicitly value Kubernetes, private cloud/OpenStack, platform engineering, non-production infrastructure, and hands-on ownership. I would not apply immediately: first complete the evidence audit and a Principal-SRE résumé version so applications do not carry title inconsistencies or unsupported production claims.
 ~~~~
 
 ~~~~text
-Your next activity should be the Profile Positioning & Evidence module—not applications yet. First resolve the title mismatch and remove the unsupported production-MTTR claim; applying with either could undermine credibility for Principal SRE roles.
+Your next activity should be the Profile Positioning & Evidence module—not applications yet. First resolve the title mismatch and remove the unsupported production-MTTR claim; applying with either could undermine credibility for senior platform and reliability roles.
 
 Use this positioning:
 
-**Headline:** Principal Application Software Engineer (IC4) | SRE & Cloud Infrastructure | OpenStack, OKE, OpenShift
+**Headline:** Senior Platform / Reliability Engineer | Automation & Infrastructure
 
 **Current-role summary:**
-At Oracle, I serve as the sole infrastructure owner for a development/test platform estate comprising 20 virtual OpenStack clusters, 5 bare-metal clusters, 2 OKE clusters, and 2 OpenShift clusters. My HR title is Principal Application Software Engineer (IC4); my work is SRE- and platform-infrastructure-focused. I previously supervised two people and now independently cover the infrastructure function.
+In the current role, I support a development/test platform estate comprising non-production infrastructure environments. My formal title and management scope require confirmation; my work is platform- and reliability-focused.
 
-**Target:** Principal SRE roles focused on internal platforms, developer infrastructure, cloud infrastructure, or non-production platform reliability. Be cautious with roles that require demonstrated ownership of production incident response, SLOs, and production MTTR metrics.
+**Target:** senior platform and reliability roles focused on internal platforms, developer infrastructure, cloud infrastructure, or non-production platform reliability. Be cautious with roles that require demonstrated ownership of production incident response, SLOs, and production MTTR metrics.
 
-Remove “reduced production incident MTTR by 60%.” You do not have evidence for it and the systems are not production. Replace it only after gathering defensible outcomes, such as provisioning-time reduction, environment availability, deployment frequency, recovery time for dev/test outages, automation coverage, or cluster-scale improvements.
+Remove the unsupported production reliability metric. Do not replace it until defensible outcomes are gathered, such as provisioning-time reduction, environment availability, deployment frequency, recovery time for dev/test outages, automation coverage, or platform improvements.
 
 I would not apply immediately. Complete this profile/evidence update first, then target roles whose requirements match your real platform scope.
 ~~~~
@@ -234,23 +234,22 @@ I would not apply immediately. Complete this profile/evidence update first, then
 ### Fresh read-only evaluator verbatim output
 
 ~~~~text
-Candidate: mx-sre-01
+Candidate: synthetic-platform-case
 Evidence
 - verified: none; no inspectable source supplied
-- candidate-reported: LinkedIn lists “Site Reliability Engineer” at Oracle.
-- candidate-reported: HR title and CV list “Principal Application Software Engineer IC4.”
-- candidate-reported: infrastructure scope includes 20 virtual OpenStack clusters, 5 bare-metal clusters, 2 OKE clusters, and 2 OpenShift clusters for dev/test.
-- candidate-reported: previously supervised two people and now covers the infrastructure function alone.
-- candidate-reported: target role is Principal SRE.
+- candidate-reported: Public profile and internal records use different role descriptions.
+- candidate-reported: infrastructure scope includes non-production infrastructure environments for dev/test.
+- candidate-reported: management scope and current ownership are unconfirmed.
+- candidate-reported: target role is a senior platform or reliability role.
 - unknown: current-role positioning is conflicting across LinkedIn, HR title, and CV.
-- unknown: a 60% reduction in production incident MTTR; no production metrics support it and the stated environments are non-production.
+- unknown: an unsupported production reliability metric; no production metrics support it and the stated environments are non-production.
 case_state: blocked_on_evidence
 evidence_gaps: [confirmation of the title to use for profile positioning, evidence for measurable outcomes, target location and job-search constraints, specific job targets]
 selected_module: optimize-professional-profile
 next_action: Confirm the title and scope to represent publicly, then provide substantiated non-production reliability outcomes for a Principal SRE positioning draft.
 authorization_required: true
 - inferred: Position around senior reliability and infrastructure ownership across the stated non-production cluster estate, without claiming production ownership, incident-MTTR improvement, or unsupported scale or results.
-- inferred: Remove the 60% production-MTTR statement unless you can supply evidence that it is accurate and applicable.
+- inferred: Remove the unsupported production reliability metric unless you can supply evidence that it is accurate and applicable.
 - inferred: Do not apply to roles yet because suitable targets, intake details, and supportable application claims are not established.
 Action boundary: Explicit authorization is required immediately before editing the LinkedIn profile or submitting an application to a named job target.
 ~~~~
@@ -361,22 +360,21 @@ This regression captures the orchestrator's executive case-management layer. It 
 ### Self-service verbatim output
 
 ~~~~text
-Candidate: mx-sre-01
+Candidate: synthetic-platform-case
 Evidence
 - verified: none; no inspectable source supplied
-- candidate-reported: LinkedIn lists “Site Reliability Engineer” at Oracle.
-- candidate-reported: HR title and CV list “Principal Application Software Engineer IC4.”
-- candidate-reported: infrastructure scope includes 20 virtual OpenStack clusters, 5 bare-metal clusters, 2 OKE clusters, and 2 OpenShift clusters for dev/test.
+- candidate-reported: Public profile and internal records use different role descriptions.
+- candidate-reported: infrastructure scope includes non-production infrastructure environments for dev/test.
 - candidate-reported: target goal is to secure a first interview for Principal SRE or platform roles.
-- unknown: 60% production incident MTTR reduction is unsupported and conflicts with the stated non-production scope.
+- unknown: An unsupported production reliability metric conflicts with the stated non-production scope.
 case_state: blocked_on_evidence
 evidence_gaps: [confirm public title, verify measurable non-production outcomes, target location and job constraints, first target vacancy]
 selected_module: optimize-professional-profile
 next_action: Resolve title and outcome evidence before drafting public profile or application claims.
 authorization_required: true
-- inferred: coach_case_brief: candidate_id=mx-sre-01; case_goal=first_interview; coach_verdict=resolve_evidence_then_sequence_linkedin_assets_and_interview_prep; evidence_strength=mixed_candidate_reported_and_unknown_conflicts; primary_bottleneck=conflicting_title_and_unsupported_result_claim; module_sequence=optimize-professional-profile > optimize-career-assets > research-professional-market > prepare-role-interviews > track-career-outcomes; handoff_ready=false; first_interview_strategy=fix_positioning_and_recruiter_bridge_before_applications; weekly_commitment=confirm_title_replace_unsupported_metric_and_prepare_one_targeted_application_packet; success_signal=qualified_recruiter_screen_or_first_interview_request; stop_condition=stop_external_actions_until_exact_action_and_target_authorization; privacy_boundary=single_candidate_only_no_benchmark_without_consent; causality_boundary=descriptive_only_no_guaranteed_outcome
-- inferred: coach_executive_review: candidate_id=mx-sre-01; diagnosis=The profile has a recruiter-trust problem: the public title and production-MTTR claim are not yet supportable together.; decision=Repair the public evidence first, then build one targeted application packet before outreach.; decision_rationale=The title conflict and unsupported production metric create more credibility risk than a one-week delay.; priority_order=P0_evidence_repair>P1_target_vacancy>P2_application_packet>P3_recruiter_bridge>P4_interview_practice; tradeoffs=Delay applications this week to reduce credibility risk instead of applying now with weak positioning.; risk_register=unsupported production metric -> remove or substantiate before use | title conflict -> confirm canonical public title | missing target vacancy -> choose one posting before assets | no action authorization -> keep drafts local; seven_day_plan=day1=confirm title and public scope;day2=replace unsupported MTTR with supportable dev/test outcomes;day3=capture two non-production platform outcomes;day4=select one target vacancy;day5=build the application packet;day6=prepare the recruiter-screen bridge;day7=log the baseline and review.; defer_until=profile_claims_are_supportable_target_vacancy_exists_and_exact_action_authorization_is_granted; first_interview_path=profile positioning > application packet > recruiter bridge > stage-specific practice.; measurement_plan=Track packet drafted, recruiter reply, screen request, and known interview stage as observations, not proof of causal lift.; leading_indicators=title_confirmed,unsupported_claim_removed,target_vacancy_selected,packet_drafted; outcome_signals=recruiter_reply,screen_request,stage_known,offer_discussion; privacy_boundary=single_candidate_only_no_benchmark_without_consent; authorization_gate=exact_action_and_target_required_before_profile_edit_outreach_cv_upload_or_application; causality_boundary=descriptive_only_no_guaranteed_outcome
-- inferred: coach_weekly_operating_plan: candidate_id=mx-sre-01; coach_weekly_operating_plan=multi_module_weekly_execution_board; weekly_goal=turn the evidence repair decision into one private application-ready week without external actions; source_review=coach_executive_review; workstream_count=5; sequence_model=evidence_repair_to_assets_to_market_to_interview_to_measurement; primary_constraint=public profile and application claims are not yet supportable enough for recruiter trust; week_exit_criteria=title confirmed, unsupported metric removed or replaced, one target vacancy selected, application packet drafted, recruiter screen bridge rehearsed, baseline logged; blocked_external_actions=LinkedIn edits, recruiter outreach, CV upload, application submission, and calendar actions stay blocked until exact action-and-target authorization; measurement_boundary=leading_indicators_are_observations_not_causal_proof; privacy_boundary=single_candidate_only_no_benchmark_without_consent; authorization_gate=exact_action_and_target_required_before_external_action; draft_only=true; no_external_action=true.
+- inferred: coach_case_brief: candidate_id=synthetic-platform-case; case_goal=first_interview; coach_verdict=resolve_evidence_then_sequence_linkedin_assets_and_interview_prep; evidence_strength=mixed_candidate_reported_and_unknown_conflicts; primary_bottleneck=conflicting_title_and_unsupported_result_claim; module_sequence=optimize-professional-profile > optimize-career-assets > research-professional-market > prepare-role-interviews > track-career-outcomes; handoff_ready=false; first_interview_strategy=fix_positioning_and_recruiter_bridge_before_applications; weekly_commitment=confirm_title_replace_unsupported_metric_and_prepare_one_targeted_application_packet; success_signal=qualified_recruiter_screen_or_first_interview_request; stop_condition=stop_external_actions_until_exact_action_and_target_authorization; privacy_boundary=single_candidate_only_no_benchmark_without_consent; causality_boundary=descriptive_only_no_guaranteed_outcome
+- inferred: coach_executive_review: candidate_id=synthetic-platform-case; diagnosis=The profile has a recruiter-trust problem: the public title and production-MTTR claim are not yet supportable together.; decision=Repair the public evidence first, then build one targeted application packet before outreach.; decision_rationale=The title conflict and unsupported production metric create more credibility risk than a one-week delay.; priority_order=P0_evidence_repair>P1_target_vacancy>P2_application_packet>P3_recruiter_bridge>P4_interview_practice; tradeoffs=Delay applications this week to reduce credibility risk instead of applying now with weak positioning.; risk_register=unsupported production metric -> remove or substantiate before use | title conflict -> confirm canonical public title | missing target vacancy -> choose one posting before assets | no action authorization -> keep drafts local; seven_day_plan=day1=confirm title and public scope;day2=replace unsupported MTTR with supportable dev/test outcomes;day3=capture two non-production platform outcomes;day4=select one target vacancy;day5=build the application packet;day6=prepare the recruiter-screen bridge;day7=log the baseline and review.; defer_until=profile_claims_are_supportable_target_vacancy_exists_and_exact_action_authorization_is_granted; first_interview_path=profile positioning > application packet > recruiter bridge > stage-specific practice.; measurement_plan=Track packet drafted, recruiter reply, screen request, and known interview stage as observations, not proof of causal lift.; leading_indicators=title_confirmed,unsupported_claim_removed,target_vacancy_selected,packet_drafted; outcome_signals=recruiter_reply,screen_request,stage_known,offer_discussion; privacy_boundary=single_candidate_only_no_benchmark_without_consent; authorization_gate=exact_action_and_target_required_before_profile_edit_outreach_cv_upload_or_application; causality_boundary=descriptive_only_no_guaranteed_outcome
+- inferred: coach_weekly_operating_plan: candidate_id=synthetic-platform-case; coach_weekly_operating_plan=multi_module_weekly_execution_board; weekly_goal=turn the evidence repair decision into one private application-ready week without external actions; source_review=coach_executive_review; workstream_count=5; sequence_model=evidence_repair_to_assets_to_market_to_interview_to_measurement; primary_constraint=public profile and application claims are not yet supportable enough for recruiter trust; week_exit_criteria=title confirmed, unsupported metric removed or replaced, one target vacancy selected, application packet drafted, recruiter screen bridge rehearsed, baseline logged; blocked_external_actions=LinkedIn edits, recruiter outreach, CV upload, application submission, and calendar actions stay blocked until exact action-and-target authorization; measurement_boundary=leading_indicators_are_observations_not_causal_proof; privacy_boundary=single_candidate_only_no_benchmark_without_consent; authorization_gate=exact_action_and_target_required_before_external_action; draft_only=true; no_external_action=true.
 - inferred: coach_weekly_workstream: candidate_id=mx-sre-01; coach_weekly_workstream=weekly_execution_lane; workstream=linkedin_positioning; module=optimize-professional-profile; objective=make the public title scope and top profile claims supportable before any edit; required_evidence=confirmed public title, dev/test scope boundary, and two non-production platform outcomes; deliverable=private LinkedIn headline About and experience claim repair notes; done_when=unsupported production-MTTR language is removed or replaced with supportable dev/test evidence; risk_if_skipped=recruiter trust remains weak because public claims and evidence conflict; metric_to_log=title_confirmed_and_unsupported_claim_removed; owner=candidate_with_coach_review; day_range=day1_to_day3; authorization_need=exact authorization required before any public profile edit; next_safe_action=private evidence repair draft only; draft_only=true; no_external_action=true.
 - inferred: coach_weekly_workstream: candidate_id=mx-sre-01; coach_weekly_workstream=weekly_execution_lane; workstream=application_packet; module=optimize-career-assets; objective=prepare one vacancy-specific packet after the profile evidence boundary is clear; required_evidence=target vacancy, fact matrix, supportable outcomes, and confidentiality-safe proof points; deliverable=private CV bullets and application summary mapped to one target vacancy; done_when=packet cites supported fact IDs and omits unsupported production ownership or metric claims; risk_if_skipped=applications may repeat weak generic positioning instead of a defensible first-screen story; metric_to_log=packet_drafted_for_one_target_vacancy; owner=candidate_with_coach_review; day_range=day4_to_day5; authorization_need=no external authorization for private drafts, exact authorization before upload or submission; next_safe_action=build private application packet; draft_only=true; no_external_action=true.
 - inferred: coach_weekly_workstream: candidate_id=mx-sre-01; coach_weekly_workstream=weekly_execution_lane; workstream=market_targeting; module=research-professional-market; objective=choose one role and geography scenario to research before positioning pay or demand; required_evidence=target role, geography or arrangement, seniority, eligibility constraints, and current comparable vacancy sources; deliverable=dated market brief request with separated Mexico, US, remote, employee, EOR, and contractor scenarios; done_when=research request is specific enough to collect comparable observations without mixing markets; risk_if_skipped=the candidate may chase high-pay headlines without knowing comparable role and arrangement evidence; metric_to_log=target_market_research_request_ready; owner=candidate; day_range=day4_to_day5; authorization_need=no external action for research request; next_safe_action=draft market research brief request; draft_only=true; no_external_action=true.

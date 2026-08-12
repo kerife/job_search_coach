@@ -382,7 +382,7 @@ After implementation and independent code review:
 1. run the full pre-publication gate matrix;
 2. refresh provenance deterministically;
 3. invoke exactly once the official helper
-   `python3 -B /Users/kevinriosferrer/.codex/skills/.system/plugin-creator/scripts/update_plugin_cachebuster.py plugins/job-search-coach`,
+   `python3 -B $HOME/.codex/skills/.system/plugin-creator/scripts/update_plugin_cachebuster.py plugins/job-search-coach`,
    preserving base version `0.2.0`;
 4. commit only the manifest and deterministic provenance files in the
    publication commit, with a clean tracked worktree before installation;

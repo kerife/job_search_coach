@@ -95,7 +95,7 @@ Expected: no hardlink regressions, no stale provenance, and all tests green.
 ```bash
 git add plugins/professional-growth-coach/scripts/private_asset_loader.py plugins/professional-growth-coach/tests/test_private_asset_loader.py docs/superpowers/specs/2026-08-11-private-asset-hardlink-boundary-design.md docs/superpowers/plans/2026-08-11-private-asset-hardlink-boundary-plan.md
 git commit -m "fix: reject hardlinked private renderer assets"
-PYTHONDONTWRITEBYTECODE=1 python3 -B /Users/kevinriosferrer/.codex/skills/.system/plugin-creator/scripts/update_plugin_cachebuster.py plugins/professional-growth-coach
+PYTHONDONTWRITEBYTECODE=1 python3 -B $HOME/.codex/skills/.system/plugin-creator/scripts/update_plugin_cachebuster.py plugins/professional-growth-coach
 ```
 
 - [ ] **Step 2: Rebind final-cycle provenance to the current commit**

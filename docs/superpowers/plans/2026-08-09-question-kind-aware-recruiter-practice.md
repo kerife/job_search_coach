@@ -585,7 +585,7 @@ repository suite pass on the exact pre-manifest functional tree.
 Run once:
 
 ```bash
-python3 -B /Users/kevinriosferrer/.codex/skills/.system/plugin-creator/scripts/update_plugin_cachebuster.py plugins/job-search-coach
+python3 -B $HOME/.codex/skills/.system/plugin-creator/scripts/update_plugin_cachebuster.py plugins/job-search-coach
 ```
 
 Expected: exactly one new `0.2.0+codex.<timestamp>` version in

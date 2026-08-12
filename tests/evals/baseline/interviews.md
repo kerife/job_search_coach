@@ -10,7 +10,7 @@ Fixture: `fixtures/interviews-principal-sre.md`
 
 **STAR: Kubernetes operations and automation**
 
-“Situation: I was responsible for administering 29 development and test Kubernetes clusters, alongside regular maintenance and operational support.
+“Situation: I supported non-production platform environments alongside regular maintenance and operational support.
 
 Task: I needed to keep the environments maintainable while reducing repetitive work in root-cause analysis and cluster configuration.
 
@@ -30,17 +30,17 @@ Result: I helped turn recurring investigation work into a more consistent proces
 
 **STAR: Leadership**
 
-“Situation: I managed two people for two years.
+“Situation: I managed a small team; scope and dates are unconfirmed.
 
 Task: I was accountable for supporting the team while continuing to meet my technical responsibilities.
 
 Action: I balanced people-management responsibilities with cluster administration, maintenance, incident response, and RCA support.
 
-Result: I gained two years of direct management experience while remaining technically involved. For a principal role, I would position this as a foundation for broader mentoring and technical leadership rather than claim experience at a scale I have not yet demonstrated.”
+Result: I gained some management experience with scope and dates unconfirmed while remaining technically involved. For a principal role, I would position this as a foundation for broader mentoring and technical leadership rather than claim experience at a scale I have not yet demonstrated.”
 
 **Handling the tooling and SRE gaps**
 
-“My strongest relevant experience is Kubernetes administration, operational response, RCA support, automation, and two years of people management. My Terraform work has been limited to personal projects, I can read and debug basic Ansible but have not authored a complete playbook, and I have not used Argo CD. I also have not owned production SLOs, error budgets, or MTTR reporting. Those are genuine development areas, and I would describe them directly while explaining how my operational and automation experience gives me a base from which to learn them.”
+“My strongest relevant experience is Kubernetes administration, operational response, RCA support, and automation. My management scope, Terraform depth, and authoring depth for common automation are unconfirmed, and I have not used Argo CD. I also have not owned production SLOs, error budgets, or MTTR reporting. Those are genuine development areas, and I would describe them directly while explaining how my operational and automation experience gives me a base from which to learn them.”
 
 **Interview process**
 
@@ -58,7 +58,7 @@ Hi [Hiring Manager],
 
 Thank you for discussing the Principal SRE role with me. I appreciated learning more about the team’s responsibilities across Kubernetes, incident management, reliability, and infrastructure automation.
 
-My experience administering 29 development and test clusters, supporting incidents and RCAs, automating RCA and new-cluster configuration, and managing two people has given me a strong operational foundation. I also recognize that my production SLO, multi-region, Terraform, and Argo CD experience does not yet match every part of the role. I would be excited to bring my existing strengths while developing further in those areas.
+My supplied evidence covers adjacent platform operations, troubleshooting automation, and collaboration. Production ownership, role-specific tooling, metrics, and management scope remain unconfirmed. I would be excited to bring the supported strengths while developing further in those areas.
 
 Thank you again for your time and consideration.
 

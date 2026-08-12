@@ -13,7 +13,7 @@
 - Reject controls fail-closed; do not strip them before storing or rendering.
 - Preserve visible whitespace, existing privacy regexes, copy, ordering, and action flags.
 - Do not add runtime dependencies or echo rejected prose in diagnostics.
-- Canonical marketplace remains `/Users/kevinriosferrer/projects/job_search_coach`.
+- Canonical marketplace remains `$REPO_ROOT`.
 
 ---
 
