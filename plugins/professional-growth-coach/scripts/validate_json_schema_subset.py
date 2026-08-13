@@ -75,22 +75,37 @@ def _validate(
     *,
     collect: bool = True,
     budget: list[int] | None = None,
+    active_ref_targets: set[int] | None = None,
 ) -> list[str]:
     if budget is None:
         budget = [MAX_SCHEMA_EVALUATIONS]
+    if active_ref_targets is None:
+        active_ref_targets = set()
     if budget[0] <= 0:
         return [SCHEMA_EVALUATION_LIMIT_ERROR]
     budget[0] -= 1
     errors: list[str] = []
     if "$ref" in schema:
-        return _validate(
-            value,
-            _pointer(root, str(schema["$ref"])),
-            root,
-            path,
-            collect=collect,
-            budget=budget,
-        )
+        reference = schema["$ref"]
+        if not isinstance(reference, str):
+            return ["schema reference is invalid"]
+        try:
+            target = _pointer(root, reference)
+        except (KeyError, TypeError, AttributeError, IndexError):
+            return ["schema reference is invalid"]
+        if not isinstance(target, Mapping):
+            return ["schema reference is invalid"]
+        target_identity = id(target)
+        if target_identity in active_ref_targets:
+            return [SCHEMA_EVALUATION_LIMIT_ERROR]
+        active_ref_targets.add(target_identity)
+        try:
+            return _validate(
+                value, target, root, path, collect=collect, budget=budget,
+                active_ref_targets=active_ref_targets,
+            )
+        finally:
+            active_ref_targets.remove(target_identity)
     if "type" in schema and not _type_ok(value, schema["type"]):
         return [f"{path}: type mismatch"]
     if "const" in schema and not _json_equal(value, schema["const"]):
@@ -134,7 +149,10 @@ def _validate(
             if key in value:
                 safe_key = safe_diagnostic_field_name(str(key))
                 errors.extend(
-                    _validate(value[key], child_schema, root, f"{path}.{safe_key}", budget=budget)
+                    _validate(
+                        value[key], child_schema, root, f"{path}.{safe_key}",
+                        budget=budget, active_ref_targets=active_ref_targets,
+                    )
                 )
     if isinstance(value, list):
         if "minItems" in schema and len(value) < schema["minItems"]:
@@ -146,39 +164,61 @@ def _validate(
         if "items" in schema:
             for index, child in enumerate(value):
                 errors.extend(
-                    _validate(child, schema["items"], root, f"{path}[{index}]", budget=budget)
+                    _validate(
+                        child, schema["items"], root, f"{path}[{index}]",
+                        budget=budget, active_ref_targets=active_ref_targets,
+                    )
                 )
         if "contains" in schema and not any(
             not _validate(
-                child, schema["contains"], root, f"{path}[{index}]", budget=budget
+                child, schema["contains"], root, f"{path}[{index}]",
+                budget=budget, active_ref_targets=active_ref_targets,
             )
             for index, child in enumerate(value)
         ):
             errors.append(f"{path}: contains mismatch")
     for branch in schema.get("allOf", []):
-        errors.extend(_validate(value, branch, root, path, budget=budget))
+        errors.extend(
+            _validate(value, branch, root, path, budget=budget,
+                      active_ref_targets=active_ref_targets)
+        )
     if "oneOf" in schema:
         matches = sum(
-            not _validate(value, branch, root, path, budget=budget)
+            not _validate(
+                value, branch, root, path, budget=budget,
+                active_ref_targets=active_ref_targets,
+            )
             for branch in schema["oneOf"]
         )
         if matches != 1:
             errors.append(f"{path}: oneOf mismatch")
     if "anyOf" in schema:
         if not any(
-            not _validate(value, branch, root, path, budget=budget)
+            not _validate(
+                value, branch, root, path, budget=budget,
+                active_ref_targets=active_ref_targets,
+            )
             for branch in schema["anyOf"]
         ):
             errors.append(f"{path}: anyOf mismatch")
-    if "not" in schema and not _validate(value, schema["not"], root, path, budget=budget):
+    if "not" in schema and not _validate(
+        value, schema["not"], root, path, budget=budget,
+        active_ref_targets=active_ref_targets,
+    ):
         errors.append(f"{path}: not mismatch")
     if "if" in schema:
         condition_matches = (
-            _validate(value, schema["if"], root, path, collect=False, budget=budget) == []
+            _validate(
+                value, schema["if"], root, path, collect=False,
+                budget=budget, active_ref_targets=active_ref_targets,
+            ) == []
         )
         branch = schema.get("then", {}) if condition_matches else schema.get("else", {})
         if branch:
-            errors.extend(_validate(value, branch, root, path, budget=budget))
+            errors.extend(
+                _validate(value, branch, root, path, budget=budget,
+                          active_ref_targets=active_ref_targets)
+            )
     return errors
 
 
