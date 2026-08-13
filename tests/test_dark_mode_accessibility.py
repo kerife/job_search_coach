@@ -147,3 +147,23 @@ class DarkModeAccessibilityTests(unittest.TestCase):
         self.assertIsNotNone(forest)
         self.assertIsNotNone(forest_soft)
         self.assertGreaterEqual(_contrast(forest.group(1), forest_soft.group(1)), 3.0)
+
+    def test_dossier_forced_colors_keep_progress_track_and_value_distinguishable(self) -> None:
+        css = (ASSETS / "executive-career-dossier-v1.css").read_text(encoding="utf-8")
+        forced = css[css.index("@media (forced-colors: active)"):]
+        self.assertRegex(
+            forced,
+            r"\.dossier-document progress\s*\{[^}]*border:\s*1px solid CanvasText;[^}]*background:\s*Canvas;[^}]*color:\s*CanvasText;",
+        )
+        self.assertRegex(
+            forced,
+            r"\.dossier-document progress::-webkit-progress-bar\s*\{[^}]*background:\s*Canvas;",
+        )
+        self.assertRegex(
+            forced,
+            r"\.dossier-document progress::-webkit-progress-value\s*\{[^}]*background:\s*Highlight;",
+        )
+        self.assertRegex(
+            forced,
+            r"\.dossier-document progress::-moz-progress-bar\s*\{[^}]*background:\s*Highlight;",
+        )

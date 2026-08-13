@@ -555,6 +555,14 @@ details summary {
   button:hover { background: Highlight; color: HighlightText; }
   button:focus-visible { outline-color: Highlight; }
   main:focus-visible { outline-color: Highlight; }
+  .dossier-document progress {
+    border: 1px solid CanvasText;
+    background: Canvas;
+    color: CanvasText;
+  }
+  .dossier-document progress::-webkit-progress-bar { background: Canvas; }
+  .dossier-document progress::-webkit-progress-value { background: Highlight; }
+  .dossier-document progress::-moz-progress-bar { background: Highlight; }
   .screen-preparation-question {
     border: 1px solid CanvasText;
     border-left: 4px solid Highlight;
