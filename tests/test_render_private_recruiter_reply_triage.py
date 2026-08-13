@@ -132,6 +132,82 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
                     self.assertEqual(section_count, 0)
                     self.assertEqual(question_count, 0)
 
+    def test_ready_handoff_renders_one_answer_path_and_non_ready_omits_it(self) -> None:
+        expected_copy = {
+            "en": {
+                "screen_opening": "Context: name the scope that is confirmed.",
+                "proof_example": "Context: place the example in the confirmed work or problem.",
+                "eligibility_boundary": "Known boundary: state only the condition that is confirmed.",
+                "compensation_boundary": "Known boundary: state only the confirmed process or range.",
+                "missing_detail": "Known fact: start with the supplied evidence.",
+            },
+            "es": {
+                "screen_opening": "Contexto: nombra el alcance que sí está confirmado.",
+                "proof_example": "Contexto: ubica el ejemplo en el trabajo o problema confirmado.",
+                "eligibility_boundary": "Límite conocido: indica sólo la condición confirmada.",
+                "compensation_boundary": "Límite conocido: indica sólo el proceso o rango confirmado.",
+                "missing_detail": "Hecho conocido: empieza con la evidencia suministrada.",
+            },
+        }
+        kind_to_classification = {
+            "screen_opening": "screen_invite",
+            "proof_example": "request_for_proof",
+            "eligibility_boundary": "eligibility_question",
+            "compensation_boundary": "compensation_question",
+            "missing_detail": "unknown",
+        }
+        for locale in ("en", "es"):
+            for kind, classification in kind_to_classification.items():
+                with self.subTest(locale=locale, kind=kind):
+                    triage = copy.deepcopy(self.fixtures["ready-en.json"])
+                    triage["locale"] = locale
+                    triage["classification"] = classification
+                    triage["question"]["kind"] = kind
+                    triage["handoff"]["packet"]["prep_scope"] = kind
+                    triage["handoff"]["reentry_packet"]["prep_scope"] = kind
+                    document = self.renderer.render_triage_html(triage)
+                    self.assertEqual(document.count('class="triage-handoff-answer-path"'), 1)
+                    answer_path_start = document.index('class="triage-handoff-answer-path"')
+                    answer_path_end = document.index("</section>", answer_path_start)
+                    answer_path = document[answer_path_start:answer_path_end]
+                    self.assertEqual(answer_path.count("<li>"), 3)
+                    self.assertIn(expected_copy[locale][kind], document)
+                    self.assertIn('aria-labelledby="handoff-answer-path-title"', document)
+                    for control in ("<button", "<form", "<input", "<a "):
+                        self.assertNotIn(control, answer_path)
+
+        for name in ("clarify-en.json", "clarify-es.json", "stop-en.json", "stop-es.json"):
+            with self.subTest(fixture=name):
+                document = self.renderer.render_triage_html(self.fixtures[name])
+                self.assertNotIn('class="triage-handoff-answer-path"', document)
+
+    def test_v2_state_surface_matrix(self) -> None:
+        for name, source in self.fixtures.items():
+            for ui_locale, content_locale in (("en", "es"), ("es", "en")):
+                with self.subTest(fixture=name, ui_locale=ui_locale, content_locale=content_locale):
+                    triage = copy.deepcopy(source)
+                    triage["schema_version"] = "private-recruiter-reply-triage-v2"
+                    triage["ui_locale"] = ui_locale
+                    triage["content_locale"] = content_locale
+                    del triage["locale"]
+                    if triage["state"] == "ready_for_private_prep":
+                        snapshot = self.renderer.VALIDATOR.snapshot_for_triage(triage)
+                        triage["handoff"]["packet"]["source_snapshot"] = snapshot
+                        triage["handoff"]["reentry_packet"]["source_snapshot"] = snapshot
+                    document = self.renderer.render_triage_html(triage)
+                    question_text = triage["question"]["text"]
+                    self.assertEqual(document.count(question_text), 0 if triage["state"] == "stop" else 1)
+                    self.assertEqual(
+                        document.count('class="triage-section triage-missing"'),
+                        1 if triage["state"] == "clarify_first" else 0,
+                    )
+                    self.assertIn(f'<html lang="{ui_locale}">', document)
+                    self.assertIn(f'lang="{content_locale}"', document)
+                    self.assertEqual(
+                        document.count('class="triage-handoff-answer-path"'),
+                        1 if triage["state"] == "ready_for_private_prep" else 0,
+                    )
+
     def test_save_boundary_is_plain_localized_copy_without_exposing_internal_enum(self) -> None:
         expected = {
             "en": "Nothing is saved on this device.",

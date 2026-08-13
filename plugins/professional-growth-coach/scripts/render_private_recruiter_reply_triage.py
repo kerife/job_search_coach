@@ -91,6 +91,22 @@ COPY = {
         "blocked": "No afirmar",
         "handoff": "Traspaso local",
         "handoff_preview": "Vista previa para preparación",
+        "answer_path_title": "Ruta para construir tu respuesta",
+        "answer_path_screen_opening_1": "Contexto: nombra el alcance que sí está confirmado.",
+        "answer_path_screen_opening_2": "Acción: describe lo que hiciste, sin ampliar el alcance.",
+        "answer_path_screen_opening_3": "Resultado observado: separa el efecto comprobado de lo que aún falta confirmar.",
+        "answer_path_proof_example_1": "Contexto: ubica el ejemplo en el trabajo o problema confirmado.",
+        "answer_path_proof_example_2": "Acción: explica tu contribución específica.",
+        "answer_path_proof_example_3": "Resultado observado: menciona la señal comprobable y su límite.",
+        "answer_path_eligibility_boundary_1": "Límite conocido: indica sólo la condición confirmada.",
+        "answer_path_eligibility_boundary_2": "Confirmación faltante: señala qué parte sigue abierta.",
+        "answer_path_eligibility_boundary_3": "Pregunta: formula una aclaración concreta antes de afirmar elegibilidad.",
+        "answer_path_compensation_boundary_1": "Límite conocido: indica sólo el proceso o rango confirmado.",
+        "answer_path_compensation_boundary_2": "Confirmación faltante: separa la cifra o condición que no conoces.",
+        "answer_path_compensation_boundary_3": "Pregunta: pide el contexto mínimo sin inventar una expectativa.",
+        "answer_path_missing_detail_1": "Hecho conocido: empieza con la evidencia suministrada.",
+        "answer_path_missing_detail_2": "Brecha exacta: nombra el detalle que impide avanzar.",
+        "answer_path_missing_detail_3": "Aclaración: formula una sola pregunta para completar esa brecha.",
         "receipt": "Recibo de entradas",
         "receipt_bring": "Traer",
         "receipt_role_summary": "Resumen del rol/respuesta sin identidad",
@@ -176,6 +192,22 @@ COPY = {
         "blocked": "Do not assert",
         "handoff": "Local handoff",
         "handoff_preview": "Preparation preview",
+        "answer_path_title": "Answer path",
+        "answer_path_screen_opening_1": "Context: name the scope that is confirmed.",
+        "answer_path_screen_opening_2": "Action: describe what you did without widening the scope.",
+        "answer_path_screen_opening_3": "Observed result: separate the checked effect from what remains unconfirmed.",
+        "answer_path_proof_example_1": "Context: place the example in the confirmed work or problem.",
+        "answer_path_proof_example_2": "Action: explain your specific contribution.",
+        "answer_path_proof_example_3": "Observed result: name the observable signal and its boundary.",
+        "answer_path_eligibility_boundary_1": "Known boundary: state only the condition that is confirmed.",
+        "answer_path_eligibility_boundary_2": "Missing confirmation: separate what is still open.",
+        "answer_path_eligibility_boundary_3": "Question: ask one concrete clarification before asserting eligibility.",
+        "answer_path_compensation_boundary_1": "Known boundary: state only the confirmed process or range.",
+        "answer_path_compensation_boundary_2": "Missing confirmation: separate the figure or condition you do not know.",
+        "answer_path_compensation_boundary_3": "Question: ask for the minimum context without inventing an expectation.",
+        "answer_path_missing_detail_1": "Known fact: start with the supplied evidence.",
+        "answer_path_missing_detail_2": "Exact gap: name the detail that blocks progress.",
+        "answer_path_missing_detail_3": "Clarification: ask one question to close that gap.",
         "receipt": "Input receipt",
         "receipt_bring": "Bring",
         "receipt_role_summary": "Identity-free role/reply summary",
@@ -276,6 +308,14 @@ PREP_SCOPE_LABEL_KEYS = {
     "missing_detail": "question_type_missing_detail",
 }
 
+ANSWER_PATH_FAMILY_KEYS = {
+    "screen_opening": "screen_opening",
+    "proof_example": "proof_example",
+    "eligibility_boundary": "eligibility_boundary",
+    "compensation_boundary": "compensation_boundary",
+    "missing_detail": "missing_detail",
+}
+
 NEXT_SAFE_ACTION_LABEL_KEYS = {
     "clarify_context_before_private_prep": "next_safe_action_clarify_context_before_private_prep",
     "manual_reenter_private_prep": "next_safe_action_manual_reenter_private_prep",
@@ -355,6 +395,15 @@ def _render_main(
         # context, fact, question, and scope.  Render only its enum scope;
         # identifiers and packet prose remain internal.
         reentry_packet = _mapping(handoff_data["reentry_packet"])
+        answer_path_family = ANSWER_PATH_FAMILY_KEYS[_text(question["kind"])]
+        answer_path = f'''<section class="triage-handoff-answer-path" aria-labelledby="handoff-answer-path-title">
+              <h3 id="handoff-answer-path-title">{labels["answer_path_title"]}</h3>
+              <ol>
+                <li>{labels[f"answer_path_{answer_path_family}_1"]}</li>
+                <li>{labels[f"answer_path_{answer_path_family}_2"]}</li>
+                <li>{labels[f"answer_path_{answer_path_family}_3"]}</li>
+              </ol>
+            </section>'''
         handoff = f'''<aside class="triage-section triage-handoff" aria-labelledby="handoff-title" aria-describedby="handoff-description">
         <h2 id="handoff-title">{labels["handoff"]}</h2>
         <p>{labels["handoff_text"]}</p>
@@ -399,6 +448,7 @@ def _render_main(
                 <dd>{labels[PREP_SCOPE_LABEL_KEYS[_text(reentry_packet["prep_scope"])] ]}</dd>
               </dl>
             </section>
+            {answer_path}
             <section class="triage-handoff-receipt" aria-labelledby="handoff-receipt-title">
               <h3 id="handoff-receipt-title">{labels["receipt"]}</h3>
               <div class="triage-handoff-receipt-group" aria-labelledby="receipt-bring-title">

@@ -1051,6 +1051,10 @@ html { color-scheme: light; background: var(--paper); }
 .private-recruiter-triage-document .triage-handoff-preview dl { display: grid; grid-template-columns: minmax(9rem, 0.35fr) minmax(0, 1fr); gap: 0.6rem 1rem; margin: 0.75rem 0 0; max-width: var(--measure); }
 .private-recruiter-triage-document .triage-handoff-preview dt { color: var(--forest); font-weight: 700; }
 .private-recruiter-triage-document .triage-handoff-preview dd { margin: 0; }
+.private-recruiter-triage-document .triage-handoff-answer-path { margin-top: 1rem; padding: 0.85rem 1rem; background: var(--surface); border: 1px solid var(--line); }
+.private-recruiter-triage-document .triage-handoff-answer-path h3 { margin: 0; color: var(--forest); font-family: var(--serif); font-size: 1.1rem; line-height: 1.2; }
+.private-recruiter-triage-document .triage-handoff-answer-path ol { display: grid; gap: 0.45rem; margin: 0.65rem 0 0; max-width: var(--measure); padding-left: 1.35rem; }
+.private-recruiter-triage-document .triage-handoff-answer-path li + li { margin-top: 0.25rem; }
 .private-recruiter-triage-document .triage-footer { padding-block: 1rem 2rem; border-top: 1px solid var(--forest); color: var(--forest); }
 
 @media screen and (prefers-color-scheme: dark) {
@@ -1097,6 +1101,7 @@ html { color-scheme: light; background: var(--paper); }
   .private-recruiter-triage-document .triage-shell { width: auto; }
   .private-recruiter-triage-document .triage-card, .private-recruiter-triage-document .triage-section { break-inside: avoid; page-break-inside: avoid; }
   .private-recruiter-triage-document .triage-handoff-preview { break-inside: avoid; page-break-inside: avoid; }
+  .private-recruiter-triage-document .triage-handoff-answer-path { break-inside: avoid; page-break-inside: avoid; }
   .private-recruiter-triage-document .triage-next-safe-action { break-inside: avoid; page-break-inside: avoid; }
   .private-recruiter-triage-document .triage-handoff-focus { break-inside: avoid; page-break-inside: avoid; }
   .private-recruiter-triage-document .triage-handoff-next-step { break-inside: avoid; page-break-inside: avoid; }
@@ -1126,6 +1131,8 @@ html { color-scheme: light; background: var(--paper); }
   .private-recruiter-triage-document .triage-next-safe-action,
   .private-recruiter-triage-document .triage-handoff-preview { border-color: CanvasText; }
   .private-recruiter-triage-document .triage-handoff-receipt { border-color: CanvasText; }
+  .private-recruiter-triage-document .triage-handoff-answer-path { border-color: CanvasText; background: Canvas; color: CanvasText; }
+  .private-recruiter-triage-document .triage-handoff-answer-path h3 { color: CanvasText; }
   .private-recruiter-triage-document .triage-handoff-step-label { color: CanvasText; }
   .private-recruiter-triage-document .triage-handoff-sequence > li::before { border-color: CanvasText; background: Canvas; color: CanvasText; }
   .private-recruiter-triage-document .triage-footer { color: CanvasText; border-color: CanvasText; }
