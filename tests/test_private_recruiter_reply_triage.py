@@ -531,6 +531,36 @@ class PrivateRecruiterReplyTriageContractTests(unittest.TestCase):
                     self.assertNotIn("Jordan Lee", result.stderr)
                     self.assertNotIn("Acme Corporation", result.stderr)
 
+    def test_rejects_ordinary_unlabelled_names_in_every_prose_field(self) -> None:
+        sentences = (
+            "John Smith has a verified technical achievement.",
+            "Juan Pérez tiene un logro técnico verificado.",
+        )
+        prose_fields = (
+            ("safe_context", "summary"),
+            ("facts", 0, "summary"),
+            ("question", "text"),
+            ("blocked_claims", 0),
+        )
+        for sentence in sentences:
+            sentinel = " ".join(sentence.split()[:2])
+            for path in prose_fields:
+                with self.subTest(sentence=sentence, path=path):
+                    triage = copy.deepcopy(self.fixtures["clarify-en.json"])
+                    target: object = triage
+                    for key in path[:-1]:
+                        target = target[key]  # type: ignore[index]
+                    target[path[-1]] = (
+                        f"{sentence[:-1]}?" if path[0] == "question" else sentence
+                    )  # type: ignore[index]
+                    result = self.run_cli(triage)
+                    self.assertEqual(result.returncode, 2, result.stderr)
+                    self.assertIn(
+                        "session contains forbidden unlabelled_identity prose",
+                        result.stderr,
+                    )
+                    self.assertNotIn(sentinel, result.stderr)
+
     def test_accepts_role_focused_prose_without_identity_context(self) -> None:
         for summary in (
             "Platform engineering work includes incident response practice.",
