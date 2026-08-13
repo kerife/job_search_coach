@@ -38,6 +38,8 @@ COPY = {
         "kicker": "Private observation receipt", "heading": "Recruiter conversion outcome",
         "event": "Observed event", "date": "Event date", "action": "Safe next step",
         "evidence": "Evidence count", "boundary": "Candidate-supplied observation only. No external action was taken.",
+        "manual_next_step_heading": "Manual next step",
+        "manual_next_step_body": "Return to the private Codex conversation and ask to start interview preparation. This receipt does not contact, send, or schedule anything.",
         "employment_boundary": "This analysis evaluates professional options; it does not recommend resigning, leaving a job, or stopping your job search; you decide what comes next.",
         "save": "Local saving is disabled.",
     },
@@ -46,6 +48,8 @@ COPY = {
         "kicker": "Recibo privado de observación", "heading": "Resultado de conversión del reclutador",
         "event": "Evento observado", "date": "Fecha del evento", "action": "Siguiente paso seguro",
         "evidence": "Evidencia", "boundary": "Solo observación reportada por la persona. No se realizó ninguna acción externa.",
+        "manual_next_step_heading": "Siguiente paso manual",
+        "manual_next_step_body": "Regresa a la conversación privada de Codex y pide iniciar la preparación de entrevista. Este recibo no contacta, envía ni agenda nada.",
         "employment_boundary": "Este análisis evalúa opciones profesionales; no recomienda renunciar, dejar un empleo ni abandonar tu búsqueda; tú decides qué sigue.",
         "save": "El guardado local está deshabilitado.",
     },
@@ -98,6 +102,14 @@ def render_outcome_html(item: Mapping[str, object], *, today: dt.date | None = N
     locale = value["locale"]
     labels, event, action = COPY[locale], value["event_type"], value["next_safe_action"]
     stop_copy = STOP_COPY[locale] if event == "stop_decision" else None
+    manual_next_step = ""
+    if action == "route_to_prepare-role-interviews":
+        manual_next_step = (
+            '<section class="outcome-manual-next-step" '
+            'aria-labelledby="outcome-manual-next-step-heading">'
+            f'<h2 id="outcome-manual-next-step-heading">{html.escape(labels["manual_next_step_heading"])}</h2>'
+            f'<p>{html.escape(labels["manual_next_step_body"])}</p></section>'
+        )
     template = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, TEMPLATE_PATH)
     css = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, CSS_PATH)
     replacements = {
@@ -105,7 +117,7 @@ def render_outcome_html(item: Mapping[str, object], *, today: dt.date | None = N
         "{{KICKER}}": labels["kicker"], "{{HEADING}}": labels["heading"], "{{EVENT_LABEL}}": labels["event"],
         "{{EVENT}}": EVENT_LABELS[locale][event], "{{DATE_LABEL}}": labels["date"], "{{DATE}}": html.escape(value["event_date"]),
         "{{ACTION_LABEL}}": labels["action"], "{{ACTION}}": stop_copy["action"] if stop_copy else ACTION_LABELS[locale][action], "{{EVIDENCE_LABEL}}": labels["evidence"],
-        "{{EVIDENCE}}": _evidence_count_copy(locale, len(value["fact_ids"])), "{{BOUNDARY}}": stop_copy["boundary"] if stop_copy else labels["boundary"], "{{EMPLOYMENT_BOUNDARY}}": "" if stop_copy else f'<p class="outcome-employment-boundary">{labels["employment_boundary"]}</p>', "{{SAVE}}": labels["save"],
+        "{{EVIDENCE}}": _evidence_count_copy(locale, len(value["fact_ids"])), "{{BOUNDARY}}": stop_copy["boundary"] if stop_copy else labels["boundary"], "{{MANUAL_NEXT_STEP}}": manual_next_step, "{{EMPLOYMENT_BOUNDARY}}": "" if stop_copy else f'<p class="outcome-employment-boundary">{labels["employment_boundary"]}</p>', "{{SAVE}}": labels["save"],
     }
     for token, replacement in replacements.items(): template = template.replace(token, replacement)
     if re.search(r"\{\{[A-Z_]+\}\}", template): raise RuntimeError("outcome template token contract is invalid")

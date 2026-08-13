@@ -39,6 +39,7 @@ LABELS = {
         "kicker": "Private candidate checkpoint", "heading": "Recruiter follow-through checkpoint",
         "state": "Action state", "event": "Next measurement event", "date": "Observed date", "action": "Safe next step",
         "boundary": "Candidate-supplied checkpoint only. No external action was taken.", "employment_boundary": "This analysis evaluates professional options; it does not recommend resigning, leaving a job, or stopping your job search; you decide what comes next.", "save": "Local saving is disabled.",
+        "manual_next_step_heading": "Manual next step", "manual_next_step_body": "Return to the private Codex conversation and ask to start interview preparation. This receipt does not contact, send, or schedule anything.",
         "states": {"accepted": "Accepted", "deferred": "Deferred", "declined": "Declined", "completed": "Completed"},
         "events": {"screen_prepared": "Screen prepared", "screen_attended": "Screen attended", "interview_requested": "Interview requested", "stop_decision": "Stop decision", "unknown": "Not specified"},
         "actions": {"manual_reenter_private_prep": "Re-enter private preparation manually", "clarify_context_before_reply": "Clarify context before replying", "record_stop_decision": "Record the stop decision", "route_to_prepare-role-interviews": "Route to interview preparation"},
@@ -48,6 +49,7 @@ LABELS = {
         "kicker": "Punto de control privado reportado por la persona", "heading": "Seguimiento del reclutador",
         "state": "Estado de acción", "event": "Siguiente evento de medición", "date": "Fecha observada", "action": "Siguiente paso seguro",
         "boundary": "Solo punto de control reportado por la persona. No se realizó ninguna acción externa.", "employment_boundary": "Este análisis evalúa opciones profesionales; no recomienda renunciar, dejar un empleo ni abandonar tu búsqueda; tú decides qué sigue.", "save": "El guardado local está deshabilitado.",
+        "manual_next_step_heading": "Siguiente paso manual", "manual_next_step_body": "Regresa a la conversación privada de Codex y pide iniciar la preparación de entrevista. Este recibo no contacta, envía ni agenda nada.",
         "states": {"accepted": "Aceptado", "deferred": "Pospuesto", "declined": "Rechazado", "completed": "Completado"},
         "events": {"screen_prepared": "Filtro preparado", "screen_attended": "Filtro atendido", "interview_requested": "Solicitaron entrevista", "stop_decision": "Decisión de detenerse", "unknown": "No especificado"},
         "actions": {"manual_reenter_private_prep": "Reingresa manualmente a la preparación privada", "clarify_context_before_reply": "Aclara el contexto antes de responder", "record_stop_decision": "Registra la decisión de detenerse", "route_to_prepare-role-interviews": "Dirige a preparación de entrevista"},
@@ -89,6 +91,14 @@ def render_checkpoint_html(item: Mapping[str, object], receipt: Mapping[str, obj
     labels = LABELS[locale]
     is_stop = value["next_measurement_event"] == "stop_decision" or value["source_receipt"]["event_type"] == "stop_decision"
     stop_copy = STOP_COPY[locale] if is_stop else None
+    manual_next_step = ""
+    if value["next_safe_action"] == "route_to_prepare-role-interviews":
+        manual_next_step = (
+            '<section class="checkpoint-manual-next-step" '
+            'aria-labelledby="checkpoint-manual-next-step-heading">'
+            f'<h2 id="checkpoint-manual-next-step-heading">{html.escape(labels["manual_next_step_heading"])}</h2>'
+            f'<p>{html.escape(labels["manual_next_step_body"])}</p></section>'
+        )
     template = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, TEMPLATE_PATH)
     css = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, CSS_PATH)
     replacements = {
@@ -98,7 +108,7 @@ def render_checkpoint_html(item: Mapping[str, object], receipt: Mapping[str, obj
         "{{EVENT_LABEL}}": labels["event"], "{{EVENT}}": labels["events"][value["next_measurement_event"]],
         "{{DATE_LABEL}}": labels["date"], "{{DATE}}": html.escape(value["observed_date"]),
         "{{ACTION_LABEL}}": labels["action"], "{{ACTION}}": stop_copy["action"] if stop_copy else labels["actions"][value["next_safe_action"]],
-        "{{BOUNDARY}}": stop_copy["boundary"] if stop_copy else labels["boundary"], "{{EMPLOYMENT_BOUNDARY}}": "" if stop_copy else f'<p class="checkpoint-employment-boundary">{labels["employment_boundary"]}</p>', "{{SAVE}}": labels["save"],
+        "{{BOUNDARY}}": stop_copy["boundary"] if stop_copy else labels["boundary"], "{{MANUAL_NEXT_STEP}}": manual_next_step, "{{EMPLOYMENT_BOUNDARY}}": "" if stop_copy else f'<p class="checkpoint-employment-boundary">{labels["employment_boundary"]}</p>', "{{SAVE}}": labels["save"],
     }
     for token, replacement in replacements.items(): template = template.replace(token, replacement)
     if re.search(r"\{\{[A-Z_]+\}\}", template): raise RuntimeError("checkpoint template token contract is invalid")

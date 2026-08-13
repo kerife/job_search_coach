@@ -106,6 +106,7 @@ The templates below are the complete layout sources. They are listed here once (
         <div><dt>{{ACTION_LABEL}}</dt><dd>{{ACTION}}</dd></div>
       </dl>
       <p class="checkpoint-boundary">{{BOUNDARY}}</p>
+      {{MANUAL_NEXT_STEP}}
     </article>
   </main>
   <footer class="checkpoint-footer"><strong>{{SAVE}}</strong>{{EMPLOYMENT_BOUNDARY}}</footer>
@@ -139,6 +140,7 @@ The templates below are the complete layout sources. They are listed here once (
         <div><dt>{{EVIDENCE_LABEL}}</dt><dd>{{EVIDENCE}}</dd></div>
       </dl>
       <p class="outcome-boundary">{{BOUNDARY}}</p>
+      {{MANUAL_NEXT_STEP}}
     </article>
   </main>
   <footer class="outcome-footer"><strong>{{SAVE}}</strong>{{EMPLOYMENT_BOUNDARY}}</footer>
