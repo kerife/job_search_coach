@@ -83,6 +83,16 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
         }
 
     def test_renders_each_locale_and_state_as_a_self_contained_decision_card(self) -> None:
+        save_boundary = {
+            "en": (
+                "Source reply is not retained by this flow.",
+                "This private HTML artifact is saved only at the path you requested.",
+            ),
+            "es": (
+                "Este flujo no conserva la respuesta de origen.",
+                "Este artefacto HTML privado solo se guarda en la ruta que solicitaste.",
+            ),
+        }
         expected = {
             "clarify-es.json": ("Aclarar primero", "Qué sabemos"),
             "clarify-en.json": ("Clarify first", "What we know"),
@@ -100,12 +110,8 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
                 self.assertIn(state_label, document)
                 self.assertIn(known_label, document)
                 self.assertIn("No external action was taken." if triage["locale"] == "en" else "No se realizó ninguna acción externa.", document)
-                self.assertIn(
-                    "Nothing is saved on this device."
-                    if triage["locale"] == "en"
-                    else "No se guarda nada en este dispositivo.",
-                    document,
-                )
+                for sentence in save_boundary[triage["locale"]]:
+                    self.assertIn(sentence, document)
                 self.assertIn("Content-Security-Policy", document)
                 state_start = document.index('class="triage-state')
                 state_end = document.index(">", state_start)
@@ -210,21 +216,25 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
 
     def test_save_boundary_is_plain_localized_copy_without_exposing_internal_enum(self) -> None:
         expected = {
-            "en": "Nothing is saved on this device.",
-            "es": "No se guarda nada en este dispositivo.",
-        }
-        old = {
-            "en": "Local saving is disabled (local_save_mode=disabled).",
-            "es": "El guardado local está deshabilitado (local_save_mode=disabled).",
+            "en": (
+                "Source reply is not retained by this flow.",
+                "This private HTML artifact is saved only at the path you requested.",
+            ),
+            "es": (
+                "Este flujo no conserva la respuesta de origen.",
+                "Este artefacto HTML privado solo se guarda en la ruta que solicitaste.",
+            ),
         }
         for name, triage in self.fixtures.items():
             with self.subTest(fixture=name):
                 self.assertEqual(triage["delivery"]["local_save_mode"], "disabled")
                 document = self.renderer.render_triage_html(triage)
-                self.assertEqual(document.count(expected[triage["locale"]]), 1)
+                for sentence in expected[triage["locale"]]:
+                    self.assertEqual(document.count(sentence), 1)
+                self.assertNotIn("Nothing is saved on this device.", document)
+                self.assertNotIn("No se guarda nada en este dispositivo.", document)
                 self.assertNotIn("local_save_mode=", document)
-                self.assertNotIn(old[triage["locale"]], document)
-                save_start = document.index(expected[triage["locale"]])
+                save_start = document.index(expected[triage["locale"]][0])
                 self.assertNotIn("no-print", document[save_start - 300 : save_start + 300])
 
     def test_v2_uses_ui_locale_for_copy_and_content_locale_for_dynamic_prose(self) -> None:
@@ -939,7 +949,10 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
     def test_cli_writes_mode_0600_deterministic_output_and_rejects_symlink_targets(self) -> None:
         fixture = FIXTURE_DIRECTORY / "ready-en.json"
         with tempfile.TemporaryDirectory() as temporary_directory:
-            root = Path(temporary_directory)
+            root = Path(temporary_directory).resolve()
+            output = root / "receipt.html"
+            receipt = self.renderer.write_triage_html(fixture, output)
+            self.assertEqual(receipt.artifact_path, output.resolve())
             first = root / "first.html"
             second = root / "second.html"
             command = [sys.executable, "-B", str(RENDERER_PATH), str(fixture)]
