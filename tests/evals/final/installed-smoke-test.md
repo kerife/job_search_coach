@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-13T03:07:59-06:00`
+release_timestamp: `2026-08-13T03:48:42-06:00`
 
-source_commit: `1f2050378ee46303ebfe5ff5ad9f185c9f7310c9`
+source_commit: `6d9d26d972cd7c005a1f88c541b466307ae9e5d4`
 
-source_tree: `f85a146a5694e90affbecf14fe42bb254662ae80`
+source_tree: `65f72dc18de8fd0147a7d46d9bf2192c1b38202a`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260813030759`
+installed_cache_version: `0.2.0+codex.20260813094842`
 
 installed_enabled: `true`
 
@@ -32,9 +32,9 @@ source_file_count: `109`
 
 installed_file_count: `109`
 
-normalized_source_cache_sha256: `f1ffeed2db72800da0d53611141b6548d147739b579fb0473bf2c8408d3c1851`
+normalized_source_cache_sha256: `7a95883d882413f0b17b82ee94b8b048749cb8d6eb79856b64b43f9e11680c07`
 
-active_config: `canonical_only`
+active_config: `canonical_and_public_enabled_ambiguous`
 
 source_cache_equivalence: `diff_qr_silent`
 
@@ -48,9 +48,9 @@ installed_linkedin_diagnostic_redaction_smoke: `4/4`
 
 installed_bounded_diagnostics_smoke: `1/1`
 
-fresh_agent_smoke: `green`
+fresh_agent_smoke: `not_run`
 
-fresh_agent_smoke_scope: `dossier-es-en, triage-es-en, practice-es; validators and renderers exit 0; no external action`
+fresh_agent_smoke_scope: `direct installed CLI validation/render smoke only; no new agent session; no external action`
 
 official_release_validator: `passed`
 
