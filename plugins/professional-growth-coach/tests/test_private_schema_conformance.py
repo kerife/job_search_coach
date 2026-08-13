@@ -1,5 +1,6 @@
 import copy
 import datetime as dt
+import importlib.util
 import json
 import sys
 import unittest
@@ -22,6 +23,16 @@ from validate_private_recruiter_reply_triage import validate_triage
 from validate_recruiter_practice_session import validate_session
 
 
+def _load_v2_dossier_helper():
+    path = ROOT.parent.parent / "tests" / "test_executive_career_dossier_v2.py"
+    specification = importlib.util.spec_from_file_location("v2_dossier_test_helper", path)
+    if specification is None or specification.loader is None:
+        raise RuntimeError("v2 dossier test helper is unavailable")
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    return module
+
+
 V2_READY_ES_SNAPSHOT = (
     "snap-triage-sha256-"
     "74720a33a8bfc5e085767831e741b7cce97d45b1bb2d76b47d3ee203a2b5d6e8"
@@ -35,6 +46,21 @@ V2_TRIAGE_PRACTICE_SNAPSHOT = (
 class PrivateSchemaConformanceTests(unittest.TestCase):
     def _schema(self, name):
         return json.loads((ROOT / "schemas" / name).read_text(encoding="utf-8"))
+
+    def test_executive_dossier_v2_schema_accepts_ledger_and_closes_new_fields(self):
+        helper = _load_v2_dossier_helper()
+        dossier = helper.make_v2_dossier()
+        schema = self._schema("executive-career-dossier-v2.schema.json")
+        self.assertEqual([], validate_schema_instance(dossier, schema))
+        missing_ledger = copy.deepcopy(dossier)
+        del missing_ledger["section_coverage"]
+        self.assertTrue(validate_schema_instance(missing_ledger, schema))
+        missing_request = copy.deepcopy(dossier)
+        del missing_request["section_coverage"][2]["inspection_request"]
+        self.assertTrue(validate_schema_instance(missing_request, schema))
+        missing_priority = copy.deepcopy(dossier)
+        del missing_priority["priorities"][0]["client_template"]
+        self.assertTrue(validate_schema_instance(missing_priority, schema))
 
     def test_schema_diagnostics_redact_absolute_field_names(self):
         cases = [

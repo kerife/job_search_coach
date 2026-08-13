@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/professional-growth-coach/executive-career-dossier-v2.schema.json",
+  "title": "Executive Career Dossier v2",
+  "type": "object",
+  "required": ["schema_version", "dossier_kind", "locale", "evidence_as_of", "case_scope", "benchmarking", "requested_technology_terms", "focus", "evidence_scope", "evidence", "claims", "verdict", "coverage", "priorities", "recruiter_scan", "dimensions", "visual_review", "copy_blocks", "do_not_change", "screen_bridge", "questions", "seven_day_plan", "analytics", "market_context", "methodology_source_categories", "privacy", "authorization", "section_coverage"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "executive-career-dossier-v2"},
+    "dossier_kind": {"const": "linkedin_profile_diagnostic"},
+    "locale": {"enum": ["es", "en"]},
+    "evidence_as_of": {"type": "string", "format": "date"},
+    "case_scope": {"const": "single_candidate"}, "benchmarking": {"const": "disabled"},
+    "requested_technology_terms": {}, "focus": {}, "evidence_scope": {},
+    "evidence": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/evidence"}},
+    "claims": {}, "verdict": {}, "coverage": {},
+    "priorities": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"$ref": "#/$defs/priority"}},
+    "recruiter_scan": {}, "dimensions": {}, "visual_review": {}, "copy_blocks": {}, "do_not_change": {}, "screen_bridge": {}, "questions": {}, "seven_day_plan": {}, "analytics": {}, "market_context": {}, "methodology_source_categories": {}, "privacy": {}, "authorization": {},
+    "section_coverage": {"type": "array", "minItems": 17, "maxItems": 17, "items": {"$ref": "#/$defs/section_coverage_row"}}
+  },
+  "$defs": {
+    "profile_section": {"enum": ["photo", "banner", "name", "profile_url", "headline", "location", "contact_info", "about", "experience", "skills", "featured", "certifications", "education", "recommendations", "activity", "analytics", "job_preferences"]},
+    "evidence": {"type": "object", "required": ["id", "state", "section", "source_kind", "paraphrase", "capture_ref", "profile_section"], "additionalProperties": false, "properties": {"id": {"type": "string", "pattern": "^E-[0-9]{3}$"}, "state": {"enum": ["verified", "candidate_reported", "inferred", "unknown"]}, "section": {"enum": ["headline", "about", "experience", "skills", "proof", "completeness", "photo", "banner", "visual", "analytics", "market"]}, "source_kind": {"enum": ["provided_material", "candidate_statement", "authorized_visible", "consented_aggregate", "dated_vacancy_research"]}, "paraphrase": {"type": "string", "minLength": 1, "maxLength": 500}, "capture_ref": {"type": ["string", "null"], "pattern": "^CAP-[0-9]{3}$"}, "profile_section": {"anyOf": [{"$ref": "#/$defs/profile_section"}, {"type": "null"}]}}},
+    "inspection_request": {"type": "object", "required": ["access_type", "decision", "scope", "carry_forward"], "additionalProperties": false, "properties": {"access_type": {"const": "read_only_visible_section_inspection"}, "decision": {"enum": ["pending_response", "declined_for_session", "authorized_inspection_failed"]}, "scope": {"const": "current_session_only"}, "carry_forward": {"const": false}}},
+    "section_coverage_row": {"oneOf": [
+      {"type": "object", "required": ["section", "availability", "evidence_state", "reason"], "additionalProperties": false, "properties": {"section": {"$ref": "#/$defs/profile_section"}, "availability": {"const": "inspected_present"}, "evidence_state": {"const": "verified"}, "reason": {"const": "inspected_content_available"}}},
+      {"type": "object", "required": ["section", "availability", "evidence_state", "reason"], "additionalProperties": false, "properties": {"section": {"$ref": "#/$defs/profile_section"}, "availability": {"const": "inspected_absent"}, "evidence_state": {"const": "verified"}, "reason": {"const": "inspected_section_absent"}}},
+      {"type": "object", "required": ["section", "availability", "evidence_state", "reason"], "additionalProperties": false, "properties": {"section": {"$ref": "#/$defs/profile_section"}, "availability": {"const": "candidate_supplied"}, "evidence_state": {"const": "candidate_reported"}, "reason": {"const": "candidate_material_supplied"}}},
+      {"type": "object", "required": ["section", "availability", "evidence_state", "reason", "inspection_request"], "additionalProperties": false, "properties": {"section": {"$ref": "#/$defs/profile_section"}, "availability": {"const": "unavailable"}, "evidence_state": {"const": "unknown"}, "reason": {"enum": ["authorization_required", "inspection_declined", "authorized_inspection_failed"]}, "inspection_request": {"$ref": "#/$defs/inspection_request"}}}
+    ]},
+    "priority": {"type": "object", "required": ["rank", "title", "problem", "why_now", "action", "timebox_minutes", "done_when", "evidence_state", "evidence_ids", "dimensions", "target_section", "coach_observation", "why_it_matters", "coach_prompt", "client_template", "privacy_boundary"], "additionalProperties": false, "properties": {"rank": {"type": "integer", "minimum": 1, "maximum": 3}, "title": {"type": "string", "minLength": 1, "maxLength": 500}, "problem": {"type": "string", "minLength": 1, "maxLength": 500}, "why_now": {"type": "string", "minLength": 1, "maxLength": 500}, "action": {"type": "string", "minLength": 1, "maxLength": 500}, "timebox_minutes": {"type": "integer", "minimum": 5, "maximum": 120}, "done_when": {"type": "string", "minLength": 1, "maxLength": 500}, "evidence_state": {"enum": ["verified", "candidate_reported", "inferred", "unknown"]}, "evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^E-[0-9]{3}$"}, "uniqueItems": true}, "dimensions": {"type": "array", "minItems": 1, "items": {"type": "string"}, "uniqueItems": true}, "target_section": {"$ref": "#/$defs/profile_section"}, "coach_observation": {"type": "string", "minLength": 1, "maxLength": 500}, "why_it_matters": {"type": "string", "minLength": 1, "maxLength": 500}, "coach_prompt": {"type": "string", "minLength": 1, "maxLength": 500}, "client_template": {"$ref": "#/$defs/client_template"}, "privacy_boundary": {"const": "no_raw_profile_text_or_private_values"}}},
+    "client_template": {"type": "object", "required": ["template_id", "field_keys"], "additionalProperties": false, "properties": {"template_id": {"enum": ["context_action_result_v1", "positioning_evidence_v1", "proof_scope_result_v1"]}, "field_keys": {"type": "array", "minItems": 1, "maxItems": 5, "uniqueItems": true, "items": {"enum": ["target_role", "specialty", "context", "action", "scope", "result", "metric", "evidence_source"]}}}}
+  }
+}
