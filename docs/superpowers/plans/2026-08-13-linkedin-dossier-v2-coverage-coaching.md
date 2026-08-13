@@ -23,7 +23,11 @@
 - Candidate identity, profile URLs, contact values, raw profile text, private analytics, local paths, raw enum values, and evidence IDs never appear in visible HTML or chat summary.
 - No new dependency, remote asset, network request, form, external script, local storage, persisted answer, or relaxed CSP.
 - Static checks do not count as empirical browser QA; report real-browser keyboard, 320px/200% zoom, print, forced-colors, dark-mode, and screen-reader status separately.
-- Run the official cachebuster exactly once and only after functional, plugin, root, static, privacy, release, diff, and source checks are green.
+- Run the official cachebuster exactly once and only after functional, plugin,
+  privacy, release, diff, source, and every non-provenance root/static check is
+  green. The only permitted pre-cachebuster failures are the known stale
+  final-eval provenance assertions; Task 4 rebinds them once to the cachebuster
+  source commit and reruns both suites to full green.
 - Leave `professional-growth-coach@codex-marketplace-public` unchanged and disclose that both public and local identities remain enabled.
 
 ---
@@ -720,7 +724,10 @@ scripts/run_release_validation.sh
 git diff --check
 ```
 
-Expected: every command exits 0 before any cachebuster or install.
+Expected: every command exits 0 before any cachebuster or install, except that
+static/root may report only the known stale final-cycle `source_commit`
+assertions. Any functional, package, privacy, accessibility, or other failure
+blocks release.
 
 - [ ] **Step 6: Commit Task 3**
 
