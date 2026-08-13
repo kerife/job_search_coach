@@ -26,8 +26,9 @@ changing the visual family:
    ledger;
 3. explain exactly three priorities as section-named coach conversations with
    blank, non-persisted templates;
-4. show exactly three separately validated vacancy evidence-alignment cards or
-   one honest incomplete-market state;
+4. show five separately validated vacancy evidence-alignment cards in the
+   complete state, or the real one-to-four-card limited state with its actual
+   denominator, or one honest unavailable-market state;
 5. compare reputable learning with cheaper proof, project, direct-application,
    and no-learning options;
 6. finish with evidence, limitations, privacy, and no-external-action copy.
@@ -125,6 +126,9 @@ For dossier v2, generated values and prose are placeholders only. Never use a
 generated company, vacancy, score, course, metric, authorization state, impact
 claim, or outcome promise as product copy or fixture evidence. Use native
 `progress` plus visible text for alignment charts; keep the detailed
-requirement explanation authoritative. At 320px, coverage rows stack rather
-than creating horizontal tables. No critical decision is hidden in a closed
-accordion. Templates are static text, not controls or stored answers.
+requirement explanation authoritative. A complete market matrix has five
+labelled vacancy columns; a limited matrix has exactly its real `N` columns and
+no padding. At 320px, coverage and matrix rows become labelled stacks rather
+than making horizontal scrolling the only access path. Print preserves all
+labels and text states. No critical decision is hidden in a closed accordion.
+Templates are static text, not controls or stored answers.

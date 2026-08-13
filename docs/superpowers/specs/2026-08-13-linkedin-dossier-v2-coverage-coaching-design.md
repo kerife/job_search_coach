@@ -31,8 +31,9 @@ contracts:
 2. `career-market-learning-dossier-v1` owns current vacancies, directional
    evidence alignment, gaps, and learning decisions.
 
-The main v2 HTML may render a snapshot of the three validated vacancy cards
-and learning decisions, but those values remain bound to the second contract.
+The main v2 HTML may render a snapshot of up to five validated vacancy cards,
+the actual-sample matrix, and learning decisions, but those values remain bound
+to the second contract.
 Market alignment never changes the seven-dimension LinkedIn score. Chat may
 return both private artifact links; the main dossier remains understandable on
 its own.
@@ -178,8 +179,9 @@ with the conversational coach-card variant:
 4. existing profile score, visual review, safe copy studio, and boundaries;
 5. in this first increment, one bounded market-evidence-unavailable state with
    no percentage, vacancy card, or paid-learning decision;
-6. in the later composed release, exactly three validated market cards and
-   learning decisions derived only from the separate market contract;
+6. in the later composed release, exactly five validated market cards in the
+   complete state or the real one-to-four-card limited state, with learning
+   decisions derived only from the separate market contract;
 7. evidence, methodology, limitations, and no-external-action footer.
 
 At 320px, the ledger becomes one stacked row-card per section rather than a
@@ -209,7 +211,8 @@ authorization controls are explicitly rejected.
   diagnostics.
 - One repair is allowed before existing localized Markdown fallback behavior.
 - A market artifact failure leaves the LinkedIn dossier valid and renders an
-  honest `market_evidence_unavailable` state; it never fabricates three cards.
+  honest `market_evidence_unavailable` state; it never fabricates five cards or
+  pads a limited sample.
 - A LinkedIn inspection failure preserves prior validated findings and records
   only a fixed unavailable reason.
 
