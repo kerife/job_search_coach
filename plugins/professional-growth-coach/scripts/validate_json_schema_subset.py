@@ -81,6 +81,18 @@ def _validate(
         budget = [MAX_SCHEMA_EVALUATIONS]
     if active_ref_targets is None:
         active_ref_targets = set()
+    if not isinstance(schema, Mapping):
+        return ["schema branch is invalid"]
+    for combinator in ("oneOf", "anyOf", "allOf"):
+        branches = schema.get(combinator)
+        if branches is not None and (
+            not isinstance(branches, list)
+            or any(not isinstance(branch, Mapping) for branch in branches)
+        ):
+            return ["schema branch is invalid"]
+    for branch_name in ("if", "then", "else", "not"):
+        if branch_name in schema and not isinstance(schema[branch_name], Mapping):
+            return ["schema branch is invalid"]
     if budget[0] <= 0:
         return [SCHEMA_EVALUATION_LIMIT_ERROR]
     budget[0] -= 1

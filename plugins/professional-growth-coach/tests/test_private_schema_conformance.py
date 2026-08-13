@@ -509,6 +509,19 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         )
         self.assertIn("schema reference is invalid", errors)
 
+    def test_dependency_free_checker_rejects_non_object_combinator_branches(self):
+        malformed_schemas = (
+            {"oneOf": [None]},
+            {"anyOf": ["invalid"]},
+            {"allOf": [None]},
+            {"if": None},
+            {"not": None},
+        )
+        for schema in malformed_schemas:
+            with self.subTest(schema=schema):
+                errors = validate_schema_instance({}, schema)
+                self.assertIn("schema branch is invalid", errors)
+
     def test_dependency_free_checker_rejects_cyclic_json_values_without_recursion_error(self):
         value = []
         value.append(value)
