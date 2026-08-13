@@ -660,12 +660,29 @@ class ExecutiveCareerDossierSchemaTests(unittest.TestCase):
                     errors,
                 )
 
+    def test_evidence_paraphrase_rejects_multi_token_and_particle_unlabelled_identities(self) -> None:
+        rejected = (
+            "Ana María López delivered reliability automation.",
+            "Ana de la Cruz delivered reliability automation.",
+            "José Luis García delivered reliability automation.",
+            "Contexto seguro. Ana María López delivered reliability automation.",
+        )
+        for text in rejected:
+            with self.subTest(text=text):
+                dossier = mutate_path(self.es_dossier, ("evidence", 0, "paraphrase"), text)
+                errors = self.validate_dossier(dossier)
+                self.assertTrue(
+                    any("unlabelled candidate identity" in error for error in errors),
+                    errors,
+                )
+
     def test_evidence_paraphrase_preserves_non_person_subject_and_role_controls(self) -> None:
         accepted = (
             "Kubernetes reliability automation reduced repetitive deployment work.",
             "Senior Engineer coordinates incident response.",
             "Platform Engineering covers incident response scope.",
             "El equipo implementó automatización.",
+            "Oracle Cloud delivers reliability automation.",
         )
         for text in accepted:
             with self.subTest(text=text):

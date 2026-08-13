@@ -450,12 +450,17 @@ class DossierRecruiterPracticeHandoffTests(unittest.TestCase):
             "Ana López reports Terraform experience.",
             "Jordan Lee works at Acme Corporation.",
             "Ana López reporta experiencia con Terraform.",
+            "Ana María López delivered reliability automation.",
+            "Ana de la Cruz delivered reliability automation.",
+            "José Luis García delivered reliability automation.",
+            "Contexto seguro. Ana María López delivered reliability automation.",
         ):
             with self.subTest(rejected=value):
                 self.assertFalse(is_identity_free_handoff_text(value, 500))
         for value in (
             "Senior Engineer leads incident response.",
             "Platform Engineering covers incident response scope.",
+            "Oracle Cloud delivers reliability automation.",
         ):
             with self.subTest(accepted=value):
                 self.assertTrue(is_identity_free_handoff_text(value, 500))
