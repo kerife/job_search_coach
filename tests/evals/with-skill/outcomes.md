@@ -69,7 +69,7 @@ Exit: `0`
 Raw JSON:
 
 ```json
-{"applications":4,"days_to_first_interview":null,"interview_rate":0.0,"interviews":0,"offer_rate":0.0,"offers":0,"response_rate":0.25,"responses":1,"warnings":["small sample: 4 applications in window; rates are descriptive","interventions observed; summary is descriptive and does not prove causality","LinkedIn outreach measurement events observed: LI-FIRST-002; descriptive only, no causal attribution"],"window_days":30}
+{"applications":4,"days_to_first_interview":null,"interview_rate":0.0,"interviews":0,"offer_rate":0.0,"offers":0,"response_rate":0.25,"responses":1,"warnings":["small sample: 4 applications in window; rates are descriptive","interventions observed; summary is descriptive and does not prove causality","LinkedIn outreach measurement events observed; descriptive only, no causal attribution"],"window_days":30}
 ```
 
 data_quality: verified: four in-window rows use `source=linkedin_outreach`, one candidate, stable role/geography/source/asset_version, and `intervention_id=LI-FIRST-002`.

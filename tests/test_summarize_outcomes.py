@@ -459,9 +459,33 @@ class SummarizeOutcomesTests(unittest.TestCase):
         summary = self.parse_valid(result)
         self.assertEqual(summary["applications"], 2)
         self.assertIn(
-            "LinkedIn outreach measurement events observed: LI-FIRST-002; descriptive only, no causal attribution",
+            "LinkedIn outreach measurement events observed; descriptive only, no causal attribution",
             summary["warnings"],
         )
+
+    def test_linkedin_outreach_warning_does_not_echo_untrusted_intervention_ids(self) -> None:
+        for sentinel in (
+            "LI-/Users/private/profile.json",
+            r"LI-D:\private\profile.json",
+            r"LI-\\server\share\profile.json",
+        ):
+            with self.subTest(sentinel=sentinel):
+                result = run_summary(
+                    [
+                        outcome_row(
+                            source="linkedin_outreach",
+                            intervention_id=sentinel,
+                        )
+                    ]
+                )
+                self.assertEqual(0, result.returncode, result.stderr)
+                self.assertNotIn(sentinel, result.stdout)
+                self.assertNotIn(sentinel, result.stderr)
+                summary = self.parse_valid(result)
+                self.assertIn(
+                    "LinkedIn outreach measurement events observed; descriptive only, no causal attribution",
+                    summary["warnings"],
+                )
 
     def test_multiple_candidates_without_unanimous_consent_get_zero_safe_summary(self) -> None:
         result = run_summary(
@@ -844,7 +868,7 @@ class SummarizeOutcomesTests(unittest.TestCase):
                 "warnings": [
                     "small sample: 4 applications in window; rates are descriptive",
                     "interventions observed; summary is descriptive and does not prove causality",
-                    "LinkedIn outreach measurement events observed: LI-FIRST-002; descriptive only, no causal attribution",
+                    "LinkedIn outreach measurement events observed; descriptive only, no causal attribution",
                 ],
                 "window_days": 30,
             },

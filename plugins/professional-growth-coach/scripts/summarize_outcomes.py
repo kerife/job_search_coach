@@ -330,17 +330,14 @@ def summarize(
         warnings.append(
             "interventions observed; summary is descriptive and does not prove causality"
         )
-    linkedin_measurement_events = sorted({
-        str(row["intervention_id"])
-        for row in in_window
-        if str(row["source"]).strip().lower() == "linkedin_outreach"
+    linkedin_measurement_events_observed = any(
+        str(row["source"]).strip().lower() == "linkedin_outreach"
         and str(row["intervention_id"]).startswith("LI-")
-    })
-    if linkedin_measurement_events:
+        for row in in_window
+    )
+    if linkedin_measurement_events_observed:
         warnings.append(
-            "LinkedIn outreach measurement events observed: "
-            + ", ".join(linkedin_measurement_events)
-            + "; descriptive only, no causal attribution"
+            "LinkedIn outreach measurement events observed; descriptive only, no causal attribution"
         )
 
     confounded_rows = sum(bool(row["confounders"]) for row in in_window)
