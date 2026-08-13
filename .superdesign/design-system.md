@@ -18,6 +18,20 @@ predicts an interview, persists a raw practice answer, or exposes internal IDs.
 4. The candidate answers manually in the originating private Codex conversation.
 5. Feedback remains categorical, evidence-bound, ephemeral, and non-predictive.
 
+For the executive LinkedIn dossier v2 exploration, extend that journey without
+changing the visual family:
+
+1. state the verdict and evidence coverage honestly;
+2. show a complete per-section inspection and current-session authorization
+   ledger;
+3. explain exactly three priorities as section-named coach conversations with
+   blank, non-persisted templates;
+4. show exactly three separately validated vacancy evidence-alignment cards or
+   one honest incomplete-market state;
+5. compare reputable learning with cheaper proof, project, direct-application,
+   and no-learning options;
+6. finish with evidence, limitations, privacy, and no-external-action copy.
+
 The current design task must improve the clarity of steps 3 and 4 without
 adding a form, fake button, link, persistence, automatic transfer, recruiter
 identity, or external action.
@@ -106,3 +120,11 @@ the supplied source CSS. Do not introduce any fonts, colors, gradients, rounded
 cards, floating navigation, decorative illustrations, or visual styles not in
 this design system. Preserve the existing document shell and candidate-facing
 copy unless a variation explicitly tests a clearer truthful continuation.
+
+For dossier v2, generated values and prose are placeholders only. Never use a
+generated company, vacancy, score, course, metric, authorization state, impact
+claim, or outcome promise as product copy or fixture evidence. Use native
+`progress` plus visible text for alignment charts; keep the detailed
+requirement explanation authoritative. At 320px, coverage rows stack rather
+than creating horizontal tables. No critical decision is hidden in a closed
+accordion. Templates are static text, not controls or stored answers.
