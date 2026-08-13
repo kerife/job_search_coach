@@ -3,7 +3,7 @@
   "artifact_kind": "deterministic-regression-fixture",
   "cycle": 1,
   "case_id": "junior",
-  "source_commit": "2dd8cc4e2df6f088cee0ee871a59d74ac841e7f2",
+  "source_commit": "7659991929b8b83d8488f89aaea38194ebd62f01",
   "source_tree": "45bbe75a49114e2cf240ba5f5813beb24eaeb4df",
   "fork_turns": "none",
   "run_id": "JSC-RUN-C1-JUNIOR",
