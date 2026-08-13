@@ -79,7 +79,7 @@ script boundaries.
 - [ ] **Step 2: Run GREEN and compatibility tests**
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest tests.test_private_recruiter_reply_triage tests.test_render_private_recruiter_reply_triage -q
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=plugins/professional-growth-coach/scripts python3 -B -m unittest tests.test_private_recruiter_reply_triage tests.test_render_private_recruiter_reply_triage -q
 PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest plugins.professional-growth-coach.tests.test_private_recruiter_reply_triage -q
 git diff --check
 ```
