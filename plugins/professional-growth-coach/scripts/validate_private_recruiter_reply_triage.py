@@ -86,10 +86,14 @@ FORBIDDEN_PROSE = {
         r"[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñü'’-]{1,40}"
     ),
     "unlabelled_identity": re.compile(
-        r"\b[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñü'’-]{1,40}\s+"
+        r"\b(?!(?i:senior|principal|lead|staff|software|platform|data|product|engineering|"
+        r"cloud|security|technical|solutions|project|program|people|talent|customer|"
+        r"account|enterprise|sales|marketing|finance|operations|strategy|user|ux|ui)\s+)"
         r"[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñü'’-]{1,40}\s+"
-        r"(?:described|contacted|joined|emailed|has|describió|contactó|"
-        r"se\s+uni[oó]|escribió|tiene)\b"
+        r"[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñü'’-]{1,40}\s+"
+        r"(?:described|describes|contacted|contact|joined|emailed|has|reports|reported|"
+        r"explains|explained|works|worked|describió|contactó|se\s+uni[oó]|escribió|"
+        r"reporta|describe|trabaja|tiene|explica|menciona)\b"
     ),
     "unlabelled_company": re.compile(
         r"\b(?:works?|worked|from|at|with|en|para)\s+"
