@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed for client review. This design supersedes only the coverage,
+Approved for implementation. This design supersedes only the coverage,
 authorization, and priority-copy portions of `executive-career-dossier-v1`.
 The v1 schema, validator, renderer, fixtures, and installed behavior remain
 unchanged until the implementation plan is approved and completed.
@@ -94,16 +94,26 @@ Each ledger row contains:
 An unavailable row has exactly one inspection request:
 
 - `access_type=read_only_visible_section_inspection`;
-- `decision=pending_response|declined_for_session|authorized_for_session`;
+- `decision=pending_response|declined_for_session|authorized_inspection_failed`;
 - `scope=current_session_only`;
 - `carry_forward=false`.
+
+The serialized ledger is a status record, not proof of consent. The positive
+authorization event exists only in the current conversation turn and is never
+written to the JSON or HTML. After an explicit client answer, the orchestrator
+immediately attempts read-only inspection of that one named section. Success
+replaces the row with `inspected_present` or `inspected_absent` and removes the
+request. Failure leaves the row unavailable with
+`decision=authorized_inspection_failed` and a fixed failure reason. A copied
+report therefore cannot act as reusable authorization.
 
 Authorization is section-specific and applies only to the current session. It
 does not authorize editing, messaging, connecting, following, applying,
 exporting, posting, uploading, downloading, or retaining raw profile content.
-An authorized row must be inspected during the same session or remain
-unavailable with a fixed failure reason. Authorization is never inferred from
-a previous report or another section.
+Authorization is never inferred from a previous report, a serialized field, or
+another section. The validator enforces the persisted state matrix; the skill
+orchestrator enforces that the positive answer came from the active
+conversation before attempting inspection.
 
 `inspected_absent` means the section was inspected and was not present; it does
 not create another authorization request. Pending or declined inspection does
@@ -117,6 +127,12 @@ inspection authorization that can materially change the recommendation. After
 the client answers, the next pending section may be requested. The agent never
 answers the authorization question on the client's behalf.
 
+Priority is deterministic: inspect priorities in rank order and select the
+first pending `target_section`; if none of the three priorities targets a
+pending section, select the first pending section in canonical ledger order.
+Never emit this authorization question together with the existing rank-one
+content question.
+
 When no section is inspectable or supplied, keep the existing rule: ask one
 useful intake or inspection-authorization question and do not create an empty
 dossier.
@@ -129,7 +145,8 @@ dossier.
 - `coach_observation`: evidence-bound, conversational explanation;
 - `why_it_matters`: bounded client consequence without outcome prediction;
 - `coach_prompt`: one direct next prompt to the client;
-- `client_template`: one to five fixed blank fields or sentence stems;
+- `client_template`: one closed template ID plus one to five enumerated field
+  keys; the renderer owns the localized blank labels;
 - `done_when`: observable private review criterion;
 - `evidence_ids`: same-section evidence only;
 - `privacy_boundary`: fixed no-raw-text/no-private-values boundary.
@@ -145,6 +162,11 @@ renderer displays natural evidence paraphrases and section labels, never
 internal IDs or raw enum values. Templates are static copyable text, not forms,
 editable controls, local storage, or persisted answers.
 
+Each v2 evidence item adds `profile_section`, containing one canonical section
+or `null` when the evidence is not attributable to a single LinkedIn section.
+Same-section priority binding uses this field. Projection to v1 removes it and
+all v2-only priority fields without mutating the source object.
+
 ## Information architecture
 
 The selected visual direction combines the decision-led Superdesign variant
@@ -154,9 +176,10 @@ with the conversational coach-card variant:
 2. complete per-section coverage and authorization ledger;
 3. exactly three section-named coach priority cards with blank templates;
 4. existing profile score, visual review, safe copy studio, and boundaries;
-5. snapshot of exactly three validated market cards or one bounded incomplete
-   market-evidence state;
-6. learning decisions derived from the separate market contract;
+5. in this first increment, one bounded market-evidence-unavailable state with
+   no percentage, vacancy card, or paid-learning decision;
+6. in the later composed release, exactly three validated market cards and
+   learning decisions derived only from the separate market contract;
 7. evidence, methodology, limitations, and no-external-action footer.
 
 At 320px, the ledger becomes one stacked row-card per section rather than a
@@ -193,8 +216,8 @@ authorization controls are explicitly rejected.
 ## Acceptance criteria
 
 1. The schema and validator require all 17 section rows exactly once.
-2. Every unavailable row carries a current-session-only authorization
-   decision; every other row forbids it.
+2. Every unavailable row carries a non-reusable current-session request state;
+   every other row forbids it, and a positive answer is never serialized.
 3. Pending and declined rows never enter the score denominator as zero.
 4. Chat asks no more than one pending authorization question per turn.
 5. Exactly three priorities name their section, use coach-style prose, and
@@ -208,3 +231,12 @@ authorization controls are explicitly rejected.
 9. Existing v1 fixtures and behavior remain valid.
 10. Source, installed cache, provenance, privacy, static, plugin, and root
     release gates pass before publication.
+
+## First-increment boundary
+
+This v2 increment ships coverage, authorization-state rendering, and coach
+priorities only. It does not implement vacancy scoring or learning decisions.
+Those surfaces remain unavailable until the independent
+`career-market-learning-dossier-v1` contract is validated and bound to the v2
+snapshot. Generic public HTTPS validation is not proof that a vacancy,
+employer, ATS, or course source is official.
