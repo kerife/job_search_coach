@@ -534,6 +534,7 @@ class PrivateRecruiterReplyTriageContractTests(unittest.TestCase):
     def test_rejects_ordinary_unlabelled_names_in_every_prose_field(self) -> None:
         sentences = (
             "John Smith has a verified technical achievement.",
+            "John Smith joined the platform engineering team.",
             "John Smith reports a verified technical achievement.",
             "John Smith describes a verified technical achievement.",
             "John Smith works remotely.",
