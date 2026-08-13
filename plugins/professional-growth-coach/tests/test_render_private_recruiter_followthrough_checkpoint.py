@@ -227,6 +227,83 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
             r"(?s)@media \(forced-colors: active\).*?\.checkpoint-boundary\s*\{[^}]*color:\s*CanvasText;",
         )
 
+    def test_route_checkpoints_render_one_localized_manual_next_step_without_private_or_interactive_data(self):
+        expected = {
+            "en": (
+                "Manual next step",
+                "Return to the private Codex conversation and ask to start interview preparation. This receipt does not contact, send, or schedule anything.",
+            ),
+            "es": (
+                "Siguiente paso manual",
+                "Regresa a la conversación privada de Codex y pide iniciar la preparación de entrevista. Este recibo no contacta, envía ni agenda nada.",
+            ),
+        }
+        for locale, (heading, body) in expected.items():
+            with self.subTest(locale=locale):
+                item = copy.deepcopy(self.item)
+                item["locale"] = locale
+                rendered = renderer.render_checkpoint_html(
+                    item, self.receipt, as_of=dt.date(2026, 8, 8)
+                )
+                self.assertEqual(rendered.count('class="checkpoint-manual-next-step"'), 1)
+                self.assertIn(
+                    '<section class="checkpoint-manual-next-step" aria-labelledby="checkpoint-manual-next-step-heading">',
+                    rendered,
+                )
+                self.assertIn(
+                    f'<h2 id="checkpoint-manual-next-step-heading">{heading}</h2>',
+                    rendered,
+                )
+                self.assertEqual(rendered.count(body), 1)
+                self.assertNotIn("route_to_prepare-role-interviews", rendered)
+                for identifier in (item["source_receipt"]["id"], "F-105"):
+                    self.assertNotIn(identifier, rendered)
+                self.assertNotRegex(rendered, r"<(?:(?:button|form))\\b|\\bonclick=")
+                self.assertNotRegex(rendered, r'href="(?!#main-content)')
+                self.assertNotRegex(rendered, r"(?:file:|/tmp/|/Users/|\\\\)")
+
+    def test_manual_next_step_is_omitted_for_manual_clarify_and_stop_checkpoints_in_both_locales(self):
+        states = (
+            ("accepted", "unknown", "manual_reenter_private_prep"),
+            ("deferred", "unknown", "clarify_context_before_reply"),
+            ("declined", "unknown", "record_stop_decision"),
+        )
+        for locale in ("en", "es"):
+            for state, event, action in states:
+                with self.subTest(locale=locale, state=state):
+                    item = copy.deepcopy(self.item)
+                    item.update(
+                        locale=locale,
+                        action_state=state,
+                        next_measurement_event=event,
+                        next_safe_action=action,
+                    )
+                    rendered = renderer.render_checkpoint_html(
+                        item, self.receipt, as_of=dt.date(2026, 8, 8)
+                    )
+                    self.assertNotIn('class="checkpoint-manual-next-step"', rendered)
+
+    def test_manual_next_step_preserves_320px_print_contrast_and_forced_color_contracts(self):
+        first = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
+        second = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
+        self.assertEqual(first, second)
+        self.assertRegex(
+            first,
+            r"\.checkpoint-manual-next-step\s*\{[^}]*min-width:\s*0;[^}]*overflow-wrap:\s*anywhere;",
+        )
+        self.assertRegex(
+            first,
+            r"(?s)@media print.*?\.checkpoint-manual-next-step\s*\{[^}]*break-inside:\s*avoid;[^}]*page-break-inside:\s*avoid;",
+        )
+        self.assertRegex(
+            first,
+            r"(?s)@media \(prefers-contrast: more\).*?\.checkpoint-manual-next-step\s*\{[^}]*border-left-width:\s*\.5rem;[^}]*color:\s*var\(--ink\);",
+        )
+        self.assertRegex(
+            first,
+            r"(?s)@media \(forced-colors: active\).*?\.checkpoint-manual-next-step\s*\{[^}]*border:\s*1px solid CanvasText;[^}]*border-left-width:\s*\.25rem;[^}]*color:\s*CanvasText;",
+        )
+
     def test_atomic_private_write_mode_and_no_overwrite(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "checkpoint.html"

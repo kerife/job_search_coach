@@ -199,6 +199,80 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
             r"(?s)@media \(forced-colors: active\).*?\.outcome-boundary\s*\{[^}]*color:\s*CanvasText;",
         )
 
+    def test_route_outcomes_render_one_localized_manual_next_step_without_private_or_interactive_data(self):
+        expected = {
+            "screen-requested-en.json": (
+                "Manual next step",
+                "Return to the private Codex conversation and ask to start interview preparation. This receipt does not contact, send, or schedule anything.",
+            ),
+            "interview-requested-es.json": (
+                "Siguiente paso manual",
+                "Regresa a la conversación privada de Codex y pide iniciar la preparación de entrevista. Este recibo no contacta, envía ni agenda nada.",
+            ),
+        }
+        for fixture, (heading, body) in expected.items():
+            with self.subTest(fixture=fixture):
+                item = load_outcome(FIXTURES / fixture)
+                rendered = render_outcome_html(item, today=dt.date(2026, 8, 9))
+                self.assertEqual(rendered.count('class="outcome-manual-next-step"'), 1)
+                self.assertIn(
+                    '<section class="outcome-manual-next-step" aria-labelledby="outcome-manual-next-step-heading">',
+                    rendered,
+                )
+                self.assertIn(
+                    f'<h2 id="outcome-manual-next-step-heading">{heading}</h2>',
+                    rendered,
+                )
+                self.assertEqual(rendered.count(body), 1)
+                self.assertNotIn("route_to_prepare-role-interviews", rendered)
+                for identifier in (item["source_artifact_id"], *item["fact_ids"]):
+                    self.assertNotIn(identifier, rendered)
+                self.assertNotRegex(rendered, r"<(?:(?:button|form))\\b|\\bonclick=")
+                self.assertNotRegex(rendered, r'href="(?!#main-content)')
+                self.assertNotRegex(rendered, r"(?:file:|/tmp/|/Users/|\\\\)")
+
+    def test_manual_next_step_is_omitted_for_clarify_stop_and_manual_outcomes_in_both_locales(self):
+        fixtures = (
+            "contact-received-en.json",
+            "stop-decision-en.json",
+            "referral-received-es.json",
+        )
+        for fixture in fixtures:
+            source = load_outcome(FIXTURES / fixture)
+            for locale in ("en", "es"):
+                with self.subTest(fixture=fixture, locale=locale):
+                    item = copy.deepcopy(source)
+                    item["locale"] = locale
+                    rendered = render_outcome_html(item, today=dt.date(2026, 8, 9))
+                    self.assertNotIn('class="outcome-manual-next-step"', rendered)
+
+    def test_manual_next_step_preserves_320px_print_contrast_and_forced_color_contracts(self):
+        rendered = render_outcome_html(
+            load_outcome(FIXTURES / "screen-requested-en.json"), today=dt.date(2026, 8, 9)
+        )
+        self.assertEqual(
+            rendered,
+            render_outcome_html(
+                load_outcome(FIXTURES / "screen-requested-en.json"), today=dt.date(2026, 8, 9)
+            ),
+        )
+        self.assertRegex(
+            rendered,
+            r"\.outcome-manual-next-step\s*\{[^}]*min-width:\s*0;[^}]*overflow-wrap:\s*anywhere;",
+        )
+        self.assertRegex(
+            rendered,
+            r"(?s)@media print.*?\.outcome-manual-next-step\s*\{[^}]*break-inside:\s*avoid;[^}]*page-break-inside:\s*avoid;",
+        )
+        self.assertRegex(
+            rendered,
+            r"(?s)@media \(prefers-contrast: more\).*?\.outcome-manual-next-step\s*\{[^}]*border-left-width:\s*\.5rem;[^}]*color:\s*var\(--ink\);",
+        )
+        self.assertRegex(
+            rendered,
+            r"(?s)@media \(forced-colors: active\).*?\.outcome-manual-next-step\s*\{[^}]*border:\s*1px solid CanvasText;[^}]*border-left-width:\s*\.25rem;[^}]*color:\s*CanvasText;",
+        )
+
     def test_evidence_count_uses_natural_localized_singular_and_plural_copy(self):
         cases = (
             ("contact-received-en.json", "en", "1 candidate-supplied fact"),
