@@ -490,6 +490,15 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
 
         self.assertIn("schema validation exceeds safe evaluation limit", errors)
 
+    def test_dependency_free_checker_bounds_cyclic_schema_references(self):
+        schema = {"$defs": {}}
+        schema["$defs"]["loop"] = {"$ref": "#/$defs/loop"}
+        schema["$ref"] = "#/$defs/loop"
+
+        errors = validate_schema_instance({}, schema)
+
+        self.assertIn("schema validation exceeds safe evaluation limit", errors)
+
     def test_dependency_free_checker_rejects_cyclic_json_values_without_recursion_error(self):
         value = []
         value.append(value)
