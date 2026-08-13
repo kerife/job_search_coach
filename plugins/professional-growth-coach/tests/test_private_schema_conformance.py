@@ -535,6 +535,19 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
                 errors = validate_schema_instance(value, schema)
                 self.assertIn("schema keyword is invalid", errors)
 
+    def test_dependency_free_checker_rejects_invalid_regex_patterns(self):
+        for pattern in ("[", "(?", r"\K"):
+            with self.subTest(pattern=pattern):
+                errors = validate_schema_instance("x", {"pattern": pattern})
+                self.assertIn("schema pattern is invalid", errors)
+
+    def test_dependency_free_checker_rejects_nested_unbounded_regex(self):
+        errors = validate_schema_instance(
+            "a" * 22 + "!", {"type": "string", "pattern": "(a+)+$"}
+        )
+
+        self.assertIn("schema pattern exceeds safe complexity limit", errors)
+
     def test_dependency_free_checker_rejects_cyclic_json_values_without_recursion_error(self):
         value = []
         value.append(value)

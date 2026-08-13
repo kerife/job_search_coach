@@ -12,6 +12,11 @@ from private_prose_safety import safe_diagnostic_field_name
 MAX_SCHEMA_EVALUATIONS = 4_096
 SCHEMA_EVALUATION_LIMIT_ERROR = "schema validation exceeds safe evaluation limit"
 SCHEMA_KEYWORD_INVALID_ERROR = "schema keyword is invalid"
+SCHEMA_PATTERN_INVALID_ERROR = "schema pattern is invalid"
+SCHEMA_PATTERN_COMPLEXITY_ERROR = "schema pattern exceeds safe complexity limit"
+_NESTED_UNBOUNDED_QUANTIFIER = re.compile(
+    r"\((?:[^()\\]|\\.)*(?<!\\[A-Za-z])[+*]\s*\)[+*?]"
+)
 
 
 def _keyword_shapes_valid(schema: Mapping[str, object]) -> bool:
@@ -35,6 +40,16 @@ def _keyword_shapes_valid(schema: Mapping[str, object]) -> bool:
     if "pattern" in schema and not isinstance(schema["pattern"], str):
         return False
     return True
+
+
+def _pattern_error(pattern: str) -> str | None:
+    if _NESTED_UNBOUNDED_QUANTIFIER.search(pattern):
+        return SCHEMA_PATTERN_COMPLEXITY_ERROR
+    try:
+        re.compile(pattern)
+    except re.error:
+        return SCHEMA_PATTERN_INVALID_ERROR
+    return None
 
 
 def _pointer(root: Mapping[str, object], reference: str) -> Mapping[str, object]:
@@ -109,6 +124,10 @@ def _validate(
         return ["schema branch is invalid"]
     if not _keyword_shapes_valid(schema):
         return [SCHEMA_KEYWORD_INVALID_ERROR]
+    if "pattern" in schema:
+        pattern_error = _pattern_error(schema["pattern"])
+        if pattern_error is not None:
+            return [pattern_error]
     for combinator in ("oneOf", "anyOf", "allOf"):
         branches = schema.get(combinator)
         if branches is not None and (
