@@ -628,7 +628,7 @@ git commit -m "feat: render linkedin dossier v2 coaching"
 - Modify: `plugins/professional-growth-coach/scripts/build_dossier_recruiter_practice_handoff.py`
 - Modify: `plugins/professional-growth-coach/scripts/validate_dossier_recruiter_practice_handoff.py`
 - Modify: `plugins/professional-growth-coach/tests/run_static_checks.py`
-- Modify: `tests/test_dossier_recruiter_practice_handoff.py`
+- Modify: `plugins/professional-growth-coach/tests/test_dossier_recruiter_practice_handoff.py`
 - Modify: `tests/test_full_plugin.py`
 - Modify: `tests/test_plugin_structure.py`
 - Modify: `tests/test_repository_privacy.py`
@@ -709,7 +709,7 @@ unchanged.
 ```bash
 PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest \
   tests.test_executive_career_dossier_v2 \
-  tests.test_dossier_recruiter_practice_handoff \
+  plugins/professional-growth-coach/tests/test_dossier_recruiter_practice_handoff.py \
   tests.test_full_plugin \
   tests.test_plugin_structure \
   tests.test_repository_privacy \
@@ -740,7 +740,7 @@ git add \
   plugins/professional-growth-coach/skills/optimize-professional-profile/references/html-dossier.md \
   plugins/professional-growth-coach/skills/optimize-professional-profile/references/profile-audit.md \
   plugins/professional-growth-coach/tests/run_static_checks.py \
-  tests/test_dossier_recruiter_practice_handoff.py \
+  plugins/professional-growth-coach/tests/test_dossier_recruiter_practice_handoff.py \
   tests/test_full_plugin.py \
   tests/test_plugin_structure.py \
   tests/test_repository_privacy.py \
