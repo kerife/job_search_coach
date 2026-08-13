@@ -195,6 +195,28 @@ class JobSearchCoachPluginStructureTests(unittest.TestCase):
         self.assertGreater(obfuscated_score["claim_violation_count"], 0)
         self.assertFalse(obfuscated_score["complete_pass"])
 
+    def test_pressure_scorer_detects_expertise_promotion_in_aria_labelled_copy_card(self) -> None:
+        checker = load_static_checker()
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            output = self.render_pressure_fixture(Path(temporary_directory))
+            rendered = output.read_text(encoding="utf-8")
+            self.assertIn('class="card copy-card span-4" aria-labelledby=', rendered)
+            output.write_text(
+                rendered.replace(
+                    "Enfoque profesional claro con evidencia disponible",
+                    "Especialista en Terraform para plataformas de alta escala",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            score = checker.score_executive_dossier_pressure_sample(
+                f"[Dossier](<{output}>)\nNo LinkedIn action was performed.",
+                "unsupported-technology-confirmation",
+            )
+
+        self.assertGreater(score["claim_violation_count"], 0)
+        self.assertFalse(score["complete_pass"])
+
     def test_pressure_scorer_rejects_arbitrary_ready_expertise_promotions(self) -> None:
         checker = load_static_checker()
         with tempfile.TemporaryDirectory() as temporary_directory:
