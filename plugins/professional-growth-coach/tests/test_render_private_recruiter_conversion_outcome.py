@@ -227,9 +227,12 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
                 self.assertNotIn("route_to_prepare-role-interviews", rendered)
                 for identifier in (item["source_artifact_id"], *item["fact_ids"]):
                     self.assertNotIn(identifier, rendered)
-                self.assertNotRegex(rendered, r"<(?:(?:button|form))\\b|\\bonclick=")
+                self.assertNotRegex(rendered, r"<(?:button|form)\b|\bonclick\s*=")
                 self.assertNotRegex(rendered, r'href="(?!#main-content)')
-                self.assertNotRegex(rendered, r"(?:file:|/tmp/|/Users/|\\\\)")
+                self.assertNotRegex(
+                    rendered,
+                    r"(?:file:|/tmp/|/Users/|[A-Za-z]:\\|\\\\[^\\\s]+\\[^\\\s]+)",
+                )
 
     def test_manual_next_step_is_omitted_for_clarify_stop_and_manual_outcomes_in_both_locales(self):
         fixtures = (

@@ -258,9 +258,12 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
                 self.assertNotIn("route_to_prepare-role-interviews", rendered)
                 for identifier in (item["source_receipt"]["id"], "F-105"):
                     self.assertNotIn(identifier, rendered)
-                self.assertNotRegex(rendered, r"<(?:(?:button|form))\\b|\\bonclick=")
+                self.assertNotRegex(rendered, r"<(?:button|form)\b|\bonclick\s*=")
                 self.assertNotRegex(rendered, r'href="(?!#main-content)')
-                self.assertNotRegex(rendered, r"(?:file:|/tmp/|/Users/|\\\\)")
+                self.assertNotRegex(
+                    rendered,
+                    r"(?:file:|/tmp/|/Users/|[A-Za-z]:\\|\\\\[^\\\s]+\\[^\\\s]+)",
+                )
 
     def test_manual_next_step_is_omitted_for_manual_clarify_and_stop_checkpoints_in_both_locales(self):
         states = (
