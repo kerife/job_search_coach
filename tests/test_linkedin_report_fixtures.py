@@ -234,6 +234,48 @@ class LinkedInReportFixtureTests(unittest.TestCase):
         self.assertNotEqual(0, result)
         self.assertNotIn("Traceback", stderr.getvalue())
 
+    def test_cli_rejects_oversized_report_without_traceback(self) -> None:
+        bundle = FIXTURE_ROOT / "scenario-a.json"
+        with tempfile.TemporaryDirectory() as temporary:
+            report = Path(temporary) / "oversized.md"
+            report.write_bytes(b" " * (validator.MAX_PRIVATE_INPUT_BYTES + 1))
+            stdout = io.StringIO()
+            stderr = io.StringIO()
+            with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+                result = validator._cli([str(report), str(bundle)])
+        self.assertNotEqual(0, result)
+        self.assertIn("report input exceeds safe size limit", stderr.getvalue())
+        self.assertNotIn("Traceback", stderr.getvalue())
+
+    def test_cli_rejects_invalid_utf8_report_without_decoder_payload(self) -> None:
+        bundle = FIXTURE_ROOT / "scenario-a.json"
+        with tempfile.TemporaryDirectory() as temporary:
+            report = Path(temporary) / "invalid.md"
+            report.write_bytes(b"# report\xff")
+            stdout = io.StringIO()
+            stderr = io.StringIO()
+            with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+                result = validator._cli([str(report), str(bundle)])
+        self.assertNotEqual(0, result)
+        self.assertIn("report input is not valid UTF-8", stderr.getvalue())
+        self.assertNotIn("UnicodeDecodeError", stderr.getvalue())
+
+    def test_cli_rejects_leaf_symlink_report_without_following_target(self) -> None:
+        bundle = FIXTURE_ROOT / "scenario-a.json"
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            target = root / "target.md"
+            report = root / "report.md"
+            target.write_bytes((FIXTURE_ROOT / "scenario-a-es.md").read_bytes())
+            report.symlink_to(target)
+            stdout = io.StringIO()
+            stderr = io.StringIO()
+            with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+                result = validator._cli([str(report), str(bundle)])
+        self.assertNotEqual(0, result)
+        self.assertIn("report input must not be a symlink", stderr.getvalue())
+        self.assertNotIn(str(target), stderr.getvalue())
+
     def test_official_source_registry_matches_the_eight_reviewed_locators(self) -> None:
         self.assertTrue(SOURCE_REGISTRY_PATH.is_file())
         registry = json.loads(SOURCE_REGISTRY_PATH.read_text(encoding="utf-8"))
