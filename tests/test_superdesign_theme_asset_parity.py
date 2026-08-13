@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 THEME = ROOT / ".superdesign" / "init" / "theme.md"
+LAYOUTS = ROOT / ".superdesign" / "init" / "layouts.md"
 ASSETS = ROOT / "plugins" / "professional-growth-coach" / "assets"
 ASSET_NAMES = (
     "executive-career-dossier-v1.css",
@@ -23,6 +24,17 @@ EXPECTED_THEME_ASSET_NAMES = {
     "private-recruiter-reply-triage-v1.css",
     "private-recruiter-followthrough-checkpoint-v1.css",
     "private-recruiter-conversion-outcome-v1.css",
+}
+HTML_ASSET_NAMES = (
+    "executive-career-dossier-v1.html",
+    "recruiter-practice-session-v1.html",
+    "private-recruiter-reply-triage-v1.html",
+    "private-recruiter-followthrough-checkpoint-v1.html",
+    "private-recruiter-conversion-outcome-v1.html",
+)
+EXPECTED_LAYOUT_SOURCES = {
+    f"plugins/professional-growth-coach/assets/{name}"
+    for name in HTML_ASSET_NAMES
 }
 
 
@@ -44,6 +56,16 @@ def _theme_dump(name: str) -> str:
     fence_start = text.index("```css\n", start) + len("```css\n")
     fence_end = text.index("\n```", fence_start)
     return text[fence_start:fence_end] + "\n"
+
+
+def _layout_sources() -> dict[str, bytes]:
+    text = LAYOUTS.read_text(encoding="utf-8")
+    sources = re.findall(
+        r"^- Source: `([^`]+\.html)`$.*?\n```html\n(.*?)\n```",
+        text,
+        re.MULTILINE | re.DOTALL,
+    )
+    return {source: (dump + "\n").encode("utf-8") for source, dump in sources}
 
 
 class SuperdesignThemeAssetParityTests(unittest.TestCase):
@@ -77,6 +99,22 @@ class SuperdesignThemeAssetParityTests(unittest.TestCase):
         for name in ASSET_NAMES:
             with self.subTest(name=name):
                 self.assertEqual((ASSETS / name).read_text(encoding="utf-8"), _theme_dump(name))
+
+    def test_private_html_layout_dumps_match_shipped_assets(self):
+        layout_sources = _layout_sources()
+        self.assertEqual(set(layout_sources), EXPECTED_LAYOUT_SOURCES)
+        for source in sorted(EXPECTED_LAYOUT_SOURCES):
+            with self.subTest(source=source):
+                self.assertEqual((ROOT / source).read_bytes(), layout_sources[source])
+
+    def test_compact_receipt_layouts_keep_employment_boundary_token(self):
+        layout_sources = _layout_sources()
+        for source in (
+            "plugins/professional-growth-coach/assets/private-recruiter-followthrough-checkpoint-v1.html",
+            "plugins/professional-growth-coach/assets/private-recruiter-conversion-outcome-v1.html",
+        ):
+            with self.subTest(source=source):
+                self.assertIn(b"{{EMPLOYMENT_BOUNDARY}}", layout_sources[source])
 
 
 if __name__ == "__main__":

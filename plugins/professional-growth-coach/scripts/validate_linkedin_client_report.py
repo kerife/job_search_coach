@@ -2157,6 +2157,13 @@ def _duplicates(values: tuple[str, ...] | list[str]) -> tuple[str, ...]:
     return tuple(duplicates)
 
 
+def _safe_diagnostic_identifier(value: object) -> str:
+    """Keep canonical synthetic IDs in diagnostics without echoing input values."""
+    if isinstance(value, str) and REPORT_IDENTIFIER.fullmatch(value) is not None:
+        return value
+    return "<redacted-value>"
+
+
 def _validate_decisions(parsed: ParsedClientReport, bundle: Mapping[str, object]) -> list[str]:
     priorities = parse_priority_blocks(parsed)
     copies = parse_copy_blocks(parsed)
@@ -2179,16 +2186,22 @@ def _validate_decisions(parsed: ParsedClientReport, bundle: Mapping[str, object]
     for priority in fixture_priorities:
         for evidence_id in _duplicates(priority["evidence_ids"]):
             errors.append(
-                f"fixture priority {priority['rank']} has duplicate evidence {evidence_id}"
+                "fixture priority "
+                f"{priority['rank']} has duplicate evidence "
+                f"{_safe_diagnostic_identifier(evidence_id)}"
             )
     for copy_block in fixture_copies:
         for fact_id in _duplicates(copy_block["fact_ids"]):
             errors.append(
-                f"fixture copy {copy_block['section']} has duplicate fact {fact_id}"
+                "fixture copy "
+                f"{copy_block['section']} has duplicate fact "
+                f"{_safe_diagnostic_identifier(fact_id)}"
             )
         for evidence_id in _duplicates(copy_block["evidence_ids"]):
             errors.append(
-                f"fixture copy {copy_block['section']} has duplicate evidence {evidence_id}"
+                "fixture copy "
+                f"{copy_block['section']} has duplicate evidence "
+                f"{_safe_diagnostic_identifier(evidence_id)}"
             )
     errors.extend(_validate_report_priorities(priorities, fixture_priorities, known_evidence))
     errors.extend(_validate_report_copies(copies, fixture_copies, facts, known_evidence, blocked_claims))
@@ -2797,7 +2810,9 @@ def _validate_enum_list(value: object, allowed: frozenset[str], label: str, erro
     items = _validate_string_list(value, label, errors)
     for item in items:
         if item not in allowed:
-            errors.append(f"{label} has invalid value: {item}")
+            errors.append(
+                f"{label} has invalid value: {_safe_diagnostic_identifier(item)}"
+            )
     return items
 
 
@@ -2817,7 +2832,10 @@ def _validate_structural_state(value: object, errors: list[str]) -> set[str]:
         evidence_id = observation["evidence_id"]
         if isinstance(evidence_id, str):
             if evidence_id in evidence_ids:
-                errors.append(f"structural_state_fixture has duplicate evidence_id: {evidence_id}")
+                errors.append(
+                    "structural_state_fixture has duplicate evidence_id: "
+                    f"{_safe_diagnostic_identifier(evidence_id)}"
+                )
             evidence_ids.add(evidence_id)
     return evidence_ids
 
@@ -2839,7 +2857,10 @@ def _validate_facts(value: object, errors: list[str]) -> set[str]:
         fact_id = fact["fact_id"]
         if isinstance(fact_id, str):
             if fact_id in fact_ids:
-                errors.append(f"synthetic_fact_catalog has duplicate fact_id: {fact_id}")
+                errors.append(
+                    "synthetic_fact_catalog has duplicate fact_id: "
+                    f"{_safe_diagnostic_identifier(fact_id)}"
+                )
             fact_ids.add(fact_id)
     return fact_ids
 
@@ -2878,7 +2899,10 @@ def _validate_score_ledger(value: object, evidence_mode: object, observation_ids
         domain_is_valid = isinstance(domain, str) and domain in DOMAIN_WEIGHTS
         if domain_is_valid:
             if domain in seen_domains:
-                errors.append(f"score_ledger has duplicate domain: {domain}")
+                errors.append(
+                    "score_ledger has duplicate domain: "
+                    f"{_safe_diagnostic_identifier(domain)}"
+                )
             seen_domains.add(domain)
         weight_is_valid = (
             domain_is_valid
@@ -3433,7 +3457,10 @@ def _validate_sources(
         source_id = source["source_id"]
         if isinstance(source_id, str):
             if source_id in source_ids:
-                errors.append(f"source_catalog has duplicate source_id: {source_id}")
+                errors.append(
+                    "source_catalog has duplicate source_id: "
+                    f"{_safe_diagnostic_identifier(source_id)}"
+                )
             source_ids.add(source_id)
     for category in sorted(SOURCE_CATEGORIES - official_categories):
         errors.append(f"source_catalog missing required official source category: {category}")
@@ -3517,7 +3544,10 @@ def _validate_references(
     if require_nonempty and not references:
         errors.append(f"{label}.{kind}s must contain at least one reference")
     for reference in _duplicates(references):
-        errors.append(f"{label}.{kind}s has duplicate {kind}: {reference}")
+        errors.append(
+            f"{label}.{kind}s has duplicate {kind}: "
+            f"{_safe_diagnostic_identifier(reference)}"
+        )
     for reference in references:
         if reference not in known:
             errors.append(f"{label} references unknown {kind}")

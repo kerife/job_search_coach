@@ -108,7 +108,7 @@ The templates below are the complete layout sources. They are listed here once (
       <p class="checkpoint-boundary">{{BOUNDARY}}</p>
     </article>
   </main>
-  <footer class="checkpoint-footer">{{SAVE}}</footer>
+  <footer class="checkpoint-footer"><strong>{{SAVE}}</strong>{{EMPLOYMENT_BOUNDARY}}</footer>
 </body>
 </html>
 ```
@@ -141,7 +141,7 @@ The templates below are the complete layout sources. They are listed here once (
       <p class="outcome-boundary">{{BOUNDARY}}</p>
     </article>
   </main>
-  <footer class="outcome-footer">{{SAVE}}</footer>
+  <footer class="outcome-footer"><strong>{{SAVE}}</strong>{{EMPLOYMENT_BOUNDARY}}</footer>
 </body>
 </html>
 ```
