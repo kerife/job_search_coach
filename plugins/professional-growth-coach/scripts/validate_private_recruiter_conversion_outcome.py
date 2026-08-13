@@ -50,7 +50,7 @@ def load_outcome(path: Path) -> dict:
     except UnicodeError as error:
         raise OutcomeLoadError("outcome input is not valid JSON") from error
     try: value = json.loads(raw, object_pairs_hook=_unique)
-    except (json.JSONDecodeError, OutcomeLoadError) as e: raise OutcomeLoadError("outcome input is not valid JSON") from e
+    except (json.JSONDecodeError, RecursionError, OutcomeLoadError) as e: raise OutcomeLoadError("outcome input is not valid JSON") from e
     _assert_max_depth(value)
     if not isinstance(value, dict): raise OutcomeLoadError("outcome input must be a JSON object")
     return value

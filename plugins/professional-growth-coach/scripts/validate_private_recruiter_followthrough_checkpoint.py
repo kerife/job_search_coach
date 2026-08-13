@@ -91,7 +91,7 @@ def _load_json(path: Path, label: str) -> dict[str, object]:
         raise CheckpointLoadError(f"{label} input is not valid JSON") from error
     try:
         value = json.loads(raw, object_pairs_hook=_unique)
-    except (json.JSONDecodeError, CheckpointLoadError) as error:
+    except (json.JSONDecodeError, RecursionError, CheckpointLoadError) as error:
         raise CheckpointLoadError(f"{label} input is not valid JSON") from error
     _assert_max_depth(value)
     if not isinstance(value, dict):

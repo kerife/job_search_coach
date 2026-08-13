@@ -409,7 +409,7 @@ def load_dossier(path: Path) -> dict[str, object]:
         raise DossierLoadError(message) from error
     try:
         value = json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_object)
-    except (UnicodeDecodeError, json.JSONDecodeError, DossierLoadError) as error:
+    except (UnicodeDecodeError, json.JSONDecodeError, RecursionError, DossierLoadError) as error:
         if isinstance(error, DossierLoadError):
             raise
         raise DossierLoadError("dossier must be valid UTF-8 JSON") from error
