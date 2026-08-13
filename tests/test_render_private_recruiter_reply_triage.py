@@ -911,6 +911,20 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
         )
         self.assertNotIn(name, error.exception.errors)
 
+    def test_render_rejects_a_bare_person_name_without_echoing_it(self) -> None:
+        triage = copy.deepcopy(self.fixtures["clarify-en.json"])
+        name = "John Smith"
+        triage["safe_context"]["summary"] = name
+
+        with self.assertRaises(self.renderer.TriageValidationError) as error:
+            self.renderer.render_triage_html(triage)
+
+        self.assertIn(
+            "session contains forbidden unlabelled_identity prose",
+            error.exception.errors,
+        )
+        self.assertNotIn(name, error.exception.errors)
+
     def test_render_is_deterministic_and_scoped_for_mobile_print_and_reduced_motion(self) -> None:
         document = self.renderer.render_triage_html(self.fixtures["ready-en.json"])
         self.assertEqual(document, self.renderer.render_triage_html(self.fixtures["ready-en.json"]))

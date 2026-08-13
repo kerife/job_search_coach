@@ -108,6 +108,38 @@ FORBIDDEN_PROSE = {
     "internal_id": re.compile(r"\b(?:F|Q)-\d{3}\b", re.IGNORECASE),
 }
 
+_BARE_IDENTITY_TOKEN = r"[A-ZÁÉÍÓÚÑÜ][A-Za-zÁÉÍÓÚÑÜáéíóúñü'’-]{1,40}"
+_BARE_IDENTITY_PARTICLE = r"(?:de|del|la|las|los|van|von|da|do|dos|y)"
+_BARE_IDENTITY_PROSE = re.compile(
+    rf"^\s*(?:(?P<title>[Dd]r|[Mm]r|[Mm]rs|[Mm]s|[Ss]r|[Ss]ra|[Ss]rta)\.\s+)?"
+    rf"(?P<tokens>{_BARE_IDENTITY_TOKEN}(?:\s+(?:{_BARE_IDENTITY_TOKEN}|{_BARE_IDENTITY_PARTICLE})){{1,3}})"
+    r"[.!?…]*\s*$"
+)
+_BARE_PARTICLE_IDENTITY_PROSE = re.compile(
+    rf"^\s*(?:(?:[Dd]r|[Mm]r|[Mm]rs|[Mm]s|[Ss]r|[Ss]ra|[Ss]rta)\.\s+)?"
+    rf"(?:van|von|de|del|da|do)\s+(?:{_BARE_IDENTITY_PARTICLE}\s+)?"
+    rf"{_BARE_IDENTITY_TOKEN}(?:\s+{_BARE_IDENTITY_TOKEN}){{0,1}}[.!?…]*\s*$",
+    re.IGNORECASE,
+)
+_SAFE_STANDALONE_PROSE = frozenset(
+    {
+        "account management", "amazon web services", "aws lambda", "customer success",
+        "google cloud", "incident response", "machine learning", "new york", "open source",
+        "oracle cloud", "platform engineering", "react native", "recruiter screen",
+        "senior engineer", "software engineering", "technical screen", "united states",
+        "kubernetes platform", "principal engineer", "senior platform engineer",
+        "initial interview", "screen opening", "role context", "safe context",
+        "terraform cloud", "docker compose", "gitlab ci", "azure devops", "mexico city",
+        "remote role", "sre role",
+    }
+)
+def _is_bare_unlabelled_identity(text: str) -> bool:
+    normalized = " ".join(text.strip().rstrip(".!?…").split()).casefold()
+    if normalized in _SAFE_STANDALONE_PROSE:
+        return False
+    match = _BARE_IDENTITY_PROSE.fullmatch(text)
+    return match is not None or _BARE_PARTICLE_IDENTITY_PROSE.fullmatch(text) is not None
+
 
 class TriageLoadError(ValueError):
     """Raised for deterministic, privacy-safe JSON input failures."""
@@ -212,6 +244,8 @@ def _validate_prose_safety(value: Mapping[str, object], errors: list[str]) -> No
     strings = _walk_strings(value)
     if any(_contains_unsupported_script(text) for text in strings):
         errors.append("session contains forbidden unsupported_script prose")
+    if any(_is_bare_unlabelled_identity(text) for text in strings):
+        errors.append("session contains forbidden unlabelled_identity prose")
     text = "\n".join(strings)
     for category, pattern in FORBIDDEN_PROSE.items():
         if pattern.search(text):

@@ -572,6 +572,50 @@ class PrivateRecruiterReplyTriageContractTests(unittest.TestCase):
                     )
                     self.assertNotIn(sentinel, result.stderr)
 
+    def test_rejects_bare_person_names_in_every_prose_field_without_echoing(self) -> None:
+        cases = (
+            ("clarify-en.json", "John Smith"),
+            ("clarify-es.json", "Juan Pérez"),
+            ("clarify-es.json", "Ana María López"),
+            ("clarify-es.json", "Juan de la Cruz"),
+            ("clarify-en.json", "Dr. John Smith"),
+            ("clarify-en.json", "van der Meer"),
+            ("clarify-en.json", "Dr. Taylor Smith"),
+            ("clarify-es.json", "Sra. Taylor Smith"),
+            ("clarify-es.json", "José Pérez"),
+            ("clarify-es.json", "María del Mar"),
+            ("clarify-es.json", "Luis de la Cruz"),
+            ("clarify-es.json", "Ángel García"),
+            ("clarify-en.json", "de la Cruz"),
+            ("clarify-es.json", "Enrique López"),
+            ("clarify-es.json", "Ximena Torres"),
+            ("clarify-es.json", "Santiago Ruiz"),
+        )
+        prose_fields = (
+            ("safe_context", "summary"),
+            ("facts", 0, "summary"),
+            ("question", "text"),
+            ("blocked_claims", 0),
+        )
+        for fixture_name, name in cases:
+            for path in prose_fields:
+                with self.subTest(fixture=fixture_name, name=name, path=path):
+                    triage = copy.deepcopy(self.fixtures[fixture_name])
+                    target: object = triage
+                    for key in path[:-1]:
+                        target = target[key]  # type: ignore[index]
+                    target[path[-1]] = f"{name}?" if path[0] == "question" else name  # type: ignore[index]
+                    if path == ("safe_context", "summary") and "handoff" in triage:
+                        triage["handoff"]["packet"]["context_summary"] = name
+                        triage["handoff"]["reentry_packet"]["context_summary"] = name
+                    result = self.run_cli(triage)
+                    self.assertEqual(result.returncode, 2, result.stderr)
+                    self.assertIn(
+                        "session contains forbidden unlabelled_identity prose",
+                        result.stderr,
+                    )
+                    self.assertNotIn(name, result.stderr)
+
     def test_accepts_role_focused_prose_without_identity_context(self) -> None:
         for summary in (
             "Platform engineering work includes incident response practice.",
@@ -580,6 +624,43 @@ class PrivateRecruiterReplyTriageContractTests(unittest.TestCase):
             "Platform Engineering has mature incident response practices.",
             "Technical Leadership has a verified operating model.",
             "Cloud Security has mature control practices.",
+            "Software Engineering supports incident response practice.",
+            "Customer Success coordinates account guidance.",
+            "Account Management tracks renewal context.",
+            "React Native is listed as technical context.",
+            "United States is a location constraint.",
+            "Incident Response remains a role focus.",
+            "Open Source is a technical domain.",
+            "Google Cloud is a supplied technology.",
+            "New York is a location constraint.",
+            "AWS Lambda is a supplied technology.",
+            "Machine Learning is a role domain.",
+            "Oracle Cloud is a supplied technology.",
+            "Kubernetes Platform is a role domain.",
+            "Amazon Web Services is a supplied technology.",
+            "Platform Engineering",
+            "Senior Engineer",
+            "Recruiter Screen",
+            "Technical Screen",
+            "AWS Lambda",
+            "Machine Learning",
+            "Google Cloud",
+            "United States",
+            "New York",
+            "Amazon Web Services",
+            "Principal Engineer",
+            "Senior Platform Engineer",
+            "Initial Interview",
+            "Screen Opening",
+            "Role Context",
+            "Safe Context",
+            "Terraform Cloud",
+            "Docker Compose",
+            "GitLab CI",
+            "Azure DevOps",
+            "Mexico City",
+            "Remote Role",
+            "SRE Role",
             "The company is hiring for a platform role.",
             "The employer is seeking production experience.",
             "١٢٣ candidate experience examples are supplied.",
