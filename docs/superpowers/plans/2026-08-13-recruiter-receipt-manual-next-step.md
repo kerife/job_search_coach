@@ -11,8 +11,8 @@
 ## Global Constraints
 
 - Render only for `next_safe_action == "route_to_prepare-role-interviews"`.
-- EN copy: `Return to the private Codex conversation and ask to start interview preparation. This receipt does not contact, send, or schedule anything.`
-- ES copy: `Regresa a la conversación privada de Codex y pide iniciar la preparación de entrevista. Este recibo no contacta, envía ni agenda nada.`
+- EN copy: `Return to the private Codex conversation, re-enter interview preparation manually, and answer the one safe recruiter-screen question. This receipt does not contact, send, or schedule anything.`
+- ES copy: `Regresa a la conversación privada de Codex, vuelve a entrar manualmente a la preparación de entrevista y responde la única pregunta segura de filtro inicial. Este recibo no contacta, envía ni agenda nada.`
 - Use a semantic named region; no buttons, forms, external links, icons, scores, raw IDs, route enum, or path interpolation.
 - Preserve clarify/stop/manual omission, validator behavior, privacy, print, forced-colors, 320px reflow, and atomic writes.
 - Keep `.superdesign/init/theme.md` CSS dumps exactly synchronized with both receipt CSS assets.

@@ -15,9 +15,9 @@ content, rendered only when the validated next-safe-action is
 `route_to_prepare-role-interviews`:
 
 - EN heading: `Manual next step`
-- EN copy: `Return to the private Codex conversation and ask to start interview preparation. This receipt does not contact, send, or schedule anything.`
+- EN copy: `Return to the private Codex conversation, re-enter interview preparation manually, and answer the one safe recruiter-screen question. This receipt does not contact, send, or schedule anything.`
 - ES heading: `Siguiente paso manual`
-- ES copy: `Regresa a la conversación privada de Codex y pide iniciar la preparación de entrevista. Este recibo no contacta, envía ni agenda nada.`
+- ES copy: `Regresa a la conversación privada de Codex, vuelve a entrar manualmente a la preparación de entrevista y responde la única pregunta segura de filtro inicial. Este recibo no contacta, envía ni agenda nada.`
 
 Use the existing receipt card/facts/boundary visual language and a semantic
 `section` with a unique localized heading ID. Do not add a button, link, form,
