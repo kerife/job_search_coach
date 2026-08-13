@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import copy
+import html
 import importlib.util
 import json
 import os
+import re
+import stat
 import subprocess
 import sys
 import tempfile
@@ -16,7 +19,9 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = REPO_ROOT / "plugins" / "professional-growth-coach" / "scripts"
 VALIDATOR_PATH = SCRIPTS / "validate_executive_career_dossier_v2.py"
+RENDERER_PATH = SCRIPTS / "render_executive_career_dossier_v2.py"
 FIXTURE_ROOT = REPO_ROOT / "tests" / "evals" / "with-skill" / "fixtures" / "executive-career-dossier"
+V2_FIXTURE_ROOT = FIXTURE_ROOT.with_name("executive-career-dossier-v2")
 
 CANONICAL_PROFILE_SECTIONS = (
     "photo", "banner", "name", "profile_url", "headline", "location",
@@ -73,15 +78,20 @@ def make_v2_dossier(locale: str = "es") -> dict[str, object]:
                 "carry_forward": False,
             },
         })
+    profile_sections = (
+        {"E-001": "headline", "E-002": "about", "E-003": "experience", "E-004": "skills", "E-006": "photo", "E-007": "banner"}
+        if locale == "es"
+        else {"E-001": "headline", "E-002": "skills", "E-003": "about", "E-004": "experience", "E-005": "photo"}
+    )
     for evidence in dossier["evidence"]:
-        evidence["profile_section"] = (
-            evidence["section"] if evidence["section"] in CANONICAL_PROFILE_SECTIONS else None
-        )
+        evidence["profile_section"] = profile_sections.get(evidence["id"])
     priority_sections = ("headline", "about", "experience")
     for priority, section in zip(dossier["priorities"], priority_sections, strict=True):
-        priority["evidence_ids"] = {
-            "headline": ["E-001"], "about": ["E-002"], "experience": ["E-003"],
-        }[section]
+        priority["evidence_ids"] = (
+            {"headline": ["E-001"], "about": ["E-002"], "experience": ["E-003"]}
+            if locale == "es"
+            else {"headline": ["E-001"], "about": ["E-003"], "experience": ["E-004"]}
+        )[section]
         priority.update({
             "target_section": section,
             "coach_observation": f"Coach observation for {section}.",
@@ -105,6 +115,22 @@ def load_validator() -> object:
     sys.modules[specification.name] = validator
     specification.loader.exec_module(validator)
     return validator
+
+
+def load_renderer() -> object:
+    specification = importlib.util.spec_from_file_location(
+        "render_executive_career_dossier_v2", RENDERER_PATH
+    )
+    assert specification is not None and specification.loader is not None
+    renderer = importlib.util.module_from_spec(specification)
+    sys.modules[specification.name] = renderer
+    specification.loader.exec_module(renderer)
+    return renderer
+
+
+def visible_text(rendered: str) -> str:
+    without_code = re.sub(r"(?is)<(?:style|script)\b.*?</(?:style|script)>", " ", rendered)
+    return " ".join(html.unescape(re.sub(r"(?s)<[^>]+>", " ", without_code)).split())
 
 
 class ExecutiveCareerDossierV2Tests(unittest.TestCase):
@@ -308,6 +334,188 @@ class ExecutiveCareerDossierV2Tests(unittest.TestCase):
                 request["decision"] = "declined_for_session"
                 row["reason"] = "inspection_declined"
         self.assertIsNone(self.validator.select_pending_inspection_section(dossier))
+
+
+class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.renderer = load_renderer()
+        cls.validator = load_validator()
+
+    def test_localized_ledger_has_one_named_region_and_exact_semantic_rows(self) -> None:
+        expected_labels = {
+            "es": (
+                "Foto", "Banner", "Nombre", "URL del perfil", "Titular", "Ubicación",
+                "Información de contacto", "Acerca de", "Experiencia", "Aptitudes",
+                "Destacado", "Certificaciones", "Educación", "Recomendaciones",
+                "Actividad", "Analítica", "Preferencias de empleo",
+            ),
+            "en": (
+                "Photo", "Banner", "Name", "Profile URL", "Headline", "Location",
+                "Contact information", "About", "Experience", "Skills", "Featured",
+                "Certifications", "Education", "Recommendations", "Activity",
+                "Analytics", "Job preferences",
+            ),
+        }
+        for locale in ("es", "en"):
+            with self.subTest(locale=locale):
+                rendered = self.renderer.render_dossier_html(make_v2_dossier(locale))
+                regions = re.findall(
+                    r'<section class="section-block section-coverage-ledger" aria-labelledby="([^"]+)">(.*?)</section>',
+                    rendered,
+                    re.DOTALL,
+                )
+                self.assertEqual(len(regions), 1)
+                region_label, body = regions[0]
+                self.assertEqual(len(re.findall(rf'<h2 id="{re.escape(region_label)}">', body)), 1)
+                rows = re.findall(
+                    r'<li class="section-coverage-row"><article aria-labelledby="([^"]+)">\s*'
+                    r'<h3 id="\1">([^<]+)</h3>\s*<dl class="section-coverage-facts">(.*?)</dl>\s*'
+                    r'</article></li>',
+                    body,
+                    re.DOTALL,
+                )
+                self.assertEqual(len(rows), 17)
+                self.assertEqual(tuple(label for _, label, _ in rows), expected_labels[locale])
+                self.assertEqual(len({heading_id for heading_id, _, _ in rows}), 17)
+                for _, _, facts in rows:
+                    self.assertIn("<dt>", facts)
+                    self.assertIn("<dd>", facts)
+                    self.assertGreaterEqual(facts.count("<dt>"), 2)
+                    self.assertEqual(facts.count("<dt>"), len(re.findall(r"<dd(?:\s|>)", facts)))
+
+    def test_unavailable_rows_show_localized_reason_and_request_decision(self) -> None:
+        for locale, labels in (
+            ("es", ("No disponible", "Autorización requerida", "Respuesta pendiente")),
+            ("en", ("Unavailable", "Authorization required", "Response pending")),
+        ):
+            with self.subTest(locale=locale):
+                rendered = self.renderer.render_dossier_html(make_v2_dossier(locale))
+                for label in labels:
+                    self.assertIn(label, rendered)
+                self.assertIn('class="section-coverage-request"', rendered)
+
+    def test_three_named_coach_cards_render_closed_blank_templates_without_legacy_priority_copy(self) -> None:
+        for locale in ("es", "en"):
+            with self.subTest(locale=locale):
+                dossier = make_v2_dossier(locale)
+                rendered = self.renderer.render_dossier_html(dossier)
+                cards = re.findall(
+                    r'<article class="card span-4 coach-priority-card" aria-labelledby="([^"]+)">(.*?)</article>',
+                    rendered,
+                    re.DOTALL,
+                )
+                self.assertEqual(len(cards), 3)
+                self.assertNotIn('class="timebox"', rendered)
+                for (heading_id, card), priority in zip(cards, dossier["priorities"], strict=True):
+                    self.assertEqual(len(re.findall(rf'<h3 id="{re.escape(heading_id)}">', card)), 1)
+                    self.assertIn('class="coach-observation"', card)
+                    self.assertIn('class="coach-prompt"', card)
+                    self.assertIn('class="coach-template"', card)
+                    blanks = re.findall(r'<li><span class="coach-template-field">[^<]+</span><span class="coach-template-blank" aria-hidden="true"></span></li>', card)
+                    self.assertGreaterEqual(len(blanks), 1)
+                    self.assertLessEqual(len(blanks), 5)
+                    for old_value in ("problem", "action"):
+                        self.assertNotIn(str(priority[old_value]), card)
+
+    def test_visible_product_surface_excludes_internal_and_private_values(self) -> None:
+        dossier = make_v2_dossier("es")
+        rendered_text = visible_text(self.renderer.render_dossier_html(dossier))
+        forbidden = {
+            "read_only_visible_section_inspection", "pending_response",
+            "declined_for_session", "authorization_required",
+            "context_action_result_v1", "profile_url", "contact_info",
+            "/private/path/profile.json", "https://www.linkedin.com/in/example",
+            "person@example.test",
+        }
+        forbidden.update(record["id"] for record in dossier["evidence"])
+        for token in forbidden:
+            with self.subTest(token=token):
+                self.assertNotIn(token, rendered_text)
+
+    def test_market_placeholder_is_one_bounded_non_recommendation_state(self) -> None:
+        rendered = self.renderer.render_dossier_html(make_v2_dossier("en"))
+        regions = re.findall(
+            r'<section class="card market-unavailable-card span-12" aria-labelledby="market-unavailable-title">(.*?)</section>',
+            rendered,
+            re.DOTALL,
+        )
+        self.assertEqual(len(regions), 1)
+        text_value = visible_text(regions[0]).casefold()
+        for forbidden in ("score", "vacancy", "employer", "course", "paid"):
+            self.assertNotIn(forbidden, text_value)
+
+    def test_chat_summary_asks_exactly_one_first_pending_authorization_question(self) -> None:
+        summary = self.renderer.build_chat_summary(make_v2_dossier("es"))
+        self.assertIn(
+            "¿Autorizas inspeccionar en modo solo lectura la sección Nombre durante esta sesión?",
+            summary,
+        )
+        self.assertNotIn("Certificaciones", summary)
+        self.assertEqual(summary.count("¿Autorizas inspeccionar"), 1)
+        self.assertNotIn(make_v2_dossier("es")["questions"][0]["question"], summary)
+        self.assertLessEqual(len(summary.split()), 180)
+
+        english = make_v2_dossier("en")
+        english["section_coverage"][1]["reason"] = "authorized_inspection_failed"
+        english["section_coverage"][1]["inspection_request"]["decision"] = "authorized_inspection_failed"
+        summary = self.renderer.build_chat_summary(english)
+        self.assertIn(
+            "Do you authorize read-only inspection of the Name section during this session?",
+            summary,
+        )
+        self.assertEqual(summary.count("Do you authorize read-only inspection"), 1)
+        self.assertLessEqual(len(summary.split()), 180)
+
+    def test_chat_summary_retains_v1_behavior_when_no_inspection_request_is_pending(self) -> None:
+        dossier = make_v2_dossier("en")
+        for row in dossier["section_coverage"]:
+            request = row.get("inspection_request")
+            if isinstance(request, dict) and request["decision"] == "pending_response":
+                row["reason"] = "inspection_declined"
+                request["decision"] = "declined_for_session"
+        summary = self.renderer.build_chat_summary(dossier)
+        self.assertNotIn("Do you authorize read-only inspection", summary)
+        self.assertIn(dossier["questions"][0]["question"], summary)
+
+    def test_shipped_fixtures_are_valid_and_project_deep_equal_to_v1_sources(self) -> None:
+        for name in ("scenario-a-es.json", "scenario-c-en.json"):
+            with self.subTest(name=name):
+                source = load_v1_fixture(name)
+                dossier = json.loads((V2_FIXTURE_ROOT / name).read_text(encoding="utf-8"))
+                self.assertEqual(self.validator.validate_dossier(dossier), [])
+                self.assertEqual(self.validator.project_v2_to_v1(dossier), source)
+
+    def test_shipped_fixture_ledger_uses_the_required_pending_and_declined_matrix(self) -> None:
+        for name in ("scenario-a-es.json", "scenario-c-en.json"):
+            with self.subTest(name=name):
+                dossier = json.loads((V2_FIXTURE_ROOT / name).read_text(encoding="utf-8"))
+                evidence_sections = {
+                    record["profile_section"]
+                    for record in dossier["evidence"]
+                    if record["profile_section"] is not None
+                }
+                rows = {row["section"]: row for row in dossier["section_coverage"]}
+                self.assertEqual(rows["featured"]["reason"], "authorization_required")
+                self.assertEqual(rows["featured"]["inspection_request"]["decision"], "pending_response")
+                self.assertEqual(rows["certifications"]["reason"], "inspection_declined")
+                self.assertEqual(rows["certifications"]["inspection_request"]["decision"], "declined_for_session")
+                self.assertEqual(dossier["analytics"]["state"], "not_requested")
+                for section in CANONICAL_PROFILE_SECTIONS:
+                    if section in evidence_sections or section == "certifications":
+                        continue
+                    self.assertEqual(rows[section]["availability"], "unavailable")
+                    self.assertEqual(rows[section]["reason"], "authorization_required")
+                    self.assertEqual(rows[section]["inspection_request"]["decision"], "pending_response")
+
+    def test_writer_keeps_the_v2_artifact_private(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "dossier-v2.html"
+            receipt = self.renderer.write_dossier_html(
+                V2_FIXTURE_ROOT / "scenario-a-es.json", output
+            )
+            self.assertEqual(stat.S_IMODE(output.stat().st_mode), 0o600)
+            self.assertEqual(receipt.artifact_type, "text/html")
 
 
 class ExecutiveCareerDossierV2LoadAndCliTests(unittest.TestCase):

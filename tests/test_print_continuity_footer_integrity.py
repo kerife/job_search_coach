@@ -19,6 +19,15 @@ FOOTERS = {
 
 
 class PrintContinuityFooterIntegrityTests(unittest.TestCase):
+    def test_dossier_v2_rows_and_coaching_cards_remain_atomic_in_print(self) -> None:
+        css = (ASSETS / "executive-career-dossier-v2.css").read_text(encoding="utf-8")
+        print_css = css[css.index("@media print"):css.index("@media (forced-colors: active)")]
+        for selector in (".section-coverage-row", ".coach-priority-card", ".coach-template", ".market-unavailable-card"):
+            with self.subTest(selector=selector):
+                self.assertIn(selector, print_css)
+        self.assertIn("break-inside: avoid", print_css)
+        self.assertIn("page-break-inside: avoid", print_css)
+
     def test_print_keeps_each_continuity_footer_atomic(self) -> None:
         for name, selector in FOOTERS.items():
             with self.subTest(name=name):

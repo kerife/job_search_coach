@@ -15,6 +15,12 @@ SPEC.loader.exec_module(loader)
 
 
 class PrivateAssetLoaderContractTests(unittest.TestCase):
+    def test_v2_css_extension_is_in_the_canonical_allowlist(self):
+        self.assertIn(
+            "assets/executive-career-dossier-v2.css",
+            loader.CANONICAL_RENDERER_ASSETS,
+        )
+
     def test_regular_copy_is_readable(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "plugin"

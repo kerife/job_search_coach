@@ -1,0 +1,46 @@
+.section-coverage-list { display: grid; gap: .75rem; margin: 0; padding: 0; list-style: none; }
+.section-coverage-ledger, .coach-priorities { min-width: 0; }
+.section-coverage-row { min-width: 0; overflow-wrap: anywhere; }
+.section-coverage-row article { padding: 1rem; border: 1px solid var(--forest-soft); background: var(--surface); }
+.section-coverage-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem 1rem; }
+.section-coverage-facts dt, .section-coverage-facts dd { min-width: 0; }
+.section-coverage-facts dd { margin: 0; }
+.section-coverage-row h3 { margin: 0; }
+.section-coverage-request { margin: 0; padding-left: .75rem; border-left: 4px solid var(--gold); }
+.coach-priority-card { border-top: 4px solid var(--coral); }
+.coach-template { margin: 1rem 0 0; padding: 1rem; border-left: 4px solid var(--forest); background: var(--paper); }
+.coach-template h4 { margin: 0; }
+.coach-template-list { margin: .5rem 0 0; padding-left: 1.25rem; }
+.coach-template-field { display: block; font-weight: 700; }
+.coach-template-blank { display: block; min-height: 1.5rem; border-bottom: 1px solid var(--line); }
+
+@media screen and (prefers-color-scheme: dark) {
+  .section-coverage-row article { border-color: var(--forest); background: var(--surface); color: var(--ink); }
+  .coach-template { background: var(--paper); color: var(--ink); }
+}
+
+@media (max-width: 480px) {
+  .section-coverage-facts { grid-template-columns: 1fr; }
+  .section-coverage-ledger, .section-coverage-list, .section-coverage-row, .section-coverage-row article, .coach-priorities, .coach-priority-card, .coach-template { min-width: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-coverage-row article, .coach-priority-card, .coach-template { animation: none !important; transition: none !important; transform: none !important; }
+}
+
+@media print {
+  .section-coverage-row, .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card { break-inside: avoid; page-break-inside: avoid; }
+}
+
+@media (forced-colors: active) {
+  .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card { background: Canvas; color: CanvasText; border-color: CanvasText; }
+  .section-coverage-request, .coach-template { border-left-color: Highlight; }
+  .coach-priority-card { border-top-color: Highlight; }
+  main:focus-visible { outline-color: Highlight; }
+}
+
+@media (prefers-contrast: more) {
+  .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card { border-width: 2px; }
+  .section-coverage-request, .coach-template { border-left-width: 5px; }
+  .coach-priority-card { border-top-width: 5px; }
+}

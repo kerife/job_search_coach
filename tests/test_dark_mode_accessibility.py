@@ -40,6 +40,25 @@ def _contrast(first: str, second: str) -> float:
 
 
 class DarkModeAccessibilityTests(unittest.TestCase):
+    def test_dossier_v2_extension_reuses_tokens_across_accessibility_modes(self) -> None:
+        css = (ASSETS / "executive-career-dossier-v2.css").read_text(encoding="utf-8")
+        dark = css[css.index("@media screen and (prefers-color-scheme: dark)"):css.index("@media (max-width: 480px)")]
+        self.assertNotRegex(dark, r"#[0-9a-fA-F]{3,8}")
+        for token in ("var(--surface)", "var(--paper)", "var(--ink)", "var(--forest)"):
+            self.assertIn(token, dark)
+        forced = css[css.index("@media (forced-colors: active)"):]
+        for system_color in ("Canvas", "CanvasText", "Highlight"):
+            self.assertIn(system_color, forced)
+        contrast = css[css.index("@media (prefers-contrast: more)"):]
+        self.assertIn("border-width: 2px", contrast)
+
+    def test_dossier_v2_compact_contract_is_one_column_without_scroll_primitives(self) -> None:
+        css = (ASSETS / "executive-career-dossier-v2.css").read_text(encoding="utf-8")
+        compact = css[css.index("@media (max-width: 480px)"):css.index("@media (prefers-reduced-motion: reduce)")]
+        self.assertIn(".section-coverage-facts { grid-template-columns: 1fr; }", compact)
+        self.assertIn("min-width: 0", compact)
+        self.assertNotRegex(css, r"overflow-x:\s*(?:auto|scroll)|white-space:\s*nowrap")
+
     def test_long_surfaces_have_screen_only_dark_contract_before_print(self) -> None:
         for filename, (scope, extra_token) in SURFACES.items():
             with self.subTest(filename=filename):

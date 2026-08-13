@@ -19,6 +19,14 @@ def load_checker():
 
 
 class DesignTokenContractTests(unittest.TestCase):
+    def test_dossier_family_includes_the_v2_extension(self):
+        checker = load_checker()
+
+        self.assertIn(
+            "assets/executive-career-dossier-v2.css",
+            checker.FAMILY_ASSETS["dossier"],
+        )
+
     def test_canonical_assets_pass_their_declared_family_allowlist(self):
         checker = load_checker()
 

@@ -10,7 +10,10 @@ from pathlib import Path
 HEX_COLOR = re.compile(r"#[0-9a-fA-F]{3,8}\b")
 
 FAMILY_ASSETS = {
-    "dossier": ("assets/executive-career-dossier-v1.css",),
+    "dossier": (
+        "assets/executive-career-dossier-v1.css",
+        "assets/executive-career-dossier-v2.css",
+    ),
     "practice_triage": (
         "assets/recruiter-practice-session-v1.css",
         "assets/private-recruiter-reply-triage-v1.css",

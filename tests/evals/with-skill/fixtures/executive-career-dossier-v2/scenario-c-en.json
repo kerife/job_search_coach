@@ -1,0 +1,628 @@
+{
+  "schema_version": "executive-career-dossier-v2",
+  "dossier_kind": "linkedin_profile_diagnostic",
+  "locale": "en",
+  "evidence_as_of": "2026-08-07",
+  "case_scope": "single_candidate",
+  "benchmarking": "disabled",
+  "requested_technology_terms": [],
+  "focus": {
+    "statement": "Target under review: clarify a professional positioning statement using partial evidence.",
+    "state": "target_under_review",
+    "claim_ids": []
+  },
+  "evidence_scope": {
+    "inspection_mode": "mixed",
+    "captured_as_of": "2026-08-07",
+    "inspected_sections": [
+      "headline",
+      "about",
+      "experience",
+      "skills",
+      "photo"
+    ],
+    "unavailable_sections": [
+      "banner",
+      "proof",
+      "completeness"
+    ],
+    "confidence": "medium",
+    "visual_state": "partial_visual",
+    "visual_capture_ref": "CAP-002"
+  },
+  "evidence": [
+    {
+      "id": "E-001",
+      "state": "verified",
+      "section": "headline",
+      "source_kind": "provided_material",
+      "paraphrase": "The headline provides a broad professional signal.",
+      "capture_ref": null,
+      "profile_section": "headline"
+    },
+    {
+      "id": "E-002",
+      "state": "verified",
+      "section": "about",
+      "source_kind": "provided_material",
+      "paraphrase": "The opening is available for a limited review.",
+      "capture_ref": null,
+      "profile_section": "skills"
+    },
+    {
+      "id": "E-003",
+      "state": "candidate_reported",
+      "section": "experience",
+      "source_kind": "candidate_statement",
+      "paraphrase": "A reported experience needs a decision-changing confirmation.",
+      "capture_ref": null,
+      "profile_section": "about"
+    },
+    {
+      "id": "E-004",
+      "state": "verified",
+      "section": "skills",
+      "source_kind": "provided_material",
+      "paraphrase": "Skills are present but lack linked proof.",
+      "capture_ref": null,
+      "profile_section": "experience"
+    },
+    {
+      "id": "E-005",
+      "state": "verified",
+      "section": "photo",
+      "source_kind": "authorized_visible",
+      "paraphrase": "The photo is visible for a limited presentation review.",
+      "capture_ref": "CAP-002",
+      "profile_section": "photo"
+    }
+  ],
+  "claims": [
+    {
+      "id": "C-001",
+      "state": "verified",
+      "paraphrase": "The profile can state a clearer professional focus.",
+      "evidence_ids": [
+        "E-001",
+        "E-002"
+      ],
+      "public_use": "allowed"
+    },
+    {
+      "id": "C-002",
+      "state": "candidate_reported",
+      "paraphrase": "A reported experience may support a specific example after confirmation.",
+      "evidence_ids": [
+        "E-003"
+      ],
+      "public_use": "confirmation_required"
+    }
+  ],
+  "verdict": {
+    "statement": "The profile needs a clearer first-screen signal.",
+    "rationale": "Partial evidence supports a private copy review without filling gaps.",
+    "start_here_action": "Review a private headline draft before making any profile change.",
+    "evidence_state": "verified",
+    "evidence_ids": [
+      "E-001",
+      "E-002"
+    ]
+  },
+  "coverage": {
+    "evaluated_count": 4,
+    "scored_weight": 65,
+    "not_scored_weight": 35,
+    "overall_score": null,
+    "confidence": "medium"
+  },
+  "priorities": [
+    {
+      "rank": 1,
+      "title": "Clarify the headline",
+      "problem": "The first signal remains broad.",
+      "why_now": "A quick scan needs a clearer focus.",
+      "action": "Review a more specific headline draft in private.",
+      "timebox_minutes": 20,
+      "done_when": "A draft states the focus without new facts.",
+      "evidence_state": "verified",
+      "evidence_ids": [
+        "E-001"
+      ],
+      "dimensions": [
+        "headline"
+      ],
+      "target_section": "headline",
+      "coach_observation": "The headline gives a broad signal that could be more precise.",
+      "why_it_matters": "A clearer focus improves the first private review.",
+      "coach_prompt": "Complete this private outline to sharpen the headline.",
+      "client_template": {
+        "template_id": "context_action_result_v1",
+        "field_keys": [
+          "context",
+          "action",
+          "result"
+        ]
+      },
+      "privacy_boundary": "no_raw_profile_text_or_private_values"
+    },
+    {
+      "rank": 2,
+      "title": "Confirm one example",
+      "problem": "A reported experience lacks confirmed scope.",
+      "why_now": "The answer determines whether specific copy is usable.",
+      "action": "Confirm the scope of one example before drafting it.",
+      "timebox_minutes": 25,
+      "done_when": "The answer approves or omits the example.",
+      "evidence_state": "candidate_reported",
+      "evidence_ids": [
+        "E-003"
+      ],
+      "dimensions": [
+        "experience"
+      ],
+      "target_section": "about",
+      "coach_observation": "The opening needs a clearer connection between context and contribution.",
+      "why_it_matters": "A structured example makes the available evidence easier to review.",
+      "coach_prompt": "Complete this private outline before drafting the opening.",
+      "client_template": {
+        "template_id": "context_action_result_v1",
+        "field_keys": [
+          "context",
+          "action",
+          "result"
+        ]
+      },
+      "privacy_boundary": "no_raw_profile_text_or_private_values"
+    },
+    {
+      "rank": 3,
+      "title": "Review proof boundaries",
+      "problem": "Available skills lack linked proof.",
+      "why_now": "The current evidence cannot support stronger claims.",
+      "action": "List only evidence that can be confirmed privately.",
+      "timebox_minutes": 15,
+      "done_when": "Each listed item has a known evidence boundary.",
+      "evidence_state": "verified",
+      "evidence_ids": [
+        "E-004"
+      ],
+      "dimensions": [
+        "skills",
+        "proof"
+      ],
+      "target_section": "experience",
+      "coach_observation": "The experience signal needs a bounded proof example.",
+      "why_it_matters": "A verifiable sequence distinguishes contribution from context.",
+      "coach_prompt": "Complete this private outline before drafting any change.",
+      "client_template": {
+        "template_id": "context_action_result_v1",
+        "field_keys": [
+          "context",
+          "action",
+          "result"
+        ]
+      },
+      "privacy_boundary": "no_raw_profile_text_or_private_values"
+    }
+  ],
+  "recruiter_scan": {
+    "understood_signal": {
+      "statement": "A broad professional focus is visible.",
+      "evidence_state": "verified",
+      "evidence_ids": [
+        "E-001"
+      ]
+    },
+    "ambiguity": {
+      "statement": "The supporting example is not yet confirmed.",
+      "evidence_state": "candidate_reported",
+      "evidence_ids": [
+        "E-003"
+      ]
+    },
+    "positioning_bridge": {
+      "statement": "Describe the focus and offer a confirmed example when appropriate.",
+      "evidence_state": "verified",
+      "evidence_ids": [
+        "E-001",
+        "E-002"
+      ]
+    }
+  },
+  "dimensions": [
+    {
+      "dimension": "visual",
+      "state": "not_evaluated",
+      "score": null,
+      "reason": "The banner is unavailable, so visual presentation is not scored.",
+      "evidence_state": "unknown",
+      "evidence_ids": [
+        "E-005"
+      ],
+      "capture_ref": "CAP-002"
+    },
+    {
+      "dimension": "headline",
+      "state": "evaluated",
+      "score": 66,
+      "reason": "The focus can be clearer.",
+      "evidence_state": "verified",
+      "evidence_ids": [
+        "E-001"
+      ],
+      "capture_ref": null
+    },
+    {
+      "dimension": "about",
+      "state": "evaluated",
+      "score": 70,
+      "reason": "The opening can be organized around a clear signal.",
+      "evidence_state": "verified",
+      "evidence_ids": [
+        "E-002"
+      ],
+      "capture_ref": null
+    },
+    {
+      "dimension": "experience",
+      "state": "evaluated",
+      "score": 64,
+      "reason": "A reported example needs confirmation.",
+      "evidence_state": "candidate_reported",
+      "evidence_ids": [
+        "E-003"
+      ],
+      "capture_ref": null
+    },
+    {
+      "dimension": "skills",
+      "state": "evaluated",
+      "score": 62,
+      "reason": "Skills need a linked proof boundary.",
+      "evidence_state": "verified",
+      "evidence_ids": [
+        "E-004"
+      ],
+      "capture_ref": null
+    },
+    {
+      "dimension": "proof",
+      "state": "not_evaluated",
+      "score": null,
+      "reason": "No proof material is available for scoring.",
+      "evidence_state": "unknown",
+      "evidence_ids": [],
+      "capture_ref": null
+    },
+    {
+      "dimension": "completeness",
+      "state": "not_evaluated",
+      "score": null,
+      "reason": "Completeness evidence is unavailable.",
+      "evidence_state": "unknown",
+      "evidence_ids": [],
+      "capture_ref": null
+    }
+  ],
+  "visual_review": {
+    "photo": {
+      "state": "evaluated",
+      "finding": "The photo is visible for a limited presentation review.",
+      "private_action": "Review whether the photo still supports the current focus.",
+      "evidence_state": "verified",
+      "evidence_ids": [
+        "E-005"
+      ],
+      "capture_ref": "CAP-002",
+      "score": null
+    },
+    "banner": {
+      "state": "not_evaluated",
+      "finding": "The banner is unavailable.",
+      "private_action": null,
+      "evidence_state": "unknown",
+      "evidence_ids": [],
+      "capture_ref": null,
+      "score": null
+    }
+  },
+  "copy_blocks": [
+    {
+      "category": "headline",
+      "state": "ready",
+      "copy": "Clear professional focus supported by available evidence",
+      "why_it_works": "It states a focus without claiming an outcome.",
+      "claim_ids": [
+        "C-001"
+      ],
+      "evidence_ids": [
+        "E-001",
+        "E-002"
+      ],
+      "claim_boundary": "Use only available evidence.",
+      "evidence_state": "verified",
+      "question_rank": null
+    },
+    {
+      "category": "about_opening",
+      "state": "requires_confirmation",
+      "copy": "I bring a clear focus and can explain one confirmed example.",
+      "why_it_works": "It keeps the example conditional on confirmation.",
+      "claim_ids": [
+        "C-002"
+      ],
+      "evidence_ids": [
+        "E-003"
+      ],
+      "claim_boundary": "Confirm scope before using the example.",
+      "evidence_state": "candidate_reported",
+      "question_rank": 1
+    },
+    {
+      "category": "experience_bullet",
+      "state": "omit",
+      "copy": null,
+      "why_it_works": "The experience example should stay omitted until its scope is confirmed.",
+      "claim_ids": [
+        "C-002"
+      ],
+      "evidence_ids": [
+        "E-003"
+      ],
+      "claim_boundary": "Do not draft this item without confirmation.",
+      "evidence_state": "candidate_reported",
+      "question_rank": null
+    }
+  ],
+  "do_not_change": [
+    {
+      "claim_ids": [
+        "C-002"
+      ],
+      "reason": "Do not add the unconfirmed example to the profile.",
+      "evidence_state": "candidate_reported",
+      "evidence_ids": [
+        "E-003"
+      ]
+    }
+  ],
+  "screen_bridge": {
+    "state": "ready",
+    "copy": "My profile presents a clear focus, and I can share a confirmed example when useful.",
+    "why_it_works": "It remains within the available evidence.",
+    "claim_ids": [
+      "C-001"
+    ],
+    "evidence_ids": [
+      "E-001",
+      "E-002"
+    ],
+    "claim_boundary": "It does not promise a conversation outcome.",
+    "evidence_state": "verified",
+    "question_rank": null
+  },
+  "questions": [
+    {
+      "rank": 1,
+      "question": "Which confirmed example best explains the reported experience?",
+      "changes": "It changes the about opening decision.",
+      "linked_copy_category": "about_opening",
+      "evidence_ids": [
+        "E-003"
+      ]
+    }
+  ],
+  "seven_day_plan": [
+    {
+      "day": 1,
+      "category": "validate_fact",
+      "action": "Confirm the scope of one reported example privately.",
+      "done_when": "The answer supports approval or omission.",
+      "evidence_ids": [
+        "E-003"
+      ]
+    }
+  ],
+  "analytics": {
+    "state": "not_requested",
+    "reason": "No aggregate observation was requested."
+  },
+  "market_context": {
+    "state": "not_researched",
+    "reason": "No dated vacancy research is available."
+  },
+  "methodology_source_categories": [
+    "good_profile",
+    "profile_photo",
+    "cover_image",
+    "skills"
+  ],
+  "privacy": {
+    "private_report": true,
+    "candidate_identity_included": false,
+    "contact_data_included": false,
+    "raw_profile_retained": false,
+    "raw_private_analytics_included": false,
+    "aggregate_analytics_included": false
+  },
+  "authorization": {
+    "external_actions_authorized": false,
+    "action_state": "not_executed"
+  },
+  "section_coverage": [
+    {
+      "section": "photo",
+      "availability": "inspected_present",
+      "evidence_state": "verified",
+      "reason": "inspected_content_available"
+    },
+    {
+      "section": "banner",
+      "availability": "unavailable",
+      "evidence_state": "unknown",
+      "reason": "authorization_required",
+      "inspection_request": {
+        "access_type": "read_only_visible_section_inspection",
+        "decision": "pending_response",
+        "scope": "current_session_only",
+        "carry_forward": false
+      }
+    },
+    {
+      "section": "name",
+      "availability": "unavailable",
+      "evidence_state": "unknown",
+      "reason": "authorization_required",
+      "inspection_request": {
+        "access_type": "read_only_visible_section_inspection",
+        "decision": "pending_response",
+        "scope": "current_session_only",
+        "carry_forward": false
+      }
+    },
+    {
+      "section": "profile_url",
+      "availability": "unavailable",
+      "evidence_state": "unknown",
+      "reason": "authorization_required",
+      "inspection_request": {
+        "access_type": "read_only_visible_section_inspection",
+        "decision": "pending_response",
+        "scope": "current_session_only",
+        "carry_forward": false
+      }
+    },
+    {
+      "section": "headline",
+      "availability": "inspected_present",
+      "evidence_state": "verified",
+      "reason": "inspected_content_available"
+    },
+    {
+      "section": "location",
+      "availability": "unavailable",
+      "evidence_state": "unknown",
+      "reason": "authorization_required",
+      "inspection_request": {
+        "access_type": "read_only_visible_section_inspection",
+        "decision": "pending_response",
+        "scope": "current_session_only",
+        "carry_forward": false
+      }
+    },
+    {
+      "section": "contact_info",
+      "availability": "unavailable",
+      "evidence_state": "unknown",
+      "reason": "authorization_required",
+      "inspection_request": {
+        "access_type": "read_only_visible_section_inspection",
+        "decision": "pending_response",
+        "scope": "current_session_only",
+        "carry_forward": false
+      }
+    },
+    {
+      "section": "about",
+      "availability": "candidate_supplied",
+      "evidence_state": "candidate_reported",
+      "reason": "candidate_material_supplied"
+    },
+    {
+      "section": "experience",
+      "availability": "inspected_present",
+      "evidence_state": "verified",
+      "reason": "inspected_content_available"
+    },
+    {
+      "section": "skills",
+      "availability": "inspected_present",
+      "evidence_state": "verified",
+      "reason": "inspected_content_available"
+    },
+    {
+      "section": "featured",
+      "availability": "unavailable",
+      "evidence_state": "unknown",
+      "reason": "authorization_required",
+      "inspection_request": {
+        "access_type": "read_only_visible_section_inspection",
+        "decision": "pending_response",
+        "scope": "current_session_only",
+        "carry_forward": false
+      }
+    },
+    {
+      "section": "certifications",
+      "availability": "unavailable",
+      "evidence_state": "unknown",
+      "reason": "inspection_declined",
+      "inspection_request": {
+        "access_type": "read_only_visible_section_inspection",
+        "decision": "declined_for_session",
+        "scope": "current_session_only",
+        "carry_forward": false
+      }
+    },
+    {
+      "section": "education",
+      "availability": "unavailable",
+      "evidence_state": "unknown",
+      "reason": "authorization_required",
+      "inspection_request": {
+        "access_type": "read_only_visible_section_inspection",
+        "decision": "pending_response",
+        "scope": "current_session_only",
+        "carry_forward": false
+      }
+    },
+    {
+      "section": "recommendations",
+      "availability": "unavailable",
+      "evidence_state": "unknown",
+      "reason": "authorization_required",
+      "inspection_request": {
+        "access_type": "read_only_visible_section_inspection",
+        "decision": "pending_response",
+        "scope": "current_session_only",
+        "carry_forward": false
+      }
+    },
+    {
+      "section": "activity",
+      "availability": "unavailable",
+      "evidence_state": "unknown",
+      "reason": "authorization_required",
+      "inspection_request": {
+        "access_type": "read_only_visible_section_inspection",
+        "decision": "pending_response",
+        "scope": "current_session_only",
+        "carry_forward": false
+      }
+    },
+    {
+      "section": "analytics",
+      "availability": "unavailable",
+      "evidence_state": "unknown",
+      "reason": "authorization_required",
+      "inspection_request": {
+        "access_type": "read_only_visible_section_inspection",
+        "decision": "pending_response",
+        "scope": "current_session_only",
+        "carry_forward": false
+      }
+    },
+    {
+      "section": "job_preferences",
+      "availability": "unavailable",
+      "evidence_state": "unknown",
+      "reason": "authorization_required",
+      "inspection_request": {
+        "access_type": "read_only_visible_section_inspection",
+        "decision": "pending_response",
+        "scope": "current_session_only",
+        "carry_forward": false
+      }
+    }
+  ]
+}
