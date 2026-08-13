@@ -28,7 +28,7 @@ This source tree is repo-local at `plugins/professional-growth-coach`. Source ed
 
 ## Starter prompts
 
-- “Analiza mi perfil de LinkedIn y entrégame una conclusión breve más un dossier HTML privado y completo. No inventes datos ni realices acciones externas.”
+- “Analiza mi perfil de LinkedIn y entrégame una conclusión breve más un dossier HTML privado v2 y completo. No inventes datos ni realices acciones externas.”
 - “Compare professional-growth options for a synthetic SQL/Airflow/dbt background, then tell me what market evidence is missing.”
 - “Prepare me for this interview using the supplied vacancy and my candidate fact matrix.”
 - “Build a first-interview recruiter screen brief, objection response map, and draft-only outreach funnel from my confirmed evidence; do not send anything.”

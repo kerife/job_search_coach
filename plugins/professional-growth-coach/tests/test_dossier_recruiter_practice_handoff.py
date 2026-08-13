@@ -32,6 +32,21 @@ class DossierRecruiterPracticeHandoffTests(unittest.TestCase):
         self.dossier["questions"][0]["linked_copy_category"] = overrides["question_linked_copy_category"]
         self.dossier["copy_blocks"][1].update(overrides["about_opening"])
 
+    def _v2_dossier(self):
+        dossier = json.loads(
+            (
+                ROOT.parent.parent
+                / "tests/evals/with-skill/fixtures/executive-career-dossier-v2/scenario-a-es.json"
+            ).read_text(encoding="utf-8")
+        )
+        overrides = self.fixture["dossier_overrides"]
+        dossier["screen_bridge"] = copy.deepcopy(overrides["screen_bridge"])
+        dossier["questions"][0]["linked_copy_category"] = overrides[
+            "question_linked_copy_category"
+        ]
+        dossier["copy_blocks"][1].update(copy.deepcopy(overrides["about_opening"]))
+        return dossier
+
     def test_builds_closed_source_projection(self):
         handoff = build_handoff(
             self.dossier,
@@ -62,6 +77,62 @@ class DossierRecruiterPracticeHandoffTests(unittest.TestCase):
         )
         with self.assertRaisesRegex(ValueError, "source_snapshot must match dossier"):
             build_handoff(changed, self.fixture["vacancy"], self.fixture["source_snapshot"])
+
+    def test_builder_accepts_v2_through_a_pure_v1_projection_and_binds_the_original_snapshot(self):
+        dossier = self._v2_dossier()
+        source_snapshot = handoff_builder.snapshot_for_dossier(dossier)
+
+        handoff = build_handoff(dossier, self.fixture["vacancy"], source_snapshot)
+
+        self.assertEqual(self.fixture["expected"]["dossier_projection"], handoff["dossier_projection"])
+        self.assertEqual(source_snapshot, handoff["source_snapshot"])
+        self.assertNotEqual(source_snapshot, handoff_builder.snapshot_for_dossier(
+            handoff_builder._load_sibling("executive_career_dossier_v2_compat").project_v2_to_v1(dossier)
+        ))
+
+    def test_validator_accepts_v2_source_with_the_original_snapshot_and_v1_practice_projection(self):
+        dossier = self._v2_dossier()
+        source_snapshot = handoff_builder.snapshot_for_dossier(dossier)
+        handoff = build_handoff(dossier, self.fixture["vacancy"], source_snapshot)
+        practice_path = (
+            ROOT.parent.parent
+            / "tests/evals/with-skill/fixtures/recruiter-practice-session/session-es.json"
+        )
+        practice = json.loads(practice_path.read_text(encoding="utf-8"))
+        practice.update(copy.deepcopy(handoff["practice_projection"]))
+
+        self.assertEqual(
+            [],
+            validate_handoff(handoff, dossier, self.fixture["vacancy"], practice),
+        )
+
+    def test_v2_source_snapshot_fails_closed_after_ledger_priority_or_profile_section_mutation(self):
+        dossier = self._v2_dossier()
+        source_snapshot = handoff_builder.snapshot_for_dossier(dossier)
+        mutations = (
+            ("ledger", lambda value: value["section_coverage"][2].update({
+                "reason": "inspection_declined",
+                "inspection_request": {
+                    "access_type": "read_only_visible_section_inspection",
+                    "decision": "declined_for_session",
+                    "scope": "current_session_only",
+                    "carry_forward": False,
+                },
+            })),
+            ("priority", lambda value: value["priorities"][0].update({
+                "action": "Revisar el enfoque con una plantilla privada distinta.",
+            })),
+            ("profile section", lambda value: value["evidence"][0].update({
+                "profile_section": "about",
+            })),
+        )
+
+        for label, mutate in mutations:
+            with self.subTest(label=label):
+                changed = copy.deepcopy(dossier)
+                mutate(changed)
+                with self.assertRaises(ValueError):
+                    build_handoff(changed, self.fixture["vacancy"], source_snapshot)
 
     def test_parity_rejects_a_fabricated_snapshot(self):
         handoff, practice = self._valid_handoff_and_practice()

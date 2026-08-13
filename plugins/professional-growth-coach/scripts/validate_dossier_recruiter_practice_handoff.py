@@ -315,7 +315,22 @@ def _validate_bridge_claim_evidence_links(
         if source_fact not in question_evidence or source_fact not in bridge_evidence:
             errors.append(
                 "handoff.dossier_projection.source_fact_evidence_id must belong to candidate bridge evidence"
-            )
+        )
+
+
+def _validated_v1_projection(
+    dossier: Mapping[str, object],
+) -> tuple[list[str], Mapping[str, object]]:
+    """Validate either supported source version and return the v1 handoff view."""
+    if dossier.get("schema_version") == "executive-career-dossier-v2":
+        validator = _load_sibling("validate_executive_career_dossier_v2")
+        errors = validator.validate_dossier(dossier)
+        if errors:
+            return errors, dossier
+        return [], validator.project_v2_to_v1(dossier)
+    validator = _load_sibling("validate_executive_career_dossier")
+    errors = validator.validate_dossier(dossier)
+    return errors, dossier
 
 
 def validate_handoff(
@@ -326,11 +341,12 @@ def validate_handoff(
 ) -> list[str]:
     """Return sorted, bounded errors for the two-source handoff contract."""
     errors = _validate_handoff_schema(handoff)
-    dossier_validator = _load_sibling("validate_executive_career_dossier")
     practice_validator = _load_sibling("validate_recruiter_practice_session")
     dossier_is_mapping = isinstance(dossier, Mapping)
     practice_is_mapping = isinstance(practice_session, Mapping)
-    dossier_errors = dossier_validator.validate_dossier(dossier) if dossier_is_mapping else []
+    dossier_errors, dossier_projection = (
+        _validated_v1_projection(dossier) if dossier_is_mapping else ([], dossier)
+    )
     practice_errors = practice_validator.validate_session(practice_session) if practice_is_mapping else []
     if not dossier_is_mapping:
         errors.append("dossier must be an object")
@@ -348,7 +364,7 @@ def validate_handoff(
     source_snapshot = handoff.get("source_snapshot")
     if not isinstance(source_snapshot, str) or not _SNAPSHOT.fullmatch(source_snapshot):
         return sorted(set(errors))
-    dossier_locale = dossier.get("locale")
+    dossier_locale = dossier_projection.get("locale")
     locale_mismatch = False
     if vacancy.get("locale") != dossier_locale:
         errors.append("vacancy.locale must match dossier.locale")
@@ -360,7 +376,7 @@ def validate_handoff(
         return sorted(set(errors))
     if dossier_errors:
         return sorted(set(errors))
-    _validate_bridge_claim_evidence_links(dossier, handoff, errors)
+    _validate_bridge_claim_evidence_links(dossier_projection, handoff, errors)
     snapshot_helper = _load_sibling("dossier_snapshot")
     if source_snapshot != snapshot_helper.snapshot_for_dossier(dossier):
         errors.append("handoff.source_snapshot must match dossier content")

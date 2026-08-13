@@ -286,7 +286,7 @@ class FullPluginIntegrationTests(unittest.TestCase):
         readme = (PLUGIN_ROOT / "README.md").read_text(encoding="utf-8")
         starter = (
             "“Analiza mi perfil de LinkedIn y entrégame una conclusión breve más un "
-            "dossier HTML privado y completo. No inventes datos ni realices acciones externas.”"
+            "dossier HTML privado v2 y completo. No inventes datos ni realices acciones externas.”"
         )
         self.assertIn(starter, readme)
         self.assertLess(readme.index(starter), readme.index("Compare professional-growth options"))
@@ -313,6 +313,19 @@ class FullPluginIntegrationTests(unittest.TestCase):
         self.assertIn("private schema conformance passed", result.stdout.lower())
         self.assertIn("dossier practice handoff conformance passed", result.stdout.lower())
         self.assertIn("static checks passed", result.stdout.lower())
+        checker_module = load_static_checker()
+        self.assertEqual(
+            (
+                "schemas/executive-career-dossier-v2.schema.json",
+                "scripts/executive_career_dossier_v2_compat.py",
+                "scripts/validate_executive_career_dossier_v2.py",
+                "scripts/render_executive_career_dossier_v2.py",
+                "assets/executive-career-dossier-v2.css",
+                "tests/evals/with-skill/fixtures/executive-career-dossier-v2/scenario-a-es.json",
+                "tests/evals/with-skill/fixtures/executive-career-dossier-v2/scenario-c-en.json",
+            ),
+            checker_module.EXECUTIVE_DOSSIER_V2_PACKAGE_PATHS,
+        )
 
     def test_dossier_practice_handoff_harness_rejects_malformed_or_zero_test_summaries(self) -> None:
         checker = load_static_checker()

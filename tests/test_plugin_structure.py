@@ -484,6 +484,19 @@ class JobSearchCoachPluginStructureTests(unittest.TestCase):
             errors,
         )
 
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            incomplete_plugin = Path(temporary_directory) / "professional-growth-coach"
+            shutil.copytree(PLUGIN_ROOT, incomplete_plugin)
+            (incomplete_plugin / "assets" / "executive-career-dossier-v2.css").unlink()
+            errors = checker.validate_executive_dossier_package(
+                incomplete_plugin,
+                REPO_ROOT,
+            )
+        self.assertIn(
+            "assets/executive-career-dossier-v2.css: missing dossier package file",
+            errors,
+        )
+
     def test_executive_dossier_package_rejects_invalid_registry_and_network_assets(self) -> None:
         checker = load_static_checker()
         with tempfile.TemporaryDirectory() as temporary_directory:

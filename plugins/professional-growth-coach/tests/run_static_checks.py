@@ -8,6 +8,7 @@ import json
 import difflib
 import importlib.util
 import re
+import stat
 import subprocess
 import sys
 import tempfile
@@ -193,6 +194,15 @@ EXECUTIVE_DOSSIER_PACKAGE_PATHS = (
     "assets/executive-career-dossier-v1.html",
     "assets/executive-career-dossier-v1.css",
     "skills/optimize-professional-profile/references/html-dossier.md",
+)
+EXECUTIVE_DOSSIER_V2_PACKAGE_PATHS = (
+    "schemas/executive-career-dossier-v2.schema.json",
+    "scripts/executive_career_dossier_v2_compat.py",
+    "scripts/validate_executive_career_dossier_v2.py",
+    "scripts/render_executive_career_dossier_v2.py",
+    "assets/executive-career-dossier-v2.css",
+    "tests/evals/with-skill/fixtures/executive-career-dossier-v2/scenario-a-es.json",
+    "tests/evals/with-skill/fixtures/executive-career-dossier-v2/scenario-c-en.json",
 )
 EXECUTIVE_DOSSIER_OFFLINE_TOKENS = (
     "http://",
@@ -430,6 +440,65 @@ def validate_executive_dossier_package(
                     f"{template_relative}: template must contain exactly one bounded inline style and script"
                 )
 
+    v2_safe_paths: set[str] = set()
+    for relative_path in EXECUTIVE_DOSSIER_V2_PACKAGE_PATHS:
+        root = repo_root if relative_path.startswith("tests/") else plugin_root
+        if _package_path_traverses_symlink(root, relative_path):
+            errors.append(
+                f"{relative_path}: dossier v2 package path cannot traverse a symlink"
+            )
+        elif not (root / relative_path).is_file():
+            errors.append(f"{relative_path}: missing dossier package file")
+        else:
+            v2_safe_paths.add(relative_path)
+
+    v2_schema_relative = "schemas/executive-career-dossier-v2.schema.json"
+    if v2_schema_relative in v2_safe_paths:
+        try:
+            v2_schema = json.loads(
+                (plugin_root / v2_schema_relative).read_text(encoding="utf-8")
+            )
+        except (OSError, UnicodeError, json.JSONDecodeError):
+            errors.append(f"{v2_schema_relative}: invalid JSON")
+        else:
+            if (
+                not isinstance(v2_schema, dict)
+                or v2_schema.get("type") != "object"
+                or v2_schema.get("additionalProperties") is not False
+                or "section_coverage" not in v2_schema.get("required", ())
+            ):
+                errors.append(f"{v2_schema_relative}: invalid closed dossier schema")
+
+    for relative_path in (
+        "scripts/validate_executive_career_dossier_v2.py",
+        "scripts/render_executive_career_dossier_v2.py",
+    ):
+        if relative_path not in v2_safe_paths:
+            continue
+        result = subprocess.run(
+            [sys.executable, "-B", str(plugin_root / relative_path), "--help"],
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if result.returncode != 0:
+            errors.append(f"{relative_path}: dossier script import failed")
+
+    v2_css_relative = "assets/executive-career-dossier-v2.css"
+    if v2_css_relative in v2_safe_paths:
+        try:
+            asset = (plugin_root / v2_css_relative).read_text(encoding="utf-8").casefold()
+        except (OSError, UnicodeError):
+            errors.append(f"{v2_css_relative}: dossier asset is not readable UTF-8")
+        else:
+            if any(token in asset for token in EXECUTIVE_DOSSIER_OFFLINE_TOKENS):
+                errors.append(f"{v2_css_relative}: remote or network token in dossier asset")
+            if re.search(r"</?(?:style|script)\b", asset, re.I):
+                errors.append(f"{v2_css_relative}: unsafe inline asset boundary")
+            if re.search(r"['\"]//[a-z0-9]", asset, re.I):
+                errors.append(f"{v2_css_relative}: remote or network token in dossier asset")
+
     if errors:
         return sorted(set(errors))
 
@@ -577,6 +646,79 @@ def validate_executive_dossier_package(
                     errors.append(
                         "executive dossier runtime semantics were not enforced in renderer receipt"
                     )
+
+    for fixture_relative in EXECUTIVE_DOSSIER_V2_PACKAGE_PATHS[-2:]:
+        fixture_path = repo_root / fixture_relative
+        try:
+            fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError):
+            errors.append(f"{fixture_relative}: invalid dossier v2 fixture")
+            continue
+        try:
+            with tempfile.TemporaryDirectory() as temporary_directory:
+                runtime_root = Path(temporary_directory)
+                input_path = runtime_root / "input.json"
+                output_path = runtime_root / "rendered.html"
+                input_path.write_text(json.dumps(fixture), encoding="utf-8")
+                validator_result = subprocess.run(
+                    [
+                        sys.executable,
+                        "-B",
+                        str(plugin_root / "scripts/validate_executive_career_dossier_v2.py"),
+                        str(input_path),
+                    ],
+                    cwd=runtime_root,
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                    timeout=20,
+                )
+                render_result = subprocess.run(
+                    [
+                        sys.executable,
+                        "-B",
+                        str(plugin_root / "scripts/render_executive_career_dossier_v2.py"),
+                        str(input_path),
+                        "--output",
+                        str(output_path),
+                    ],
+                    cwd=runtime_root,
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                    timeout=20,
+                )
+                rendered_output = (
+                    output_path.read_text(encoding="utf-8") if output_path.is_file() else ""
+                )
+                output_mode = (
+                    stat.S_IMODE(output_path.stat().st_mode)
+                    if output_path.is_file()
+                    else None
+                )
+        except (OSError, subprocess.TimeoutExpired):
+            errors.append(f"{fixture_relative}: dossier v2 runtime package execution failed")
+            continue
+        if validator_result.returncode != 0:
+            errors.append(f"{fixture_relative}: v2 validator rejected valid dossier fixture")
+        if render_result.returncode != 0 or output_mode is None:
+            errors.append(f"{fixture_relative}: v2 renderer did not render valid dossier fixture")
+            continue
+        if output_mode != 0o600:
+            errors.append(f"{fixture_relative}: v2 renderer did not write mode-600 artifact")
+        if not (
+            len(re.findall(r"<style\b", rendered_output, re.I)) == 1
+            and len(re.findall(r"</style\s*>", rendered_output, re.I)) == 1
+            and len(re.findall(r"<script\b", rendered_output, re.I)) == 1
+            and len(re.findall(r"</script\s*>", rendered_output, re.I)) == 1
+        ):
+            errors.append(f"{fixture_relative}: v2 rendered dossier has unsafe inline boundaries")
+        errors.extend(
+            _dossier_security_errors(
+                rendered_output,
+                f"{fixture_relative}: v2 rendered dossier",
+            )
+        )
 
     for relative_path in EXECUTIVE_DOSSIER_IGNORED_OUTPUTS:
         ignored = subprocess.run(

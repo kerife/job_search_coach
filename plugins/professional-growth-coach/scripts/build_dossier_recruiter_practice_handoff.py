@@ -43,6 +43,19 @@ def _load_dossier_validator():
     return _load_sibling("validate_executive_career_dossier")
 
 
+def _validated_v1_projection(dossier: Mapping[str, object]) -> Mapping[str, object]:
+    """Validate either supported source version and return its v1 handoff view."""
+    if dossier.get("schema_version") == "executive-career-dossier-v2":
+        validator = _load_sibling("validate_executive_career_dossier_v2")
+        if validator.validate_dossier(dossier):
+            raise ValueError("dossier validation failed")
+        return validator.project_v2_to_v1(dossier)
+    validator = _load_dossier_validator()
+    if validator.validate_dossier(dossier):
+        raise ValueError("dossier validation failed")
+    return dossier
+
+
 def snapshot_for_dossier(dossier: Mapping[str, object]) -> str:
     return _load_sibling("dossier_snapshot").snapshot_for_dossier(dossier)
 
@@ -143,20 +156,18 @@ def build_handoff(
         raise ValueError("dossier must be an object")
     if not _load_sibling("dossier_snapshot").is_snapshot(source_snapshot):
         raise ValueError("source_snapshot must use snap-dossier-sha256 format")
-    validator = _load_dossier_validator()
-    if validator.validate_dossier(dossier):
-        raise ValueError("dossier validation failed")
+    dossier_projection = _validated_v1_projection(dossier)
     safe_context, requirement_summary, vacancy_locale = _validate_vacancy(vacancy)
-    if dossier.get("locale") != vacancy_locale:
+    if dossier_projection.get("locale") != vacancy_locale:
         raise ValueError("dossier.locale must match vacancy.locale")
 
-    bridge = dossier.get("screen_bridge")
+    bridge = dossier_projection.get("screen_bridge")
     if not isinstance(bridge, Mapping) or bridge.get("state") != "requires_confirmation":
         raise ValueError("dossier screen_bridge must require confirmation")
     if bridge.get("question_rank") != 1:
         raise ValueError("dossier screen_bridge must select rank 1")
 
-    questions = dossier.get("questions")
+    questions = dossier_projection.get("questions")
     if not isinstance(questions, list):
         raise ValueError("dossier questions must be a list")
     selected = next((row for row in questions if isinstance(row, Mapping) and row.get("rank") == 1), None)
@@ -168,8 +179,8 @@ def build_handoff(
     if not is_safe_handoff_text(question_text, 500):
         raise ValueError("dossier rank 1 question contains forbidden safe text")
 
-    claims = _records(dossier.get("claims"), "C", "claims")
-    evidence = _records(dossier.get("evidence"), "E", "evidence")
+    claims = _records(dossier_projection.get("claims"), "C", "claims")
+    evidence = _records(dossier_projection.get("evidence"), "E", "evidence")
     claim_ids = _references(bridge.get("claim_ids"), claims, "screen_bridge.claim_ids")
     evidence_ids = _references(bridge.get("evidence_ids"), evidence, "screen_bridge.evidence_ids")
     bridge_evidence = set(evidence_ids)
