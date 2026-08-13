@@ -16,11 +16,11 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-13T00:46:22-06:00`
+release_timestamp: `2026-08-13T00:54:24-06:00`
 
-source_commit: `434a85bc1ca65dc68649ba57a7e9daad55146ccf`
+source_commit: `9dd147c2b70d856fecabc8c4bf0011c591800ccb`
 
-source_tree: `aebaf0eab9cb6e11636219dcc88f67107cdc17a3`
+source_tree: `3d2e432d57e63674457eb0e9b7d809369a12dfcf`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
@@ -32,7 +32,7 @@ source_file_count: `109`
 
 installed_file_count: `109`
 
-normalized_source_cache_sha256: `81f1c82a12b53e55d3299f64e6f10e160ae0acb730356bfa3b7685efe7897245`
+normalized_source_cache_sha256: `78c8c2e979af2f06f455f24de5afe425149f816d5bf0b65dd0bea4ca4c4434fc`
 
 active_config: `canonical_only`
 
