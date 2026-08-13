@@ -448,6 +448,14 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
 
         self.assertIn("schema validation exceeds safe evaluation limit", errors)
 
+    def test_dependency_free_checker_rejects_cyclic_json_values_without_recursion_error(self):
+        value = []
+        value.append(value)
+
+        errors = validate_schema_instance(value, {"const": value})
+
+        self.assertEqual([], errors)
+
     def test_dependency_free_checker_enforces_numeric_and_array_bounds(self):
         schema = {
             "type": "object",

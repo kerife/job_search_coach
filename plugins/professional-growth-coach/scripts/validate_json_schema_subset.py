@@ -34,8 +34,12 @@ def _type_ok(value: object, expected: object) -> bool:
     }.get(expected, True)
 
 
-def _json_equal(left: object, right: object) -> bool:
+def _json_equal(
+    left: object, right: object, seen: set[tuple[int, int]] | None = None
+) -> bool:
     """Compare JSON values without Python's bool/int equality quirk."""
+    if seen is None:
+        seen = set()
     if isinstance(left, bool) or isinstance(right, bool):
         return isinstance(left, bool) and isinstance(right, bool) and left == right
     if isinstance(left, (int, float)) and isinstance(right, (int, float)):
@@ -43,12 +47,20 @@ def _json_equal(left: object, right: object) -> bool:
     if type(left) is not type(right):
         return False
     if isinstance(left, list) and isinstance(right, list):
+        pair = (id(left), id(right))
+        if pair in seen:
+            return True
+        seen.add(pair)
         return len(left) == len(right) and all(
-            _json_equal(item, other) for item, other in zip(left, right)
+            _json_equal(item, other, seen) for item, other in zip(left, right)
         )
     if isinstance(left, Mapping) and isinstance(right, Mapping):
+        pair = (id(left), id(right))
+        if pair in seen:
+            return True
+        seen.add(pair)
         return set(left) == set(right) and all(
-            _json_equal(left[key], right[key]) for key in left
+            _json_equal(left[key], right[key], seen) for key in left
         )
     return left == right
 
