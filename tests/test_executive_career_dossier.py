@@ -620,6 +620,26 @@ class ExecutiveCareerDossierSchemaTests(unittest.TestCase):
                 errors = self.validate_dossier(dossier)
                 self.assertTrue(any(fragment in error for error in errors), errors)
 
+    def test_evidence_paraphrase_rejects_ordinary_unlabelled_identity(self) -> None:
+        unsafe = mutate_path(
+            self.es_dossier,
+            ("evidence", 0, "paraphrase"),
+            "Ana López delivered Kubernetes reliability automation.",
+        )
+        errors = self.validate_dossier(unsafe)
+        self.assertTrue(
+            any("unlabelled candidate identity" in error for error in errors),
+            errors,
+        )
+
+    def test_evidence_paraphrase_keeps_safe_technical_control(self) -> None:
+        safe = mutate_path(
+            self.es_dossier,
+            ("evidence", 0, "paraphrase"),
+            "Kubernetes reliability automation reduced repetitive deployment work.",
+        )
+        self.assertEqual(self.validate_dossier(safe), [])
+
     def test_confirmation_copy_requires_one_linked_question(self) -> None:
         mutated = copy.deepcopy(self.es_dossier)
         mutated["questions"] = []
@@ -2115,6 +2135,21 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
         )
         with self.assertRaises(self.renderer.DossierValidationError):
             self.renderer.render_dossier_html(dossier)
+
+    def test_renderer_rejects_ordinary_unlabelled_identity_before_rendering(self) -> None:
+        marker = "Ana López delivered Kubernetes reliability automation."
+        dossier = mutate_path(
+            self.es_dossier,
+            ("evidence", 0, "paraphrase"),
+            marker,
+        )
+        with self.assertRaises(self.renderer.DossierValidationError) as context:
+            self.renderer.render_dossier_html(dossier)
+        self.assertTrue(
+            any("unlabelled candidate identity" in error for error in context.exception.errors),
+            context.exception.errors,
+        )
+        self.assertNotIn("Ana López", "\n".join(context.exception.errors))
 
     def test_artifact_has_no_remote_dependency_or_runtime_ledger(self) -> None:
         rendered = self.renderer.render_dossier_html(self.es_dossier)
