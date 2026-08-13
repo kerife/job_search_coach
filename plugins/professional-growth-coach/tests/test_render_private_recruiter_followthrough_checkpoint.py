@@ -231,11 +231,11 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
         expected = {
             "en": (
                 "Manual next step",
-                "Return to the private Codex conversation and ask to start interview preparation. This receipt does not contact, send, or schedule anything.",
+                "Return to the private Codex conversation, re-enter interview preparation manually, and answer the one safe recruiter-screen question. This receipt does not contact, send, or schedule anything.",
             ),
             "es": (
                 "Siguiente paso manual",
-                "Regresa a la conversación privada de Codex y pide iniciar la preparación de entrevista. Este recibo no contacta, envía ni agenda nada.",
+                "Regresa a la conversación privada de Codex, vuelve a entrar manualmente a la preparación de entrevista y responde la única pregunta segura de filtro inicial. Este recibo no contacta, envía ni agenda nada.",
             ),
         }
         for locale, (heading, body) in expected.items():
