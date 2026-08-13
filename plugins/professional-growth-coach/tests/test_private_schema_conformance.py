@@ -61,6 +61,18 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         missing_priority = copy.deepcopy(dossier)
         del missing_priority["priorities"][0]["client_template"]
         self.assertTrue(validate_schema_instance(missing_priority, schema))
+        inherited_v1 = copy.deepcopy(dossier)
+        inherited_v1["focus"] = {}
+        self.assertTrue(validate_schema_instance(inherited_v1, schema))
+        for reason, decision in (
+            ("authorization_required", "declined_for_session"),
+            ("inspection_declined", "authorized_inspection_failed"),
+            ("authorized_inspection_failed", "pending_response"),
+        ):
+            mismatched = copy.deepcopy(dossier)
+            mismatched["section_coverage"][10]["reason"] = reason
+            mismatched["section_coverage"][10]["inspection_request"]["decision"] = decision
+            self.assertTrue(validate_schema_instance(mismatched, schema))
 
     def test_schema_diagnostics_redact_absolute_field_names(self):
         cases = [

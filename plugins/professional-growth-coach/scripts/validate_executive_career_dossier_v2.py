@@ -108,6 +108,8 @@ def _validate_rows(root: Mapping[str, object], errors: list[str]) -> dict[str, M
         if not isinstance(item, Mapping):
             errors.append(f"{path} must be an object")
             continue
+        if set(item) - ROW_FIELDS:
+            errors.append(f"{path} has unsupported fields")
         section = item.get("section")
         if not isinstance(section, str) or section not in CANONICAL_PROFILE_SECTIONS:
             errors.append(f"{path}.section has invalid section")
@@ -169,7 +171,20 @@ def _validate_rows(root: Mapping[str, object], errors: list[str]) -> dict[str, M
 def _validate_priorities(root: Mapping[str, object], errors: list[str]) -> None:
     priorities = root.get("priorities")
     evidence = root.get("evidence")
-    evidence_sections = {item.get("id"): item.get("profile_section") for item in evidence if isinstance(item, Mapping)} if isinstance(evidence, list) else {}
+    evidence_sections: dict[str, object] = {}
+    if isinstance(evidence, list):
+        for evidence_index, record in enumerate(evidence):
+            if not isinstance(record, Mapping):
+                continue
+            profile_section = record.get("profile_section")
+            if "profile_section" not in record or (
+                profile_section is not None
+                and (not isinstance(profile_section, str) or profile_section not in CANONICAL_PROFILE_SECTIONS)
+            ):
+                errors.append(f"evidence[{evidence_index}].profile_section has invalid profile section")
+            identifier = record.get("id")
+            if isinstance(identifier, str):
+                evidence_sections[identifier] = profile_section
     if not isinstance(priorities, list):
         return
     for index, item in enumerate(priorities):
@@ -194,10 +209,18 @@ def _validate_priorities(root: Mapping[str, object], errors: list[str]) -> None:
             if template.get("template_id") not in TEMPLATE_IDS:
                 errors.append(f"{path}.client_template has invalid template_id")
             keys = template.get("field_keys")
-            if not isinstance(keys, list) or not 1 <= len(keys) <= 5 or len(keys) != len(set(keys)) or any(key not in TEMPLATE_KEYS for key in keys):
+            if (
+                not isinstance(keys, list)
+                or not 1 <= len(keys) <= 5
+                or any(not isinstance(key, str) or key not in TEMPLATE_KEYS for key in keys)
+                or (isinstance(keys, list) and len(keys) != len(set(keys)))
+            ):
                 errors.append(f"{path}.client_template.field_keys has invalid keys")
         ids = row.get("evidence_ids")
-        if isinstance(ids, list) and isinstance(target, str) and any(evidence_sections.get(identifier) != target for identifier in ids):
+        if isinstance(ids, list) and isinstance(target, str) and any(
+            not isinstance(identifier, str) or evidence_sections.get(identifier) != target
+            for identifier in ids
+        ):
             errors.append(f"{path}.evidence_ids must bind to the target section")
 
 

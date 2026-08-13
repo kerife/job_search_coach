@@ -237,14 +237,57 @@ class ExecutiveCareerDossierV2Tests(unittest.TestCase):
         invalid["priorities"][0]["client_template"]["template_id"] = "unknown_template"
         self.assertTrue(self.validator.validate_dossier(invalid))
 
+    def test_every_ledger_and_request_boundary_rejects_session_or_positive_authorization_fields(self) -> None:
+        mutations = (
+            ("section_coverage", 10, "session_id"),
+            ("section_coverage", 10, "authorized_for_session"),
+            ("inspection_request", 10, "session_id"),
+            ("inspection_request", 10, "authorization_granted"),
+        )
+        for boundary, index, key in mutations:
+            with self.subTest(boundary=boundary, key=key):
+                dossier = make_v2_dossier()
+                target = dossier["section_coverage"][index]
+                if boundary == "inspection_request":
+                    target = target["inspection_request"]
+                target[key] = True
+                errors = self.validator.validate_dossier(dossier)
+                self.assertTrue(errors)
+                self.assertNotIn(key, "\n".join(errors))
+
+    def test_every_evidence_record_requires_a_canonical_or_null_profile_section(self) -> None:
+        for label, replacement in (("missing", None), ("unknown", "unknown_section"), ("number", 3), ("array", [])):
+            with self.subTest(replacement=label):
+                dossier = make_v2_dossier()
+                if label == "missing":
+                    del dossier["evidence"][4]["profile_section"]
+                else:
+                    dossier["evidence"][4]["profile_section"] = replacement
+                self.assertTrue(self.validator.validate_dossier(dossier))
+
+    def test_selector_falls_back_to_canonical_pending_section_not_targeted_by_a_priority(self) -> None:
+        dossier = make_v2_dossier()
+        for row in dossier["section_coverage"]:
+            if isinstance(row.get("inspection_request"), dict):
+                row["inspection_request"]["decision"] = "declined_for_session"
+                row["reason"] = "inspection_declined"
+        dossier["section_coverage"][10]["inspection_request"]["decision"] = "pending_response"
+        dossier["section_coverage"][10]["reason"] = "authorization_required"
+        self.assertEqual(self.validator.select_pending_inspection_section(dossier), "featured")
+
     def test_v2_diagnostics_do_not_echo_new_prose_values(self) -> None:
-        sentinel = "/private/path/profile.json"
+        sentinels = (
+            "/private/path/profile.json", "https://www.linkedin.com/in/example",
+            "person@example.test", "unsafe\x1b[31m", "unsafe\u202evalue",
+        )
         for field in ("coach_observation", "why_it_matters", "coach_prompt", "privacy_boundary"):
-            dossier = make_v2_dossier()
-            dossier["priorities"][0][field] = sentinel
-            errors = self.validator.validate_dossier(dossier)
-            self.assertTrue(errors)
-            self.assertNotIn(sentinel, "\n".join(errors))
+            for sentinel in sentinels:
+                with self.subTest(field=field, sentinel=repr(sentinel)):
+                    dossier = make_v2_dossier()
+                    dossier["priorities"][0][field] = sentinel
+                    errors = self.validator.validate_dossier(dossier)
+                    self.assertTrue(errors)
+                    self.assertNotIn(sentinel, "\n".join(errors))
 
     def test_selector_returns_one_pending_priority_then_ledger_section(self) -> None:
         dossier = make_v2_dossier()
@@ -304,18 +347,60 @@ class ExecutiveCareerDossierV2LoadAndCliTests(unittest.TestCase):
                 self.validator.load_dossier(fifo)
 
     def test_cli_returns_bounded_non_echoing_diagnostics(self) -> None:
-        dossier = make_v2_dossier()
-        sentinel = "person@example.test"
-        dossier[sentinel] = "bad"
+        for sentinel in ("person@example.test", "https://example.test/private", "/private/path.json", "line\nbreak", "ansi\x1b[31m", "bidi\u202evalue"):
+            with self.subTest(sentinel=repr(sentinel)):
+                dossier = make_v2_dossier()
+                dossier[sentinel] = "bad"
+                with tempfile.TemporaryDirectory() as directory:
+                    path = Path(directory) / "invalid.json"
+                    path.write_text(json.dumps(dossier), encoding="utf-8")
+                    result = subprocess.run([sys.executable, "-B", str(VALIDATOR_PATH), str(path)], cwd=REPO_ROOT, text=True, capture_output=True, check=False)
+                self.assertEqual(result.returncode, 2)
+                self.assertTrue(result.stderr)
+                self.assertLessEqual(len(result.stderr.encode("utf-8")), 16 * 1024)
+                self.assertNotIn("Traceback", result.stderr)
+                self.assertNotIn(sentinel, result.stderr)
+
+    def test_cli_rejects_row_request_and_template_attacks_without_traceback(self) -> None:
+        mutations = (
+            ("row", "session_id", "opaque-session-value"),
+            ("request", "authorization_granted", True),
+            ("template", "field_keys", [{"x": "y"}]),
+            ("template", "field_keys", [["context"]]),
+        )
+        for boundary, key, value in mutations:
+            with self.subTest(boundary=boundary, key=key):
+                dossier = make_v2_dossier()
+                if boundary == "row":
+                    dossier["section_coverage"][10][key] = value
+                elif boundary == "request":
+                    dossier["section_coverage"][10]["inspection_request"][key] = value
+                else:
+                    dossier["priorities"][0]["client_template"][key] = value
+                with tempfile.TemporaryDirectory() as directory:
+                    path = Path(directory) / "invalid.json"
+                    path.write_text(json.dumps(dossier), encoding="utf-8")
+                    result = subprocess.run([sys.executable, "-B", str(VALIDATOR_PATH), str(path)], cwd=REPO_ROOT, text=True, capture_output=True, check=False)
+                self.assertEqual(result.returncode, 2)
+                self.assertNotIn("Traceback", result.stderr)
+                self.assertLessEqual(len(result.stderr.encode("utf-8")), 16 * 1024)
+
+    def test_cli_decoder_recursion_and_truncation_are_bounded(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "invalid.json"
-            path.write_text(json.dumps(dossier), encoding="utf-8")
+            root = Path(directory)
+            recursive = root / "recursive.json"
+            recursive.write_text("[" * 1200 + "0" + "]" * 1200, encoding="utf-8")
+            result = subprocess.run([sys.executable, "-B", str(VALIDATOR_PATH), str(recursive)], cwd=REPO_ROOT, text=True, capture_output=True, check=False)
+            self.assertEqual(result.returncode, 2)
+            self.assertNotIn("Traceback", result.stderr)
+            invalid = make_v2_dossier()
+            invalid["section_coverage"] = [None] * 700
+            path = root / "many-errors.json"
+            path.write_text(json.dumps(invalid), encoding="utf-8")
             result = subprocess.run([sys.executable, "-B", str(VALIDATOR_PATH), str(path)], cwd=REPO_ROOT, text=True, capture_output=True, check=False)
-        self.assertEqual(result.returncode, 2)
-        self.assertTrue(result.stderr)
-        self.assertLessEqual(len(result.stderr.encode("utf-8")), 16 * 1024)
-        self.assertNotIn("Traceback", result.stderr)
-        self.assertNotIn(sentinel, result.stderr)
+            self.assertEqual(result.returncode, 2)
+            self.assertLessEqual(len(result.stderr.encode("utf-8")), 16 * 1024)
+            self.assertIn("validation diagnostics truncated; additional errors omitted", result.stderr)
 
     def test_cli_accepts_a_valid_v2_dossier(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
