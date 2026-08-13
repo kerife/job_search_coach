@@ -88,8 +88,8 @@ FORBIDDEN_PROSE = {
     "unlabelled_identity": re.compile(
         r"\b[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñü'’-]{1,40}\s+"
         r"[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñü'’-]{1,40}\s+"
-        r"(?:described|contacted|joined|emailed|describió|contactó|"
-        r"se\s+uni[oó]|escribió)\b"
+        r"(?:described|contacted|joined|emailed|has|describió|contactó|"
+        r"se\s+uni[oó]|escribió|tiene)\b"
     ),
     "unlabelled_company": re.compile(
         r"\b(?:works?|worked|from|at|with|en|para)\s+"
