@@ -51,8 +51,8 @@ _UNLABELLED_PERSON_INTRO = re.compile(
     r"account|enterprise|sales|marketing|finance|operations|strategy|user|ux|ui)\s+)"
     r"[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑa-záéíóúñ'-]+\s+"
     r"[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑa-záéíóúñ'-]+\s+"
-    r"(?i:reports?|describes?|works?|has|joined|explains?|reported|reporta|"
-    r"describe|trabaja|tiene|explica|menciona|coment[aoó]?)\b"
+    r"(?i:reports?|describes?|works?|has|joined|deliver(?:s|ed)?|explains?|reported|"
+    r"reporta|describe|trabaja|tiene|entreg[aoó]|explica|menciona|coment[aoó]?)\b"
 )
 
 
@@ -69,8 +69,13 @@ def is_safe_handoff_text(value: object, maximum: int) -> bool:
     )
 
 
+def has_unlabelled_person_intro(value: object) -> bool:
+    """Return whether prose begins a sentence with an ordinary person name."""
+    return isinstance(value, str) and _UNLABELLED_PERSON_INTRO.search(
+        unicodedata.normalize("NFKC", value)
+    ) is not None
+
+
 def is_identity_free_handoff_text(value: object, maximum: int) -> bool:
     """Return whether projected source-fact prose contains no bare person intro."""
-    return is_safe_handoff_text(value, maximum) and _UNLABELLED_PERSON_INTRO.search(
-        unicodedata.normalize("NFKC", value)
-    ) is None
+    return is_safe_handoff_text(value, maximum) and not has_unlabelled_person_intro(value)

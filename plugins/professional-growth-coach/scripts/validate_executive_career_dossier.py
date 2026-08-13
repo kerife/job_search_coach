@@ -25,6 +25,26 @@ except ModuleNotFoundError:
     _prose_spec.loader.exec_module(_prose_module)
     format_bounded_diagnostics = _prose_module.format_bounded_diagnostics
 try:
+    from dossier_practice_safe_text import has_unlabelled_person_intro
+except ModuleNotFoundError:
+    _dossier_safety_path = Path(__file__).with_name("dossier_practice_safe_text.py")
+    _dossier_safety_spec = importlib.util.spec_from_file_location(
+        "_pgc_dossier_practice_safe_text", _dossier_safety_path
+    )
+    if _dossier_safety_spec is None or _dossier_safety_spec.loader is None:
+        raise
+    _dossier_safety_module = importlib.util.module_from_spec(_dossier_safety_spec)
+    _dossier_safety_scripts_dir = str(_dossier_safety_path.parent)
+    _dossier_safety_added_path = _dossier_safety_scripts_dir not in sys.path
+    if _dossier_safety_added_path:
+        sys.path.insert(0, _dossier_safety_scripts_dir)
+    try:
+        _dossier_safety_spec.loader.exec_module(_dossier_safety_module)
+    finally:
+        if _dossier_safety_added_path:
+            sys.path.remove(_dossier_safety_scripts_dir)
+    has_unlabelled_person_intro = _dossier_safety_module.has_unlabelled_person_intro
+try:
     from private_input_loader import PrivateInputError, read_bounded_bytes
 except ModuleNotFoundError:
     _loader_spec = importlib.util.spec_from_file_location("_pgc_private_input_loader", Path(__file__).with_name("private_input_loader.py"))
@@ -1029,6 +1049,8 @@ def candidate_text_privacy_errors(value: object) -> tuple[str, ...]:
         errors.append("client report contains forbidden raw-profile alias")
     if CONFIDENTIAL_IDENTITY_CUE.search(normalized):
         errors.append("client report contains forbidden confidential identity cue")
+    if has_unlabelled_person_intro(value):
+        errors.append("client report contains forbidden unlabelled candidate identity")
     return tuple(sorted(set(errors)))
 
 
