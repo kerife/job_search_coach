@@ -96,6 +96,24 @@ class DarkModeAccessibilityTests(unittest.TestCase):
                     r"main:focus-visible\s*\{[^}]*outline-color:\s*Highlight;",
                 )
 
+    def test_compact_receipt_skip_link_forced_colors(self) -> None:
+        surfaces = (
+            "private-recruiter-conversion-outcome-v1.css",
+            "private-recruiter-followthrough-checkpoint-v1.css",
+        )
+        for filename in surfaces:
+            with self.subTest(filename=filename):
+                css = (ASSETS / filename).read_text(encoding="utf-8")
+                forced = css[css.index("@media (forced-colors: active)") :]
+                self.assertRegex(
+                    forced,
+                    r"\.skip-link\s*\{[^}]*background:\s*Canvas;[^}]*border-color:\s*CanvasText;[^}]*color:\s*CanvasText;",
+                )
+                self.assertRegex(
+                    forced,
+                    r"\.skip-link:focus-visible\s*\{[^}]*outline:\s*2px solid Highlight;[^}]*outline-offset:\s*2px;",
+                )
+
     def test_dossier_forced_colors_keeps_all_focusable_surfaces_visible(self) -> None:
         css = (ASSETS / "executive-career-dossier-v1.css").read_text(encoding="utf-8")
         forced = css[css.index("@media (forced-colors: active)"):]
