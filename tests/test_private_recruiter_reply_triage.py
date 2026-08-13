@@ -534,7 +534,17 @@ class PrivateRecruiterReplyTriageContractTests(unittest.TestCase):
     def test_rejects_ordinary_unlabelled_names_in_every_prose_field(self) -> None:
         sentences = (
             "John Smith has a verified technical achievement.",
+            "John Smith reports a verified technical achievement.",
+            "John Smith describes a verified technical achievement.",
+            "John Smith works remotely.",
+            "John Smith explains a verified technical achievement.",
+            "John Smith reported a verified technical achievement.",
             "Juan Pérez tiene un logro técnico verificado.",
+            "Juan Pérez reporta un logro técnico verificado.",
+            "Juan Pérez describe un logro técnico verificado.",
+            "Juan Pérez trabaja de forma remota.",
+            "Juan Pérez explica un logro técnico verificado.",
+            "Juan Pérez menciona un logro técnico verificado.",
         )
         prose_fields = (
             ("safe_context", "summary"),
@@ -566,6 +576,9 @@ class PrivateRecruiterReplyTriageContractTests(unittest.TestCase):
             "Platform engineering work includes incident response practice.",
             "Site Reliability Engineering manages production reliability.",
             "Platform Engineering works at scale across regions.",
+            "Platform Engineering has mature incident response practices.",
+            "Technical Leadership has a verified operating model.",
+            "Cloud Security has mature control practices.",
             "The company is hiring for a platform role.",
             "The employer is seeking production experience.",
             "١٢٣ candidate experience examples are supplied.",

@@ -823,7 +823,7 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
         triage = copy.deepcopy(self.fixtures["clarify-en.json"])
         name = "John Smith"
         triage["safe_context"]["summary"] = (
-            f"{name} has a verified technical achievement."
+            f"{name} reports a verified technical achievement."
         )
 
         with self.assertRaises(self.renderer.TriageValidationError) as error:
