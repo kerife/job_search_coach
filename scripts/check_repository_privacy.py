@@ -648,7 +648,14 @@ def scan_text(path: Path, text: str) -> Counter[str]:
     if has_duplicate_json_key:
         violations["DUPLICATE_JSON_KEY"] = 1
     for rule_id, pattern in RULES.items():
-        count = len(pattern.findall(corpus))
+        matches = list(pattern.finditer(corpus))
+        if rule_id == "PHONE_NUMBER":
+            matches = [
+                match
+                for match in matches
+                if not re.search(r"(?i)codex\.\d+$", corpus[max(0, match.start() - 6):match.end()])
+            ]
+        count = len(matches)
         if count:
             violations[rule_id] = count
     for key, raw_value in ASSIGNMENT_PATTERN.findall(corpus):

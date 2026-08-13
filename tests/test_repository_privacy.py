@@ -593,6 +593,16 @@ class RepositoryPrivacyTests(unittest.TestCase):
             with self.subTest(label=label):
                 self.assertIn(rule_id, scanner.scan_text(Path("synthetic.md"), text))
 
+    def test_release_version_timestamp_is_not_misclassified_as_phone(self) -> None:
+        scanner = load_scanner()
+        self.assertNotIn(
+            "PHONE_NUMBER",
+            scanner.scan_text(
+                Path("synthetic.md"),
+                "installed_cache_version: 0.2.0+codex.20260813022934",
+            ),
+        )
+
     def test_current_private_aliases_and_literal_assignments_are_rejected(self) -> None:
         scanner = load_scanner()
         cases = {
