@@ -655,9 +655,10 @@ def _render_priorities(dossier: Mapping[str, object], locale: str) -> str:
     labels = COPY[locale]
     cards = []
     for priority in _rows(dossier["priorities"]):
+        heading_id = f"priority-title-{priority['rank']}"
         cards.append(f"""
-      <article class="card span-4" data-priority-card="true">
-        <div class="priority-header"><h3>{text(priority['title'])}</h3><span class="priority-rank">{priority['rank']}</span></div>
+      <article class="card span-4" data-priority-card="true" aria-labelledby="{heading_id}">
+        <div class="priority-header"><h3 id="{heading_id}">{text(priority['title'])}</h3><span class="priority-rank">{priority['rank']}</span></div>
         <p class="status-label">{_natural_state(locale, priority['evidence_state'])}</p>
         <dl class="priority-body">
           <dt>{labels['problem']}</dt><dd>{text(priority['problem'])}</dd>
@@ -725,7 +726,7 @@ def _render_dimensions(dossier: Mapping[str, object], locale: str) -> str:
         )
         extra_class = "" if evaluated else " not-evaluated"
         cards.append(f"""
-      <article class="card dimension-card{extra_class}" data-dimension-card="true">
+      <article class="card dimension-card{extra_class}" data-dimension-card="true" aria-labelledby="{heading_id}">
         <h3 id="{heading_id}">{DIMENSION_LABELS[locale][dimension_key]}</h3>
         {score_markup}
         <p>{text(dimension['reason'])}</p>
@@ -743,15 +744,16 @@ def _render_visual_review(dossier: Mapping[str, object], locale: str) -> str:
     cards = []
     for key in ("photo", "banner"):
         item = _mapping(review[key])
+        heading_id = f"visual-title-{key}"
         private_action = (
             f'<p><span class="label">{labels["private_review"]}</span>{text(item["private_action"])}</p>'
             if item["private_action"] is not None
             else ""
         )
         cards.append(f"""
-      <article class="card visual-card span-6">
+      <article class="card visual-card span-6" aria-labelledby="{heading_id}">
         <p class="status-label">{_natural_state(locale, item['evidence_state'])}</p>
-        <h3>{labels[key]}</h3>
+        <h3 id="{heading_id}">{labels[key]}</h3>
         <p>{text(item['finding'])}</p>{private_action}
       </article>""")
     return f"""
@@ -817,6 +819,7 @@ def _render_copy_blocks(dossier: Mapping[str, object], locale: str) -> str:
             else ""
         )
         described_by = f"{status_id} {confirmation_id}" if confirmation else status_id
+        heading_id = f"copy-title-{index}"
         draft = (
             f'<p class="copy-text" id="{source_id}" data-copy-source>{text(block["copy"])}</p>'
             f'<button class="no-print" type="button" data-copy-target="{source_id}" '
@@ -827,8 +830,8 @@ def _render_copy_blocks(dossier: Mapping[str, object], locale: str) -> str:
             else f'<p class="copy-text">{labels["no_copy"]}</p>'
         )
         cards.append(f"""
-      <article class="card copy-card span-4">
-        <div class="copy-heading"><h3>{COPY_LABELS[locale][text(block['category'])]}</h3><span class="state-chip">{DECISION_STATE_LABELS[locale][text(block['state'])]}</span></div>
+      <article class="card copy-card span-4" aria-labelledby="{heading_id}">
+        <div class="copy-heading"><h3 id="{heading_id}">{COPY_LABELS[locale][text(block['category'])]}</h3><span class="state-chip">{DECISION_STATE_LABELS[locale][text(block['state'])]}</span></div>
         {draft}
         <p><span class="label">{labels['why_works']}</span>{text(block['why_it_works'])}</p>
         <p class="boundary"><span class="label">{labels['boundary']}</span>{text(block['claim_boundary'])}</p>

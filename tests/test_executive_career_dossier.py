@@ -1851,6 +1851,29 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
         self.assertIn("No se pudo copiar; selecciona y copia el texto", rendered)
         self.assertIn("Necesita confirmación; conserva este texto como borrador privado.", rendered)
 
+    def test_dossier_article_cards_have_named_headings_in_spanish_and_english(self) -> None:
+        selectors = (
+            'data-priority-card="true"',
+            'data-dimension-card="true"',
+            'class="card visual-card span-6"',
+            'class="card copy-card span-4"',
+        )
+        for dossier in (self.es_dossier, self.en_dossier):
+            rendered = self.renderer.render_dossier_html(dossier)
+            for marker in selectors:
+                with self.subTest(locale=dossier["locale"], marker=marker):
+                    cards = re.findall(
+                        rf'<article\b(?=[^>]*{re.escape(marker)})[^>]*aria-labelledby="([^"]+)"[^>]*>(.*?)</article>',
+                        rendered,
+                        re.DOTALL,
+                    )
+                    self.assertTrue(cards)
+                    for heading_id, body in cards:
+                        self.assertEqual(
+                            1,
+                            len(re.findall(rf'<h3\s+id="{re.escape(heading_id)}">', body)),
+                        )
+                    self.assertEqual(len(cards), len({heading_id for heading_id, _ in cards}))
     def test_confirmation_boundary_is_localized_and_associated_only_when_needed(self) -> None:
         for dossier, expected, absent in (
             (self.es_dossier, "Necesita confirmación; conserva este texto como borrador privado.", "Needs confirmation; keep this text as a private draft."),
