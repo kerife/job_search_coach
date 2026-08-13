@@ -24,7 +24,7 @@ source_tree: `45bbe75a49114e2cf240ba5f5813beb24eaeb4df`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260813115352`
+installed_cache_version: `0.2.0+codex.20260813124246`
 
 installed_enabled: `true`
 
