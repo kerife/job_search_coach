@@ -3557,7 +3557,8 @@ def _scan_privacy(value: object, path: str = "") -> list[str]:
     errors: list[str] = []
     if isinstance(value, Mapping):
         for key, nested in value.items():
-            child_path = f"{path}.{key}" if path else str(key)
+            safe_key = _safe_diagnostic_field_name(key)
+            child_path = f"{path}.{safe_key}" if path else safe_key
             errors.extend(_scan_privacy(nested, child_path))
     elif isinstance(value, list):
         for index, nested in enumerate(value):

@@ -527,6 +527,35 @@ class LinkedInReportFixtureTests(unittest.TestCase):
                     validator.validate_fixture_bundle(bundle),
                 )
 
+    def test_privacy_diagnostics_redact_untrusted_mapping_key_paths_api_and_cli(self) -> None:
+        sentinel = "/Users/PRIVATE_SENTINEL/profile.json"
+        bundle = self.fixture("scenario-a.json")
+        bundle[sentinel] = "https://evil.example"
+
+        api_errors = validator.validate_fixture_bundle(bundle)
+        api_text = "\n".join(api_errors)
+        self.assertNotIn(sentinel, api_text)
+        self.assertIn(
+            "fixture contains forbidden URL value outside source_catalog[].url at <redacted-field>",
+            api_text,
+        )
+
+        report = FIXTURE_ROOT / "scenario-a-es.md"
+        with tempfile.TemporaryDirectory() as temporary:
+            bundle_path = Path(temporary) / "sentinel.json"
+            bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+            stdout = io.StringIO()
+            stderr = io.StringIO()
+            with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+                result = validator._cli([str(report), str(bundle_path)])
+
+        self.assertNotEqual(0, result)
+        self.assertNotIn(sentinel, stderr.getvalue())
+        self.assertIn(
+            "fixture contains forbidden URL value outside source_catalog[].url at <redacted-field>",
+            stderr.getvalue(),
+        )
+
     def test_fixture_requires_non_mapping_profile_origin(self) -> None:
         bundle = self.fixture("scenario-a.json")
         bundle["real_profile_mapping"] = "mapping_retained"
