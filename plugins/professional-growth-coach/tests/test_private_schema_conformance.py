@@ -522,6 +522,19 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
                 errors = validate_schema_instance({}, schema)
                 self.assertIn("schema branch is invalid", errors)
 
+    def test_dependency_free_checker_rejects_malformed_keyword_shapes(self):
+        malformed_schemas = (
+            ({}, {"type": "object", "properties": None}),
+            ({}, {"type": "object", "required": None}),
+            ({}, {"enum": None}),
+            (1, {"type": "number", "minimum": "a"}),
+            ([1], {"type": "array", "minItems": "a"}),
+        )
+        for value, schema in malformed_schemas:
+            with self.subTest(schema=schema):
+                errors = validate_schema_instance(value, schema)
+                self.assertIn("schema keyword is invalid", errors)
+
     def test_dependency_free_checker_rejects_cyclic_json_values_without_recursion_error(self):
         value = []
         value.append(value)

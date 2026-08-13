@@ -11,6 +11,30 @@ from private_prose_safety import safe_diagnostic_field_name
 
 MAX_SCHEMA_EVALUATIONS = 4_096
 SCHEMA_EVALUATION_LIMIT_ERROR = "schema validation exceeds safe evaluation limit"
+SCHEMA_KEYWORD_INVALID_ERROR = "schema keyword is invalid"
+
+
+def _keyword_shapes_valid(schema: Mapping[str, object]) -> bool:
+    if "properties" in schema and not isinstance(schema["properties"], Mapping):
+        return False
+    for keyword in ("required", "enum"):
+        if keyword in schema and not isinstance(schema[keyword], list):
+            return False
+    for keyword in ("minimum", "maximum"):
+        value = schema.get(keyword)
+        if value is not None and (
+            not isinstance(value, (int, float)) or isinstance(value, bool)
+        ):
+            return False
+    for keyword in ("minLength", "maxLength", "minItems", "maxItems"):
+        value = schema.get(keyword)
+        if value is not None and (
+            not isinstance(value, int) or isinstance(value, bool) or value < 0
+        ):
+            return False
+    if "pattern" in schema and not isinstance(schema["pattern"], str):
+        return False
+    return True
 
 
 def _pointer(root: Mapping[str, object], reference: str) -> Mapping[str, object]:
@@ -83,6 +107,8 @@ def _validate(
         active_ref_targets = set()
     if not isinstance(schema, Mapping):
         return ["schema branch is invalid"]
+    if not _keyword_shapes_valid(schema):
+        return [SCHEMA_KEYWORD_INVALID_ERROR]
     for combinator in ("oneOf", "anyOf", "allOf"):
         branches = schema.get(combinator)
         if branches is not None and (
