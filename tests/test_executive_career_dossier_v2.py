@@ -24,6 +24,60 @@ RENDERER_PATH = SCRIPTS / "render_executive_career_dossier_v2.py"
 FIXTURE_ROOT = REPO_ROOT / "tests" / "evals" / "with-skill" / "fixtures" / "executive-career-dossier"
 V2_FIXTURE_ROOT = FIXTURE_ROOT.with_name("executive-career-dossier-v2")
 
+UNSAFE_COACHING_PROSE = (
+    (
+        "coach_observation",
+        "Publish this on LinkedIn now.",
+        "must remain a private review action",
+    ),
+    (
+        "why_it_matters",
+        "Publish this on LinkedIn now.",
+        "must remain a private review action",
+    ),
+    (
+        "coach_prompt",
+        "Publish this on LinkedIn now.",
+        "must remain a private review action",
+    ),
+    (
+        "coach_observation",
+        "The profile is now live on LinkedIn.",
+        "must remain a private review action",
+    ),
+    (
+        "why_it_matters",
+        "The profile is now live on LinkedIn.",
+        "must remain a private review action",
+    ),
+    (
+        "coach_prompt",
+        "The profile is now live on LinkedIn.",
+        "must remain a private review action",
+    ),
+    (
+        "coach_prompt",
+        "Quit your job now.",
+        "must preserve current employment by default",
+    ),
+    (
+        "coach_observation",
+        "There were 314 private profile views.",
+        "analytics measures require observed aggregate analytics",
+    ),
+    (
+        "why_it_matters",
+        "Employers are actively hiring 1000 SREs.",
+        "demand language requires linked dated market evidence",
+    ),
+)
+
+SAFE_COACHING_PROSE = (
+    ("coach_observation", "The incident response scope is ready for private review."),
+    ("why_it_matters", "Technical scope supports a focused private coaching review."),
+    ("coach_prompt", "Review the private incident response scope for technical clarity."),
+)
+
 CANONICAL_PROFILE_SECTIONS = (
     "photo", "banner", "name", "profile_url", "headline", "location",
     "contact_info", "about", "experience", "skills", "featured",
@@ -287,6 +341,21 @@ class ExecutiveCareerDossierV2Tests(unittest.TestCase):
         invalid["priorities"][0]["client_template"]["template_id"] = "unknown_template"
         self.assertTrue(self.validator.validate_dossier(invalid))
 
+    def test_new_coaching_prose_reuses_v1_action_employment_analytics_and_market_guards(self) -> None:
+        for field, value, diagnostic in UNSAFE_COACHING_PROSE:
+            with self.subTest(field=field, diagnostic=diagnostic):
+                dossier = make_v2_dossier()
+                dossier["priorities"][0][field] = value
+                errors = self.validator.validate_dossier(dossier)
+                self.assertIn(f"priorities[0].{field} {diagnostic}", errors)
+                self.assertNotIn(value, "\n".join(errors))
+
+        for field, value in SAFE_COACHING_PROSE:
+            with self.subTest(field=field):
+                dossier = make_v2_dossier()
+                dossier["priorities"][0][field] = value
+                self.assertEqual(self.validator.validate_dossier(dossier), [])
+
     def test_every_ledger_and_request_boundary_rejects_session_or_positive_authorization_fields(self) -> None:
         mutations = (
             ("section_coverage", 10, "session_id"),
@@ -456,6 +525,23 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         for token in forbidden:
             with self.subTest(token=token):
                 self.assertNotIn(token, rendered_text)
+
+    def test_writer_rejects_unsafe_new_coaching_prose_before_creating_visible_output(self) -> None:
+        for field, value, diagnostic in UNSAFE_COACHING_PROSE:
+            with self.subTest(field=field, diagnostic=diagnostic):
+                dossier = make_v2_dossier()
+                dossier["priorities"][0][field] = value
+                with tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    source = root / "unsafe.json"
+                    output = root / "unsafe.html"
+                    source.write_text(json.dumps(dossier), encoding="utf-8")
+                    with self.assertRaises(self.renderer.DossierValidationError) as context:
+                        self.renderer.write_dossier_html(source, output)
+                    self.assertFalse(output.exists())
+                errors = "\n".join(context.exception.errors)
+                self.assertIn(f"priorities[0].{field} {diagnostic}", errors)
+                self.assertNotIn(value, errors)
 
     def test_market_placeholder_is_one_bounded_non_recommendation_state(self) -> None:
         for name in ("scenario-a-es.json", "scenario-c-en.json"):
@@ -658,6 +744,27 @@ class ExecutiveCareerDossierV2LoadAndCliTests(unittest.TestCase):
                     result = subprocess.run([sys.executable, "-B", str(VALIDATOR_PATH), str(path)], cwd=REPO_ROOT, text=True, capture_output=True, check=False)
                 self.assertEqual(result.returncode, 2)
                 self.assertNotIn("Traceback", result.stderr)
+                self.assertLessEqual(len(result.stderr.encode("utf-8")), 16 * 1024)
+
+    def test_cli_rejects_unsafe_new_coaching_prose_with_fixed_non_echoing_diagnostics(self) -> None:
+        for field, value, diagnostic in UNSAFE_COACHING_PROSE:
+            with self.subTest(field=field, diagnostic=diagnostic):
+                dossier = make_v2_dossier()
+                dossier["priorities"][0][field] = value
+                with tempfile.TemporaryDirectory() as directory:
+                    path = Path(directory) / "unsafe.json"
+                    path.write_text(json.dumps(dossier), encoding="utf-8")
+                    result = subprocess.run(
+                        [sys.executable, "-B", str(VALIDATOR_PATH), str(path)],
+                        cwd=REPO_ROOT,
+                        text=True,
+                        capture_output=True,
+                        check=False,
+                    )
+                self.assertEqual(result.returncode, 2)
+                self.assertIn(f"priorities[0].{field} {diagnostic}", result.stderr)
+                self.assertNotIn("Traceback", result.stderr)
+                self.assertNotIn(value, result.stderr)
                 self.assertLessEqual(len(result.stderr.encode("utf-8")), 16 * 1024)
 
     def test_cli_decoder_recursion_and_truncation_are_bounded(self) -> None:

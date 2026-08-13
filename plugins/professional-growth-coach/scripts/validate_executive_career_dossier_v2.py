@@ -88,6 +88,35 @@ def _validate_private_prose(value: object, path: str, errors: list[str]) -> None
         errors.append(f"{path} contains forbidden private value")
 
 
+def _validate_priority_prose_semantics(
+    root: Mapping[str, object],
+    row: Mapping[str, object],
+    value: str,
+    path: str,
+    market_evidence: set[str],
+    errors: list[str],
+) -> None:
+    """Apply established v1 prose semantics without exposing v2-only fields."""
+    _v1._validate_employment_continuity(value, path, errors)
+    semantic_view = {
+        "analytics": root.get("analytics"),
+        "market_context": root.get("market_context"),
+        "claims": root.get("claims"),
+        "priorities": [{"action": value, "evidence_ids": row.get("evidence_ids")}],
+    }
+    placeholder = "priorities[0].action"
+    semantic_errors = (
+        _v1._validate_absent_module_claims(semantic_view)
+        + _v1._validate_structured_module_prose(semantic_view)
+        + _v1._validate_market_language(semantic_view, market_evidence)
+    )
+    errors.extend(
+        f"{path}{error[len(placeholder):]}"
+        for error in semantic_errors
+        if error.startswith(f"{placeholder} ")
+    )
+
+
 def _validate_rows(root: Mapping[str, object], errors: list[str]) -> dict[str, Mapping[str, object]]:
     rows = root.get("section_coverage")
     if not isinstance(rows, list):
@@ -185,6 +214,15 @@ def _validate_priorities(root: Mapping[str, object], errors: list[str]) -> None:
             identifier = record.get("id")
             if isinstance(identifier, str):
                 evidence_sections[identifier] = profile_section
+    market_evidence = {
+        record["id"]
+        for record in evidence
+        if isinstance(record, Mapping)
+        and isinstance(record.get("id"), str)
+        and record.get("section") == "market"
+        and record.get("source_kind") == "dated_vacancy_research"
+        and record.get("state") == "verified"
+    } if isinstance(evidence, list) else set()
     if not isinstance(priorities, list):
         return
     for index, item in enumerate(priorities):
@@ -201,6 +239,21 @@ def _validate_priorities(root: Mapping[str, object], errors: list[str]) -> None:
                 errors.extend(
                     f"{path}.{field} {error}" for error in _v1._privacy_errors(row[field])
                 )
+                if field != "privacy_boundary":
+                    if field == "coach_prompt":
+                        _v1._validate_private_action(row[field], f"{path}.{field}", errors)
+                    else:
+                        _v1._validate_explicit_external_action(
+                            row[field], f"{path}.{field}", errors
+                        )
+                    _validate_priority_prose_semantics(
+                        root,
+                        row,
+                        row[field],
+                        f"{path}.{field}",
+                        market_evidence,
+                        errors,
+                    )
             _validate_private_prose(row.get(field), f"{path}.{field}", errors)
         if row.get("privacy_boundary") != "no_raw_profile_text_or_private_values":
             errors.append(f"{path}.privacy_boundary has invalid boundary")

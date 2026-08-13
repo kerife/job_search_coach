@@ -1357,6 +1357,24 @@ class ExecutiveCareerDossierEvidenceModuleTests(unittest.TestCase):
                     self.validator.validate_dossier(dossier),
                 )
 
+    def test_unresearched_market_rejects_active_hiring_without_blocking_technical_controls(self) -> None:
+        dossier = mutate_path(
+            self.es_dossier,
+            ("priorities", 0, "why_now"),
+            "Employers are actively hiring 1000 SREs.",
+        )
+        self.assertIn(
+            "priorities[0].why_now demand language requires linked dated market evidence",
+            self.validator.validate_dossier(dossier),
+        )
+
+        safe = mutate_path(
+            self.es_dossier,
+            ("priorities", 0, "why_now"),
+            "Technical controls are reviewed in private.",
+        )
+        self.assertEqual(self.validator.validate_dossier(safe), [])
+
     def test_linked_dated_market_language_is_allowed_without_score_effect(self) -> None:
         dossier = copy.deepcopy(self.market_dossier)
         dossier["priorities"][0]["why_now"] = "Dated vacancy evidence shows employer demand for the required signal."
