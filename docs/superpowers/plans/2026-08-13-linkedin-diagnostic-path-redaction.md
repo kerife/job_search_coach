@@ -4,7 +4,7 @@
 
 **Goal:** Prevent caller-controlled JSON mapping keys from leaking private paths or control characters through LinkedIn validator diagnostics.
 
-**Architecture:** Keep the recursive privacy scanner and its canonical source URL handling unchanged. Sanitize only mapping-key segments through `_safe_diagnostic_field_name()` before composing `child_path`; list indexes and ordinary keys remain structurally readable.
+**Architecture:** Keep the recursive privacy scanner and its canonical source URL handling unchanged. Sanitize only mapping-key segments through `_safe_diagnostic_field_name()` before composing `child_path`; extend that helper for Unix absolute roots, drive-letter paths, and UNC paths. List indexes and ordinary keys remain structurally readable.
 
 **Tech Stack:** Python 3, `unittest`, standard-library JSON/CLI helpers.
 
@@ -13,6 +13,7 @@
 - Preserve existing `source_catalog[N].url` canonical-source behavior.
 - Preserve ordinary diagnostic paths such as `priorities[0].done_when`.
 - Do not echo caller-controlled absolute paths, credentials, or control characters.
+- Redact `/opt`, `/Applications`, drive-letter, and UNC path keys while preserving relative backslash keys.
 - Keep the validator dependency-free and bounded by existing input limits.
 
 ---

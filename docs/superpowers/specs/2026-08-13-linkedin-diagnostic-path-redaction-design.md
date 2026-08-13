@@ -11,9 +11,11 @@ path.
 ## Design
 
 Reuse `_safe_diagnostic_field_name()` for every mapping-key segment while
-`_scan_privacy()` constructs a diagnostic path. List indexes and ordinary
-synthetic field names remain readable; path-like, credential-like, and control
-characters are redacted or escaped by the existing helper. Canonical
+`_scan_privacy()` constructs a diagnostic path. The helper recognizes Unix
+absolute roots, drive-letter paths, and UNC paths in addition to existing
+credential-like aliases. List indexes and ordinary synthetic field names remain
+readable; path-like, credential-like, and control characters are redacted or
+escaped by the helper. Canonical
 `source_catalog[N].url` paths retain their existing source-URL exception.
 
 ## Success criteria

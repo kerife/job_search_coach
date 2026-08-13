@@ -171,6 +171,11 @@ _SUSPICIOUS_DIAGNOSTIC_FIELD = re.compile(
     r"(?:token|secret|password|credential|api[_-]?key|access[_-]?key|auth|cookie|private)",
     re.IGNORECASE,
 )
+_ABSOLUTE_PATH_DIAGNOSTIC_FIELD = re.compile(
+    r"^(?:[A-Za-z]:[\\/]|\\\\|//|"
+    r"/(?:users|private|tmp|home|var|opt|applications|volumes|root|srv|usr)(?:/|$))",
+    re.IGNORECASE,
+)
 FORBIDDEN_PLACEHOLDERS = frozenset({"x", "criteria", "generic", "tbd"})
 SAFETY_TOKEN_CLASSES = {
     "visual": frozenset({"banner", "foto", "imagen", "image", "photo", "visual"}),
@@ -2708,7 +2713,10 @@ def _safe_diagnostic_field_name(value: object) -> str:
     """Redact sensitive field names and keep control characters single-line."""
     if not isinstance(value, str):
         return _escape_diagnostic_controls(str(value))
-    if _SUSPICIOUS_DIAGNOSTIC_FIELD.search(value):
+    if (
+        _SUSPICIOUS_DIAGNOSTIC_FIELD.search(value)
+        or _ABSOLUTE_PATH_DIAGNOSTIC_FIELD.search(value)
+    ):
         return "<redacted-field>"
     return _escape_diagnostic_controls(value)
 
