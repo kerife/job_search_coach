@@ -165,7 +165,10 @@ COPY = {
         "reentry_manual": "Reingreso manual requerido; la preparación permanece sin respuesta.",
         "footer": "No se realizó ninguna acción externa.",
         "employment_boundary": "Este análisis evalúa opciones profesionales; no recomienda renunciar, dejar un empleo ni abandonar tu búsqueda; tú decides qué sigue.",
-        "save_disabled": "No se guarda nada en este dispositivo.",
+        "save_disabled": (
+            "Este flujo no conserva la respuesta de origen. "
+            "Este artefacto HTML privado solo se guarda en la ruta que solicitaste."
+        ),
         "sequence_conditions": "01 Condiciones",
         "sequence_focus": "02 Enfoque",
         "sequence_reentry": "03 Reingreso manual",
@@ -266,7 +269,10 @@ COPY = {
         "reentry_manual": "Manual re-entry is required; preparation remains unanswered.",
         "footer": "No external action was taken.",
         "employment_boundary": "This analysis evaluates professional options; it does not recommend resigning, leaving a job, or stopping your job search; you decide what comes next.",
-        "save_disabled": "Nothing is saved on this device.",
+        "save_disabled": (
+            "Source reply is not retained by this flow. "
+            "This private HTML artifact is saved only at the path you requested."
+        ),
         "sequence_conditions": "01 Conditions",
         "sequence_focus": "02 Focus",
         "sequence_reentry": "03 Manual re-entry",
