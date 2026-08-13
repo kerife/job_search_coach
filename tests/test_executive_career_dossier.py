@@ -640,6 +640,38 @@ class ExecutiveCareerDossierSchemaTests(unittest.TestCase):
         )
         self.assertEqual(self.validate_dossier(safe), [])
 
+    def test_evidence_paraphrase_rejects_common_unlabelled_identity_verbs_and_diacritics(self) -> None:
+        rejected = (
+            "Ana López redujo trabajo repetitivo.",
+            "Ana López lideró automatización.",
+            "Ana López construyó automatización.",
+            "Ana López implementó automatización.",
+            "Ana López diseñó automatización.",
+            "Álvaro Pérez explicó el incidente.",
+            "Jörg Müller delivered reliability automation.",
+            "Contexto seguro. Ana López implementó automatización.",
+        )
+        for text in rejected:
+            with self.subTest(text=text):
+                dossier = mutate_path(self.es_dossier, ("evidence", 0, "paraphrase"), text)
+                errors = self.validate_dossier(dossier)
+                self.assertTrue(
+                    any("unlabelled candidate identity" in error for error in errors),
+                    errors,
+                )
+
+    def test_evidence_paraphrase_preserves_non_person_subject_and_role_controls(self) -> None:
+        accepted = (
+            "Kubernetes reliability automation reduced repetitive deployment work.",
+            "Senior Engineer coordinates incident response.",
+            "Platform Engineering covers incident response scope.",
+            "El equipo implementó automatización.",
+        )
+        for text in accepted:
+            with self.subTest(text=text):
+                dossier = mutate_path(self.es_dossier, ("evidence", 0, "paraphrase"), text)
+                self.assertEqual(self.validate_dossier(dossier), [])
+
     def test_confirmation_copy_requires_one_linked_question(self) -> None:
         mutated = copy.deepcopy(self.es_dossier)
         mutated["questions"] = []

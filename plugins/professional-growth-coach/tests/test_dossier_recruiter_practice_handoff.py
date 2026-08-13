@@ -442,7 +442,7 @@ class DossierRecruiterPracticeHandoffTests(unittest.TestCase):
         dossier = copy.deepcopy(self.dossier)
         dossier["evidence"][3]["paraphrase"] = "Ana López reports Terraform experience."
         source_snapshot = handoff_builder.snapshot_for_dossier(dossier)
-        with self.assertRaisesRegex(ValueError, "contains forbidden safe text"):
+        with self.assertRaisesRegex(ValueError, "dossier validation failed"):
             build_handoff(dossier, self.fixture["vacancy"], source_snapshot)
 
     def test_identity_free_guard_rejects_person_intros_but_preserves_role_prose(self):

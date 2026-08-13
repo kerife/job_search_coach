@@ -49,10 +49,11 @@ _UNLABELLED_PERSON_INTRO = re.compile(
     r"(?!(?i:senior|principal|lead|staff|software|platform|data|product|engineering|"
     r"cloud|security|technical|solutions|project|program|people|talent|customer|"
     r"account|enterprise|sales|marketing|finance|operations|strategy|user|ux|ui)\s+)"
-    r"[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑa-záéíóúñ'-]+\s+"
-    r"[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑa-záéíóúñ'-]+\s+"
+    r"[A-ZÀ-ÖØ-Þ][A-Za-zÀ-ÖØ-öø-ÿ'-]+\s+"
+    r"[A-ZÀ-ÖØ-Þ][A-Za-zÀ-ÖØ-öø-ÿ'-]+\s+"
     r"(?i:reports?|describes?|works?|has|joined|deliver(?:s|ed)?|explains?|reported|"
-    r"reporta|describe|trabaja|tiene|entreg[aoó]|explica|menciona|coment[aoó]?)\b"
+    r"reporta|describe|trabaja|tiene|entreg[aoó]|explica|explic[óo]|reduce|reduj[oe]|"
+    r"lider[óo]|construy[óo]|implement[óo]|diseñ[óo]|menciona|coment[aoó]?)\b"
 )
 
 
