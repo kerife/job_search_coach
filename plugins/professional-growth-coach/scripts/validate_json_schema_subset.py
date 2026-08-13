@@ -7,6 +7,10 @@ import re
 from collections.abc import Mapping
 
 
+MAX_SCHEMA_EVALUATIONS = 4_096
+SCHEMA_EVALUATION_LIMIT_ERROR = "schema validation exceeds safe evaluation limit"
+
+
 def _pointer(root: Mapping[str, object], reference: str) -> Mapping[str, object]:
     value: object = root
     for part in reference.removeprefix("#/").split("/"):
@@ -56,10 +60,23 @@ def _validate(
     path: str,
     *,
     collect: bool = True,
+    budget: list[int] | None = None,
 ) -> list[str]:
+    if budget is None:
+        budget = [MAX_SCHEMA_EVALUATIONS]
+    if budget[0] <= 0:
+        return [SCHEMA_EVALUATION_LIMIT_ERROR]
+    budget[0] -= 1
     errors: list[str] = []
     if "$ref" in schema:
-        return _validate(value, _pointer(root, str(schema["$ref"])), root, path, collect=collect)
+        return _validate(
+            value,
+            _pointer(root, str(schema["$ref"])),
+            root,
+            path,
+            collect=collect,
+            budget=budget,
+        )
     if "type" in schema and not _type_ok(value, schema["type"]):
         return [f"{path}: type mismatch"]
     if "const" in schema and not _json_equal(value, schema["const"]):
@@ -97,7 +114,9 @@ def _validate(
                 errors.append(f"{path}: missing required field {key}")
         for key, child_schema in properties.items():
             if key in value:
-                errors.extend(_validate(value[key], child_schema, root, f"{path}.{key}"))
+                errors.extend(
+                    _validate(value[key], child_schema, root, f"{path}.{key}", budget=budget)
+                )
     if isinstance(value, list):
         if "minItems" in schema and len(value) < schema["minItems"]:
             errors.append(f"{path}: too few items")
@@ -107,28 +126,40 @@ def _validate(
             errors.append(f"{path}: duplicate items")
         if "items" in schema:
             for index, child in enumerate(value):
-                errors.extend(_validate(child, schema["items"], root, f"{path}[{index}]"))
+                errors.extend(
+                    _validate(child, schema["items"], root, f"{path}[{index}]", budget=budget)
+                )
         if "contains" in schema and not any(
-            not _validate(child, schema["contains"], root, f"{path}[{index}]")
+            not _validate(
+                child, schema["contains"], root, f"{path}[{index}]", budget=budget
+            )
             for index, child in enumerate(value)
         ):
             errors.append(f"{path}: contains mismatch")
     for branch in schema.get("allOf", []):
-        errors.extend(_validate(value, branch, root, path))
+        errors.extend(_validate(value, branch, root, path, budget=budget))
     if "oneOf" in schema:
-        matches = sum(not _validate(value, branch, root, path) for branch in schema["oneOf"])
+        matches = sum(
+            not _validate(value, branch, root, path, budget=budget)
+            for branch in schema["oneOf"]
+        )
         if matches != 1:
             errors.append(f"{path}: oneOf mismatch")
     if "anyOf" in schema:
-        if not any(not _validate(value, branch, root, path) for branch in schema["anyOf"]):
+        if not any(
+            not _validate(value, branch, root, path, budget=budget)
+            for branch in schema["anyOf"]
+        ):
             errors.append(f"{path}: anyOf mismatch")
-    if "not" in schema and not _validate(value, schema["not"], root, path):
+    if "not" in schema and not _validate(value, schema["not"], root, path, budget=budget):
         errors.append(f"{path}: not mismatch")
     if "if" in schema:
-        condition_matches = _validate(value, schema["if"], root, path, collect=False) == []
+        condition_matches = (
+            _validate(value, schema["if"], root, path, collect=False, budget=budget) == []
+        )
         branch = schema.get("then", {}) if condition_matches else schema.get("else", {})
         if branch:
-            errors.extend(_validate(value, branch, root, path))
+            errors.extend(_validate(value, branch, root, path, budget=budget))
     return errors
 
 
@@ -136,4 +167,8 @@ def validate_schema_instance(
     value: object, schema: Mapping[str, object]
 ) -> list[str]:
     """Return bounded schema errors for the supported keyword subset."""
-    return sorted(set(_validate(value, schema, schema, "$")))
+    budget = [MAX_SCHEMA_EVALUATIONS]
+    errors = _validate(value, schema, schema, "$", budget=budget)
+    if budget[0] <= 0:
+        errors.append(SCHEMA_EVALUATION_LIMIT_ERROR)
+    return sorted(set(errors))

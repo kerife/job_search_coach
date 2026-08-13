@@ -439,6 +439,15 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         ):
             self.assertTrue(any(expected in error for error in validate_schema_instance(value, schema)), (value, expected))
 
+    def test_dependency_free_checker_bounds_nested_combinator_evaluations(self):
+        schema = {"const": "ok"}
+        for _ in range(13):
+            schema = {"oneOf": [schema, copy.deepcopy(schema)]}
+
+        errors = validate_schema_instance("not-ok", schema)
+
+        self.assertIn("schema validation exceeds safe evaluation limit", errors)
+
     def test_dependency_free_checker_enforces_numeric_and_array_bounds(self):
         schema = {
             "type": "object",
