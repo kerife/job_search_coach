@@ -6,6 +6,8 @@ import datetime as dt
 import re
 from collections.abc import Mapping
 
+from private_prose_safety import safe_diagnostic_field_name
+
 
 MAX_SCHEMA_EVALUATIONS = 4_096
 SCHEMA_EVALUATION_LIMIT_ERROR = "schema validation exceeds safe evaluation limit"
@@ -119,15 +121,20 @@ def _validate(
         properties = schema.get("properties", {})
         if schema.get("additionalProperties") is False:
             errors.extend(
-                f"{path}: unsupported field {key}" for key in value if key not in properties
+                f"{path}: unsupported field {safe_diagnostic_field_name(str(key))}"
+                for key in value
+                if key not in properties
             )
         for key in schema.get("required", []):
             if key not in value:
-                errors.append(f"{path}: missing required field {key}")
+                errors.append(
+                    f"{path}: missing required field {safe_diagnostic_field_name(str(key))}"
+                )
         for key, child_schema in properties.items():
             if key in value:
+                safe_key = safe_diagnostic_field_name(str(key))
                 errors.extend(
-                    _validate(value[key], child_schema, root, f"{path}.{key}", budget=budget)
+                    _validate(value[key], child_schema, root, f"{path}.{safe_key}", budget=budget)
                 )
     if isinstance(value, list):
         if "minItems" in schema and len(value) < schema["minItems"]:

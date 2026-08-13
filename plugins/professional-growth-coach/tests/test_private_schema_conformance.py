@@ -36,6 +36,48 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
     def _schema(self, name):
         return json.loads((ROOT / "schemas" / name).read_text(encoding="utf-8"))
 
+    def test_schema_diagnostics_redact_absolute_field_names(self):
+        cases = [
+            (
+                {},
+                {"type": "object", "required": [r"\\server\share\profile.json"]},
+                r"\\server\share\profile.json",
+            ),
+            (
+                {"/opt/private/profile.json": "x"},
+                {"type": "object", "properties": {}, "additionalProperties": False},
+                "/opt/private/profile.json",
+            ),
+            (
+                {"/Applications/private/profile.json": "x"},
+                {"type": "object", "properties": {}, "additionalProperties": False},
+                "/Applications/private/profile.json",
+            ),
+        ]
+        for value, schema, sentinel in cases:
+            with self.subTest(sentinel=sentinel):
+                errors = validate_schema_instance(value, schema)
+                self.assertIn("<redacted-field>", "\n".join(errors))
+                self.assertNotIn(sentinel, "\n".join(errors))
+
+        nested_key = "/opt/private/nested.json"
+        nested_errors = validate_schema_instance(
+            {nested_key: 123},
+            {
+                "type": "object",
+                "properties": {nested_key: {"type": "string"}},
+                "additionalProperties": False,
+            },
+        )
+        self.assertIn("$.<redacted-field>: type mismatch", nested_errors)
+        self.assertNotIn(nested_key, "\n".join(nested_errors))
+
+        ordinary_errors = validate_schema_instance(
+            {"extra": "x"},
+            {"type": "object", "properties": {}, "additionalProperties": False},
+        )
+        self.assertIn("$: unsupported field extra", ordinary_errors)
+
     def test_all_private_conversion_and_followthrough_fixtures_conform(self):
         cases = [
             ("private-recruiter-conversion-outcome-v1.schema.json", ROOT / "tests/fixtures/private-recruiter-conversion-outcome"),

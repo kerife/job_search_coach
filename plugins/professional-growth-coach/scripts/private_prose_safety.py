@@ -13,7 +13,8 @@ DIAGNOSTIC_TRUNCATION_MARKER = "validation diagnostics truncated; additional err
 
 _SUSPICIOUS_DIAGNOSTIC_FIELD = re.compile(
     r"@|://|~[\\/]|[.]{1,2}[\\/]|"
-    r"(?:^|[\\/])(?:users|private|tmp|home)[\\/]|"
+    r"(?:^[A-Za-z]:[\\/]|^\\\\|^//)|"
+    r"(?:^|[\\/])(?:users|private|tmp|home|var|opt|applications|volumes|root|srv|usr)[\\/]|"
     r"(?:www\.|linkedin\.com/)|"
     r"(?<![A-Za-z])\+?\d[\d .()_-]{6,}\d|"
     r"(?:token|secret|password|credential|api[_-]?key|access[_-]?key|auth|cookie|private)",
