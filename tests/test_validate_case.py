@@ -933,6 +933,35 @@ class ValidateCaseTests(unittest.TestCase):
         )
         self.assertNotIn(sentinel, result.stderr)
 
+    def test_redacts_absolute_and_unc_path_keys(self) -> None:
+        module = load_validator_module()
+        path_keys = (
+            "/opt/private/profile.json",
+            "/Applications/private.app",
+            r"\\server\share\profile.json",
+        )
+        for key in path_keys:
+            with self.subTest(key=key):
+                case = valid_case()
+                case[key] = "x"
+
+                errors = module.validate_case(case)
+                result = run_validator(case)
+
+                self.assertTrue(any("<redacted-key>" in error for error in errors))
+                self.assertNotIn(key, "\n".join(errors))
+                self.assertEqual(result.returncode, 2)
+                self.assertIn("<redacted-key>", result.stderr)
+                self.assertNotIn(key, result.stderr)
+
+        relative_case = valid_case()
+        relative_key = r"relative\profile.json"
+        relative_case[relative_key] = "x"
+        self.assertIn(
+            f"case has unsupported field: {relative_key}",
+            module.validate_case(relative_case),
+        )
+
     def test_cli_diagnostic_cap_preserves_utf8_boundaries(self) -> None:
         case = valid_case()
         case.update({f"campo-ñ-{index:04d}": "x" for index in range(1_000)})

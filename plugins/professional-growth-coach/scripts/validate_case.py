@@ -107,7 +107,8 @@ _LINKEDIN_PROFILE_VALUE = re.compile(
 )
 _LOCAL_PATH_VALUE = re.compile(
     r"(?<![A-Za-z0-9.])(?:/Users/|/home/|/private/|/var/tmp/|/tmp/|"
-    r"~/|\.\.?/|[A-Z]:[/\\])",
+    r"/opt/|/Applications/|/var/|/Volumes/|/root/|/srv/|/usr/|"
+    r"~/|\.\.?/|[A-Z]:[/\\]|\\\\|//)",
     re.I,
 )
 _HYPHEN_LIKE = frozenset("‐‑‒–—―−⁃")
