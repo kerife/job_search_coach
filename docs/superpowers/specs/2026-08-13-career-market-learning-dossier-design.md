@@ -2,10 +2,11 @@
 
 ## Status
 
-Proposed for client review. This revision incorporates the requested
+Approved for implementation. This revision incorporates the requested
 five-vacancy default, real-sample recurrence, LinkedIn Jobs fallback, and
-responsive five-column matrix. It does not change current market or learning
-behavior until its implementation plan is approved.
+responsive five-column matrix. The implementation remains staged so each
+contract, renderer, routing change, and live-research run is independently
+verified before publication.
 
 ## Problem
 
