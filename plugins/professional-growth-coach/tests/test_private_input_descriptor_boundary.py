@@ -1,3 +1,5 @@
+import contextlib
+import io
 import importlib.util
 import sys
 import tempfile
@@ -39,6 +41,29 @@ LOAD_CASES = (
 )
 
 
+def _decoder_recursion_fixture() -> str:
+    return "[" * 1_000 + "0" + "]" * 1_000
+
+
+DIRECT_RECURSION_CASES = (
+    ("outcome", OUTCOME.load_outcome, OUTCOME.OutcomeLoadError, "outcome input is not valid JSON"),
+    ("checkpoint", CHECKPOINT.load_checkpoint, CHECKPOINT.CheckpointLoadError, "checkpoint input is not valid JSON"),
+    ("receipt", CHECKPOINT.load_receipt, CHECKPOINT.CheckpointLoadError, "receipt input is not valid JSON"),
+    ("triage", TRIAGE.load_triage, TRIAGE.TriageLoadError, "triage input is not valid JSON"),
+    ("practice", PRACTICE.load_session, PRACTICE.SessionLoadError, "session input is not valid JSON"),
+    ("dossier", DOSSIER.load_dossier, DOSSIER.DossierLoadError, "dossier must be valid UTF-8 JSON"),
+)
+
+
+CLI_RECURSION_CASES = (
+    ("outcome", OUTCOME._cli, ("{input}", "--as-of", "2026-08-13"), "outcome input is not valid JSON", 3),
+    ("checkpoint", CHECKPOINT._cli, ("{input}", "--receipt", "{receipt}", "--as-of", "2026-08-13"), "checkpoint input is not valid JSON", 3),
+    ("triage", TRIAGE._cli, ("{input}",), "triage input is not valid JSON", 3),
+    ("practice", PRACTICE._cli, ("{input}",), "session input is not valid JSON", 3),
+    ("dossier", DOSSIER._cli, ("{input}",), "dossier must be valid UTF-8 JSON", 2),
+)
+
+
 class PrivateInputDescriptorBoundaryTests(unittest.TestCase):
     def test_regular_file_parent_is_reported_as_safe_unavailable_error(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -73,6 +98,36 @@ class PrivateInputDescriptorBoundaryTests(unittest.TestCase):
                 path = Path(directory) / "input.json"
                 path.write_bytes(fixture.read_bytes())
                 self.assertIsInstance(loader(path), dict)
+
+    def test_decoder_recursion_is_normalized_at_every_loader_boundary(self):
+        for label, loader, error_type, message in DIRECT_RECURSION_CASES:
+            with self.subTest(label=label), tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / "input.json"
+                path.write_text(_decoder_recursion_fixture(), encoding="utf-8")
+
+                with self.assertRaisesRegex(error_type, f"^{message}$"):
+                    loader(path)
+
+    def test_cli_decoder_recursion_returns_safe_loader_error(self):
+        for label, cli, argument_template, message, exit_code in CLI_RECURSION_CASES:
+            with self.subTest(label=label), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                input_path = root / "input.json"
+                receipt_path = root / "receipt.json"
+                input_path.write_text(_decoder_recursion_fixture(), encoding="utf-8")
+                receipt_path.write_text("{}", encoding="utf-8")
+                arguments = tuple(
+                    part.format(input=input_path, receipt=receipt_path)
+                    for part in argument_template
+                )
+                stderr = io.StringIO()
+
+                with contextlib.redirect_stderr(stderr):
+                    result = cli(arguments)
+
+                self.assertEqual(exit_code, result)
+                self.assertEqual(f"{message}\n", stderr.getvalue())
+                self.assertNotIn("Traceback", stderr.getvalue())
 
 
 if __name__ == "__main__":
