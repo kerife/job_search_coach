@@ -104,6 +104,11 @@ DOSSIER_VALIDATOR_PATH = (
     Path(__file__).resolve().parents[1]
     / "plugins/professional-growth-coach/scripts/validate_executive_career_dossier.py"
 )
+DOSSIER_V2_SCHEMA_VERSION = "executive-career-dossier-v2"
+DOSSIER_V2_VALIDATOR_PATH = (
+    Path(__file__).resolve().parents[1]
+    / "plugins/professional-growth-coach/scripts/validate_executive_career_dossier_v2.py"
+)
 RECRUITER_PRACTICE_SCHEMA_VERSION = "recruiter-practice-session-v1"
 RECRUITER_PRACTICE_VALIDATOR_PATH = (
     Path(__file__).resolve().parents[1]
@@ -327,6 +332,61 @@ def _safe_dossier_scan_value(text: str, value: object) -> dict[str, object] | No
     del scan_value["privacy"]["raw_private_analytics_included"]
     del scan_value["privacy"]["aggregate_analytics_included"]
     return scan_value
+
+
+@lru_cache(maxsize=1)
+def _load_dossier_v2_contract() -> (
+    tuple[Callable[[object], list[str]], Callable[[dict[str, object]], dict[str, object]]]
+    | None
+):
+    specification = importlib.util.spec_from_file_location(
+        "job_search_coach_executive_career_dossier_v2_privacy",
+        DOSSIER_V2_VALIDATOR_PATH,
+    )
+    if specification is None or specification.loader is None:
+        return None
+    module = importlib.util.module_from_spec(specification)
+    sys.modules[specification.name] = module
+    try:
+        specification.loader.exec_module(module)
+    except Exception:
+        return None
+    validate = getattr(module, "validate_dossier", None)
+    project = getattr(module, "project_v2_to_v1", None)
+    if not callable(validate) or not callable(project):
+        return None
+    return validate, project
+
+
+def _safe_dossier_v2_scan_value(
+    text: str, value: object
+) -> dict[str, object] | None:
+    if (
+        not isinstance(value, dict)
+        or value.get("schema_version") != DOSSIER_V2_SCHEMA_VERSION
+        or len(text.encode("utf-8")) > 256 * 1024
+        or not _json_depth_is_bounded(value, 12)
+    ):
+        return None
+    before = copy.deepcopy(value)
+    try:
+        contract = _load_dossier_v2_contract()
+        if contract is None:
+            return None
+        validate, project = contract
+        errors = validate(value)
+        if (
+            type(errors) is not list
+            or any(type(error) is not str for error in errors)
+            or errors
+        ):
+            return None
+        projected = project(value)
+    except Exception:
+        return None
+    if value != before or not isinstance(projected, dict):
+        return None
+    return _safe_dossier_scan_value(text, projected)
 
 
 @lru_cache(maxsize=1)
@@ -621,6 +681,10 @@ def scan_text(path: Path, text: str) -> Counter[str]:
             dossier_candidate = None
         if parsed_json is not None:
             safe_scan_value = _safe_dossier_scan_value(text, dossier_candidate)
+            if safe_scan_value is None:
+                safe_scan_value = _safe_dossier_v2_scan_value(
+                    text, dossier_candidate
+                )
             if safe_scan_value is None:
                 safe_scan_value = _safe_recruiter_practice_scan_value(
                     text, dossier_candidate

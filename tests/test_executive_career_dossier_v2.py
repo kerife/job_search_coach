@@ -13,6 +13,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from html.parser import HTMLParser
 from pathlib import Path
 
 
@@ -131,6 +132,29 @@ def load_renderer() -> object:
 def visible_text(rendered: str) -> str:
     without_code = re.sub(r"(?is)<(?:style|script)\b.*?</(?:style|script)>", " ", rendered)
     return " ".join(html.unescape(re.sub(r"(?s)<[^>]+>", " ", without_code)).split())
+
+
+class DossierDOMAudit(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.ids: list[str] = []
+        self.references: list[str] = []
+        self.classes: list[str] = []
+        self.tag_counts: dict[str, int] = {}
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.tag_counts[tag] = self.tag_counts.get(tag, 0) + 1
+        values = dict(attrs)
+        identifier = values.get("id")
+        if identifier:
+            self.ids.append(identifier)
+        for field in ("aria-labelledby", "aria-describedby"):
+            references = values.get(field)
+            if references:
+                self.references.extend(references.split())
+        classes = values.get("class")
+        if classes:
+            self.classes.extend(classes.split())
 
 
 class ExecutiveCareerDossierV2Tests(unittest.TestCase):
@@ -434,16 +458,54 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
                 self.assertNotIn(token, rendered_text)
 
     def test_market_placeholder_is_one_bounded_non_recommendation_state(self) -> None:
-        rendered = self.renderer.render_dossier_html(make_v2_dossier("en"))
-        regions = re.findall(
-            r'<section class="card market-unavailable-card span-12" aria-labelledby="market-unavailable-title">(.*?)</section>',
-            rendered,
-            re.DOTALL,
-        )
-        self.assertEqual(len(regions), 1)
-        text_value = visible_text(regions[0]).casefold()
-        for forbidden in ("score", "vacancy", "employer", "course", "paid"):
-            self.assertNotIn(forbidden, text_value)
+        for name in ("scenario-a-es.json", "scenario-c-en.json"):
+            with self.subTest(name=name):
+                dossier = json.loads((V2_FIXTURE_ROOT / name).read_text(encoding="utf-8"))
+                rendered = self.renderer.render_dossier_html(dossier)
+                regions = re.findall(
+                    r'<section class="card market-unavailable-card span-12" aria-labelledby="market-unavailable-title">(.*?)</section>',
+                    rendered,
+                    re.DOTALL,
+                )
+                self.assertEqual(len(regions), 1)
+                text_value = visible_text(regions[0]).casefold()
+                self.assertNotIn("<progress", regions[0].casefold())
+                self.assertNotRegex(text_value, r"\d+(?:\.\d+)?%")
+                for forbidden in (
+                    "score", "vacancy", "vacante", "employer", "empleador",
+                    "course", "curso", "paid", "pago",
+                ):
+                    self.assertNotIn(forbidden, text_value)
+
+    def test_shipped_fixtures_have_complete_resolved_noninteractive_dom(self) -> None:
+        for name in ("scenario-a-es.json", "scenario-c-en.json"):
+            with self.subTest(name=name):
+                dossier = json.loads((V2_FIXTURE_ROOT / name).read_text(encoding="utf-8"))
+                rendered = self.renderer.render_dossier_html(dossier)
+                audit = DossierDOMAudit()
+                audit.feed(rendered)
+
+                self.assertEqual(audit.tag_counts.get("h1"), 1)
+                self.assertEqual(audit.tag_counts.get("main"), 1)
+                self.assertEqual(audit.tag_counts.get("footer"), 1)
+                self.assertEqual(len(audit.ids), len(set(audit.ids)))
+                self.assertEqual(set(audit.references) - set(audit.ids), set())
+                self.assertEqual(audit.classes.count("section-coverage-row"), 17)
+                self.assertEqual(audit.classes.count("coach-priority-card"), 3)
+                self.assertEqual(audit.classes.count("market-unavailable-card"), 1)
+                self.assertNotIn('data-priority-card="true"', rendered)
+                self.assertNotIn('class="timebox"', rendered)
+                templates = re.findall(
+                    r'<section class="coach-template"[^>]*>(.*?)</section>',
+                    rendered,
+                    re.DOTALL,
+                )
+                self.assertEqual(len(templates), 3)
+                for template in templates:
+                    self.assertNotRegex(
+                        template,
+                        r"<(?:a|button|input|select|textarea)\b",
+                    )
 
     def test_chat_summary_asks_exactly_one_first_pending_authorization_question(self) -> None:
         summary = self.renderer.build_chat_summary(make_v2_dossier("es"))
@@ -456,15 +518,20 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         self.assertNotIn(make_v2_dossier("es")["questions"][0]["question"], summary)
         self.assertLessEqual(len(summary.split()), 180)
 
-        english = make_v2_dossier("en")
-        english["section_coverage"][1]["reason"] = "authorized_inspection_failed"
-        english["section_coverage"][1]["inspection_request"]["decision"] = "authorized_inspection_failed"
+        english = json.loads(
+            (V2_FIXTURE_ROOT / "scenario-c-en.json").read_text(encoding="utf-8")
+        )
         summary = self.renderer.build_chat_summary(english)
         self.assertIn(
-            "Do you authorize read-only inspection of the Name section during this session?",
+            "Do you authorize read-only inspection of the Banner section during this session?",
             summary,
         )
         self.assertEqual(summary.count("Do you authorize read-only inspection"), 1)
+        self.assertNotIn(
+            "Do you authorize read-only inspection of the Name section during this session?",
+            summary,
+        )
+        self.assertNotIn("Certifications", summary)
         self.assertLessEqual(len(summary.split()), 180)
 
     def test_chat_summary_retains_v1_behavior_when_no_inspection_request_is_pending(self) -> None:
