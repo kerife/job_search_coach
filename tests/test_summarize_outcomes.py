@@ -236,15 +236,15 @@ class SummarizeOutcomesTests(unittest.TestCase):
         cases = (
             (
                 run_summary([outcome_row(application_date="2026-02-30")]),
-                "row 2: application_date must be empty or YYYY-MM-DD; got '2026-02-30'",
+                "row 2: application_date must be empty or YYYY-MM-DD",
             ),
             (
                 run_summary([outcome_row(response_date="06/08/2026")]),
-                "row 2: response_date must be empty or YYYY-MM-DD; got '06/08/2026'",
+                "row 2: response_date must be empty or YYYY-MM-DD",
             ),
             (
                 run_summary([], as_of="2026-13-01"),
-                "--as-of must be YYYY-MM-DD; got '2026-13-01'",
+                "--as-of must be YYYY-MM-DD",
             ),
         )
 
@@ -261,11 +261,11 @@ class SummarizeOutcomesTests(unittest.TestCase):
         )
         self.assert_invalid(
             run_summary([], window="0"),
-            "--window must be a positive integer; got '0'",
+            "--window must be a positive integer",
         )
         self.assert_invalid(
             run_summary([], window="thirty"),
-            "--window must be a positive integer; got 'thirty'",
+            "--window must be a positive integer",
         )
 
     def test_csv_input_rejects_direct_and_intermediate_symlinks(self) -> None:
@@ -340,7 +340,7 @@ class SummarizeOutcomesTests(unittest.TestCase):
 
         self.assert_invalid(
             result,
-            "row 3: duplicate application_id 'stable-1' first seen on row 2",
+            "row 3: duplicate application_id; first seen on row 2",
         )
 
     def test_chronology_and_future_dates_are_rejected(self) -> None:
@@ -775,8 +775,36 @@ class SummarizeOutcomesTests(unittest.TestCase):
                 result = run_summary([outcome_row(**{field: "maybe"})])
                 self.assert_invalid(
                     result,
-                    f"row 2: {field} must be true, false, or empty; got 'maybe'",
+                    f"row 2: {field} must be true, false, or empty",
                 )
+
+    def test_invalid_scalar_diagnostics_never_echo_input_values(self) -> None:
+        cases = (
+            (run_summary([outcome_row(application_date="/Users/private/profile.json")]), "profile.json"),
+            (run_summary([outcome_row(benchmark_consent="token_sk_live_SYNTHETIC")]), "token_sk_live_SYNTHETIC"),
+            (
+                run_summary(
+                    [
+                        outcome_row(application_id="/Users/private/app.json"),
+                        outcome_row(application_id="/Users/private/app.json"),
+                    ]
+                ),
+                "/Users/private/app.json",
+            ),
+            (run_summary([], window="/Users/private/window.csv"), "/Users/private/window.csv"),
+            (run_summary([], as_of="/Users/private/date.csv"), "/Users/private/date.csv"),
+            (
+                run_summary(
+                    [outcome_row()],
+                    fieldnames=CSV_FIELDS + ("/Users/private/header.csv", "/Users/private/header.csv"),
+                ),
+                "/Users/private/header.csv",
+            ),
+        )
+        for result, sentinel in cases:
+            with self.subTest(sentinel=sentinel):
+                self.assertNotIn(sentinel, result.stdout)
+                self.assertNotIn(sentinel, result.stderr)
 
     def test_bundled_asset_and_forward_fixtures_use_the_canonical_header(self) -> None:
         paths = [

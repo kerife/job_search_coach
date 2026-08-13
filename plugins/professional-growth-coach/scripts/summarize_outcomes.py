@@ -84,11 +84,9 @@ def parse_iso_date(value: str, *, label: str) -> date | None:
     try:
         parsed = date.fromisoformat(cleaned)
     except ValueError as error:
-        raise InputError(
-            f"{label} must be empty or YYYY-MM-DD; got {cleaned!r}"
-        ) from error
+        raise InputError(f"{label} must be empty or YYYY-MM-DD") from error
     if parsed.isoformat() != cleaned:
-        raise InputError(f"{label} must be empty or YYYY-MM-DD; got {cleaned!r}")
+        raise InputError(f"{label} must be empty or YYYY-MM-DD")
     return parsed
 
 
@@ -98,9 +96,7 @@ def parse_boolean(value: str, *, row_number: int, field: str) -> bool:
         return False
     if cleaned == "true":
         return True
-    raise InputError(
-        f"row {row_number}: {field} must be true, false, or empty; got {value.strip()!r}"
-    )
+    raise InputError(f"row {row_number}: {field} must be true, false, or empty")
 
 
 def rate(numerator: int, denominator: int) -> float:
@@ -174,9 +170,7 @@ def read_rows(
                 header for header, count in Counter(headers).items() if count > 1
             )
             if duplicate_headers:
-                raise InputError(
-                    "duplicate CSV headers: " + ", ".join(duplicate_headers)
-                )
+                raise InputError("duplicate CSV headers")
             missing_headers = [field for field in CSV_FIELDS if field not in headers]
             if missing_headers:
                 raise InputError(
@@ -203,8 +197,7 @@ def read_rows(
                 first_row = seen_application_ids.get(application_id)
                 if first_row is not None:
                     raise InputError(
-                        f"row {row_number}: duplicate application_id {application_id!r} "
-                        f"first seen on row {first_row}"
+                        f"row {row_number}: duplicate application_id; first seen on row {first_row}"
                     )
                 seen_application_ids[application_id] = row_number
 
@@ -394,10 +387,10 @@ def emit_json(payload: dict[str, object], *, stream: object) -> None:
 def parse_window(raw_window: str, as_of: date) -> int:
     cleaned = raw_window.strip()
     if not cleaned or not cleaned.isascii() or not cleaned.isdecimal():
-        raise InputError(f"--window must be a positive integer; got {raw_window!r}")
+        raise InputError("--window must be a positive integer")
     normalized = cleaned.lstrip("0")
     if not normalized:
-        raise InputError(f"--window must be a positive integer; got {raw_window!r}")
+        raise InputError("--window must be a positive integer")
 
     maximum = as_of.toordinal()
     maximum_text = str(maximum)
@@ -422,11 +415,9 @@ def main(argv: list[str] | None = None) -> int:
         try:
             as_of = parse_iso_date(arguments.as_of, label="--as-of")
         except InputError as error:
-            raise InputError(
-                f"--as-of must be YYYY-MM-DD; got {arguments.as_of!r}"
-            ) from error
+            raise InputError("--as-of must be YYYY-MM-DD") from error
         if as_of is None:
-            raise InputError(f"--as-of must be YYYY-MM-DD; got {arguments.as_of!r}")
+            raise InputError("--as-of must be YYYY-MM-DD")
         window = parse_window(arguments.window, as_of)
         candidate_id = arguments.candidate_id
         if candidate_id is not None:
