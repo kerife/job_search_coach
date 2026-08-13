@@ -1851,6 +1851,33 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
         self.assertIn("No se pudo copiar; selecciona y copia el texto", rendered)
         self.assertIn("Necesita confirmación; conserva este texto como borrador privado.", rendered)
 
+    def test_copy_controls_have_unique_localized_accessible_context(self) -> None:
+        for dossier in (self.es_dossier, self.en_dossier):
+            rendered = self.renderer.render_dossier_html(dossier)
+            buttons = {
+                target: (label, visible)
+                for target, label, visible in re.findall(
+                    r'<button[^>]*data-copy-target="([^"]+)"[^>]*aria-label="([^"]+)"[^>]*>([^<]+)</button>',
+                    rendered,
+                )
+            }
+            expected = {
+                f"copy-source-{index}": (
+                    f"{self.renderer.COPY[dossier['locale']]['copy_button']}: "
+                    f"{self.renderer.COPY_LABELS[dossier['locale']][block['category']]}"
+                )
+                for index, block in enumerate(dossier["copy_blocks"], start=1)
+                if block["copy"] is not None
+            }
+            self.assertEqual(
+                {target: (label, self.renderer.COPY[dossier['locale']]['copy_button']) for target, label in expected.items()},
+                buttons,
+            )
+            self.assertEqual(len(buttons), len({label for label, _ in buttons.values()}))
+            for label, visible in buttons.values():
+                self.assertEqual(self.renderer.COPY[dossier['locale']]['copy_button'], visible)
+                self.assertIn("Copy draft" if dossier["locale"] == "en" else "Copiar borrador", label)
+
     def test_dossier_article_cards_have_named_headings_in_spanish_and_english(self) -> None:
         selectors = (
             'data-priority-card="true"',

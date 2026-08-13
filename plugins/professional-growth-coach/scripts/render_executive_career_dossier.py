@@ -820,10 +820,15 @@ def _render_copy_blocks(dossier: Mapping[str, object], locale: str) -> str:
         )
         described_by = f"{status_id} {confirmation_id}" if confirmation else status_id
         heading_id = f"copy-title-{index}"
+        accessible_copy_label = (
+            f"{labels['copy_button']}: "
+            f"{COPY_LABELS[locale][text(block['category'])]}"
+        )
         draft = (
             f'<p class="copy-text" id="{source_id}" data-copy-source>{text(block["copy"])}</p>'
             f'<button class="no-print" type="button" data-copy-target="{source_id}" '
-            f'data-copy-status="{status_id}" aria-describedby="{described_by}" '
+            f'data-copy-status="{status_id}" aria-label="{accessible_copy_label}" '
+            f'aria-describedby="{described_by}" '
             f'data-copy-success="{labels["copied"]}" data-copy-failure="{labels["copy_failed"]}">{labels["copy_button"]}</button>'
             f'<span class="copy-status no-print" id="{status_id}" role="status" aria-live="polite" aria-atomic="true"></span>{confirmation}'
             if block["copy"] is not None
