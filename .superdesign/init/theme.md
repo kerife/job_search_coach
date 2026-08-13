@@ -584,7 +584,9 @@ details summary {
 @media (forced-colors: active) {
   button { background: ButtonFace; color: ButtonText; border-color: ButtonText; }
   button:hover { background: Highlight; color: HighlightText; }
-  button:focus-visible { outline-color: Highlight; }
+  a:focus-visible,
+  button:focus-visible,
+  summary:focus-visible,
   main:focus-visible { outline-color: Highlight; }
   .dossier-document progress {
     border: 1px solid CanvasText;

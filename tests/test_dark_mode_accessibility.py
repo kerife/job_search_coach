@@ -96,6 +96,14 @@ class DarkModeAccessibilityTests(unittest.TestCase):
                     r"main:focus-visible\s*\{[^}]*outline-color:\s*Highlight;",
                 )
 
+    def test_dossier_forced_colors_keeps_all_focusable_surfaces_visible(self) -> None:
+        css = (ASSETS / "executive-career-dossier-v1.css").read_text(encoding="utf-8")
+        forced = css[css.index("@media (forced-colors: active)"):]
+        self.assertRegex(
+            forced,
+            r"a:focus-visible,\s*button:focus-visible,\s*summary:focus-visible,\s*main:focus-visible\s*\{[^}]*outline-color:\s*Highlight;",
+        )
+
     def test_practice_confirm_feedback_has_dark_contrast(self) -> None:
         css = (ASSETS / "recruiter-practice-session-v1.css").read_text(encoding="utf-8")
         dark_start = css.index("@media screen and (prefers-color-scheme: dark)")
