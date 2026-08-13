@@ -542,6 +542,57 @@ class LinkedInReportFixtureTests(unittest.TestCase):
         bundle["synthetic_fact_catalog"].append(copy.deepcopy(bundle["synthetic_fact_catalog"][0]))
         self.assertIn("synthetic_fact_catalog has duplicate fact_id: FACT-JSC1-READY", validator.validate_fixture_bundle(bundle))
 
+    def test_invalid_enum_diagnostics_redact_credential_and_path_like_values(self) -> None:
+        for value in (
+            "Authorization: Bearer abc.def.ghi",
+            "/Users/private-candidate/profile.json",
+        ):
+            with self.subTest(value=value):
+                bundle = self.fixture("scenario-a.json")
+                bundle["blocked_claims"] = [value]
+                errors = validator.validate_fixture_bundle(bundle)
+                self.assertIn(
+                    "blocked_claims has invalid value: <redacted-value>",
+                    errors,
+                )
+                self.assertNotIn(value, "\n".join(errors))
+
+    def test_duplicate_reference_diagnostics_redact_credential_like_values(self) -> None:
+        bundle = self.fixture("scenario-a.json")
+        secret = "password=very-secret-value"
+        bundle["copy_blocks"][0]["fact_ids"] = [secret, secret]
+        errors = validator.validate_fixture_bundle(bundle)
+        self.assertIn(
+            "copy_blocks[0].fact_ids has duplicate fact_id: <redacted-value>",
+            errors,
+        )
+        self.assertNotIn(secret, "\n".join(errors))
+
+    def test_duplicate_source_and_fact_id_diagnostics_redact_credential_like_values(self) -> None:
+        secret = "password=very-secret-value"
+
+        source_bundle = self.fixture("scenario-a.json")
+        source_bundle["source_catalog"][0]["source_id"] = secret
+        source_bundle["source_catalog"][1]["source_id"] = secret
+        source_errors = validator.validate_fixture_bundle(source_bundle)
+        self.assertIn(
+            "source_catalog has duplicate source_id: <redacted-value>",
+            source_errors,
+        )
+        self.assertNotIn(secret, "\n".join(source_errors))
+
+        fact_bundle = self.fixture("scenario-a.json")
+        fact = copy.deepcopy(fact_bundle["synthetic_fact_catalog"][0])
+        fact["fact_id"] = secret
+        fact_bundle["synthetic_fact_catalog"].append(copy.deepcopy(fact))
+        fact_bundle["synthetic_fact_catalog"][0]["fact_id"] = secret
+        fact_errors = validator.validate_fixture_bundle(fact_bundle)
+        self.assertIn(
+            "synthetic_fact_catalog has duplicate fact_id: <redacted-value>",
+            fact_errors,
+        )
+        self.assertNotIn(secret, "\n".join(fact_errors))
+
     def test_fixture_rejects_references_to_nonexistent_facts(self) -> None:
         bundle = self.fixture("scenario-a.json")
         bundle["copy_blocks"][0]["fact_ids"].append("FACT-JSC1-MISSING")
