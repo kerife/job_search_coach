@@ -172,8 +172,7 @@ _SUSPICIOUS_DIAGNOSTIC_FIELD = re.compile(
     re.IGNORECASE,
 )
 _ABSOLUTE_PATH_DIAGNOSTIC_FIELD = re.compile(
-    r"^(?:[A-Za-z]:[\\/]|\\\\|//|"
-    r"/(?:users|private|tmp|home|var|opt|applications|volumes|root|srv|usr)(?:/|$))",
+    r"^(?:[A-Za-z]:[\\/]|\\\\|//|/)",
     re.IGNORECASE,
 )
 FORBIDDEN_PLACEHOLDERS = frozenset({"x", "criteria", "generic", "tbd"})
@@ -1016,7 +1015,10 @@ def parse_score_table(parsed: ParsedClientReport) -> tuple[ReportDomainScore, ..
             raise ValueError("score table rows must contain exactly five columns")
         domain_label, state_label, score_text, evidence_text, reason = cells
         if domain_label not in domains:
-            raise ValueError(f"score table has unknown dimension: {domain_label}")
+            raise ValueError(
+                f"score table has unknown dimension: "
+                f"{_safe_diagnostic_field_name(domain_label)}"
+            )
         if state_label not in states:
             raise ValueError(f"score table has invalid state for {domains[domain_label]}")
         if score_text == "—":
@@ -1079,7 +1081,10 @@ def parse_copy_blocks(parsed: ParsedClientReport) -> tuple[ReportCopyBlock, ...]
     allowed_headings = COPY_SECTION_LABELS[parsed.locale]
     for heading, _body in blocks:
         if heading not in allowed_headings:
-            raise ValueError(f"copy section has unexpected H3: {heading}")
+            raise ValueError(
+                f"copy section has unexpected H3: "
+                f"{_safe_diagnostic_field_name(heading)}"
+            )
     copies: list[ReportCopyBlock] = []
     for heading, body in blocks:
         section = allowed_headings[heading]
@@ -2169,6 +2174,13 @@ def _safe_diagnostic_identifier(value: object) -> str:
     return "<redacted-value>"
 
 
+def _safe_source_category(value: object) -> str:
+    """Keep canonical source categories readable without echoing invalid input."""
+    if isinstance(value, str) and value in SOURCE_CATEGORIES:
+        return value
+    return _safe_diagnostic_identifier(value)
+
+
 def _validate_decisions(parsed: ParsedClientReport, bundle: Mapping[str, object]) -> list[str]:
     priorities = parse_priority_blocks(parsed)
     copies = parse_copy_blocks(parsed)
@@ -2238,9 +2250,15 @@ def _validate_report_priorities(
             errors.append(f"priority {priority.rank} has invalid localized section")
         for code in (priority.diagnosed_gap, priority.action_type):
             if _is_generic_priority_code(code):
-                errors.append(f"generic priority code is not allowed: {code}")
+                errors.append(
+                    "generic priority code is not allowed: "
+                    f"{_safe_diagnostic_field_name(code)}"
+                )
         for evidence_id in _duplicates(priority.evidence_ids):
-            errors.append(f"priority {priority.rank} has duplicate evidence {evidence_id}")
+            errors.append(
+                f"priority {priority.rank} has duplicate evidence "
+                f"{_safe_diagnostic_identifier(evidence_id)}"
+            )
         for evidence_id in priority.evidence_ids:
             if evidence_id not in known_evidence:
                 errors.append(f"priority {priority.rank} references unknown evidence")
@@ -2311,11 +2329,20 @@ def _validate_report_copies(
         if "actual_copy" not in copy_block.present_fields or not copy_block.actual_copy:
             errors.append(f"copy {copy_block.section} requires nonempty actual copy")
         for fact_id in _duplicates(copy_block.fact_ids):
-            errors.append(f"copy {copy_block.section} has duplicate fact {fact_id}")
+            errors.append(
+                f"copy {copy_block.section} has duplicate fact "
+                f"{_safe_diagnostic_identifier(fact_id)}"
+            )
         for evidence_id in _duplicates(copy_block.evidence_ids):
-            errors.append(f"copy {copy_block.section} has duplicate evidence {evidence_id}")
+            errors.append(
+                f"copy {copy_block.section} has duplicate evidence "
+                f"{_safe_diagnostic_identifier(evidence_id)}"
+            )
         for claim in _duplicates(copy_block.claims):
-            errors.append(f"copy {copy_block.section} has duplicate claim {claim}")
+            errors.append(
+                f"copy {copy_block.section} has duplicate claim "
+                f"{_safe_diagnostic_identifier(claim)}"
+            )
         expected = fixture_by_section.get(copy_block.section)
         report_values = {
             "copy_id": copy_block.copy_id,
@@ -3408,7 +3435,7 @@ def _validate_sources(
             if not registered_official_url and isinstance(source_category, str):
                 errors.append(
                     f"{label} official URL is not registered for source_category "
-                    f"{source_category}"
+                    f"{_safe_source_category(source_category)}"
                 )
         elif source_class == "secondary":
             secondary_url_error = _secondary_source_url_error(source["url"])
@@ -3459,7 +3486,7 @@ def _validate_sources(
             }
             if state in {"stale", "unreachable"} and not fallback_is_safe:
                 errors.append(
-                    f"source {source['source_id']} resolved {state} and must degrade to "
+                    f"source {_safe_diagnostic_identifier(source['source_id'])} resolved {state} and must degrade to "
                     "COACH_HEURISTIC or BLOCK_CLAIM"
                 )
         source_id = source["source_id"]

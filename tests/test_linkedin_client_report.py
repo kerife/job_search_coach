@@ -1521,6 +1521,98 @@ class LinkedInClientReportDecisionTests(unittest.TestCase):
                 self.assertIn(bundle_error, validator.validate_client_report(report, bundle))
                 self.assertIn(bundle_error, validator.validate_fixture_bundle(bundle))
 
+    def test_untrusted_parser_and_generic_diagnostics_redact_api_and_cli(self) -> None:
+        sentinel = "/Users/PRIVATE_SENTINEL/parser.json"
+        baseline = self.report("scenario-a-es.md")
+        cases = (
+            (
+                "| Identidad visual | Evaluada | 60 |",
+                f"| {sentinel} | Evaluada | 60 |",
+                "score table has unknown dimension: <redacted-field>",
+            ),
+            (
+                "### Titular",
+                f"### {sentinel}",
+                "copy section has unexpected H3: <redacted-field>",
+            ),
+            (
+                "- Acción: `ACTION-A-HEADLINE`",
+                f"- Acción: `{sentinel}/profile/improve`",
+                "generic priority code is not allowed: <redacted-field>",
+            ),
+        )
+        for old, new, expected in cases:
+            with self.subTest(expected=expected):
+                report = self.replace_once(baseline, old, new)
+                errors = validator.validate_client_report(report, self.bundle("scenario-a.json"))
+                self.assertIn(expected, errors)
+                self.assertNotIn(sentinel, "\n".join(errors))
+
+                with tempfile.TemporaryDirectory() as temporary:
+                    report_path = Path(temporary) / "parser-sentinel.md"
+                    report_path.write_text(report, encoding="utf-8")
+                    result = subprocess.run(
+                        [
+                            sys.executable,
+                            "-B",
+                            str(VALIDATOR_PATH),
+                            str(report_path),
+                            str(FIXTURE_ROOT / "scenario-a.json"),
+                        ],
+                        capture_output=True,
+                        text=True,
+                        check=False,
+                    )
+                self.assertEqual(2, result.returncode)
+                self.assertIn(expected, result.stderr)
+                self.assertNotIn(sentinel, result.stderr)
+
+    def test_report_duplicate_reference_diagnostics_redact_untrusted_values_api_and_cli(self) -> None:
+        sentinel = "/Users/PRIVATE_SENTINEL/reference.json"
+        baseline = self.report("scenario-a-es.md")
+        cases = (
+            (
+                "- Evidencia: `EVID-JSC1-PRIORITY-1`",
+                f"- Evidencia: `{sentinel}`, `{sentinel}`",
+                f"priority 1 has duplicate evidence <redacted-value>",
+            ),
+            (
+                "- Hechos: `FACT-JSC1-READY`",
+                f"- Hechos: `{sentinel}`, `{sentinel}`",
+                f"copy headline has duplicate fact <redacted-value>",
+            ),
+            (
+                "- Evidencia: `EVID-JSC1-HEADLINE`",
+                f"- Evidencia: `{sentinel}`, `{sentinel}`",
+                f"copy headline has duplicate evidence <redacted-value>",
+            ),
+        )
+        for old, new, expected in cases:
+            with self.subTest(expected=expected):
+                report = self.replace_once(baseline, old, new)
+                errors = validator.validate_client_report(report, self.bundle("scenario-a.json"))
+                self.assertIn(expected, errors)
+                self.assertNotIn(sentinel, "\n".join(errors))
+
+                with tempfile.TemporaryDirectory() as temporary:
+                    report_path = Path(temporary) / "report.md"
+                    report_path.write_text(report, encoding="utf-8")
+                    result = subprocess.run(
+                        [
+                            sys.executable,
+                            "-B",
+                            str(VALIDATOR_PATH),
+                            str(report_path),
+                            str(FIXTURE_ROOT / "scenario-a.json"),
+                        ],
+                        capture_output=True,
+                        text=True,
+                        check=False,
+                    )
+                self.assertEqual(2, result.returncode)
+                self.assertIn(expected, result.stderr)
+                self.assertNotIn(sentinel, result.stderr)
+
     def test_copy_section_rejects_unexpected_h3_blocks(self) -> None:
         extra = (
             "### Profile summary\n\n"

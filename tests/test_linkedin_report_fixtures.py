@@ -530,6 +530,7 @@ class LinkedInReportFixtureTests(unittest.TestCase):
     def test_privacy_diagnostics_redact_untrusted_mapping_key_paths_api_and_cli(self) -> None:
         cases = (
             "/Users/PRIVATE_SENTINEL/profile.json",
+            "/etc/passwd",
             "/opt/data/profile.json",
             r"D:\work\candidate\profile.json",
             r"\\server\share\profile.json",
@@ -685,6 +686,52 @@ class LinkedInReportFixtureTests(unittest.TestCase):
             fact_errors,
         )
         self.assertNotIn(secret, "\n".join(fact_errors))
+
+    def test_source_diagnostics_redact_untrusted_ids_and_categories_api_and_cli(self) -> None:
+        cases = (
+            (
+                "source_id",
+                "/Users/PRIVATE_SENTINEL/source.json",
+                "source",
+                "resolved stale and must degrade to COACH_HEURISTIC or BLOCK_CLAIM",
+            ),
+            (
+                "source_category",
+                "/Users/PRIVATE_SENTINEL/category",
+                "source_catalog[0] official URL is not registered for source_category",
+                "",
+            ),
+        )
+        report = FIXTURE_ROOT / "scenario-a-es.md"
+        for field, sentinel, prefix, suffix in cases:
+            with self.subTest(field=field):
+                bundle = self.fixture("scenario-a.json")
+                source = bundle["source_catalog"][0]
+                source[field] = sentinel
+                if field == "source_id":
+                    source["access_date"] = "2020-01-01"
+                    source["fallback"] = "bad"
+
+                expected = (
+                    f"{prefix} <redacted-value> {suffix}"
+                    if field == "source_id"
+                    else f"{prefix} <redacted-value>"
+                )
+                api_errors = validator.validate_fixture_bundle(bundle)
+                api_text = "\n".join(api_errors)
+                self.assertNotIn(sentinel, api_text)
+                self.assertIn(expected, api_text)
+
+                with tempfile.TemporaryDirectory() as temporary:
+                    bundle_path = Path(temporary) / "source-sentinel.json"
+                    bundle_path.write_text(json.dumps(bundle), encoding="utf-8")
+                    stdout = io.StringIO()
+                    stderr = io.StringIO()
+                    with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+                        result = validator._cli([str(report), str(bundle_path)])
+                self.assertNotEqual(0, result)
+                self.assertNotIn(sentinel, stderr.getvalue())
+                self.assertIn(expected, stderr.getvalue())
 
     def test_fixture_rejects_references_to_nonexistent_facts(self) -> None:
         bundle = self.fixture("scenario-a.json")
