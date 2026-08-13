@@ -356,6 +356,50 @@ class ExecutiveCareerDossierV2Tests(unittest.TestCase):
                 dossier["priorities"][0][field] = value
                 self.assertEqual(self.validator.validate_dossier(dossier), [])
 
+    def test_v2_dated_market_coaching_prose_and_projection_use_v1_hire_and_hiring_semantics(self) -> None:
+        source = load_v1_fixture("scenario-market-en.json")
+        dossier = make_v2_dossier("en")
+        market_evidence = copy.deepcopy(source["evidence"][-1])
+        market_evidence["profile_section"] = None
+        dossier["evidence"].append(market_evidence)
+        dossier["market_context"] = copy.deepcopy(source["market_context"])
+        self.assertEqual(self.validator.project_v2_to_v1(dossier), source)
+
+        for text in (
+            "Employers actively hire SREs.",
+            "Employers are actively hiring SREs.",
+        ):
+            with self.subTest(text=text, surface="v2 coaching prose"):
+                unlinked = copy.deepcopy(dossier)
+                unlinked["priorities"][0]["why_it_matters"] = text
+                self.assertIn(
+                    "priorities[0].why_it_matters market claims require local dated market evidence",
+                    self.validator.validate_dossier(unlinked),
+                )
+
+            with self.subTest(text=text, surface="v1 projection", evidence="unlinked"):
+                projected = self.validator.project_v2_to_v1(dossier)
+                projected["priorities"][0]["why_now"] = text
+                self.assertIn(
+                    "priorities[0].why_now market claims require local dated market evidence",
+                    self.validator._v1.validate_dossier(projected),
+                )
+
+            with self.subTest(text=text, surface="v1 projection", evidence="linked"):
+                projected = self.validator.project_v2_to_v1(dossier)
+                projected["priorities"][0]["why_now"] = text
+                projected["priorities"][0]["evidence_ids"].append("E-008")
+                self.assertEqual(
+                    self.validator._v1.validate_dossier(projected),
+                    [],
+                )
+
+        safe = copy.deepcopy(dossier)
+        safe["priorities"][0]["why_it_matters"] = (
+            "Technical controls remain available for private review."
+        )
+        self.assertEqual(self.validator.validate_dossier(safe), [])
+
     def test_every_ledger_and_request_boundary_rejects_session_or_positive_authorization_fields(self) -> None:
         mutations = (
             ("section_coverage", 10, "session_id"),

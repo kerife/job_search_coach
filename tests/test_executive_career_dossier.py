@@ -1383,6 +1383,43 @@ class ExecutiveCareerDossierEvidenceModuleTests(unittest.TestCase):
         self.assertEqual(self.validator.validate_dossier(dossier), [])
         self.assertEqual(dossier["coverage"]["overall_score"], before)
 
+    def test_dated_market_hire_and_hiring_require_local_evidence_and_count_as_guidance(self) -> None:
+        for text in (
+            "Employers actively hire SREs.",
+            "Employers are actively hiring SREs.",
+        ):
+            with self.subTest(text=text, evidence="unlinked"):
+                unlinked = mutate_path(
+                    self.market_dossier,
+                    ("priorities", 0, "why_now"),
+                    text,
+                )
+                self.assertIn(
+                    "priorities[0].why_now market claims require local dated market evidence",
+                    self.validator.validate_dossier(unlinked),
+                )
+
+            with self.subTest(text=text, evidence="linked"):
+                linked = mutate_path(
+                    self.market_dossier,
+                    ("priorities", 0, "why_now"),
+                    text,
+                )
+                linked["priorities"][0]["evidence_ids"].append("E-008")
+                errors = self.validator.validate_dossier(linked)
+                self.assertEqual(errors, [])
+                self.assertNotIn(
+                    "priorities[0].evidence_ids dated market evidence requires explicit market guidance",
+                    errors,
+                )
+
+        safe = mutate_path(
+            self.market_dossier,
+            ("priorities", 0, "why_now"),
+            "Technical controls remain available for private review.",
+        )
+        self.assertEqual(self.validator.validate_dossier(safe), [])
+
     def test_observed_analytics_does_not_authorize_free_prose_or_unreconciled_numbers(self) -> None:
         cases = (
             "Profile views rose strongly during the observation window.",

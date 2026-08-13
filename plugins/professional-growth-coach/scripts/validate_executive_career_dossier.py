@@ -115,6 +115,7 @@ MARKET_CLAIM_LANGUAGE = re.compile(
     r"demanda|oportunidades\s+laborales|sought|solicitad[oa]s?|scarce|escas[oa]s?|"
     r"outpaces?\s+supply|supera\s+la\s+oferta|difficult\s+for\s+employers?\s+to\s+fill|"
     r"dificil(?:es)?\s+de\s+cubrir|eager\s+to\s+hire|compete\s+for\s+(?:this\s+)?talent|"
+    r"employers?\b[^.!?\n]{0,48}\bhir(?:e|ing)\b|"
     r"scarcity|escasez|escasea|(?:candidate|talent)\s+shortage|"
     r"open\s+roles?\s+exceed\s+available\s+candidates?|"
     r"(?:are|aren\s+t|are\s+not)\s+enough\s+(?:candidates?|talent)|"
