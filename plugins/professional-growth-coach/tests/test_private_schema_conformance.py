@@ -195,6 +195,16 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
                 value = json.loads(path.read_text(encoding="utf-8"))
                 self.assertEqual([], validate_schema_instance(value, schema), (schema_name, path.name))
 
+    def test_target_vacancy_research_fixtures_conform_to_closed_schema(self):
+        schema = self._schema("target-vacancy-research-v1.schema.json")
+        fixture_dir = ROOT.parent.parent / "tests/evals/with-skill/fixtures/target-vacancy-research"
+        for path in sorted(fixture_dir.glob("*.json")):
+            value = json.loads(path.read_text(encoding="utf-8"))
+            self.assertEqual([], validate_schema_instance(value, schema), path.name)
+        invalid = json.loads((fixture_dir / "complete-five-es.json").read_text(encoding="utf-8"))
+        invalid["vacancies"].append(copy.deepcopy(invalid["vacancies"][-1]))
+        self.assertTrue(validate_schema_instance(invalid, schema))
+
     def test_mutations_fail_closed_for_date_closure_and_invariants(self):
         schema = self._schema("private-recruiter-followthrough-checkpoint-v1.schema.json")
         source = json.loads((ROOT / "tests/fixtures/private-recruiter-followthrough-checkpoint/accepted-en.json").read_text(encoding="utf-8"))

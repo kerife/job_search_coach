@@ -62,6 +62,13 @@ must be present in the official registry, and secondary market sources must
 use HTTPS. Unknown categories and non-HTTPS URLs are rejected by both schema
 and runtime validation before rendering.
 
+Current vacancy research uses the closed `target-vacancy-research-v1` artifact.
+It is identity-free, bounded to at most five distinct postings, records dated
+public-source provenance, and exposes only `complete`,
+`limited_market_evidence`, or `market_evidence_unavailable`. Its deterministic
+snapshot is suitable for downstream dossier work; it never performs external
+actions or infers candidate eligibility.
+
 ## Coach mode example
 
 Use coach mode when helping multiple people:
