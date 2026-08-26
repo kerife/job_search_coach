@@ -690,6 +690,15 @@ details summary {
 .recurrence-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(6rem, 2fr) auto; gap: .75rem; align-items: center; padding: .5rem; border: 1px solid var(--muted); break-inside: avoid; page-break-inside: avoid; }
 .market-boundary, .market-limitation { margin: .75rem 0 0; padding-left: .75rem; border-left: 4px solid var(--gold); }
 .gap-closure-route { padding: 1rem; border-left: 4px solid var(--forest); background: var(--paper); }
+.market-learning-roi { margin-top: 1.25rem; padding: 1rem; border: 1px solid var(--line); border-left: 4px solid var(--gold); background: var(--surface); break-inside: avoid; page-break-inside: avoid; }
+.market-learning-roi h3, .market-learning-roi h4 { color: var(--forest); }
+.learning-coach-decision, .learning-proof-sprint, .learning-reuse { margin-top: 1rem; padding: .75rem; border: 1px solid var(--muted); background: var(--paper); }
+.learning-decision-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: .75rem; }
+.learning-decision-row { min-width: 0; padding: .75rem; border: 1px solid var(--muted); background: var(--paper); break-inside: avoid; page-break-inside: avoid; }
+.learning-decision-facts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .35rem .75rem; }
+.learning-decision-facts dt { color: var(--muted); font-weight: 700; }
+.learning-decision-facts dd { margin: 0; overflow-wrap: anywhere; }
+.learning-reuse ul { display: grid; gap: .35rem; margin: .5rem 0 0; padding-left: 1.25rem; }
 
 @media screen and (max-width: 680px) {
   .vacancy-alignment-list { grid-template-columns: 1fr; }
@@ -700,18 +709,20 @@ details summary {
   .market-matrix td::before { content: attr(data-label); color: var(--muted); font-size: .8125rem; font-weight: 700; }
   .market-alignment-line { align-items: flex-start; flex-direction: column; gap: .2rem; }
   .recurrence-row { grid-template-columns: 1fr; gap: .35rem; }
+  .learning-decision-list { grid-template-columns: 1fr; }
+  .learning-decision-facts { grid-template-columns: 1fr; gap: .2rem; }
 }
 
 @media (prefers-reduced-motion: reduce) { .vacancy-alignment-card, .recurrence-row { animation: none !important; transition: none !important; transform: none !important; } }
 
-@media print { .market-summary, .market-key, .market-matrix-wrap, .gap-closure-route, .vacancy-alignment-card, .recurrence-row { break-inside: avoid; page-break-inside: avoid; } .market-matrix thead { display: table-header-group; } }
+@media print { .market-summary, .market-key, .market-matrix-wrap, .gap-closure-route, .market-learning-roi, .learning-decision-row, .vacancy-alignment-card, .recurrence-row { break-inside: avoid; page-break-inside: avoid; } .market-matrix thead { display: table-header-group; } }
 
 @media (forced-colors: active) {
-  .market-summary, .vacancy-alignment-card, .recurrence-row, .gap-closure-route, .market-matrix th, .market-matrix td, .market-alignment-score, .market-recurrence-count { background: Canvas; color: CanvasText; border-color: CanvasText; }
+  .market-summary, .vacancy-alignment-card, .recurrence-row, .gap-closure-route, .market-learning-roi, .learning-coach-decision, .learning-proof-sprint, .learning-reuse, .learning-decision-row, .market-matrix th, .market-matrix td, .market-alignment-score, .market-recurrence-count { background: Canvas; color: CanvasText; border-color: CanvasText; }
   .market-boundary, .market-limitation, .gap-closure-route { border-left-color: Highlight; }
 }
 
-@media (prefers-contrast: more) { .market-summary, .vacancy-alignment-card, .recurrence-row, .market-matrix th, .market-matrix td { border-width: 2px; } }
+@media (prefers-contrast: more) { .market-summary, .vacancy-alignment-card, .recurrence-row, .market-learning-roi, .learning-coach-decision, .learning-proof-sprint, .learning-reuse, .learning-decision-row, .market-matrix th, .market-matrix td { border-width: 2px; } }
 ```
 
 ### `plugins/professional-growth-coach/assets/recruiter-practice-session-v1.css`
