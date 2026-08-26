@@ -134,6 +134,11 @@ def _date(value: object, path: str, errors: list[str]) -> date | None:
     if not isinstance(value, str):
         errors.append(f"{path} must be an ISO date")
         return None
+    try:
+        return date.fromisoformat(value)
+    except ValueError:
+        errors.append(f"{path} must be an ISO date")
+        return None
 
 
 def _source_url_error(value: object, source_kind: object) -> str | None:
@@ -163,11 +168,6 @@ def _source_url_error(value: object, source_kind: object) -> str | None:
     if any(marker in value for marker in ("?", "#")):
         return "source URL is invalid"
     return None
-    try:
-        return date.fromisoformat(value)
-    except ValueError:
-        errors.append(f"{path} must be an ISO date")
-        return None
 
 
 def _depth(value: object, level: int = 0) -> bool:
@@ -403,7 +403,7 @@ def _cli(argv: list[str] | None = None) -> int:
         return 2
     errors = validate_market_dossier(value)
     if errors:
-        print("\n".join(errors), file=sys.stderr)
+        sys.stderr.write(_prose.format_bounded_diagnostics(errors))
         return 1
     print("valid market learning dossier")
     return 0

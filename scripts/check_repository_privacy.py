@@ -32,6 +32,13 @@ DOSSIER_SOURCE_INVENTORY_PATHS = (
     Path("plugins/professional-growth-coach/assets/executive-career-dossier-v1.html"),
     Path("plugins/professional-growth-coach/assets/executive-career-dossier-v1.css"),
     Path("tests/test_executive_career_dossier.py"),
+    Path("plugins/professional-growth-coach/schemas/target-vacancy-research-v1.schema.json"),
+    Path("plugins/professional-growth-coach/schemas/candidate-market-alignment-v1.schema.json"),
+    Path("plugins/professional-growth-coach/schemas/career-market-learning-dossier-v1.schema.json"),
+    Path("plugins/professional-growth-coach/scripts/validate_target_vacancy_research.py"),
+    Path("plugins/professional-growth-coach/scripts/build_career_market_learning_dossier.py"),
+    Path("plugins/professional-growth-coach/scripts/validate_career_market_learning_dossier.py"),
+    Path("plugins/professional-growth-coach/assets/career-market-learning-dossier-v1.css"),
 )
 INVENTORY_PATHS = (
     Path("docs/superpowers/plans/2026-08-05-job-search-coach-plugin.md"),
@@ -72,8 +79,10 @@ RULES = {
         r"about_text|experience_text|headline_text)\b\s*[:=]"
     ),
     "SECRET_ASSIGNMENT": re.compile(
-        r"(?i)\bauthorization\b[\"']?\s*:\s*[\"']?"
-        r"(?:Bearer|Basic)\s+[^\s;,\"']{8,}"
+        r"(?i)(?:\bauthorization\b[\"']?\s*:\s*[\"']?"
+        r"(?:Bearer|Basic)\s+[^\s;,\"']{8,}|"
+        r"[?&#](?:access[_-]?token|refresh[_-]?token|api[_-]?key|auth[_-]?token)="
+        r"[^\s&#,\"']{8,})"
     ),
 }
 HANDLE_PATTERN = re.compile(r"(?i)(?<![a-z0-9._%+-])@[a-z][a-z0-9._-]{2,}(?![a-z0-9._-])")

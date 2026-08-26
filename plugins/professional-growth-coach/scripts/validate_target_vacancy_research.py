@@ -112,7 +112,18 @@ def _url_error(value: object, *, source_kind: str | None = None) -> str | None:
         host = (parsed.hostname or "").casefold().rstrip(".")
         if host not in {"linkedin.com", "www.linkedin.com"} or not parsed.path.startswith("/jobs/"):
             return "LinkedIn backup URL must use the linkedin.com/jobs path"
-        if parsed.scheme.casefold() != "https":
+        try:
+            port = parsed.port
+        except ValueError:
+            return "source URL must use HTTPS"
+        if (
+            parsed.scheme.casefold() != "https"
+            or parsed.username
+            or parsed.password
+            or parsed.query
+            or parsed.fragment
+            or port not in {None, 443}
+        ):
             return "source URL must use HTTPS"
         return None
     errors = _report.validate_secondary_source_url(value)
@@ -388,7 +399,7 @@ def _cli(argv: list[str] | None = None) -> int:
         return 2
     errors = validate_research(value)
     if errors:
-        print("\n".join(errors), file=sys.stderr)
+        sys.stderr.write(_prose.format_bounded_diagnostics(errors))
         return 1
     print("valid target vacancy research")
     return 0

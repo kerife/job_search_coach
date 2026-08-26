@@ -13,6 +13,38 @@ Market demand and compensation are time-sensitive: browse current sources for ev
 
 Read [source-policy.md](references/source-policy.md) before researching. Read [market-brief.md](references/market-brief.md) before returning a brief.
 
+## Default five-vacancy research
+
+When this skill supports a normal local profile dossier, run the default
+five-vacancy research before returning market conclusions. Search SRE, Platform
+Engineering, and DevOps families in Mexico or stated remote scope. Target at
+most five active postings, with five distinct employers searched first; do not
+pad the result with stale, duplicate, unrelated, or hypothetical postings.
+
+For each employer, inspect official employer and employer-operated ATS sources
+first. LinkedIn Jobs backup only is permitted when an active posting is
+inspectable and the direct source is unavailable or does not expose the needed
+role detail. A search-result snippet is discovery only, never evidence. Each
+included posting needs active verification and access date, a public HTTPS
+source, its observed eligibility gates, and a dated role-matched requirement
+paraphrase. Keep raw vacancy text, cookies, session data, candidate identity,
+and private browser data out of the artifact.
+
+Return the closed `target-vacancy-research-v1` artifact with
+`maximum_vacancies=5`, official-sources-first provenance, and
+`no_external_action=true`. A complete result contains five active postings.
+Use limited `1..4` when the bounded search returns some valid evidence and
+state the exact limitation; use unavailable `0` when it returns none. Do not
+manufacture an employer, a vacancy, a skill requirement, or a recurrence rate.
+Report every recurring signal against the actual sample `k/N`, not a presumed
+five-posting denominator. Keep `learning_state=not_evaluated` until a later
+learning-decision increment consumes the validated market dossier.
+
+Do not infer work-authorization, internal-mobility, EOR, or remote-eligibility
+from a role title, employer, country, remote label, or source location. This is
+read-only research: no apply, message, connect, follow, publish, enroll, or
+purchase action. Browser session access does not broaden that boundary.
+
 Start with current employer vacancy pages for the supplied role. Use government sources and transparent salary studies only as secondary context. Record each source URL, `as_of_date`, `source_date`, `source_age_days`, `freshness_window_days`, `freshness_status`, and `source_state`: `active`, `stale`, `expired`, or `unavailable`. `active` means the direct source was reachable and role-matched at the stated crawl date; `stale` means the observation is old for this decision; `expired` means the employer identifies the vacancy as closed; `unavailable` means the cited direct source cannot be verified (for example, HTTP 404). Record publication date when visible, otherwise crawl date and an explicit `unknown:` publication date. Do not treat a search-result timestamp as a publication date. Use `freshness_window_days=90` by default for vacancy compensation unless the request defines a stricter or broader decision window.
 
 For every source, record a `compensation_observation`: the source-specific raw amount and basis, or `unknown`. Also record `compensation_components`, `component_gaps`, `employer_or_publisher`, `source_id`, `independent_observation_id`, `comparable_group_id`, `comparability_status`, `comparability_check`, `range_method`, `conversion_basis`, geography, currency, compensation basis, seniority, employment arrangement, and sample context. Keep Mexico employee, Mexico-based international contractor/EOR, US work-authorized employee, and remote international arrangements separate. Remote is not a geography or proof of work authorization, contractor/EOR availability, tax eligibility, or benefit eligibility.

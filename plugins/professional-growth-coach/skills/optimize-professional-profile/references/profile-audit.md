@@ -6,6 +6,21 @@ The canonical rows and matrices in this reference are output contracts only for 
 
 In the normal HTML dossier, render supported sections now and mark optional or inaccessible sections unavailable and unscored rather than zero. Missing visual evidence stays unavailable; do not request another capture unless the visual answer would be the first pending authorization question that changes the recommendation. The dossier may contain its validated question set, but chat asks only that one question and never duplicates it (at most the rank-1 decision-changing question when no authorization is pending). No authorization carries forward; a positive answer is consumed immediately and never stored in the artifact. Analytics needs separate explicit consent, no inspection authorization permits an external action, and an authorized inspection attempt regenerates a new collision-safe v2 artifact without writing `authorized_for_session` or any session identifier.
 
+For a normal + local execution dossier, add bounded five-vacancy research only
+after profile evidence validates. Its closed `target-vacancy-research-v1` input
+must stay identity-free and current, and its validated
+`career-market-learning-dossier-v1` is composed by the private v2 renderer.
+Research SRE, Platform Engineering, and DevOps in Mexico or stated remote
+scope; search five distinct employers first, prefer official employer and
+employer-operated ATS sources, and use LinkedIn Jobs only as an inspectable
+active backup. Keep `learning_state=not_evaluated`, calculate recurrence from
+the actual sample `k/N`, retain limited `1..4` without padding, and use
+unavailable `0` when no valid vacancy can be retained. If that route cannot
+finish, preserve the valid profile dossier with a limited or unavailable market
+state and one bounded reason. Never infer work-authorization,
+internal-mobility, EOR, or remote-eligibility, and never apply, message,
+connect, follow, publish, enroll, or purchase.
+
 Record capture date and source. Each material item begins with exactly one canonical prefix: `verified:`, `candidate-reported:`, `inferred:`, or `unknown:`. Use `verified: (visible)` when inspected, `unknown: (unavailable)` when inaccessible, and `unknown: (conflicting)` for source conflicts. Never use slash compounds.
 
 Source policy for every contract in this reference: one current official source may stand alone when it directly supports the criterion. Official category coverage counts only a category-specific registered locator. Dated secondary guidance is optional and, when used, carries its publisher and document title; any later example that mentions official plus secondary guidance describes an allowed enrichment, not a requirement. Secondary sources never satisfy official category coverage. Publisher provenance is limited to one line and 120 characters; document titles are limited to one line and 240 characters. Neither provenance field may contain secrets or private data. Coach-selected weights, priority order, review windows, and timeboxes are always `COACH_HEURISTIC`, never platform measurements or source-derived effects.

@@ -147,6 +147,23 @@ class TargetVacancyResearchTests(unittest.TestCase):
                 value["vacancies"][0]["source_kind"] = kind
                 self.assertTrue(validate_research(value))
 
+    def test_linkedin_backup_rejects_private_url_metadata_and_nonstandard_port(self) -> None:
+        source = load_fixture("complete-five-es.json")
+        urls = (
+            "https://synthetic-user:private-marker@www.linkedin.com/jobs/view/123",
+            "https://www.linkedin.com/jobs/view/123?access_token=private-marker",
+            "https://www.linkedin.com/jobs/view/123#private-marker",
+            "https://www.linkedin.com:8443/jobs/view/123",
+        )
+        for url in urls:
+            with self.subTest(url=url):
+                value = copy.deepcopy(source)
+                value["vacancies"][0]["source_url"] = url
+                value["vacancies"][0]["source_kind"] = "linkedin_jobs_backup"
+                errors = validate_research(value)
+                self.assertTrue(errors)
+                self.assertNotIn("private-marker", " ".join(errors))
+
     def test_unknown_eligibility_cannot_contain_inferred_pass(self) -> None:
         value = load_fixture("complete-five-es.json")
         value["vacancies"][0]["eligibility_gates"][0] = {

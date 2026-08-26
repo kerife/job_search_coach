@@ -17,6 +17,9 @@ Read [client-report.md](references/client-report.md) for every audit so the vali
 - `normal + no local execution -> localized Markdown fallback`: use the complete compact report from `client-report.md`; do not claim that an artifact exists.
 - `debug | eval | detail_requested -> existing Markdown + canonical appendix`: use the validated expanded path from `client-report.md` unchanged.
 
+Follow [html-dossier.md](references/html-dossier.md) for the five-vacancy
+handoff; preserve the profile on limited/unavailable evidence; remain read-only.
+
 A second validation or render failure also uses the localized Markdown fallback after private cleanup. A normal request remains normal even when it asks to skip presentation or return raw/debug/internal rows. When there is no inspectable or supplied evidence, ask exactly one useful intake question rather than generating an empty report. With partial evidence, render available findings now and exclude unavailable sections instead of scoring them as zero. In coach mode, create one isolated temporary input and one generic artifact per candidate, never a combined dossier.
 
 The artifact branch supersedes the root router and legacy normal rows. Do not append an evidence index, `Routing receipt`, `Live source summary`, canonical row, later-module handoff, duplicate question, or duplicate no-action sentence after the artifact link. A `linkedin_rendered_client_report_sample` row never substitutes for either the HTML dossier or the rendered Markdown fallback.

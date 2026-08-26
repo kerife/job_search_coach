@@ -326,6 +326,18 @@ class FullPluginIntegrationTests(unittest.TestCase):
             ),
             checker_module.EXECUTIVE_DOSSIER_V2_PACKAGE_PATHS,
         )
+        self.assertEqual(
+            13,
+            len(checker_module.CAREER_MARKET_PACKAGE_PATHS),
+        )
+        self.assertIn(
+            "scripts/build_career_market_learning_dossier.py",
+            checker_module.CAREER_MARKET_PACKAGE_PATHS,
+        )
+        self.assertIn(
+            "assets/career-market-learning-dossier-v1.css",
+            checker_module.CAREER_MARKET_PACKAGE_PATHS,
+        )
 
     def test_dossier_practice_handoff_harness_rejects_malformed_or_zero_test_summaries(self) -> None:
         checker = load_static_checker()

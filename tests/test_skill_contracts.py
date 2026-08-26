@@ -4917,6 +4917,73 @@ class ResearchTargetJobMarketContractTests(unittest.TestCase):
         ):
             self.assertIn(requirement, contract)
 
+    def test_default_five_vacancy_route_is_bounded_and_safe_for_profile_dossiers(self) -> None:
+        """The default research route must stay evidence-led and non-executing."""
+
+        market_root = (
+            REPO_ROOT
+            / "plugins"
+            / "professional-growth-coach"
+            / "skills"
+            / "research-professional-market"
+        )
+        profile_root = (
+            REPO_ROOT
+            / "plugins"
+            / "professional-growth-coach"
+            / "skills"
+            / "optimize-professional-profile"
+        )
+        market_contract = "\n".join(
+            path.read_text(encoding="utf-8")
+            for path in (
+                market_root / "SKILL.md",
+                market_root / "references" / "source-policy.md",
+                market_root / "references" / "market-brief.md",
+            )
+        )
+        profile_contract = "\n".join(
+            path.read_text(encoding="utf-8")
+            for path in (
+                profile_root / "SKILL.md",
+                profile_root / "references" / "html-dossier.md",
+                profile_root / "references" / "profile-audit.md",
+            )
+        )
+
+        normalized_market_contract = re.sub(r"\s+", " ", market_contract)
+        normalized_profile_contract = re.sub(r"\s+", " ", profile_contract)
+
+        for requirement in (
+            "Default five-vacancy research",
+            "SRE, Platform Engineering, and DevOps",
+            "Mexico or stated remote scope",
+            "five distinct employers searched first",
+            "official employer and employer-operated ATS sources first",
+            "LinkedIn Jobs backup only",
+            "active verification and access date",
+            "limited `1..4`",
+            "unavailable `0`",
+            "actual sample `k/N`",
+            "work-authorization, internal-mobility, EOR, or remote-eligibility",
+            "no apply, message, connect, follow, publish, enroll, or purchase action",
+            "`learning_state=not_evaluated`",
+        ):
+            with self.subTest(requirement=requirement):
+                self.assertIn(re.sub(r"\s+", " ", requirement), normalized_market_contract)
+
+        for requirement in (
+            "bounded five-vacancy research",
+            "target-vacancy-research-v1",
+            "career-market-learning-dossier-v1",
+            "--market-dossier",
+            "preserve the valid profile dossier",
+            "one bounded reason",
+            "no external action",
+        ):
+            with self.subTest(requirement=requirement):
+                self.assertIn(re.sub(r"\s+", " ", requirement), normalized_profile_contract)
+
     def test_post_review_market_snapshot_records_exact_current_source_states(self) -> None:
         evaluation = (REPO_ROOT / "tests" / "evals" / "with-skill" / "market.md").read_text(
             encoding="utf-8"
@@ -7507,6 +7574,42 @@ class TrackJobSearchOutcomesContractTests(unittest.TestCase):
         self.assertIn("reprocessing the same receipt and checkpoint is idempotent", combined)
         self.assertIn("replay of the same receipt/checkpoint pair is idempotent", combined)
         self.assertIn("same receipt/checkpoint pair idempotently", combined)
+
+    def test_five_vacancy_profile_orchestration_contract_is_enforced(self) -> None:
+        """Catch a dropped research, composition, fallback, or learning-state gate."""
+        checker = load_static_checker()
+
+        documents = checker.load_five_vacancy_orchestration_documents()
+        self.assertEqual(
+            [],
+            checker.validate_five_vacancy_orchestration_contract(documents),
+        )
+
+        missing_composition = dict(documents)
+        for document_name in ("profile_skill", "html_dossier", "profile_audit"):
+            missing_composition[document_name] = missing_composition[
+                document_name
+            ].replace("--market-dossier", "--omitted-market-input")
+        errors = checker.validate_five_vacancy_orchestration_contract(
+            missing_composition
+        )
+        self.assertTrue(
+            any("--market-dossier" in error for error in errors),
+            errors,
+        )
+
+        missing_learning_gate = dict(documents)
+        for document_name in ("profile_skill", "html_dossier", "profile_audit"):
+            missing_learning_gate[document_name] = missing_learning_gate[
+                document_name
+            ].replace("learning_state=not_evaluated", "learning state omitted")
+        errors = checker.validate_five_vacancy_orchestration_contract(
+            missing_learning_gate
+        )
+        self.assertTrue(
+            any("learning_state=not_evaluated" in error for error in errors),
+            errors,
+        )
 
 
 if __name__ == "__main__":

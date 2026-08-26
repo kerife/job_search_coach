@@ -10,3 +10,15 @@ market_brief
 ```
 
 Do not compare a Mexico employee amount with Mexico-based international contractor/EOR, US work-authorized employee, or remote international compensation. Do not compare annual base, total compensation, OTE, equity-heavy, commission-heavy, benefits-inclusive, or hourly observations as one high-pay range unless the source components are compatible or explicitly normalized with disclosed limits. Use a separate entry and warning for each. A current range requires at least two active, fresh, compatible, independent observations with distinct `source_id` and `independent_observation_id`; disclose `range_method`. Set `conversion_basis=none` unless a dated conversion source is supplied. A stale, expired, or unavailable source may retain a historical `compensation_observation`, but cannot support a current range, demand, or recurrence. Keep provider-specific requirements source-specific unless repeated across active compatible sources. This brief is evidence for `explore-career-options`; it does not choose a career path.
+
+## Five-vacancy handoff
+
+For the default five-vacancy route, normalize only public, active, role-matched
+observations into `target-vacancy-research-v1`. Retain the exact sample count:
+complete is five, limited `1..4` has one stated bounded limitation, and
+unavailable `0` has no vacancy rows. Preserve each source's access date and
+eligibility observation without inferring work-authorization,
+internal-mobility, EOR, or remote-eligibility. The downstream learning dossier
+uses the actual sample `k/N` recurrence and starts with
+`learning_state=not_evaluated`; no learning recommendation follows merely from
+this research handoff.

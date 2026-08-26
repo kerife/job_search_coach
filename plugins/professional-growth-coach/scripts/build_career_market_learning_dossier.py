@@ -7,6 +7,7 @@ import argparse
 import copy
 import importlib.util
 import json
+import os
 import sys
 from collections.abc import Mapping
 from pathlib import Path
@@ -28,6 +29,9 @@ RESEARCH = _sibling("validate_target_vacancy_research.py")
 EXECUTIVE = _sibling("validate_executive_career_dossier_v2.py")
 SNAPSHOTS = _sibling("dossier_snapshot.py")
 OUTPUT = _sibling("validate_career_market_learning_dossier.py")
+_LOADER = _sibling("private_input_loader.py")
+MAX_INPUT_BYTES = 256 * 1024
+MAX_DEPTH = 12
 
 ALIGNMENT_FIELDS = frozenset({
     "schema_version", "research_snapshot", "executive_dossier_snapshot", "signal_bindings",
@@ -35,6 +39,46 @@ ALIGNMENT_FIELDS = frozenset({
 })
 BINDING_FIELDS = frozenset({"signal", "support_state", "evidence_ids"})
 SUPPORT_STATES = frozenset(OUTPUT.SUPPORT_NUMERATORS)
+
+
+def _unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    value: dict[str, object] = {}
+    for key, item in pairs:
+        if key in value:
+            raise ValueError("duplicate JSON key")
+        value[key] = item
+    return value
+
+
+def _within_depth(value: object, level: int = 0) -> bool:
+    if level > MAX_DEPTH:
+        return False
+    if isinstance(value, Mapping):
+        return all(_within_depth(key, level + 1) and _within_depth(item, level + 1) for key, item in value.items())
+    if isinstance(value, list):
+        return all(_within_depth(item, level + 1) for item in value)
+    return True
+
+
+def _load_alignment(path: Path) -> dict[str, object]:
+    raw = _LOADER.read_bounded_bytes(path, MAX_INPUT_BYTES)
+    value = json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_object)
+    if not isinstance(value, dict) or not _within_depth(value):
+        raise ValueError("alignment input is invalid")
+    return value
+
+
+def _write_private_json(path: Path, value: Mapping[str, object]) -> None:
+    encoded = (json.dumps(value, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0)
+    descriptor = os.open(path, flags, 0o600)
+    try:
+        offset = 0
+        while offset < len(encoded):
+            offset += os.write(descriptor, encoded[offset:])
+    finally:
+        os.close(descriptor)
 
 
 def _closed(value: object, fields: frozenset[str], errors: list[str], path: str) -> Mapping[str, object] | None:
@@ -230,12 +274,12 @@ def _cli(argv: list[str] | None = None) -> int:
     try:
         research = RESEARCH.load_research(args.research)
         dossier = EXECUTIVE.load_dossier(args.dossier)
-        alignment = json.loads(args.alignment.read_text(encoding="utf-8"))
+        alignment = _load_alignment(args.alignment)
         output = build_market_dossier(research, dossier, alignment)
+        _write_private_json(args.output, output)
     except (OSError, UnicodeError, ValueError, json.JSONDecodeError):
         print("market learning dossier could not be built", file=sys.stderr)
         return 2
-    args.output.write_text(json.dumps(output, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return 0
 
 

@@ -5,7 +5,9 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import os
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -18,6 +20,8 @@ MARKET_FIXTURES = ROOT / "tests" / "evals" / "with-skill" / "fixtures" / "career
 sys.path.insert(0, str(SCRIPTS))
 
 from build_career_market_learning_dossier import (  # noqa: E402
+    _load_alignment,
+    _write_private_json,
     build_market_dossier,
 )
 from validate_career_market_learning_dossier import (  # noqa: E402
@@ -150,6 +154,20 @@ class CareerMarketLearningDossierTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_market_dossier(research, mismatched, alignment)
 
+    def test_builder_alignment_loader_rejects_duplicate_keys_and_writer_is_private(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            duplicate = root / "duplicate.json"
+            duplicate.write_text('{"signal_bindings": [], "signal_bindings": []}', encoding="utf-8")
+            with self.assertRaises(ValueError):
+                _load_alignment(duplicate)
+
+            output = root / "nested" / "market.json"
+            _write_private_json(output, {"schema_version": "test"})
+            self.assertEqual(0o600, os.stat(output).st_mode & 0o777)
+            with self.assertRaises(FileExistsError):
+                _write_private_json(output, {"schema_version": "test"})
+
     def test_builder_rejects_inferred_or_unknown_evidence_for_explicit_gap(self) -> None:
         research = valid_research()
         dossier = valid_dossier()
@@ -195,6 +213,12 @@ class CareerMarketLearningDossierTests(unittest.TestCase):
             mutated["vacancy_cards"][0]["source_kind"] = kind
             with self.subTest(url=url, kind=kind):
                 self.assertTrue(validate_market_dossier(mutated))
+
+    def test_validator_rejects_non_iso_evidence_date(self) -> None:
+        value = load_json(MARKET_FIXTURES / "complete-five-es.json")
+        value["as_of_date"] = "not-a-date"
+
+        self.assertIn("as_of_date must be an ISO date", validate_market_dossier(value))
 
     def test_fixture_outputs_are_reproducible_and_closed(self) -> None:
         fixtures = sorted(MARKET_FIXTURES.glob("*.json"))

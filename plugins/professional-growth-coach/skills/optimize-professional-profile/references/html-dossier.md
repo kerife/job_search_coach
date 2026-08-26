@@ -17,6 +17,37 @@ Use this workflow for a normal LinkedIn audit when local filesystem and command 
 
 Resolve both scripts relative to the installed plugin location, not the repository working directory. Keep the temporary JSON and renderer receipt out of the final answer. The private output always preserves `action_state=not_executed`.
 
+## Market-aware composition
+
+The executable handoff is closed: run `validate_target_vacancy_research.py`,
+create the `candidate-market-alignment-v1` input from validated evidence, run
+`build_career_market_learning_dossier.py` and
+`validate_career_market_learning_dossier.py`, then compose the result with
+`render_executive_career_dossier_v2.py --market-dossier`.
+
+After the validated profile dossier is available, perform the bounded
+five-vacancy research path before the final render: validate the
+identity-free `target-vacancy-research-v1`, build and validate
+`career-market-learning-dossier-v1`, then pass it to the renderer with
+`--market-dossier`. Search current SRE, Platform Engineering, and DevOps
+postings in Mexico or stated remote scope, searching five distinct employers
+first and preferring official employer and employer-operated ATS sources.
+LinkedIn Jobs is an inspectable active backup only.
+
+Every included posting must have active verification and access date. Return
+five rows only when five active postings exist; retain limited `1..4` evidence
+without padding, and return unavailable `0` without vacancies. The rendered
+recurrence uses the actual sample `k/N`, and
+`learning_state=not_evaluated` remains until a later validated decision
+increment. Never infer work-authorization, internal-mobility, EOR, or
+remote-eligibility. The market route is read-only: no apply, message, connect,
+follow, publish, enroll, or purchase action.
+
+If the market route fails after the profile dossier validates, preserve the
+valid profile dossier and render the limited or unavailable market state with
+one bounded reason. This does not expose raw vacancy text, source snapshots,
+candidate identity, or browser/session data.
+
 ## Branch table
 
 | Trigger | Required outcome |

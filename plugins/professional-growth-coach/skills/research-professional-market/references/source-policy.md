@@ -2,11 +2,23 @@
 
 ## Source hierarchy
 
-1. Current, direct employer vacancy pages: use for role title, seniority, geography, employment context, compensation disclosures, and observed requirements.
-2. Government sources: use only for dated occupational context, with the occupation, geography, sample definition, and mismatch to the requested role disclosed.
-3. Transparent salary studies: use only where the publisher states date, geography, currency, compensation basis, sample, and methodology. Mark them secondary.
+For Default five-vacancy research, search five distinct employers first and
+stop at five active role-matched postings. Search the SRE, Platform Engineering,
+and DevOps families in Mexico or stated remote scope. Capture active verification
+and access date for every included posting. A limited `1..4` result must retain
+its real limitation, while unavailable `0` contains no padded substitute.
 
-Job-board reposts, snippets, crowdsourced salary pages, and undated articles are discovery leads rather than a sufficient basis for compensation or demand conclusions. A direct employer page is still only an observation, not a market-wide conclusion.
+1. Current, direct employer vacancy pages: use for role title, seniority, geography, employment context, compensation disclosures, and observed requirements.
+2. Employer-operated ATS pages: treat as direct employer evidence when the employer operates the listing.
+3. Government sources: use only for dated occupational context, with the occupation, geography, sample definition, and mismatch to the requested role disclosed.
+4. Transparent salary studies: use only where the publisher states date, geography, currency, compensation basis, sample, and methodology. Mark them secondary.
+
+LinkedIn Jobs backup only may be used for an inspectable active posting after
+the official employer and employer-operated ATS search cannot supply the needed
+role evidence. Job-board reposts, snippets, crowdsourced salary pages, and
+undated articles are discovery leads rather than a sufficient basis for
+compensation or demand conclusions. A direct employer page is still only an
+observation, not a market-wide conclusion.
 
 ## Source state and observation record
 
@@ -40,6 +52,12 @@ Before presenting a compensation range, confirm that the included observations m
 Assign each observation a `comparable_group_id`, `comparability_status`, and `comparability_check` so downstream path discovery can see which observations could be combined. Only multiple active, fresh, compatible observations in the same group with distinct sources and independent observations may produce a current market range. A shared `comparable_group_id` is necessary but not sufficient proof. If any item differs or is unknown, do not combine the observations. State `range=unknown`, retain each source in its own context, and add a `warning` saying the data are not comparable. One source cannot establish a range. Sources without a publication date need a crawl date and `unknown:` publication date. Stale, expired, and unavailable sources cannot support a current range, demand, or recurrence.
 
 Keep provider-specific requirements source-specific unless the exact requirement repeats across active compatible sources. For example, AWS/EKS from one active source must not become a recurring requirement with Azure/AKS from a different or unavailable source.
+
+For the five-vacancy artifact, calculate any recurrence only from the actual
+sample `k/N`; a limited sample never uses five as an implied denominator. Do
+not infer work-authorization, internal-mobility, EOR, or remote-eligibility.
+This policy permits read-only inspection only: no apply, message, connect,
+follow, publish, enroll, or purchase action.
 
 ## Confidence
 

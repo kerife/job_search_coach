@@ -204,6 +204,21 @@ EXECUTIVE_DOSSIER_V2_PACKAGE_PATHS = (
     "tests/evals/with-skill/fixtures/executive-career-dossier-v2/scenario-a-es.json",
     "tests/evals/with-skill/fixtures/executive-career-dossier-v2/scenario-c-en.json",
 )
+CAREER_MARKET_PACKAGE_PATHS = (
+    "schemas/target-vacancy-research-v1.schema.json",
+    "schemas/candidate-market-alignment-v1.schema.json",
+    "schemas/career-market-learning-dossier-v1.schema.json",
+    "scripts/validate_target_vacancy_research.py",
+    "scripts/build_career_market_learning_dossier.py",
+    "scripts/validate_career_market_learning_dossier.py",
+    "assets/career-market-learning-dossier-v1.css",
+    "tests/evals/with-skill/fixtures/target-vacancy-research/complete-five-es.json",
+    "tests/evals/with-skill/fixtures/target-vacancy-research/limited-four-en.json",
+    "tests/evals/with-skill/fixtures/target-vacancy-research/unavailable-es.json",
+    "tests/evals/with-skill/fixtures/career-market-learning-dossier/complete-five-es.json",
+    "tests/evals/with-skill/fixtures/career-market-learning-dossier/limited-four-en.json",
+    "tests/evals/with-skill/fixtures/career-market-learning-dossier/unavailable-es.json",
+)
 EXECUTIVE_DOSSIER_OFFLINE_TOKENS = (
     "http://",
     "https://",
@@ -498,6 +513,65 @@ def validate_executive_dossier_package(
                 errors.append(f"{v2_css_relative}: unsafe inline asset boundary")
             if re.search(r"['\"]//[a-z0-9]", asset, re.I):
                 errors.append(f"{v2_css_relative}: remote or network token in dossier asset")
+
+    market_safe_paths: set[str] = set()
+    for relative_path in CAREER_MARKET_PACKAGE_PATHS:
+        root = repo_root if relative_path.startswith("tests/") else plugin_root
+        if _package_path_traverses_symlink(root, relative_path):
+            errors.append(f"{relative_path}: market package path cannot traverse a symlink")
+        elif not (root / relative_path).is_file():
+            errors.append(f"{relative_path}: missing market package file")
+        else:
+            market_safe_paths.add(relative_path)
+
+    for relative_path in (
+        "schemas/target-vacancy-research-v1.schema.json",
+        "schemas/candidate-market-alignment-v1.schema.json",
+        "schemas/career-market-learning-dossier-v1.schema.json",
+    ):
+        if relative_path not in market_safe_paths:
+            continue
+        try:
+            schema = json.loads((plugin_root / relative_path).read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError):
+            errors.append(f"{relative_path}: invalid JSON")
+        else:
+            if not isinstance(schema, dict) or schema.get("type") != "object" or schema.get("additionalProperties") is not False:
+                errors.append(f"{relative_path}: invalid closed market schema")
+
+    for relative_path in (
+        "scripts/validate_target_vacancy_research.py",
+        "scripts/build_career_market_learning_dossier.py",
+        "scripts/validate_career_market_learning_dossier.py",
+    ):
+        if relative_path not in market_safe_paths:
+            continue
+        result = subprocess.run(
+            [sys.executable, "-B", str(plugin_root / relative_path), "--help"],
+            cwd=repo_root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if result.returncode != 0:
+            errors.append(f"{relative_path}: market script import failed")
+
+    market_css = "assets/career-market-learning-dossier-v1.css"
+    if market_css in market_safe_paths:
+        try:
+            asset = (plugin_root / market_css).read_text(encoding="utf-8").casefold()
+        except (OSError, UnicodeError):
+            errors.append(f"{market_css}: market asset is not readable UTF-8")
+        else:
+            if any(token in asset for token in EXECUTIVE_DOSSIER_OFFLINE_TOKENS) or re.search(r"</?(?:style|script)\b", asset, re.I) or re.search(r"['\"]//[a-z0-9]", asset, re.I):
+                errors.append(f"{market_css}: remote or unsafe inline asset boundary")
+
+    for relative_path in CAREER_MARKET_PACKAGE_PATHS:
+        if relative_path.startswith("tests/") and relative_path in market_safe_paths:
+            try:
+                json.loads((repo_root / relative_path).read_text(encoding="utf-8"))
+            except (OSError, UnicodeError, json.JSONDecodeError):
+                errors.append(f"{relative_path}: invalid market fixture")
 
     if errors:
         return sorted(set(errors))
@@ -16567,6 +16641,82 @@ def validate_renderer_asset_paths() -> list[str]:
     return checker.validate_asset_paths(PLUGIN_ROOT)
 
 
+def load_five_vacancy_orchestration_documents() -> dict[str, str]:
+    """Load the installed skill surfaces that define market composition."""
+    research_root = SKILLS_ROOT / "research-professional-market"
+    profile_root = SKILLS_ROOT / "optimize-professional-profile"
+    paths = {
+        "research_skill": research_root / "SKILL.md",
+        "source_policy": research_root / "references" / "source-policy.md",
+        "market_brief": research_root / "references" / "market-brief.md",
+        "profile_skill": profile_root / "SKILL.md",
+        "html_dossier": profile_root / "references" / "html-dossier.md",
+        "profile_audit": profile_root / "references" / "profile-audit.md",
+    }
+    return {
+        name: path.read_text(encoding="utf-8")
+        for name, path in paths.items()
+    }
+
+
+def validate_five_vacancy_orchestration_contract(
+    documents: dict[str, str],
+) -> list[str]:
+    """Require the default research-to-private-render workflow end to end."""
+    errors: list[str] = []
+    research = "\n".join(
+        documents.get(name, "")
+        for name in ("research_skill", "source_policy", "market_brief")
+    ).casefold()
+    profile = "\n".join(
+        documents.get(name, "")
+        for name in ("profile_skill", "html_dossier", "profile_audit")
+    ).casefold()
+
+    research_requirements = {
+        "target-vacancy-research-v1": "closed research artifact",
+        "sre": "SRE target family",
+        "platform engineering": "Platform Engineering target family",
+        "devops": "DevOps target family",
+        "mexico or stated remote scope": "Mexico-or-stated-remote scope",
+        "maximum_vacancies=5": "five-posting maximum",
+        "five distinct employers first": "distinct-employer-first search",
+        "employer-operated ats": "employer ATS source priority",
+        "linkedin jobs": "LinkedIn Jobs backup boundary",
+        "source_state=active": "active source verification",
+        "access date": "per-posting access date",
+        "limited `1..4`": "limited-sample state",
+        "unavailable `0`": "unavailable-sample state",
+        "k/n": "actual-sample recurrence",
+        "internal-mobility": "internal-mobility non-inference",
+        "eor": "EOR non-inference",
+        "remote-eligibility": "remote-eligibility non-inference",
+        "no_external_action": "read-only action boundary",
+    }
+    profile_requirements = {
+        "render supported sections now": "profile-first rendering",
+        "validate_target_vacancy_research.py": "research validation",
+        "candidate-market-alignment-v1": "identity-free alignment input",
+        "build_career_market_learning_dossier.py": "market dossier builder",
+        "validate_career_market_learning_dossier.py": "market dossier validation",
+        "--market-dossier": "renderer market composition",
+        "collision-safe": "fresh private artifact path",
+        "learning_state=not_evaluated": "learning-state handoff gate",
+        "limited or unavailable market state": "limited market fallback",
+        "unavailable market state": "unavailable market fallback",
+        "bounded reason": "bounded market-failure diagnostic",
+        "preserve the valid profile dossier": "profile preservation on market failure",
+        "no external action": "profile action boundary",
+    }
+    for token, label in research_requirements.items():
+        if token.casefold() not in research:
+            errors.append(f"five-vacancy research contract missing {label}: {token}")
+    for token, label in profile_requirements.items():
+        if token.casefold() not in profile:
+            errors.append(f"five-vacancy profile contract missing {label}: {token}")
+    return errors
+
+
 def main() -> int:
     errors: list[str] = []
     harness = PLUGIN_ROOT / "tests" / "test_private_schema_conformance.py"
@@ -16600,6 +16750,11 @@ def main() -> int:
     )
     errors.extend(validate_renderer_asset_paths())
     errors.extend(validate_design_token_palette())
+    errors.extend(
+        validate_five_vacancy_orchestration_contract(
+            load_five_vacancy_orchestration_documents()
+        )
+    )
     manifest_path = PLUGIN_ROOT / ".codex-plugin" / "plugin.json"
     if not manifest_path.is_file():
         errors.append("missing plugin manifest")

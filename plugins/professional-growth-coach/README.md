@@ -69,12 +69,28 @@ public-source provenance, and exposes only `complete`,
 snapshot is suitable for downstream dossier work; it never performs external
 actions or infers candidate eligibility.
 
+For a normal local profile dossier, the default route is bounded five-vacancy
+research: SRE, Platform Engineering, and DevOps in Mexico or stated remote
+scope. It searches five distinct employers first, prefers official employer
+and employer-operated ATS postings, and uses LinkedIn Jobs only as an
+inspectable active backup. Every retained posting records active verification
+and access date. A complete sample has five postings; limited `1..4` and
+unavailable `0` results are never padded. Recurrence is always the actual
+sample `k/N`; no work-authorization, internal-mobility, EOR, or
+remote-eligibility is inferred. Research remains read-only: no apply, message,
+connect, follow, publish, enroll, or purchase action.
+
 The v2 renderer can optionally compose a validated
 `career-market-learning-dossier-v1` with `--market-dossier`. The composition
 shows documented alignment cards, a semantic vacancy matrix, exact sample
 recurrence, and a four-stage gap-closure route. Locale, evidence date, and the
 executive-dossier snapshot must match before any HTML is written; omitting the
 option preserves the existing no-market render byte-for-byte.
+
+The default composition begins with `learning_state=not_evaluated`. If bounded
+market research cannot finish, the plugin preserves the valid profile dossier
+and renders the limited or unavailable market state with one bounded reason;
+it does not fabricate vacancies, market conclusions, or learning decisions.
 
 ## Coach mode example
 

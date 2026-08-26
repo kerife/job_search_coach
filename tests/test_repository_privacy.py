@@ -61,6 +61,13 @@ DOSSIER_SOURCE_INVENTORY_PATHS = (
     Path("plugins/professional-growth-coach/assets/executive-career-dossier-v1.html"),
     Path("plugins/professional-growth-coach/assets/executive-career-dossier-v1.css"),
     Path("tests/test_executive_career_dossier.py"),
+    Path("plugins/professional-growth-coach/schemas/target-vacancy-research-v1.schema.json"),
+    Path("plugins/professional-growth-coach/schemas/candidate-market-alignment-v1.schema.json"),
+    Path("plugins/professional-growth-coach/schemas/career-market-learning-dossier-v1.schema.json"),
+    Path("plugins/professional-growth-coach/scripts/validate_target_vacancy_research.py"),
+    Path("plugins/professional-growth-coach/scripts/build_career_market_learning_dossier.py"),
+    Path("plugins/professional-growth-coach/scripts/validate_career_market_learning_dossier.py"),
+    Path("plugins/professional-growth-coach/assets/career-market-learning-dossier-v1.css"),
 )
 
 
@@ -574,6 +581,7 @@ class RepositoryPrivacyTests(unittest.TestCase):
         )
         self.assertEqual(expected, set(scanner.scan_paths(REPO_ROOT)))
         self.assertEqual(5, len(INVENTORY_PATHS))
+        self.assertEqual(13, len(DOSSIER_SOURCE_INVENTORY_PATHS))
         self.assertEqual(
             set(DOSSIER_SOURCE_INVENTORY_PATHS),
             set(scanner.DOSSIER_SOURCE_INVENTORY_PATHS),
@@ -787,6 +795,22 @@ class RepositoryPrivacyTests(unittest.TestCase):
             "SINGLING_OUT_STRUCTURED_COMBINATION",
             scanner.scan_text(Path("tests/evals/with-skill/market.md"), near_miss),
         )
+
+    def test_market_research_url_metadata_cannot_bypass_privacy_scan(self) -> None:
+        scanner = load_scanner()
+        fixture = (
+            REPO_ROOT
+            / "tests/evals/with-skill/fixtures/target-vacancy-research/complete-five-es.json"
+        )
+        value = json.loads(fixture.read_text(encoding="utf-8"))
+        value["vacancies"][0]["source_kind"] = "linkedin_jobs_backup"
+        value["vacancies"][0]["source_url"] = (
+            "https://www.linkedin.com/jobs/view/123?access_token=SYNTHETIC_SECRET_VALUE_123"
+        )
+
+        violations = scanner.scan_text(Path("synthetic.json"), json.dumps(value))
+
+        self.assertGreater(violations["SECRET_ASSIGNMENT"], 0)
 
     def test_non_mapping_marker_requires_boolean_true_or_exact_markdown_field(self) -> None:
         scanner = load_scanner()
