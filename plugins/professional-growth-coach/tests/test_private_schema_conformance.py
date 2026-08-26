@@ -205,6 +205,16 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         invalid["vacancies"].append(copy.deepcopy(invalid["vacancies"][-1]))
         self.assertTrue(validate_schema_instance(invalid, schema))
 
+    def test_learning_option_research_fixtures_conform_to_closed_schema(self):
+        schema = self._schema("learning-option-research-v1.schema.json")
+        fixture_dir = ROOT.parent.parent / "tests/evals/with-skill/fixtures/learning-option-research"
+        for path in sorted(fixture_dir.glob("*.json")):
+            value = json.loads(path.read_text(encoding="utf-8"))
+            self.assertEqual([], validate_schema_instance(value, schema), path.name)
+        invalid = json.loads((fixture_dir / "complete-five-es.json").read_text(encoding="utf-8"))
+        invalid["options"][0]["unexpected"] = True
+        self.assertTrue(validate_schema_instance(invalid, schema))
+
     def test_market_learning_schemas_and_fixtures_conform(self):
         fixture_dir = ROOT.parent.parent / "tests/evals/with-skill/fixtures/career-market-learning-dossier"
         market_schema = self._schema("career-market-learning-dossier-v1.schema.json")

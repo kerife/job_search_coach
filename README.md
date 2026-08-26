@@ -12,6 +12,11 @@ the plugin itself lives at `plugins/professional-growth-coach/`.
 - `docs/` — design specifications and implementation plans.
 - `.superdesign/` — shareable design-system/source artifacts; private generated renders belong in ignored paths.
 
+Learning recommendations use the closed `learning-option-research-v1` schema and
+validator to keep provider evidence dated, identity-free, and separate from
+market snapshots; paid or external actions remain blocked until explicitly
+authorized.
+
 ## Share through Git
 
 Clone this repository, then add its marketplace root to Codex:

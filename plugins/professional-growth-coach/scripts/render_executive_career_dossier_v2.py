@@ -311,10 +311,11 @@ def _render_market_context(market_dossier: Mapping[str, object], locale: str) ->
         employer = html.escape(str(card["employer_name"]), quote=True)
         title = html.escape(str(card["title"]), quote=True)
         score = int(card["alignment_percent"])
+        score_id = f"market-alignment-score-{index}"
         card_html.append(f'''<article class="vacancy-alignment-card" aria-labelledby="{heading_id}">
           <p class="market-vacancy-key">{short_key}</p><h3 id="{heading_id}">{employer} — {title}</h3>
-          <p>{labels['market_alignment']}: <strong>{score} {'de' if locale == 'es' else 'out of'} 100</strong></p>
-          <progress max="100" value="{score}" aria-labelledby="{heading_id}">{score}</progress>
+          <p class="market-alignment-line"><span>{labels['market_alignment']}</span><strong class="market-alignment-score" id="{score_id}">{score} {'de' if locale == 'es' else 'out of'} 100</strong></p>
+          <progress max="100" value="{score}" aria-labelledby="{heading_id} {score_id}">{score}</progress>
         </article>''')
         key_rows.append(f"<li><strong>{short_key}</strong> — {employer} — {title}</li>")
 
@@ -338,11 +339,13 @@ def _render_market_context(market_dossier: Mapping[str, object], locale: str) ->
         matrix_rows.append(f'''<tr><th scope="row">{html.escape(str(row['signal']), quote=True)}<span class="market-state"> {symbol} {state_label}</span></th>{''.join(cells)}</tr>''')
 
     recurrence: list[str] = []
-    for row_value in BASE._rows(market_dossier["recurrence_rows"]):
+    for index, row_value in enumerate(BASE._rows(market_dossier["recurrence_rows"]), start=1):
         row = BASE._mapping(row_value)
         occurrences, sample_size = int(row["occurrences"]), int(row["sample_size"])
-        recurrence.append(f'''<li class="recurrence-row"><span>{html.escape(str(row['signal']), quote=True)}</span>
-          <progress value="{occurrences}" max="{sample_size}">{occurrences}/{sample_size}</progress><strong>{occurrences}/{sample_size}</strong></li>''')
+        signal_id = f"market-recurrence-signal-{index}"
+        count_id = f"market-recurrence-count-{index}"
+        recurrence.append(f'''<li class="recurrence-row"><span id="{signal_id}">{html.escape(str(row['signal']), quote=True)}</span>
+          <progress value="{occurrences}" max="{sample_size}" aria-labelledby="{signal_id} {count_id}">{occurrences}/{sample_size}</progress><strong class="market-recurrence-count" id="{count_id}">{occurrences}/{sample_size}</strong></li>''')
     limitation = ""
     if market_dossier.get("state") == "limited_market_evidence":
         limitation = f'<p class="market-limitation"><strong>{labels["market_limited"]}:</strong> {html.escape(str(summary["limitation"]), quote=True)}</p>'

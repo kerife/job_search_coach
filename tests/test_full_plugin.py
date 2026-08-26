@@ -327,7 +327,7 @@ class FullPluginIntegrationTests(unittest.TestCase):
             checker_module.EXECUTIVE_DOSSIER_V2_PACKAGE_PATHS,
         )
         self.assertEqual(
-            13,
+            17,
             len(checker_module.CAREER_MARKET_PACKAGE_PATHS),
         )
         self.assertIn(
@@ -336,6 +336,10 @@ class FullPluginIntegrationTests(unittest.TestCase):
         )
         self.assertIn(
             "assets/career-market-learning-dossier-v1.css",
+            checker_module.CAREER_MARKET_PACKAGE_PATHS,
+        )
+        self.assertIn(
+            "scripts/validate_learning_option_research.py",
             checker_module.CAREER_MARKET_PACKAGE_PATHS,
         )
 

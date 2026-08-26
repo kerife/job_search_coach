@@ -4,6 +4,8 @@
 .vacancy-alignment-card { min-width: 0; padding: 1rem; border: 1px solid var(--forest-soft); background: var(--paper); break-inside: avoid; page-break-inside: avoid; }
 .vacancy-alignment-card h3 { margin: .25rem 0 .75rem; overflow-wrap: anywhere; }
 .market-vacancy-key { margin: 0; color: var(--muted); font-weight: 700; }
+.market-alignment-line { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; margin: .75rem 0 0; }
+.market-alignment-score, .market-recurrence-count { color: var(--forest); font-variant-numeric: tabular-nums; }
 .market-key, .market-matrix-wrap, .gap-closure-route { margin-top: 1.25rem; min-width: 0; }
 .market-key ol, .gap-closure-route ol { margin: .5rem 0 0; padding-left: 1.25rem; }
 .market-matrix { width: 100%; border-collapse: collapse; table-layout: fixed; }
@@ -22,6 +24,7 @@
   .market-matrix tr { padding: .75rem 0; border-bottom: 1px solid var(--muted); }
   .market-matrix td { display: grid; grid-template-columns: minmax(7rem, .4fr) minmax(0, 1fr); gap: .75rem; border: 0; }
   .market-matrix td::before { content: attr(data-label); color: var(--muted); font-size: .8125rem; font-weight: 700; }
+  .market-alignment-line { align-items: flex-start; flex-direction: column; gap: .2rem; }
   .recurrence-row { grid-template-columns: 1fr; gap: .35rem; }
 }
 
@@ -30,7 +33,7 @@
 @media print { .market-summary, .market-key, .market-matrix-wrap, .gap-closure-route, .vacancy-alignment-card, .recurrence-row { break-inside: avoid; page-break-inside: avoid; } .market-matrix thead { display: table-header-group; } }
 
 @media (forced-colors: active) {
-  .market-summary, .vacancy-alignment-card, .recurrence-row, .gap-closure-route, .market-matrix th, .market-matrix td { background: Canvas; color: CanvasText; border-color: CanvasText; }
+  .market-summary, .vacancy-alignment-card, .recurrence-row, .gap-closure-route, .market-matrix th, .market-matrix td, .market-alignment-score, .market-recurrence-count { background: Canvas; color: CanvasText; border-color: CanvasText; }
   .market-boundary, .market-limitation, .gap-closure-route { border-left-color: Highlight; }
 }
 

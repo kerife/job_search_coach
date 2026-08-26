@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Identity-free learning option research v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "locale", "as_of_date", "source_market_snapshot", "candidate_preferences", "options", "privacy_boundary", "no_external_action"],
+  "properties": {
+    "schema_version": {"const": "learning-option-research-v1"},
+    "locale": {"enum": ["es", "en"]},
+    "as_of_date": {"type": "string", "format": "date"},
+    "source_market_snapshot": {"type": "string", "pattern": "^snap-market-sha256-[0-9a-f]{64}$"},
+    "candidate_preferences": {"$ref": "#/$defs/preferences"},
+    "options": {"type": "array", "minItems": 1, "maxItems": 5, "items": {"$ref": "#/$defs/option"}},
+    "privacy_boundary": {"const": "identity_free_market_and_provider_evidence_only"},
+    "no_external_action": {"const": true}
+  },
+  "$defs": {
+    "preferences": {
+      "type": "object", "additionalProperties": false,
+      "required": ["weekly_time_budget", "money_budget", "currency", "purchase_authorized"],
+      "properties": {
+        "weekly_time_budget": {"type": "string", "minLength": 1, "maxLength": 100},
+        "money_budget": {"type": "string", "minLength": 1, "maxLength": 100},
+        "currency": {"type": "string", "minLength": 1, "maxLength": 100},
+        "purchase_authorized": {"const": false}
+      }
+    },
+    "action_gate": {
+      "type": "object", "additionalProperties": false,
+      "required": ["external_action_authorized", "exact_authorization_required", "ownership_review", "secrets_review", "confidentiality_review", "customer_data_review", "rights_holder_review", "publication_authorized"],
+      "properties": {
+        "external_action_authorized": {"const": false},
+        "exact_authorization_required": {"const": true},
+        "ownership_review": {"enum": ["required", "not_applicable"]},
+        "secrets_review": {"enum": ["required", "not_applicable"]},
+        "confidentiality_review": {"enum": ["required", "not_applicable"]},
+        "customer_data_review": {"enum": ["required", "not_applicable"]},
+        "rights_holder_review": {"enum": ["required", "not_applicable"]},
+        "publication_authorized": {"const": false}
+      }
+    },
+    "option": {
+      "type": "object", "additionalProperties": false,
+      "required": ["option_id", "gap_signal", "option_type", "provider", "option", "source_title", "source_date", "source_state", "url", "geography", "availability", "role", "seniority", "current_cost", "currency", "tax", "duration", "duration_basis", "prerequisite", "renewal", "maintenance", "unknowns", "proof_artifact", "action_gate"],
+      "properties": {
+        "option_id": {"type": "string", "pattern": "^LO-[0-9]{3}$"},
+        "gap_signal": {"type": "string", "pattern": "^[a-z][a-z0-9_]{1,63}$"},
+        "option_type": {"enum": ["candidate_owned_project", "lab", "course", "certification", "free_resource", "do_nothing_now"]},
+        "provider": {"type": "string", "minLength": 1, "maxLength": 160},
+        "option": {"type": "string", "minLength": 1, "maxLength": 240},
+        "source_title": {"type": "string", "minLength": 1, "maxLength": 240},
+        "source_date": {"type": "string", "format": "date"},
+        "source_state": {"enum": ["active", "stale", "unavailable", "synthetic"]},
+        "url": {"type": ["string", "null"], "pattern": "^https://"},
+        "geography": {"type": "string", "minLength": 1, "maxLength": 160},
+        "availability": {"type": "string", "minLength": 1, "maxLength": 160},
+        "role": {"type": "string", "minLength": 1, "maxLength": 160},
+        "seniority": {"type": "string", "minLength": 1, "maxLength": 160},
+        "current_cost": {"type": "string", "minLength": 1, "maxLength": 100},
+        "currency": {"type": "string", "minLength": 1, "maxLength": 100},
+        "tax": {"type": "string", "minLength": 1, "maxLength": 100},
+        "duration": {"type": "string", "minLength": 1, "maxLength": 160},
+        "duration_basis": {"enum": ["provider_verified", "provider_duration_unknown", "candidate_estimated"]},
+        "prerequisite": {"type": "string", "minLength": 1, "maxLength": 300},
+        "renewal": {"type": "string", "minLength": 1, "maxLength": 160},
+        "maintenance": {"type": "string", "minLength": 1, "maxLength": 160},
+        "unknowns": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 300}},
+        "proof_artifact": {"type": "string", "minLength": 1, "maxLength": 500},
+        "action_gate": {"$ref": "#/$defs/action_gate"}
+      }
+    }
+  }
+}

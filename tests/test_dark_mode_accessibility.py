@@ -63,6 +63,8 @@ class DarkModeAccessibilityTests(unittest.TestCase):
         css = (ASSETS / "career-market-learning-dossier-v1.css").read_text(encoding="utf-8")
         self.assertIn("@media screen and (max-width: 680px)", css)
         self.assertIn(".market-matrix td::before", css)
+        self.assertIn(".market-alignment-score, .market-recurrence-count", css)
+        self.assertIn("font-variant-numeric: tabular-nums", css)
         self.assertIn("content: attr(data-label)", css)
         self.assertNotRegex(css, r"overflow-x:\s*(?:auto|scroll)|white-space:\s*nowrap")
         forced = css[css.index("@media (forced-colors: active)"):]

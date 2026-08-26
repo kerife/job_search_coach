@@ -674,6 +674,8 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
 
         self.assertEqual(rendered.count('class="vacancy-alignment-card"'), 5)
         self.assertEqual(rendered.count('<progress max="100"'), 5)
+        self.assertEqual(rendered.count('class="market-alignment-score"'), 5)
+        self.assertEqual(rendered.count('class="market-recurrence-count"'), len(market["recurrence_rows"]))
         self.assertIn('class="market-matrix"', rendered)
         self.assertIn('class="recurrence-row"', rendered)
         self.assertIn('class="gap-closure-route"', rendered)
@@ -683,6 +685,26 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         self.assertIn("1/5", rendered)
         self.assertNotIn("snap-market-sha256", rendered)
         self.assertNotIn("E-001", visible_text(rendered))
+
+    def test_market_progress_indicators_have_composite_text_labels(self) -> None:
+        dossier = make_v2_dossier("en")
+        market = make_composable_market_dossier("complete-five-es.json", dossier)
+        rendered = self.renderer.render_dossier_html(dossier, market)
+        audit = DossierDOMAudit()
+        audit.feed(rendered)
+
+        self.assertTrue(
+            all(reference in audit.ids for reference in audit.references),
+            "every market progress label reference resolves to visible text",
+        )
+        self.assertRegex(
+            rendered,
+            r'<progress[^>]+aria-labelledby="market-vacancy-title-1 market-alignment-score-1"',
+        )
+        self.assertRegex(
+            rendered,
+            r'<progress[^>]+aria-labelledby="market-recurrence-signal-1 market-recurrence-count-1"',
+        )
 
     def test_optional_market_dossier_limited_and_unavailable_states_do_not_pad_or_score(self) -> None:
         english = make_v2_dossier("en")
