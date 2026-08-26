@@ -781,9 +781,9 @@ def _render_market_context(dossier: Mapping[str, object], locale: str) -> str:
             rows.append(f"""
           <tr>
             <th scope="row">{text(role['title'])}</th>
-            <td>{_join_values(role['required_signals'])}</td>
-            <td>{_join_values(role['supported_signals'])}</td>
-            <td>{_join_values(role['gaps'])}</td>
+            <td data-label="{text(labels['required'])}">{_join_values(role['required_signals'])}</td>
+            <td data-label="{text(labels['supported'])}">{_join_values(role['supported_signals'])}</td>
+            <td data-label="{text(labels['gaps'])}">{_join_values(role['gaps'])}</td>
           </tr>""")
         source_items = "".join(
             f'<li><a href="{text(source["url"])}" rel="noreferrer">{text(source["document_title"])}</a> — {text(source["publisher"])}</li>'

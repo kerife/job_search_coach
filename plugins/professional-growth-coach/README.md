@@ -52,7 +52,8 @@ v2 HTML renders a separate comparison table with the real sample date,
 candidate-to-signal gaps, and sanitized public research sources. Without that
 evidence it keeps one explicit unavailable-market state. Vacancy context never
 changes the LinkedIn score and never authorizes outreach, applications, or
-other external action.
+other external action. On screens up to 680px, the table stacks signal cells
+with localized labels while preserving its semantic and print layouts.
 
 ## Coach mode example
 

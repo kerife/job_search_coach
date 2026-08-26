@@ -44,6 +44,11 @@ research links. Market rows remain separate from the LinkedIn score; no
 unvalidated vacancy, employer, salary, ranking, or eligibility claim may enter
 the surface.
 
+The dated market table keeps native table semantics and, at screen widths up to
+680px, presents each signal cell as a labelled vertical stack using localized
+labels. The print layout remains tabular, and the responsive treatment does not
+depend on horizontal scrolling.
+
 ## Visual language
 
 - Preserve the existing editorial document aesthetic: calm, sober, private,
@@ -136,6 +141,7 @@ claim, or outcome promise as product copy or fixture evidence. Use native
 requirement explanation authoritative. A complete market matrix has five
 labelled vacancy columns; a limited matrix has exactly its real `N` columns and
 no padding. At 320px, coverage and matrix rows become labelled stacks rather
-than making horizontal scrolling the only access path. Print preserves all
+than making horizontal scrolling the only access path. The market matrix uses
+localized cell labels while retaining table semantics. Print preserves all
 labels and text states. No critical decision is hidden in a closed accordion.
 Templates are static text, not controls or stored answers.

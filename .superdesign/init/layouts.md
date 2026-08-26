@@ -11,6 +11,10 @@ The templates below are the complete layout sources. They are listed here once (
 - Source: `plugins/professional-growth-coach/assets/executive-career-dossier-v1.html`
 - Renders: document body with renderer-supplied header, main content, and a page-specific inline script.
 
+When dated vacancy evidence is present, the market comparison table remains
+semantic and switches to labelled cell stacks at screen widths up to 680px;
+the print rendering stays tabular.
+
 ```html
 <!doctype html>
 <html lang="{{LANG}}">

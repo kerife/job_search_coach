@@ -19,6 +19,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = REPO_ROOT / "plugins" / "professional-growth-coach" / "scripts"
+ASSETS_ROOT = REPO_ROOT / "plugins" / "professional-growth-coach" / "assets"
 VALIDATOR_PATH = SCRIPTS / "validate_executive_career_dossier_v2.py"
 RENDERER_PATH = SCRIPTS / "render_executive_career_dossier_v2.py"
 FIXTURE_ROOT = REPO_ROOT / "tests" / "evals" / "with-skill" / "fixtures" / "executive-career-dossier"
@@ -635,6 +636,24 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
                 self.assertIn(caption, rendered)
                 self.assertNotIn("source_digest", visible_text(rendered))
                 self.assertNotIn("E-008", visible_text(rendered))
+
+    def test_dated_market_table_exposes_localized_mobile_labels_without_changing_semantics(self) -> None:
+        expected = {
+            "en": ("Required signals", "Supported signals", "Needs confirmation"),
+            "es": ("Señales requeridas", "Señales sustentadas", "Por confirmar"),
+        }
+        css = (ASSETS_ROOT / "executive-career-dossier-v1.css").read_text(encoding="utf-8")
+        self.assertIn("@media screen and (max-width: 680px)", css)
+        self.assertIn(".comparison-table td::before", css)
+        self.assertIn("content: attr(data-label)", css)
+        self.assertNotIn("overflow-x: auto", css)
+        for locale, labels in expected.items():
+            with self.subTest(locale=locale):
+                rendered = self.renderer.render_dossier_html(make_market_v2_dossier(locale))
+                self.assertIn("<thead>", rendered)
+                self.assertEqual(rendered.count("data-label="), 3)
+                for label in labels:
+                    self.assertIn(f'<td data-label="{label}">', rendered)
 
     def test_shipped_fixtures_have_complete_resolved_noninteractive_dom(self) -> None:
         for name in ("scenario-a-es.json", "scenario-c-en.json"):

@@ -20,6 +20,9 @@ composes the same document shell after validating the complete section ledger
 and coaching extensions. Its market region is conditional: `not_researched`
 renders one bounded unavailable state, while validated dated vacancy evidence
 uses the base comparison table without changing the LinkedIn score.
+At screen widths up to 680px, its signal cells stack with localized labels;
+print keeps the semantic table layout and no horizontal-scroll affordance is
+required.
 
 ## /recruiter-practice-session (offline artifact)
 
