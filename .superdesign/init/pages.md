@@ -23,6 +23,8 @@ uses the base comparison table without changing the LinkedIn score.
 At screen widths up to 680px, its signal cells stack with localized labels;
 print keeps the semantic table layout and no horizontal-scroll affordance is
 required.
+The section-coverage ledger likewise keeps a single facts column at 640px and
+below, preserving the same semantic reading order without horizontal scrolling.
 
 ## /recruiter-practice-session (offline artifact)
 

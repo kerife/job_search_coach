@@ -53,7 +53,9 @@ candidate-to-signal gaps, and sanitized public research sources. Without that
 evidence it keeps one explicit unavailable-market state. Vacancy context never
 changes the LinkedIn score and never authorizes outreach, applications, or
 other external action. On screens up to 680px, the table stacks signal cells
-with localized labels while preserving its semantic and print layouts.
+with localized labels while preserving its semantic and print layouts. The
+section-coverage facts also collapse to one column at 640px and below so the
+17-section ledger remains readable without horizontal scrolling.
 
 ## Coach mode example
 

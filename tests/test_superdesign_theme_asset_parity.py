@@ -71,6 +71,16 @@ def _layout_sources() -> dict[str, bytes]:
 
 
 class SuperdesignThemeAssetParityTests(unittest.TestCase):
+    def test_dossier_coverage_facts_keep_one_column_through_640px(self):
+        css = (ASSETS / "executive-career-dossier-v2.css").read_text(encoding="utf-8")
+        self.assertRegex(
+            css,
+            re.compile(
+                r"@media screen and \(max-width: 640px\).*?\.section-coverage-facts\s*\{\s*grid-template-columns:\s*1fr;",
+                re.DOTALL,
+            ),
+        )
+
     def test_compact_facts_keep_one_column_through_640px(self):
         for name, selector in (
             ("private-recruiter-followthrough-checkpoint-v1.css", ".checkpoint-facts"),
