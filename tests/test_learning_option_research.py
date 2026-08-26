@@ -113,6 +113,17 @@ class LearningOptionResearchTests(unittest.TestCase):
         source["options"][2]["duration_basis"] = "garbage"
         self.assertIn("duration_basis", " ".join(validate_research(source)))
 
+    def test_synthetic_sources_and_dates_cannot_impersonate_live_evidence(self) -> None:
+        source = load_fixture("complete-five-es.json")
+        source["options"][0]["url"] = "https://provider.example.org/course"
+        self.assertTrue(validate_research(source))
+        future = load_fixture("complete-five-es.json")
+        future["as_of_date"] = "2099-01-01"
+        self.assertIn("future", " ".join(validate_research(future)))
+        active_fixture = load_fixture("complete-five-es.json")
+        active_fixture["options"][0]["source_state"] = "active"
+        self.assertTrue(validate_research(active_fixture))
+
 
 if __name__ == "__main__":
     unittest.main()

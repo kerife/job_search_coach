@@ -35,10 +35,13 @@ DOSSIER_SOURCE_INVENTORY_PATHS = (
     Path("plugins/professional-growth-coach/schemas/target-vacancy-research-v1.schema.json"),
     Path("plugins/professional-growth-coach/schemas/candidate-market-alignment-v1.schema.json"),
     Path("plugins/professional-growth-coach/schemas/career-market-learning-dossier-v1.schema.json"),
+    Path("plugins/professional-growth-coach/schemas/career-market-learning-dossier-v2.schema.json"),
     Path("plugins/professional-growth-coach/schemas/learning-option-research-v1.schema.json"),
     Path("plugins/professional-growth-coach/scripts/validate_target_vacancy_research.py"),
     Path("plugins/professional-growth-coach/scripts/build_career_market_learning_dossier.py"),
     Path("plugins/professional-growth-coach/scripts/validate_career_market_learning_dossier.py"),
+    Path("plugins/professional-growth-coach/scripts/build_career_market_learning_dossier_v2.py"),
+    Path("plugins/professional-growth-coach/scripts/validate_career_market_learning_dossier_v2.py"),
     Path("plugins/professional-growth-coach/scripts/validate_learning_option_research.py"),
     Path("plugins/professional-growth-coach/assets/career-market-learning-dossier-v1.css"),
 )
@@ -776,7 +779,9 @@ def scan_text(path: Path, text: str) -> Counter[str]:
             matches = [
                 match
                 for match in matches
-                if not re.search(r"(?i)codex\.\d+$", corpus[max(0, match.start() - 6):match.end()])
+                if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", match.group())
+                and not re.search(r"sha256-$", corpus[max(0, match.start() - 7):match.start()])
+                and not re.search(r"(?i)codex\.\d+$", corpus[max(0, match.start() - 6):match.end()])
             ]
         count = len(matches)
         if count:

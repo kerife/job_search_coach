@@ -17,6 +17,12 @@ validator to keep provider evidence dated, identity-free, and separate from
 market snapshots; paid or external actions remain blocked until explicitly
 authorized.
 
+The market-learning v2 dossier composes that research only with an exact market
+snapshot and recurring vacancy rows. It emits three to five ranked, draft-only
+decisions, prefers a candidate-owned proof project before paid learning, and
+does not recommend a paid option when budget or current source evidence is
+unknown. Every decision remains bounded by `no_external_action=true`.
+
 ## Share through Git
 
 Clone this repository, then add its marketplace root to Codex:

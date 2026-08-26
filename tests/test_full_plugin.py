@@ -327,7 +327,7 @@ class FullPluginIntegrationTests(unittest.TestCase):
             checker_module.EXECUTIVE_DOSSIER_V2_PACKAGE_PATHS,
         )
         self.assertEqual(
-            17,
+            22,
             len(checker_module.CAREER_MARKET_PACKAGE_PATHS),
         )
         self.assertIn(

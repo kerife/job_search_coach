@@ -57,6 +57,14 @@ semantics while exposing each cell label in the rendered reading order; no
 horizontal scrolling, color-only meaning, source snapshots, or external action
 is introduced.
 
+The market-learning v2 decision region uses a linear editorial stack: each
+decision card exposes the gap signal, visible recurrence (`k/N`), decision
+label, proof-first rationale, and the next manual review gate. Project-first,
+consider, and not-needed states must remain distinguishable by text and border
+treatment, never by color alone; paid options must surface their budget/source
+unknowns beside the decision. The region is static copy, not a button, form, or
+collapsed control.
+
 ## Visual language
 
 - Preserve the existing editorial document aesthetic: calm, sober, private,

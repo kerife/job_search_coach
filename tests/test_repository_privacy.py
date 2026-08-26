@@ -64,10 +64,13 @@ DOSSIER_SOURCE_INVENTORY_PATHS = (
     Path("plugins/professional-growth-coach/schemas/target-vacancy-research-v1.schema.json"),
     Path("plugins/professional-growth-coach/schemas/candidate-market-alignment-v1.schema.json"),
     Path("plugins/professional-growth-coach/schemas/career-market-learning-dossier-v1.schema.json"),
+    Path("plugins/professional-growth-coach/schemas/career-market-learning-dossier-v2.schema.json"),
     Path("plugins/professional-growth-coach/schemas/learning-option-research-v1.schema.json"),
     Path("plugins/professional-growth-coach/scripts/validate_target_vacancy_research.py"),
     Path("plugins/professional-growth-coach/scripts/build_career_market_learning_dossier.py"),
     Path("plugins/professional-growth-coach/scripts/validate_career_market_learning_dossier.py"),
+    Path("plugins/professional-growth-coach/scripts/build_career_market_learning_dossier_v2.py"),
+    Path("plugins/professional-growth-coach/scripts/validate_career_market_learning_dossier_v2.py"),
     Path("plugins/professional-growth-coach/scripts/validate_learning_option_research.py"),
     Path("plugins/professional-growth-coach/assets/career-market-learning-dossier-v1.css"),
 )
@@ -583,7 +586,7 @@ class RepositoryPrivacyTests(unittest.TestCase):
         )
         self.assertEqual(expected, set(scanner.scan_paths(REPO_ROOT)))
         self.assertEqual(5, len(INVENTORY_PATHS))
-        self.assertEqual(15, len(DOSSIER_SOURCE_INVENTORY_PATHS))
+        self.assertEqual(18, len(DOSSIER_SOURCE_INVENTORY_PATHS))
         self.assertEqual(
             set(DOSSIER_SOURCE_INVENTORY_PATHS),
             set(scanner.DOSSIER_SOURCE_INVENTORY_PATHS),
@@ -659,6 +662,18 @@ class RepositoryPrivacyTests(unittest.TestCase):
             scanner.scan_text(
                 Path("synthetic.md"),
                 "installed_cache_version: 0.2.0+codex.20260813022934",
+            ),
+        )
+
+    def test_iso_dates_and_snapshot_hashes_are_not_misclassified_as_phone(self) -> None:
+        scanner = load_scanner()
+        self.assertNotIn(
+            "PHONE_NUMBER",
+            scanner.scan_text(
+                Path("synthetic.json"),
+                '{"as_of_date":"2026-08-13", "snapshot":"snap-market-sha256-'
+                + "0" * 64
+                + '"}',
             ),
         )
 

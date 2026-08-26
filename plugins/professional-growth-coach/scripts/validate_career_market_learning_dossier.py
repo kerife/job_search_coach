@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib.util
 import ipaddress
 import json
@@ -55,6 +56,14 @@ TOP_FIELDS = frozenset({
 
 def rounded_percent(numerator: int, denominator: int) -> int:
     return 0 if denominator == 0 else (100 * numerator + denominator // 2) // denominator
+
+
+def snapshot_for_market_dossier(value: Mapping[str, object]) -> str:
+    """Return the canonical content-bound identifier for a validated market dossier."""
+    if not isinstance(value, Mapping):
+        raise ValueError("market learning dossier must be an object")
+    canonical = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return f"snap-market-sha256-{hashlib.sha256(canonical).hexdigest()}"
 
 
 def alignment_score(

@@ -115,8 +115,10 @@ def _url_error(value: object, source_state: object) -> str | None:
     if not isinstance(value, str):
         return "learning source URL is invalid"
     # Reserved test URLs are allowed only for explicitly synthetic fixtures.
-    if source_state == "synthetic" and value.startswith("https://example.com/"):
-        return None if not any(marker in value for marker in ("@", "?", "#")) else "learning source URL is invalid"
+    if source_state == "synthetic":
+        if not value.startswith("https://example.com/") or any(marker in value for marker in ("@", "?", "#")):
+            return "learning source URL is invalid"
+        return None
     try:
         from urllib.parse import urlsplit
         parsed = urlsplit(value)
@@ -130,6 +132,8 @@ def _url_error(value: object, source_state: object) -> str | None:
     # Decimal IPv4 forms (for example 2130706433) are not accepted as public
     # hostnames even when the standard library does not parse them as IPs.
     if not host or host.isdigit() or host == "localhost" or host.endswith(".localhost"):
+        return "learning source URL is invalid"
+    if source_state != "synthetic" and (host == "example.com" or host.endswith(".example.com") or host == "example.org" or host.endswith(".example.org") or host == "example.net" or host.endswith(".example.net")):
         return "learning source URL is invalid"
     if re.fullmatch(r"(?:0x[0-9a-f]+|[0-9]+)(?:\.(?:0x[0-9a-f]+|[0-9]+)){1,3}", host, re.I):
         return "learning source URL is invalid"
@@ -205,6 +209,8 @@ def _validate_option(value: object, index: int, as_of: date | None, seen_ids: se
     source_date = _date(row.get("source_date"), f"{path}.source_date", errors)
     if as_of and source_date and source_date > as_of:
         errors.append(f"{path}.source_date cannot be after as_of_date")
+    if source_date and source_date > date.today():
+        errors.append(f"{path}.source_date cannot be in the future")
     source_state = row.get("source_state")
     if source_state not in SOURCE_STATES:
         errors.append(f"{path}.source_state has invalid value")
@@ -263,6 +269,8 @@ def validate_research(value: object) -> list[str]:
         if value.get("locale") not in {"es", "en"}:
             errors.append("locale has invalid value")
         as_of = _date(value.get("as_of_date"), "as_of_date", errors)
+        if as_of and as_of > date.today():
+            errors.append("as_of_date cannot be in the future")
         if not isinstance(value.get("source_market_snapshot"), str) or not MARKET_SNAPSHOT.fullmatch(value["source_market_snapshot"]):
             errors.append("source_market_snapshot has invalid value")
         _validate_preferences(value.get("candidate_preferences"), errors)

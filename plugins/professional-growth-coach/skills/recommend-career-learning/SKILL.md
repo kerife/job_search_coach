@@ -17,6 +17,15 @@ Record a separate official-source row for every provider option with these expli
 
 For structured runs, keep provider rows in the closed `learning-option-research-v1` artifact and validate it with `scripts/validate_learning_option_research.py` before any ROI composition. The artifact is identity-free, source-snapshot bound, synthetic-fixture safe, and always `no_external_action=true`; stale or unavailable sources remain blocked from current recommendations.
 
+For market-linked runs, compose `career-market-learning-dossier-v2` only after
+validating both the v1 market dossier and the exact learning-research snapshot.
+Return three to five ranked decisions tied to recurring vacancy signals; use a
+candidate-owned project or lab before paid learning when it can produce the
+needed proof, and keep a paid option at `consider` when budget or current
+provider evidence is unknown. The v2 artifact is draft-only, includes a fixed
+five-day proof sprint when a project is selected, and never performs an external
+action.
+
 Map role and seniority to exact vacancy evidence, and label that context separately from provider-verified facts. Do not compress mixed target roles into one invented role. Preserve mixed stated and unspecified seniority, or use `unknown:` when the fixtures do not state seniority. Do not infer seniority from a bridge-role recommendation.
 
 Current prices, exam fees, course costs, certification rules, provider duration, prerequisites, and availability must come from a current dated official source or official provider page, or be `unknown:`. Label provider option time as `provider-verified` or `provider duration unknown`. Label candidate work, preparation, or project time as `candidate-estimated`. Do not hard-code prices. Do not make stale price claims or invented outcomes.

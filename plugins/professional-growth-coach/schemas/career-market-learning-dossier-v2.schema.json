@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Career market learning dossier v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "locale", "as_of_date", "state", "source_research_snapshot", "source_executive_dossier_snapshot", "source_market_snapshot", "source_learning_research_snapshot", "search_summary", "vacancy_cards", "matrix_rows", "recurrence_rows", "learning_state", "learning_decisions", "learning_options", "coach_decision", "proof_sprint", "reuse_map", "methodology_boundary", "privacy_boundary", "no_external_action"],
+  "properties": {
+    "schema_version": {"const": "career-market-learning-dossier-v2"},
+    "locale": {"enum": ["es", "en"]},
+    "as_of_date": {"type": "string", "format": "date"},
+    "state": {"enum": ["complete", "limited_market_evidence", "market_evidence_unavailable"]},
+    "source_research_snapshot": {"type": "string", "pattern": "^snap-market-sha256-[0-9a-f]{64}$"},
+    "source_executive_dossier_snapshot": {"type": "string", "pattern": "^snap-dossier-sha256-[0-9a-f]{64}$"},
+    "source_market_snapshot": {"type": "string", "pattern": "^snap-market-sha256-[0-9a-f]{64}$"},
+    "source_learning_research_snapshot": {"type": "string", "pattern": "^snap-learning-sha256-[0-9a-f]{64}$"},
+    "candidate_preferences": {"$ref": "#/$defs/preferences"},
+    "search_summary": {"$ref": "#/$defs/search_summary"},
+    "vacancy_cards": {"type": "array", "maxItems": 5, "items": {"$ref": "#/$defs/card"}},
+    "matrix_rows": {"type": "array", "maxItems": 150, "items": {"$ref": "#/$defs/matrix_row"}},
+    "recurrence_rows": {"type": "array", "maxItems": 150, "items": {"$ref": "#/$defs/recurrence_row"}},
+    "learning_state": {"const": "evaluated"},
+    "learning_decisions": {"type": "array", "minItems": 3, "maxItems": 5, "items": {"$ref": "#/$defs/decision"}},
+    "learning_options": {"type": "array", "minItems": 1, "maxItems": 5, "items": {"$ref": "#/$defs/option"}},
+    "coach_decision": {"$ref": "#/$defs/coach_decision"},
+    "proof_sprint": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/proof_sprint"}]},
+    "reuse_map": {"type": "array", "maxItems": 3, "items": {"$ref": "#/$defs/reuse"}},
+    "methodology_boundary": {"const": "sample_based_documented_evidence_only_no_hiring_fit"},
+    "privacy_boundary": {"const": "identity_free_evidence_references_only"},
+    "no_external_action": {"const": true}
+  },
+  "$defs": {
+    "search_summary": {"type": "object", "additionalProperties": false, "required": ["vacancy_sample_count", "bounded_queries_run", "limit_reason", "limitation"], "properties": {"vacancy_sample_count": {"type": "integer", "minimum": 0, "maximum": 5}, "bounded_queries_run": {"type": "integer", "minimum": 0, "maximum": 100}, "limit_reason": {"enum": ["target_reached", "search_limit_reached", "source_limit", "none"]}, "limitation": {"type": "string", "minLength": 1, "maxLength": 500}}},
+    "requirement": {"type": "object", "additionalProperties": false, "required": ["requirement_id", "signal", "importance"], "properties": {"requirement_id": {"type": "string", "pattern": "^V-[0-9]{3}-R-[0-9]{2}$"}, "signal": {"type": "string", "pattern": "^[a-z][a-z0-9_]{1,63}$"}, "importance": {"enum": ["must_have", "preferred", "responsibility_only"]}}},
+    "card": {"type": "object", "additionalProperties": false, "required": ["vacancy_id", "employer_name", "title", "location", "arrangement", "source_kind", "source_url", "requirements", "earned_points", "maximum_points", "known_points", "alignment_percent", "evidence_coverage_percent", "interpretation", "qualitative_band"], "properties": {"vacancy_id": {"type": "string", "pattern": "^V-[0-9]{3}$"}, "employer_name": {"type": "string", "minLength": 1, "maxLength": 160}, "title": {"type": "string", "minLength": 1, "maxLength": 240}, "location": {"type": "string", "minLength": 1, "maxLength": 160}, "arrangement": {"enum": ["onsite", "hybrid", "remote", "flexible"]}, "source_kind": {"enum": ["official_employer", "employer_operated_ats", "linkedin_jobs_backup"]}, "source_url": {"type": "string", "pattern": "^https://"}, "requirements": {"type": "array", "minItems": 1, "maxItems": 30, "items": {"$ref": "#/$defs/requirement"}}, "earned_points": {"type": "integer", "minimum": 0}, "maximum_points": {"type": "integer", "minimum": 0}, "known_points": {"type": "integer", "minimum": 0}, "alignment_percent": {"type": "integer", "minimum": 0, "maximum": 100}, "evidence_coverage_percent": {"type": "integer", "minimum": 0, "maximum": 100}, "interpretation": {"const": "directional_documented_evidence_not_hiring_fit"}, "qualitative_band": {"enum": ["insufficient_evidence", "higher_documented_alignment", "moderate_documented_alignment", "lower_documented_alignment"]}}},
+    "matrix_cell": {"type": "object", "additionalProperties": false, "required": ["vacancy_id", "required"], "properties": {"vacancy_id": {"type": "string", "pattern": "^V-[0-9]{3}$"}, "required": {"type": "boolean"}}},
+    "matrix_row": {"type": "object", "additionalProperties": false, "required": ["signal", "support_state", "evidence_ids", "cells"], "properties": {"signal": {"type": "string", "pattern": "^[a-z][a-z0-9_]{1,63}$"}, "support_state": {"enum": ["verified_match", "candidate_reported_match", "adjacent_evidence", "explicit_gap", "unknown"]}, "evidence_ids": {"type": "array", "maxItems": 20, "uniqueItems": true, "items": {"type": "string", "pattern": "^E-[0-9]{3}$"}}, "cells": {"type": "array", "maxItems": 5, "items": {"$ref": "#/$defs/matrix_cell"}}}},
+    "recurrence_row": {"type": "object", "additionalProperties": false, "required": ["signal", "occurrences", "sample_size", "display_fraction", "support_state", "evidence_ids"], "properties": {"signal": {"type": "string", "pattern": "^[a-z][a-z0-9_]{1,63}$"}, "occurrences": {"type": "integer", "minimum": 1, "maximum": 5}, "sample_size": {"type": "integer", "minimum": 1, "maximum": 5}, "display_fraction": {"type": "string", "pattern": "^[1-5]/[1-5]$"}, "support_state": {"enum": ["verified_match", "candidate_reported_match", "adjacent_evidence", "explicit_gap", "unknown"]}, "evidence_ids": {"type": "array", "maxItems": 20, "uniqueItems": true, "items": {"type": "string", "pattern": "^E-[0-9]{3}$"}}}},
+    "preferences": {"type": "object", "additionalProperties": false, "required": ["weekly_time_budget", "money_budget", "currency", "purchase_authorized"], "properties": {"weekly_time_budget": {"type": "string", "minLength": 1, "maxLength": 100}, "money_budget": {"type": "string", "minLength": 1, "maxLength": 100}, "currency": {"type": "string", "minLength": 1, "maxLength": 100}, "purchase_authorized": {"const": false}}},
+    "action_gate": {"type": "object", "additionalProperties": false, "required": ["external_action_authorized", "exact_authorization_required", "ownership_review", "secrets_review", "confidentiality_review", "customer_data_review", "rights_holder_review", "publication_authorized"], "properties": {"external_action_authorized": {"const": false}, "exact_authorization_required": {"const": true}, "ownership_review": {"enum": ["required", "not_applicable"]}, "secrets_review": {"enum": ["required", "not_applicable"]}, "confidentiality_review": {"enum": ["required", "not_applicable"]}, "customer_data_review": {"enum": ["required", "not_applicable"]}, "rights_holder_review": {"enum": ["required", "not_applicable"]}, "publication_authorized": {"const": false}}},
+    "option": {"type": "object", "additionalProperties": false, "required": ["option_id", "gap_signal", "option_type", "provider", "option", "source_title", "source_date", "source_state", "url", "geography", "availability", "role", "seniority", "current_cost", "currency", "tax", "duration", "duration_basis", "prerequisite", "renewal", "maintenance", "unknowns", "proof_artifact", "action_gate"], "properties": {"option_id": {"type": "string", "pattern": "^LO-[0-9]{3}$"}, "gap_signal": {"type": "string", "pattern": "^[a-z][a-z0-9_]{1,63}$"}, "option_type": {"enum": ["candidate_owned_project", "lab", "course", "certification", "free_resource", "do_nothing_now"]}, "provider": {"type": "string", "minLength": 1, "maxLength": 160}, "option": {"type": "string", "minLength": 1, "maxLength": 240}, "source_title": {"type": "string", "minLength": 1, "maxLength": 240}, "source_date": {"type": "string", "format": "date"}, "source_state": {"enum": ["active", "stale", "unavailable", "synthetic"]}, "url": {"type": ["string", "null"], "pattern": "^https://"}, "geography": {"type": "string", "minLength": 1, "maxLength": 160}, "availability": {"type": "string", "minLength": 1, "maxLength": 160}, "role": {"type": "string", "minLength": 1, "maxLength": 160}, "seniority": {"type": "string", "minLength": 1, "maxLength": 160}, "current_cost": {"type": "string", "minLength": 1, "maxLength": 100}, "currency": {"type": "string", "minLength": 1, "maxLength": 100}, "tax": {"type": "string", "minLength": 1, "maxLength": 100}, "duration": {"type": "string", "minLength": 1, "maxLength": 160}, "duration_basis": {"enum": ["provider_verified", "provider_duration_unknown", "candidate_estimated"]}, "prerequisite": {"type": "string", "minLength": 1, "maxLength": 300}, "renewal": {"type": "string", "minLength": 1, "maxLength": 160}, "maintenance": {"type": "string", "minLength": 1, "maxLength": 160}, "unknowns": {"type": "array", "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 300}}, "proof_artifact": {"type": "string", "minLength": 1, "maxLength": 500}, "action_gate": {"$ref": "#/$defs/action_gate"}}},
+    "bounded_text": {"type": "string", "minLength": 1, "maxLength": 500},
+    "decision": {
+      "type": "object", "additionalProperties": false,
+      "required": ["rank", "gap_signal", "frequency_occurrences", "frequency_sample_size", "frequency_display", "gap_type", "option_id", "option_type", "decision", "proof_needed", "opportunity_cost", "decision_basis", "next_action_gate", "expected_signal", "confidence", "outcome_boundary", "draft_only", "no_external_action"],
+      "properties": {
+        "rank": {"type": "integer", "minimum": 1, "maximum": 5},
+        "gap_signal": {"type": "string", "pattern": "^[a-z][a-z0-9_]{1,63}$"},
+        "frequency_occurrences": {"type": "integer", "minimum": 1, "maximum": 5},
+        "frequency_sample_size": {"type": "integer", "minimum": 1, "maximum": 5},
+        "frequency_display": {"type": "string", "pattern": "^[1-5]/[1-5]$"},
+        "gap_type": {"enum": ["learnable_gap", "professional_experience_gap", "proof_gap"]},
+        "option_id": {"type": "string", "pattern": "^LO-[0-9]{3}$"},
+        "option_type": {"enum": ["free_resource", "course", "certification", "lab", "candidate_owned_project", "do_nothing_now"]},
+        "decision": {"enum": ["recommended", "consider", "pause", "project_first", "apply_with_boundary", "not_needed"]},
+        "proof_needed": {"$ref": "#/$defs/bounded_text"},
+        "opportunity_cost": {"$ref": "#/$defs/bounded_text"},
+        "decision_basis": {"$ref": "#/$defs/bounded_text"},
+        "next_action_gate": {"$ref": "#/$defs/bounded_text"},
+        "expected_signal": {"type": "string", "pattern": "^bounded hypothesis .+", "maxLength": 500},
+        "confidence": {"enum": ["low", "medium", "high"]},
+        "outcome_boundary": {"const": "not_an_interview_offer_salary_or_roi_prediction"},
+        "draft_only": {"const": true},
+        "no_external_action": {"const": true}
+      }
+    },
+    "coach_decision": {
+      "type": "object", "additionalProperties": false,
+      "required": ["decision", "rationale", "review_gate", "draft_only", "no_external_action"],
+      "properties": {
+        "decision": {"enum": ["project_first", "review_learning_options", "hold_until_preferences_confirmed", "do_nothing_now"]},
+        "rationale": {"$ref": "#/$defs/bounded_text"},
+        "review_gate": {"$ref": "#/$defs/bounded_text"},
+        "draft_only": {"const": true},
+        "no_external_action": {"const": true}
+      }
+    },
+    "proof_sprint": {
+      "type": "object", "additionalProperties": false,
+      "required": ["duration_days", "scope", "steps", "ownership_review", "publication_review", "no_external_action"],
+      "properties": {
+        "duration_days": {"const": 5},
+        "scope": {"$ref": "#/$defs/bounded_text"},
+        "steps": {"type": "array", "minItems": 5, "maxItems": 5, "items": {"$ref": "#/$defs/bounded_text"}},
+        "ownership_review": {"const": "required_before_publication"},
+        "publication_review": {"const": "required_before_publication"},
+        "no_external_action": {"const": true}
+      }
+    },
+    "reuse": {
+      "type": "object", "additionalProperties": false,
+      "required": ["destination", "claim_boundary", "exact_authorization_required", "publication_authorized", "no_external_action"],
+      "properties": {
+        "destination": {"enum": ["linkedin", "application_packet", "interview"]},
+        "claim_boundary": {"$ref": "#/$defs/bounded_text"},
+        "exact_authorization_required": {"const": true},
+        "publication_authorized": {"const": false},
+        "no_external_action": {"const": true}
+      }
+    }
+  }
+}

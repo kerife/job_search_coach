@@ -1,0 +1,488 @@
+{
+  "as_of_date": "2026-08-13",
+  "candidate_preferences": {
+    "currency": "unknown",
+    "money_budget": "limited",
+    "purchase_authorized": false,
+    "weekly_time_budget": "3_to_5_hours"
+  },
+  "coach_decision": {
+    "decision": "hold_until_preferences_confirmed",
+    "draft_only": true,
+    "no_external_action": true,
+    "rationale": "Prioritize candidate-owned proof before paid learning while preserving private review gates.",
+    "review_gate": "No external action; review the exact option, candidate preferences, and publication boundary before proceeding."
+  },
+  "learning_decisions": [
+    {
+      "confidence": "medium",
+      "decision": "consider",
+      "decision_basis": "recurring vacancy evidence is bounded and the next review gate remains private",
+      "draft_only": true,
+      "expected_signal": "bounded hypothesis a bounded proof artifact may make the gap easier to discuss without predicting hiring outcomes",
+      "frequency_display": "4/4",
+      "frequency_occurrences": 4,
+      "frequency_sample_size": 4,
+      "gap_signal": "terraform_iac",
+      "gap_type": "learnable_gap",
+      "next_action_gate": "no external action; confirm the exact candidate action and target before proceeding",
+      "no_external_action": true,
+      "opportunity_cost": "time diverted from applications, interview preparation, and higher-signal candidate-owned proof",
+      "option_id": "LO-101",
+      "option_type": "free_resource",
+      "outcome_boundary": "not_an_interview_offer_salary_or_roi_prediction",
+      "proof_needed": "Synthetic notes",
+      "rank": 1
+    },
+    {
+      "confidence": "medium",
+      "decision": "consider",
+      "decision_basis": "official provider source and exact recurring vacancy evidence; review budget and authorization before enrollment",
+      "draft_only": true,
+      "expected_signal": "bounded hypothesis a bounded proof artifact may make the gap easier to discuss without predicting hiring outcomes",
+      "frequency_display": "4/4",
+      "frequency_occurrences": 4,
+      "frequency_sample_size": 4,
+      "gap_signal": "kubernetes",
+      "gap_type": "learnable_gap",
+      "next_action_gate": "no external action; confirm the exact candidate action and target before proceeding",
+      "no_external_action": true,
+      "opportunity_cost": "time diverted from applications, interview preparation, and higher-signal candidate-owned proof",
+      "option_id": "LO-102",
+      "option_type": "course",
+      "outcome_boundary": "not_an_interview_offer_salary_or_roi_prediction",
+      "proof_needed": "Synthetic private project",
+      "rank": 2
+    },
+    {
+      "confidence": "medium",
+      "decision": "consider",
+      "decision_basis": "official provider source and exact recurring vacancy evidence; review budget and authorization before enrollment",
+      "draft_only": true,
+      "expected_signal": "bounded hypothesis a bounded proof artifact may make the gap easier to discuss without predicting hiring outcomes",
+      "frequency_display": "4/4",
+      "frequency_occurrences": 4,
+      "frequency_sample_size": 4,
+      "gap_signal": "observability",
+      "gap_type": "learnable_gap",
+      "next_action_gate": "no external action; confirm the exact candidate action and target before proceeding",
+      "no_external_action": true,
+      "opportunity_cost": "time diverted from applications, interview preparation, and higher-signal candidate-owned proof",
+      "option_id": "LO-103",
+      "option_type": "course",
+      "outcome_boundary": "not_an_interview_offer_salary_or_roi_prediction",
+      "proof_needed": "Synthetic exercises",
+      "rank": 3
+    }
+  ],
+  "learning_options": [
+    {
+      "action_gate": {
+        "confidentiality_review": "required",
+        "customer_data_review": "required",
+        "exact_authorization_required": true,
+        "external_action_authorized": false,
+        "ownership_review": "not_applicable",
+        "publication_authorized": false,
+        "rights_holder_review": "not_applicable",
+        "secrets_review": "required"
+      },
+      "availability": "unknown",
+      "currency": "not_applicable",
+      "current_cost": "not_applicable",
+      "duration": "unknown",
+      "duration_basis": "provider_duration_unknown",
+      "gap_signal": "terraform_iac",
+      "geography": "unknown",
+      "maintenance": "not_applicable",
+      "option": "Synthetic observability guide",
+      "option_id": "LO-101",
+      "option_type": "free_resource",
+      "prerequisite": "unknown",
+      "proof_artifact": "Synthetic notes",
+      "provider": "Fixture Learning Platform",
+      "renewal": "not_applicable",
+      "role": "unknown",
+      "seniority": "unknown",
+      "source_date": "2026-08-13",
+      "source_state": "synthetic",
+      "source_title": "Synthetic guide",
+      "tax": "not_applicable",
+      "unknowns": [
+        "synthetic fixture"
+      ],
+      "url": "https://example.com/fixtures/guide"
+    },
+    {
+      "action_gate": {
+        "confidentiality_review": "required",
+        "customer_data_review": "required",
+        "exact_authorization_required": true,
+        "external_action_authorized": false,
+        "ownership_review": "required",
+        "publication_authorized": false,
+        "rights_holder_review": "required",
+        "secrets_review": "required"
+      },
+      "availability": "unknown",
+      "currency": "unknown",
+      "current_cost": "unknown",
+      "duration": "5 private days",
+      "duration_basis": "provider_duration_unknown",
+      "gap_signal": "kubernetes",
+      "geography": "unknown",
+      "maintenance": "not_applicable",
+      "option": "Synthetic observability project",
+      "option_id": "LO-102",
+      "option_type": "course",
+      "prerequisite": "unknown",
+      "proof_artifact": "Synthetic private project",
+      "provider": "Fixture University",
+      "renewal": "not_applicable",
+      "role": "unknown",
+      "seniority": "unknown",
+      "source_date": "2026-08-13",
+      "source_state": "synthetic",
+      "source_title": "Synthetic project",
+      "tax": "unknown",
+      "unknowns": [
+        "synthetic fixture"
+      ],
+      "url": "https://example.com/fixtures/observability-project"
+    },
+    {
+      "action_gate": {
+        "confidentiality_review": "required",
+        "customer_data_review": "required",
+        "exact_authorization_required": true,
+        "external_action_authorized": false,
+        "ownership_review": "not_applicable",
+        "publication_authorized": false,
+        "rights_holder_review": "not_applicable",
+        "secrets_review": "required"
+      },
+      "availability": "unknown",
+      "currency": "unknown",
+      "current_cost": "unknown",
+      "duration": "unknown",
+      "duration_basis": "provider_duration_unknown",
+      "gap_signal": "observability",
+      "geography": "unknown",
+      "maintenance": "unknown",
+      "option": "Synthetic automation course",
+      "option_id": "LO-103",
+      "option_type": "course",
+      "prerequisite": "unknown",
+      "proof_artifact": "Synthetic exercises",
+      "provider": "Fixture University",
+      "renewal": "unknown",
+      "role": "unknown",
+      "seniority": "unknown",
+      "source_date": "2026-08-13",
+      "source_state": "synthetic",
+      "source_title": "Synthetic course",
+      "tax": "unknown",
+      "unknowns": [
+        "synthetic fixture"
+      ],
+      "url": "https://example.com/fixtures/automation-course"
+    },
+    {
+      "action_gate": {
+        "confidentiality_review": "not_applicable",
+        "customer_data_review": "not_applicable",
+        "exact_authorization_required": true,
+        "external_action_authorized": false,
+        "ownership_review": "not_applicable",
+        "publication_authorized": false,
+        "rights_holder_review": "not_applicable",
+        "secrets_review": "not_applicable"
+      },
+      "availability": "not_applicable",
+      "currency": "not_applicable",
+      "current_cost": "not_applicable",
+      "duration": "not_applicable",
+      "duration_basis": "provider_duration_unknown",
+      "gap_signal": "observability",
+      "geography": "not_applicable",
+      "maintenance": "not_applicable",
+      "option": "Synthetic defer",
+      "option_id": "LO-104",
+      "option_type": "do_nothing_now",
+      "prerequisite": "not_applicable",
+      "proof_artifact": "Synthetic defer record",
+      "provider": "none",
+      "renewal": "not_applicable",
+      "role": "not_applicable",
+      "seniority": "not_applicable",
+      "source_date": "2026-08-13",
+      "source_state": "synthetic",
+      "source_title": "Synthetic defer decision",
+      "tax": "not_applicable",
+      "unknowns": [],
+      "url": null
+    }
+  ],
+  "learning_state": "evaluated",
+  "locale": "en",
+  "matrix_rows": [
+    {
+      "cells": [
+        {
+          "required": true,
+          "vacancy_id": "V-001"
+        },
+        {
+          "required": true,
+          "vacancy_id": "V-002"
+        },
+        {
+          "required": true,
+          "vacancy_id": "V-003"
+        },
+        {
+          "required": true,
+          "vacancy_id": "V-004"
+        }
+      ],
+      "evidence_ids": [
+        "E-001"
+      ],
+      "signal": "terraform_iac",
+      "support_state": "explicit_gap"
+    },
+    {
+      "cells": [
+        {
+          "required": true,
+          "vacancy_id": "V-001"
+        },
+        {
+          "required": true,
+          "vacancy_id": "V-002"
+        },
+        {
+          "required": true,
+          "vacancy_id": "V-003"
+        },
+        {
+          "required": true,
+          "vacancy_id": "V-004"
+        }
+      ],
+      "evidence_ids": [
+        "E-002"
+      ],
+      "signal": "kubernetes",
+      "support_state": "explicit_gap"
+    },
+    {
+      "cells": [
+        {
+          "required": true,
+          "vacancy_id": "V-001"
+        },
+        {
+          "required": true,
+          "vacancy_id": "V-002"
+        },
+        {
+          "required": true,
+          "vacancy_id": "V-003"
+        },
+        {
+          "required": true,
+          "vacancy_id": "V-004"
+        }
+      ],
+      "evidence_ids": [
+        "E-003"
+      ],
+      "signal": "observability",
+      "support_state": "explicit_gap"
+    }
+  ],
+  "methodology_boundary": "sample_based_documented_evidence_only_no_hiring_fit",
+  "no_external_action": true,
+  "privacy_boundary": "identity_free_evidence_references_only",
+  "proof_sprint": null,
+  "recurrence_rows": [
+    {
+      "display_fraction": "4/4",
+      "evidence_ids": [
+        "E-002"
+      ],
+      "occurrences": 4,
+      "sample_size": 4,
+      "signal": "kubernetes",
+      "support_state": "explicit_gap"
+    },
+    {
+      "display_fraction": "4/4",
+      "evidence_ids": [
+        "E-003"
+      ],
+      "occurrences": 4,
+      "sample_size": 4,
+      "signal": "observability",
+      "support_state": "explicit_gap"
+    },
+    {
+      "display_fraction": "4/4",
+      "evidence_ids": [
+        "E-001"
+      ],
+      "occurrences": 4,
+      "sample_size": 4,
+      "signal": "terraform_iac",
+      "support_state": "explicit_gap"
+    }
+  ],
+  "reuse_map": [],
+  "schema_version": "career-market-learning-dossier-v2",
+  "search_summary": {
+    "bounded_queries_run": 12,
+    "limit_reason": "target_reached",
+    "limitation": "none",
+    "vacancy_sample_count": 4
+  },
+  "source_executive_dossier_snapshot": "snap-dossier-sha256-0000000000000000000000000000000000000000000000000000000000000000",
+  "source_learning_research_snapshot": "snap-learning-sha256-4ce2a82d922aa0dc525d259f8f9c46a147d650b004bdf556475461440b8ac149",
+  "source_market_snapshot": "snap-market-sha256-c7da923514bbe580df4d5baf9641f0b563a3c3e25f6c2a122d48ef0e9d589e3b",
+  "source_research_snapshot": "snap-market-sha256-0000000000000000000000000000000000000000000000000000000000000000",
+  "state": "limited_market_evidence",
+  "vacancy_cards": [
+    {
+      "alignment_percent": 0,
+      "arrangement": "hybrid",
+      "earned_points": 0,
+      "employer_name": "Fixture Employer A",
+      "evidence_coverage_percent": 100,
+      "interpretation": "directional_documented_evidence_not_hiring_fit",
+      "known_points": 12,
+      "location": "Mexico",
+      "maximum_points": 12,
+      "qualitative_band": "lower_documented_alignment",
+      "requirements": [
+        {
+          "importance": "must_have",
+          "requirement_id": "V-001-R-01",
+          "signal": "terraform_iac"
+        },
+        {
+          "importance": "must_have",
+          "requirement_id": "V-001-R-02",
+          "signal": "kubernetes"
+        },
+        {
+          "importance": "must_have",
+          "requirement_id": "V-001-R-03",
+          "signal": "observability"
+        }
+      ],
+      "source_kind": "official_employer",
+      "source_url": "https://example.com/careers/v-001",
+      "title": "Reliability Engineer",
+      "vacancy_id": "V-001"
+    },
+    {
+      "alignment_percent": 0,
+      "arrangement": "remote",
+      "earned_points": 0,
+      "employer_name": "Fixture Employer B",
+      "evidence_coverage_percent": 100,
+      "interpretation": "directional_documented_evidence_not_hiring_fit",
+      "known_points": 12,
+      "location": "Mexico",
+      "maximum_points": 12,
+      "qualitative_band": "lower_documented_alignment",
+      "requirements": [
+        {
+          "importance": "must_have",
+          "requirement_id": "V-002-R-01",
+          "signal": "terraform_iac"
+        },
+        {
+          "importance": "must_have",
+          "requirement_id": "V-002-R-02",
+          "signal": "kubernetes"
+        },
+        {
+          "importance": "must_have",
+          "requirement_id": "V-002-R-03",
+          "signal": "observability"
+        }
+      ],
+      "source_kind": "official_employer",
+      "source_url": "https://example.com/careers/v-002",
+      "title": "Platform Engineer",
+      "vacancy_id": "V-002"
+    },
+    {
+      "alignment_percent": 0,
+      "arrangement": "hybrid",
+      "earned_points": 0,
+      "employer_name": "Fixture Employer C",
+      "evidence_coverage_percent": 100,
+      "interpretation": "directional_documented_evidence_not_hiring_fit",
+      "known_points": 12,
+      "location": "Mexico",
+      "maximum_points": 12,
+      "qualitative_band": "lower_documented_alignment",
+      "requirements": [
+        {
+          "importance": "must_have",
+          "requirement_id": "V-003-R-01",
+          "signal": "terraform_iac"
+        },
+        {
+          "importance": "must_have",
+          "requirement_id": "V-003-R-02",
+          "signal": "kubernetes"
+        },
+        {
+          "importance": "must_have",
+          "requirement_id": "V-003-R-03",
+          "signal": "observability"
+        }
+      ],
+      "source_kind": "official_employer",
+      "source_url": "https://example.com/careers/v-003",
+      "title": "DevOps Engineer",
+      "vacancy_id": "V-003"
+    },
+    {
+      "alignment_percent": 0,
+      "arrangement": "flexible",
+      "earned_points": 0,
+      "employer_name": "Fixture Employer D",
+      "evidence_coverage_percent": 100,
+      "interpretation": "directional_documented_evidence_not_hiring_fit",
+      "known_points": 12,
+      "location": "Mexico",
+      "maximum_points": 12,
+      "qualitative_band": "lower_documented_alignment",
+      "requirements": [
+        {
+          "importance": "must_have",
+          "requirement_id": "V-004-R-01",
+          "signal": "terraform_iac"
+        },
+        {
+          "importance": "must_have",
+          "requirement_id": "V-004-R-02",
+          "signal": "kubernetes"
+        },
+        {
+          "importance": "must_have",
+          "requirement_id": "V-004-R-03",
+          "signal": "observability"
+        }
+      ],
+      "source_kind": "official_employer",
+      "source_url": "https://example.com/careers/v-004",
+      "title": "Cloud Engineer",
+      "vacancy_id": "V-004"
+    }
+  ]
+}
