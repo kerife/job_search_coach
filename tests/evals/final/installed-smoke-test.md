@@ -18,7 +18,7 @@ release_version_prefix: `0.2.0+codex`
 
 release_timestamp: `2026-08-26T22:35:05-06:00`
 
-source_commit: `f37197b51b24bb3f0fdb493d5360b79acb81b5b5`
+source_commit: `a29637569584816f0a985eb1a9806d68bcb1a50a`
 
 source_tree: `b2225925a1235274453c4d75dc701ad9461e8c9d`
 
