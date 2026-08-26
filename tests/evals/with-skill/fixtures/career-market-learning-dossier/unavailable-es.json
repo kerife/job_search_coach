@@ -1,0 +1,6 @@
+{
+  "schema_version": "career-market-learning-dossier-v1", "locale": "es", "as_of_date": "2026-08-13", "state": "market_evidence_unavailable",
+  "source_research_snapshot": "snap-market-sha256-0000000000000000000000000000000000000000000000000000000000000000", "source_executive_dossier_snapshot": "snap-dossier-sha256-0000000000000000000000000000000000000000000000000000000000000000",
+  "search_summary": {"vacancy_sample_count": 0, "bounded_queries_run": 12, "limit_reason": "source_limit", "limitation": "No active identity-free fixture vacancy was available."},
+  "vacancy_cards": [], "matrix_rows": [], "recurrence_rows": [], "learning_state": "not_evaluated", "learning_decisions": [], "methodology_boundary": "sample_based_documented_evidence_only_no_hiring_fit", "privacy_boundary": "identity_free_evidence_references_only", "no_external_action": true
+}

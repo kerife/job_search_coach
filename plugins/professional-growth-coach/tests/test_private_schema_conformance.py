@@ -205,6 +205,43 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         invalid["vacancies"].append(copy.deepcopy(invalid["vacancies"][-1]))
         self.assertTrue(validate_schema_instance(invalid, schema))
 
+    def test_market_learning_schemas_and_fixtures_conform(self):
+        fixture_dir = ROOT.parent.parent / "tests/evals/with-skill/fixtures/career-market-learning-dossier"
+        market_schema = self._schema("career-market-learning-dossier-v1.schema.json")
+        for path in sorted(fixture_dir.glob("*.json")):
+            value = json.loads(path.read_text(encoding="utf-8"))
+            self.assertEqual([], validate_schema_instance(value, market_schema), path.name)
+        alignment_schema = self._schema("candidate-market-alignment-v1.schema.json")
+        invalid = {
+            "schema_version": "candidate-market-alignment-v1",
+            "research_snapshot": "snap-market-sha256-" + "0" * 64,
+            "executive_dossier_snapshot": "snap-dossier-sha256-" + "0" * 64,
+            "signal_bindings": [],
+            "privacy_boundary": "identity_free_evidence_references_only",
+        }
+        self.assertEqual([], validate_schema_instance(invalid, alignment_schema))
+        invalid["unexpected"] = "x"
+        self.assertTrue(validate_schema_instance(invalid, alignment_schema))
+
+    def test_market_learning_fixtures_and_alignment_schema_are_closed(self):
+        alignment_schema = self._schema("candidate-market-alignment-v1.schema.json")
+        alignment = {
+            "schema_version": "candidate-market-alignment-v1",
+            "research_snapshot": "snap-market-sha256-" + "0" * 64,
+            "executive_dossier_snapshot": "snap-dossier-sha256-" + "0" * 64,
+            "signal_bindings": [],
+            "privacy_boundary": "identity_free_evidence_references_only",
+        }
+        self.assertEqual([], validate_schema_instance(alignment, alignment_schema))
+        alignment["unexpected"] = True
+        self.assertTrue(validate_schema_instance(alignment, alignment_schema))
+
+        market_schema = self._schema("career-market-learning-dossier-v1.schema.json")
+        fixture_dir = ROOT.parent.parent / "tests/evals/with-skill/fixtures/career-market-learning-dossier"
+        for path in sorted(fixture_dir.glob("*.json")):
+            value = json.loads(path.read_text(encoding="utf-8"))
+            self.assertEqual([], validate_schema_instance(value, market_schema), path.name)
+
     def test_mutations_fail_closed_for_date_closure_and_invariants(self):
         schema = self._schema("private-recruiter-followthrough-checkpoint-v1.schema.json")
         source = json.loads((ROOT / "tests/fixtures/private-recruiter-followthrough-checkpoint/accepted-en.json").read_text(encoding="utf-8"))

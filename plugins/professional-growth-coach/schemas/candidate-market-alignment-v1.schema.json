@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Identity-free candidate market alignment v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "research_snapshot", "executive_dossier_snapshot", "signal_bindings", "privacy_boundary"],
+  "properties": {
+    "schema_version": {"const": "candidate-market-alignment-v1"},
+    "research_snapshot": {"type": "string", "pattern": "^snap-market-sha256-[0-9a-f]{64}$"},
+    "executive_dossier_snapshot": {"type": "string", "pattern": "^snap-dossier-sha256-[0-9a-f]{64}$"},
+    "signal_bindings": {"type": "array", "maxItems": 150, "uniqueItems": true, "items": {"$ref": "#/$defs/binding"}},
+    "privacy_boundary": {"const": "identity_free_evidence_references_only"}
+  },
+  "$defs": {
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["signal", "support_state", "evidence_ids"],
+      "properties": {
+        "signal": {"type": "string", "pattern": "^[a-z][a-z0-9_]{1,63}$"},
+        "support_state": {"enum": ["verified_match", "candidate_reported_match", "adjacent_evidence", "explicit_gap", "unknown"]},
+        "evidence_ids": {"type": "array", "maxItems": 20, "uniqueItems": true, "items": {"type": "string", "pattern": "^E-[0-9]{3}$"}}
+      }
+    }
+  }
+}
