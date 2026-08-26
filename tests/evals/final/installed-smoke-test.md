@@ -18,13 +18,13 @@ release_version_prefix: `0.2.0+codex`
 
 release_timestamp: `2026-08-26T22:35:05-06:00`
 
-source_commit: `dd843ffe30cfc2dc4f99d3653395d8c65f6c101f`
+source_commit: `0f7a2ec347edb292766d77b890424518ab991f6b`
 
-source_tree: `b2225925a1235274453c4d75dc701ad9461e8c9d`
+source_tree: `d16c8f04eb34c84cc6d5c371a9bd1749f38d907a`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260826232744`
+installed_cache_version: `0.2.0+codex.20260826234118`
 
 installed_enabled: `true`
 
