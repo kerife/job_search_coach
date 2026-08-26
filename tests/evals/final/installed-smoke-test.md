@@ -16,23 +16,23 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-13T14:17:36-06:00`
+release_timestamp: `2026-08-26T21:56:40-06:00`
 
-source_commit: `b5fc1a86d2d95a5ebca0a4ebaceddd9a1bbf47f8`
+source_commit: `a75227494d271af0e3442bada4ec572ff76998a3`
 
-source_tree: `7df3a94451af2392ae34e32be1fd45766adc893a`
+source_tree: `dc801c1493836f0122f91b1ca6cc2a6aae3b168f`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260813201136`
+installed_cache_version: `0.2.0+codex.20260826215640`
 
 installed_enabled: `true`
 
-source_file_count: `114`
+source_file_count: `121`
 
-installed_file_count: `114`
+installed_file_count: `121`
 
-normalized_source_cache_sha256: `19571b7da4a9d304de6f2c9f9f10492cd722dc58027056a3d90b9c942cc1091c`
+normalized_source_cache_sha256: `8642c62f8eeddc77cf71cf7f9f764efe863e13f5fac119b689ac92fcfbdd396d`
 
 active_config: `canonical_and_public_enabled_ambiguous`
 
@@ -41,6 +41,12 @@ source_cache_equivalence: `diff_qr_silent`
 installed_renderer_smokes: `6/6 triage validator/renderer fixtures`
 
 installed_dossier_v2_smoke: `4/4 EN/ES validator and renderer`
+
+installed_market_research_smoke: `2/2 complete/limited validator`
+
+installed_market_learning_smoke: `2/2 complete/limited builder and validator`
+
+installed_market_renderer_smoke: `2/2 complete/limited market composition`
 
 installed_diagnostic_redaction_smoke: `6/6`
 
