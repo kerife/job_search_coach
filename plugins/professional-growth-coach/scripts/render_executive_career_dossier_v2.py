@@ -244,6 +244,13 @@ def _render_main(dossier: Mapping[str, object], locale: str) -> str:
     projected = COMPAT.project_v2_to_v1(BASE._mapping(_plain(dossier)))
     opening = BASE._render_verdict(projected, locale) + BASE._render_recruiter_scan(projected, locale)
     bridge_holds = BASE._render_holds(projected, locale) + BASE._render_screen_bridge(projected, locale)
+    market_context = projected.get("market_context")
+    market_surface = (
+        BASE._render_market_context(BASE._mapping(BASE._freeze(projected)), locale)
+        if isinstance(market_context, Mapping)
+        and market_context.get("state") == "dated_vacancy_evidence"
+        else _render_market_evidence_unavailable(locale)
+    )
     return f'''<main id="main-content" class="shell" tabindex="-1">
       <div class="dossier-grid">{opening}</div>
       {_render_section_coverage(dossier, locale)}
@@ -251,7 +258,7 @@ def _render_main(dossier: Mapping[str, object], locale: str) -> str:
       <div class="dossier-grid section-block">{BASE._render_analytics(projected, locale)}</div>
       {BASE._render_dimensions(projected, locale)}
       {BASE._render_visual_review(projected, locale)}
-      {_render_market_evidence_unavailable(locale)}
+      {market_surface}
       {BASE._render_copy_blocks(projected, locale)}
       <div class="dossier-grid section-block">{bridge_holds}</div>
       {BASE._render_questions(projected, locale)}

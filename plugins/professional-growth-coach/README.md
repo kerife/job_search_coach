@@ -47,6 +47,13 @@ request: Audit LinkedIn, identify CV gaps, and prepare interview drills for this
 
 Expected routing: start with `professional-growth-coach`, preserve evidence labels, then produce an ordered plan across professional positioning, assets, market research, and conversation preparation.
 
+When the private dossier route receives validated dated vacancy evidence, its
+v2 HTML renders a separate comparison table with the real sample date,
+candidate-to-signal gaps, and sanitized public research sources. Without that
+evidence it keeps one explicit unavailable-market state. Vacancy context never
+changes the LinkedIn score and never authorizes outreach, applications, or
+other external action.
+
 ## Coach mode example
 
 Use coach mode when helping multiple people:

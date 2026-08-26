@@ -37,6 +37,13 @@ The current design task must improve the clarity of steps 3 and 4 without
 adding a form, fake button, link, persistence, automatic transfer, recruiter
 identity, or external action.
 
+The v2 renderer now keeps the honest unavailable-market card for
+`not_researched` inputs, while a validated `dated_vacancy_evidence` context
+renders the existing editorial comparison table and its sanitized public
+research links. Market rows remain separate from the LinkedIn score; no
+unvalidated vacancy, employer, salary, ranking, or eligibility claim may enter
+the surface.
+
 ## Visual language
 
 - Preserve the existing editorial document aesthetic: calm, sober, private,

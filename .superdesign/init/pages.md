@@ -15,6 +15,12 @@ Dependencies:
 
 The renderer validates a closed dossier payload, generates header/main HTML in Python, inlines the stylesheet and an artifact-specific script, and writes offline HTML.
 
+The v2 entry point `plugins/professional-growth-coach/scripts/render_executive_career_dossier_v2.py`
+composes the same document shell after validating the complete section ledger
+and coaching extensions. Its market region is conditional: `not_researched`
+renders one bounded unavailable state, while validated dated vacancy evidence
+uses the base comparison table without changing the LinkedIn score.
+
 ## /recruiter-practice-session (offline artifact)
 
 Entry: `plugins/professional-growth-coach/scripts/render_recruiter_practice_session.py`

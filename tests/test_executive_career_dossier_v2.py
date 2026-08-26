@@ -161,6 +161,16 @@ def make_v2_dossier(locale: str = "es") -> dict[str, object]:
     return dossier
 
 
+def make_market_v2_dossier(locale: str = "en") -> dict[str, object]:
+    source = load_v1_fixture("scenario-market-en.json")
+    dossier = make_v2_dossier(locale)
+    market_evidence = copy.deepcopy(source["evidence"][-1])
+    market_evidence["profile_section"] = None
+    dossier["evidence"].append(market_evidence)
+    dossier["market_context"] = copy.deepcopy(source["market_context"])
+    return dossier
+
+
 def load_validator() -> object:
     specification = importlib.util.spec_from_file_location(
         "validate_executive_career_dossier_v2", VALIDATOR_PATH
@@ -606,6 +616,25 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
                     "course", "curso", "paid", "pago",
                 ):
                     self.assertNotIn(forbidden, text_value)
+
+    def test_dated_market_context_renders_validated_matrix_and_public_source(self) -> None:
+        for locale, heading, caption in (
+            ("en", "Vacancy context and gaps", "Comparison kept separate from the LinkedIn diagnosis"),
+            ("es", "Contexto de vacantes y brechas", "Comparación separada del diagnóstico de LinkedIn"),
+        ):
+            with self.subTest(locale=locale):
+                dossier = make_market_v2_dossier(locale)
+                self.assertEqual(self.validator.validate_dossier(dossier), [])
+                rendered = self.renderer.render_dossier_html(dossier)
+                self.assertEqual(rendered.count('class="card market-card span-12"'), 1)
+                self.assertNotIn('class="card market-unavailable-card span-12"', rendered)
+                self.assertIn(heading, rendered)
+                self.assertIn("Platform reliability roles", rendered)
+                self.assertIn("Public vacancy research methodology", rendered)
+                self.assertIn('href="https://www.themuse.com/advice/linkedin-profile-tips"', rendered)
+                self.assertIn(caption, rendered)
+                self.assertNotIn("source_digest", visible_text(rendered))
+                self.assertNotIn("E-008", visible_text(rendered))
 
     def test_shipped_fixtures_have_complete_resolved_noninteractive_dom(self) -> None:
         for name in ("scenario-a-es.json", "scenario-c-en.json"):
