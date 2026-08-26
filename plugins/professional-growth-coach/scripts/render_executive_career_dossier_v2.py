@@ -30,6 +30,7 @@ VALIDATOR = _sibling("validate_executive_career_dossier_v2.py")
 COMPAT = _sibling("executive_career_dossier_v2_compat.py")
 BASE = _sibling("render_executive_career_dossier.py")
 MARKET = _sibling("validate_career_market_learning_dossier.py")
+MARKET_V2 = _sibling("validate_career_market_learning_dossier_v2.py")
 SNAPSHOTS = _sibling("dossier_snapshot.py")
 
 ASSET_ROOT = Path(__file__).resolve().parents[1] / "assets"
@@ -159,6 +160,19 @@ COPY = {
         "market_route": "Ruta para cerrar brechas",
         "market_route_steps": ("Confirmar la brecha", "Elegir una prueba", "Practicar el ejemplo", "Revisar la evidencia"),
         "market_limited": "Limitación de la muestra",
+        "learning_title": "Ruta de aprendizaje",
+        "learning_coach": "Decisión de coaching",
+        "learning_decisions": "Decisiones priorizadas",
+        "learning_frequency": "Frecuencia de la muestra",
+        "learning_proof": "Prueba necesaria",
+        "learning_cost": "Costo actual",
+        "learning_currency": "Moneda",
+        "learning_tax": "Impuestos",
+        "learning_duration": "Duración",
+        "learning_availability": "Disponibilidad",
+        "learning_sprint": "Sprint privado de prueba",
+        "learning_reuse": "Posibles reutilizaciones",
+        "learning_boundary": "Estas decisiones son una hipótesis acotada; no autorizan compras, inscripción, publicación ni acciones externas.",
     },
     "en": {
         "coverage_title": "Section coverage", "availability": "Availability", "reason": "Reason",
@@ -177,6 +191,19 @@ COPY = {
         "market_route": "Gap-closure route",
         "market_route_steps": ("Confirm the gap", "Choose evidence", "Practice the example", "Review the evidence"),
         "market_limited": "Sample limitation",
+        "learning_title": "Learning route",
+        "learning_coach": "Coaching decision",
+        "learning_decisions": "Ranked decisions",
+        "learning_frequency": "Sample frequency",
+        "learning_proof": "Proof needed",
+        "learning_cost": "Current cost",
+        "learning_currency": "Currency",
+        "learning_tax": "Tax",
+        "learning_duration": "Duration",
+        "learning_availability": "Availability",
+        "learning_sprint": "Private proof sprint",
+        "learning_reuse": "Possible reuses",
+        "learning_boundary": "These decisions are a bounded hypothesis; they do not authorize purchase, enrollment, publication, or external action.",
     },
 }
 
@@ -201,7 +228,9 @@ def _validate_and_freeze_market(
     dossier: Mapping[str, object], market_dossier: Mapping[str, object],
 ) -> Mapping[str, object]:
     """Accept only a market artifact bound to this exact executive dossier."""
-    errors = MARKET.validate_market_dossier(market_dossier)
+    version = market_dossier.get("schema_version")
+    validator = MARKET_V2.validate_learning_dossier if version == MARKET_V2.SCHEMA_VERSION else MARKET.validate_market_dossier
+    errors = validator(market_dossier)
     if errors:
         raise DossierValidationError(errors)
     if market_dossier.get("locale") != dossier.get("locale"):
@@ -295,6 +324,102 @@ def _market_state_copy(state: object, locale: str) -> tuple[str, str]:
     return symbol, spanish if locale == "es" else english
 
 
+LEARNING_DECISION_COPY = {
+    "es": {
+        "project_first": "Primero, prueba privada",
+        "recommended": "Considerar tras revisión",
+        "consider": "Considerar con revisión",
+        "pause": "Pausar por ahora",
+        "apply_with_boundary": "Aplicar con límite explícito",
+        "not_needed": "No es necesario por ahora",
+        "candidate_owned_project": "Proyecto propio",
+        "lab": "Laboratorio",
+        "course": "Curso",
+        "certification": "Certificación",
+        "free_resource": "Recurso gratuito",
+        "do_nothing_now": "Sin aprendizaje por ahora",
+        "linkedin": "Perfil",
+        "application_packet": "Paquete de candidatura",
+        "interview": "Práctica de entrevista",
+    },
+    "en": {
+        "project_first": "Private proof first",
+        "recommended": "Consider after review",
+        "consider": "Consider with review",
+        "pause": "Pause for now",
+        "apply_with_boundary": "Apply with an explicit boundary",
+        "not_needed": "Not needed now",
+        "candidate_owned_project": "Candidate-owned project",
+        "lab": "Lab",
+        "course": "Course",
+        "certification": "Certification",
+        "free_resource": "Free resource",
+        "do_nothing_now": "No learning now",
+        "linkedin": "Profile",
+        "application_packet": "Application packet",
+        "interview": "Interview practice",
+    },
+}
+
+
+def _learning_text(value: object) -> str:
+    return html.escape(str(value), quote=True)
+
+
+def _render_learning_roi(market_dossier: Mapping[str, object], locale: str) -> str:
+    """Render only validated v2 learning decisions; v1 keeps its prior bytes."""
+    if market_dossier.get("schema_version") != MARKET_V2.SCHEMA_VERSION:
+        return ""
+    labels = COPY[locale]
+    copy_labels = LEARNING_DECISION_COPY[locale]
+    options = {
+        str(row["option_id"]): BASE._mapping(row)
+        for row in BASE._rows(market_dossier["learning_options"])
+    }
+    decision_rows: list[str] = []
+    for row_value in BASE._rows(market_dossier["learning_decisions"]):
+        row = BASE._mapping(row_value)
+        option = options[str(row["option_id"])]
+        decision_rows.append(f'''<article class="learning-decision-row">
+          <h4>{copy_labels[str(row['decision'])]}</h4>
+          <dl class="learning-decision-facts">
+            <dt>{labels['learning_frequency']}</dt><dd>{_learning_text(row['frequency_display'])}</dd>
+            <dt>{labels['learning_proof']}</dt><dd>{_learning_text(row['proof_needed'])}</dd>
+            <dt>{labels['learning_cost']}</dt><dd>{_learning_text(option['current_cost'])}</dd>
+            <dt>{labels['learning_currency']}</dt><dd>{_learning_text(option['currency'])}</dd>
+            <dt>{labels['learning_tax']}</dt><dd>{_learning_text(option['tax'])}</dd>
+            <dt>{labels['learning_duration']}</dt><dd>{_learning_text(option['duration'])}</dd>
+            <dt>{labels['learning_availability']}</dt><dd>{_learning_text(option['availability'])}</dd>
+          </dl>
+          <p>{_learning_text(row['expected_signal'])}</p>
+          <p class="market-boundary">{_learning_text(row['next_action_gate'])}</p>
+        </article>''')
+    coach = BASE._mapping(market_dossier["coach_decision"])
+    coach_surface = f'''<section class="learning-coach-decision" aria-labelledby="learning-coach-title">
+      <h3 id="learning-coach-title">{labels['learning_coach']}</h3>
+      <p><strong>{copy_labels[str(coach['decision'])]}</strong></p>
+      <p>{_learning_text(coach['rationale'])}</p><p class="market-boundary">{_learning_text(coach['review_gate'])}</p>
+    </section>'''
+    sprint_surface = ""
+    sprint_value = market_dossier.get("proof_sprint")
+    if isinstance(sprint_value, Mapping):
+        sprint = BASE._mapping(sprint_value)
+        steps = "".join(f"<li>{_learning_text(step)}</li>" for step in sprint["steps"])
+        sprint_surface = f'''<section class="learning-proof-sprint" aria-labelledby="learning-sprint-title">
+          <h3 id="learning-sprint-title">{labels['learning_sprint']}</h3><p>{_learning_text(sprint['scope'])}</p><ol>{steps}</ol>
+        </section>'''
+    reuse_rows = "".join(
+        f'<li class="learning-reuse-row">{copy_labels[str(BASE._mapping(row)["destination"])]}</li>'
+        for row in BASE._rows(market_dossier["reuse_map"])
+    )
+    reuse_surface = f'<section class="learning-reuse" aria-labelledby="learning-reuse-title"><h3 id="learning-reuse-title">{labels["learning_reuse"]}</h3><ul>{reuse_rows}</ul></section>' if reuse_rows else ""
+    return f'''<section class="market-learning-roi" aria-labelledby="market-learning-title">
+      <h3 id="market-learning-title">{labels['learning_title']}</h3>{coach_surface}
+      <section aria-labelledby="learning-decisions-title"><h4 id="learning-decisions-title">{labels['learning_decisions']}</h4><div class="learning-decision-list">{''.join(decision_rows)}</div></section>
+      {sprint_surface}{reuse_surface}<p class="market-boundary">{labels['learning_boundary']}</p>
+    </section>'''
+
+
 def _render_market_context(market_dossier: Mapping[str, object], locale: str) -> str:
     """Render the already-validated market artifact without recomputing it."""
     if market_dossier.get("state") == "market_evidence_unavailable":
@@ -350,6 +475,7 @@ def _render_market_context(market_dossier: Mapping[str, object], locale: str) ->
     if market_dossier.get("state") == "limited_market_evidence":
         limitation = f'<p class="market-limitation"><strong>{labels["market_limited"]}:</strong> {html.escape(str(summary["limitation"]), quote=True)}</p>'
     route = "".join(f"<li>{html.escape(step, quote=True)}</li>" for step in labels["market_route_steps"])
+    learning_surface = _render_learning_roi(market_dossier, locale)
     return f'''<section class="market-summary section-block" aria-labelledby="market-summary-title">
       <h2 id="market-summary-title">{labels['market_summary']}</h2>
       <p>{len(cards)} {'vacantes' if locale == 'es' else 'vacancies'}</p>{limitation}
@@ -359,6 +485,7 @@ def _render_market_context(market_dossier: Mapping[str, object], locale: str) ->
         <table class="market-matrix"><thead><tr><th scope="col">{'Señal' if locale == 'es' else 'Signal'}</th><th scope="col">{labels['market_evidence']}</th>{header_cells}</tr></thead>
         <tbody>{''.join(matrix_rows)}</tbody></table></section>
       <section aria-labelledby="market-recurrence-title"><h3 id="market-recurrence-title">{labels['market_recurrence']}</h3><ul class="recurrence-list">{''.join(recurrence)}</ul><p class="market-boundary">{labels['market_boundary']}</p></section>
+      {learning_surface}
       <section class="gap-closure-route" aria-labelledby="gap-closure-route-title"><h3 id="gap-closure-route-title">{labels['market_route']}</h3><ol>{route}</ol></section>
     </section>'''
 

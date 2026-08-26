@@ -26,6 +26,7 @@ RENDERER_PATH = SCRIPTS / "render_executive_career_dossier_v2.py"
 FIXTURE_ROOT = REPO_ROOT / "tests" / "evals" / "with-skill" / "fixtures" / "executive-career-dossier"
 V2_FIXTURE_ROOT = FIXTURE_ROOT.with_name("executive-career-dossier-v2")
 MARKET_FIXTURE_ROOT = FIXTURE_ROOT.with_name("career-market-learning-dossier")
+MARKET_V2_FIXTURE_ROOT = FIXTURE_ROOT.with_name("career-market-learning-dossier-v2")
 
 UNSAFE_COACHING_PROSE = (
     (
@@ -181,6 +182,38 @@ def make_composable_market_dossier(name: str, dossier: dict[str, object]) -> dic
     market["as_of_date"] = dossier["evidence_as_of"]
     canonical = json.dumps(dossier, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
     market["source_executive_dossier_snapshot"] = "snap-dossier-sha256-" + hashlib.sha256(canonical).hexdigest()
+    return market
+
+
+def make_composable_learning_market_dossier(
+    name: str, dossier: dict[str, object], renderer: object,
+) -> dict[str, object]:
+    """Bind a fixture v2 to the supplied dossier without exposing snapshots."""
+    market = json.loads((MARKET_V2_FIXTURE_ROOT / name).read_text(encoding="utf-8"))
+    market["locale"] = dossier["locale"]
+    market["as_of_date"] = dossier["evidence_as_of"]
+    for option in market["learning_options"]:
+        option["source_date"] = dossier["evidence_as_of"]
+    canonical = json.dumps(dossier, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    market["source_executive_dossier_snapshot"] = "snap-dossier-sha256-" + hashlib.sha256(canonical).hexdigest()
+    base = copy.deepcopy(market)
+    base["schema_version"] = "career-market-learning-dossier-v1"
+    base["learning_state"] = "not_evaluated"
+    base["learning_decisions"] = []
+    for key in ("source_market_snapshot", "source_learning_research_snapshot", "candidate_preferences", "learning_options", "coach_decision", "proof_sprint", "reuse_map"):
+        base.pop(key, None)
+    market["source_market_snapshot"] = renderer.MARKET.snapshot_for_market_dossier(base)
+    research = {
+        "schema_version": "learning-option-research-v1",
+        "locale": market["locale"],
+        "as_of_date": market["as_of_date"],
+        "source_market_snapshot": market["source_market_snapshot"],
+        "candidate_preferences": market["candidate_preferences"],
+        "options": market["learning_options"],
+        "privacy_boundary": "identity_free_market_and_provider_evidence_only",
+        "no_external_action": True,
+    }
+    market["source_learning_research_snapshot"] = renderer.MARKET_V2.RESEARCH.snapshot_for_learning_research(research)
     return market
 
 
@@ -685,6 +718,48 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         self.assertIn("1/5", rendered)
         self.assertNotIn("snap-market-sha256", rendered)
         self.assertNotIn("E-001", visible_text(rendered))
+
+    def test_evaluated_learning_market_renders_one_private_static_decision_region(self) -> None:
+        dossier = make_v2_dossier("es")
+        market = make_composable_learning_market_dossier(
+            "project-first-five-es.json", dossier, self.renderer,
+        )
+        rendered = self.renderer.render_dossier_html(dossier, market)
+        visible = visible_text(rendered)
+
+        self.assertEqual(rendered.count('class="market-learning-roi"'), 1)
+        self.assertEqual(rendered.count('class="learning-decision-row"'), 3)
+        self.assertIn('class="learning-coach-decision"', rendered)
+        self.assertIn('class="learning-proof-sprint"', rendered)
+        self.assertEqual(rendered.count('class="learning-reuse-row"'), 3)
+        self.assertLess(rendered.index('id="market-recurrence-title"'), rendered.index('class="market-learning-roi"'))
+        self.assertLess(rendered.index('class="market-learning-roi"'), rendered.index('class="gap-closure-route"'))
+        self.assertIn("Ruta de aprendizaje", visible)
+        self.assertIn("Decisión de coaching", visible)
+        region_start = rendered.index('<section class="market-learning-roi"')
+        region_end = rendered.index('<section class="gap-closure-route"', region_start)
+        region = rendered[region_start:region_end]
+        self.assertNotRegex(region, r"<(?:a|button|form|input|select|textarea)\b")
+        self.assertNotRegex(region, r"\son[a-z]+=", re.I)
+        for private_token in ("snap-market", "snap-learning", "LO-001", "E-001", "https://example.com"):
+            self.assertNotIn(private_token, region)
+
+    def test_market_v1_keeps_its_existing_gap_route_without_learning_decisions(self) -> None:
+        dossier = make_v2_dossier("en")
+        market = make_composable_market_dossier("complete-five-es.json", dossier)
+        rendered = self.renderer.render_dossier_html(dossier, market)
+        self.assertIn('class="gap-closure-route"', rendered)
+        self.assertNotIn('class="market-learning-roi"', rendered)
+
+    def test_evaluated_learning_market_rejects_stale_research_snapshot(self) -> None:
+        dossier = make_v2_dossier("es")
+        market = make_composable_learning_market_dossier(
+            "project-first-five-es.json", dossier, self.renderer,
+        )
+        market["source_learning_research_snapshot"] = "snap-learning-sha256-" + ("0" * 64)
+
+        with self.assertRaises(self.renderer.DossierValidationError):
+            self.renderer.render_dossier_html(dossier, market)
 
     def test_market_progress_indicators_have_composite_text_labels(self) -> None:
         dossier = make_v2_dossier("en")

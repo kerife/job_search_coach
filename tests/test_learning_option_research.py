@@ -41,6 +41,15 @@ class LearningOptionResearchTests(unittest.TestCase):
                 self.assertTrue(all(str(row["url"] or "").startswith("https://example.com/") or row["url"] is None for row in value["options"]))
                 self.assertFalse(value["candidate_preferences"]["purchase_authorized"])
 
+    def test_option_text_rejects_profile_and_session_material_without_echoing(self) -> None:
+        for field in ("proof_artifact", "option", "source_title"):
+            with self.subTest(field=field):
+                value = load_fixture("complete-five-es.json")
+                value["options"][0][field] = "raw https://www.linkedin.com/in/private-person session " + "a" * 32
+                errors = validate_research(value)
+                self.assertTrue(any("restricted material" in error for error in errors), errors)
+                self.assertNotIn("private-person", " ".join(errors))
+
     def test_snapshot_is_typed_and_deterministic(self) -> None:
         value = load_fixture("complete-five-es.json")
         snapshot = snapshot_for_learning_research(value)

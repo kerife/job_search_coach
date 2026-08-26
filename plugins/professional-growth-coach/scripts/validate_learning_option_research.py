@@ -97,6 +97,9 @@ def _text(value: object, path: str, errors: list[str], *, maximum: int = 500) ->
     if re.search(r"(?:[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|(?:^|\s)(?:/[A-Za-z]|[A-Za-z]:[\\/]))", value):
         errors.append(f"{path} contains private value")
         return False
+    if re.search(r"(?i)(?:https?://|www\.|linkedin\.com/|\b(?:session|cookie|bearer|api[_ -]?key|access[_ -]?token)\b|\b[a-f0-9]{32,}\b)", value):
+        errors.append(f"{path} contains restricted material")
+        return False
     return True
 
 
