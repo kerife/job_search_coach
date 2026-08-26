@@ -114,6 +114,14 @@ RECRUITER_PRACTICE_VALIDATOR_PATH = (
     Path(__file__).resolve().parents[1]
     / "plugins/professional-growth-coach/scripts/validate_recruiter_practice_session.py"
 )
+MARKET_RESEARCH_VALIDATOR_PATH = (
+    Path(__file__).resolve().parents[1]
+    / "plugins/professional-growth-coach/scripts/validate_target_vacancy_research.py"
+)
+MARKET_DOSSIER_VALIDATOR_PATH = (
+    Path(__file__).resolve().parents[1]
+    / "plugins/professional-growth-coach/scripts/validate_career_market_learning_dossier.py"
+)
 PUBLIC_MARKET_ROW_SCHEMAS = frozenset(
     {
         frozenset(
@@ -448,6 +456,38 @@ def _safe_recruiter_practice_scan_value(
     return scan_value
 
 
+def _safe_market_artifact_scan_value(text: str, value: object) -> dict[str, object] | None:
+    """Elide validated identity-free market artifacts from privacy heuristics."""
+    if not isinstance(value, dict):
+        return None
+    version = value.get("schema_version")
+    if version == "target-vacancy-research-v1":
+        validator_path = MARKET_RESEARCH_VALIDATOR_PATH
+        validator_name = "validate_research"
+    elif version == "career-market-learning-dossier-v1":
+        validator_path = MARKET_DOSSIER_VALIDATOR_PATH
+        validator_name = "validate_market_dossier"
+    else:
+        return None
+    if len(text.encode("utf-8")) > 256 * 1024 or not _json_depth_is_bounded(value, 12):
+        return None
+    specification = importlib.util.spec_from_file_location(
+        f"job_search_coach_{version.replace('-', '_')}_privacy", validator_path
+    )
+    if specification is None or specification.loader is None:
+        return None
+    module = importlib.util.module_from_spec(specification)
+    try:
+        specification.loader.exec_module(module)
+        validate = getattr(module, validator_name, None)
+        errors = validate(value) if callable(validate) else ["validator unavailable"]
+    except Exception:
+        return None
+    if type(errors) is not list or errors:
+        return None
+    return {"schema_version": version, "privacy_boundary": value.get("privacy_boundary"), "no_external_action": value.get("no_external_action")}
+
+
 def _normalize_key(key: object) -> tuple[str, ...]:
     text = normalize_and_decode(str(key))
     text = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", "_", text)
@@ -667,6 +707,7 @@ def scan_text(path: Path, text: str) -> Counter[str]:
     parsed_json: object | None = None
     dossier_candidate: object | None = None
     has_duplicate_json_key = False
+    market_artifact_safe = False
     if path.suffix.lower() == ".json":
         try:
             parsed_json = json.loads(text)
@@ -689,6 +730,13 @@ def scan_text(path: Path, text: str) -> Counter[str]:
                 safe_scan_value = _safe_recruiter_practice_scan_value(
                     text, dossier_candidate
                 )
+            if safe_scan_value is None:
+                market_safe_value = _safe_market_artifact_scan_value(
+                    text, dossier_candidate
+                )
+                if market_safe_value is not None:
+                    safe_scan_value = market_safe_value
+                    market_artifact_safe = True
             if safe_scan_value is not None:
                 corpus_parts = [
                     normalize_and_decode(fragment)
@@ -743,13 +791,13 @@ def scan_text(path: Path, text: str) -> Counter[str]:
     analytics_count = sum(len(pattern.findall(corpus)) for pattern in ANALYTICS_VALUE_PATTERNS)
     if analytics_count:
         violations["PRIVATE_ANALYTICS_VALUE"] = analytics_count
-    structured_count = _structured_text_singling_out(path, normalize_and_decode(text))
+    structured_count = 0 if market_artifact_safe else _structured_text_singling_out(path, normalize_and_decode(text))
     is_exact_non_record_schema = (
         path == NON_RECORD_SCHEMA_PATH
         and isinstance(parsed_json, dict)
         and isinstance(parsed_json.get("$schema"), str)
     )
-    if parsed_json is not None and not is_exact_non_record_schema:
+    if parsed_json is not None and not is_exact_non_record_schema and not market_artifact_safe:
         json_structured_count = sum(
             _mapping_is_singling_out(mapping) for mapping in _walk_mappings(parsed_json)
         )
