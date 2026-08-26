@@ -14,6 +14,7 @@ ASSETS = ROOT / "plugins" / "professional-growth-coach" / "assets"
 ASSET_NAMES = (
     "executive-career-dossier-v1.css",
     "executive-career-dossier-v2.css",
+    "career-market-learning-dossier-v1.css",
     "recruiter-practice-session-v1.css",
     "private-recruiter-reply-triage-v1.css",
     "private-recruiter-followthrough-checkpoint-v1.css",
@@ -22,6 +23,7 @@ ASSET_NAMES = (
 EXPECTED_THEME_ASSET_NAMES = {
     "executive-career-dossier-v1.css",
     "executive-career-dossier-v2.css",
+    "career-market-learning-dossier-v1.css",
     "recruiter-practice-session-v1.css",
     "private-recruiter-reply-triage-v1.css",
     "private-recruiter-followthrough-checkpoint-v1.css",

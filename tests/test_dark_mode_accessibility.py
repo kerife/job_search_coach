@@ -59,6 +59,16 @@ class DarkModeAccessibilityTests(unittest.TestCase):
         self.assertIn("min-width: 0", compact)
         self.assertNotRegex(css, r"overflow-x:\s*(?:auto|scroll)|white-space:\s*nowrap")
 
+    def test_market_composition_is_non_scrollable_and_forced_color_readable(self) -> None:
+        css = (ASSETS / "career-market-learning-dossier-v1.css").read_text(encoding="utf-8")
+        self.assertIn("@media screen and (max-width: 680px)", css)
+        self.assertIn(".market-matrix td::before", css)
+        self.assertIn("content: attr(data-label)", css)
+        self.assertNotRegex(css, r"overflow-x:\s*(?:auto|scroll)|white-space:\s*nowrap")
+        forced = css[css.index("@media (forced-colors: active)"):]
+        for token in ("Canvas", "CanvasText", "Highlight"):
+            self.assertIn(token, forced)
+
     def test_long_surfaces_have_screen_only_dark_contract_before_print(self) -> None:
         for filename, (scope, extra_token) in SURFACES.items():
             with self.subTest(filename=filename):

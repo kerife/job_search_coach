@@ -17,6 +17,7 @@ CANONICAL_RENDERER_ASSETS = (
     "assets/executive-career-dossier-v1.html",
     "assets/executive-career-dossier-v1.css",
     "assets/executive-career-dossier-v2.css",
+    "assets/career-market-learning-dossier-v1.css",
     "assets/recruiter-practice-session-v1.html",
     "assets/recruiter-practice-session-v1.css",
     "assets/private-recruiter-reply-triage-v1.html",

@@ -59,16 +59,19 @@ class PrivateAssetBoundaryTests(unittest.TestCase):
 
         self.assertIn("--paper", content)
 
-    def test_v2_css_extension_is_a_canonical_private_asset(self) -> None:
+    def test_dossier_market_css_extension_is_a_canonical_private_asset(self) -> None:
         helper = load_helper()
-        relative = "assets/executive-career-dossier-v2.css"
-
-        self.assertIn(relative, helper.CANONICAL_RENDERER_ASSETS)
-        content = helper.read_private_asset(
-            REPO_ROOT / "plugins" / "professional-growth-coach",
-            REPO_ROOT / "plugins" / "professional-growth-coach" / relative,
-        )
-        self.assertIn(".section-coverage-list", content)
+        for relative, marker in (
+            ("assets/executive-career-dossier-v2.css", ".section-coverage-list"),
+            ("assets/career-market-learning-dossier-v1.css", ".market-summary"),
+        ):
+            with self.subTest(relative=relative):
+                self.assertIn(relative, helper.CANONICAL_RENDERER_ASSETS)
+                content = helper.read_private_asset(
+                    REPO_ROOT / "plugins" / "professional-growth-coach",
+                    REPO_ROOT / "plugins" / "professional-growth-coach" / relative,
+                )
+                self.assertIn(marker, content)
 
     def test_direct_symlink_is_rejected_without_echoing_target(self) -> None:
         helper = load_helper()

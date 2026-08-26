@@ -28,6 +28,14 @@ class PrintContinuityFooterIntegrityTests(unittest.TestCase):
         self.assertIn("break-inside: avoid", print_css)
         self.assertIn("page-break-inside: avoid", print_css)
 
+    def test_market_cards_matrix_and_recurrence_remain_atomic_in_print(self) -> None:
+        css = (ASSETS / "career-market-learning-dossier-v1.css").read_text(encoding="utf-8")
+        print_css = css[css.index("@media print"):css.index("@media (forced-colors: active)")]
+        for selector in (".market-summary", ".market-key", ".market-matrix-wrap", ".gap-closure-route", ".vacancy-alignment-card", ".recurrence-row"):
+            with self.subTest(selector=selector):
+                self.assertIn(selector, print_css)
+        self.assertIn("table-header-group", print_css)
+
     def test_print_keeps_each_continuity_footer_atomic(self) -> None:
         for name, selector in FOOTERS.items():
             with self.subTest(name=name):

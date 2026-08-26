@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import html
 import importlib.util
 import json
@@ -28,11 +29,14 @@ def _sibling(name: str) -> Any:
 VALIDATOR = _sibling("validate_executive_career_dossier_v2.py")
 COMPAT = _sibling("executive_career_dossier_v2_compat.py")
 BASE = _sibling("render_executive_career_dossier.py")
+MARKET = _sibling("validate_career_market_learning_dossier.py")
+SNAPSHOTS = _sibling("dossier_snapshot.py")
 
 ASSET_ROOT = Path(__file__).resolve().parents[1] / "assets"
 TEMPLATE_PATH = ASSET_ROOT / "executive-career-dossier-v1.html"
 BASE_CSS_PATH = ASSET_ROOT / "executive-career-dossier-v1.css"
 CSS_PATH = ASSET_ROOT / "executive-career-dossier-v2.css"
+MARKET_CSS_PATH = ASSET_ROOT / "career-market-learning-dossier-v1.css"
 
 DossierValidationError = BASE.DossierValidationError
 RenderReceipt = BASE.RenderReceipt
@@ -145,6 +149,16 @@ COPY = {
         "observation": "Observación", "why": "Por qué importa", "prompt": "Pregunta de coaching",
         "template": "Plantilla privada", "market_title": "Evidencia de mercado no disponible",
         "market_body": "Este dossier no incluye evidencia de mercado. Continúa con la evidencia del perfil ya revisada.",
+        "market_summary": "Muestra de vacantes revisada",
+        "market_alignment": "Alineación documentada",
+        "market_evidence": "Evidencia del perfil",
+        "market_recurrence": "Recurrencia en esta muestra",
+        "market_matrix": "Matriz de requisitos y evidencia",
+        "market_key": "Clave de vacantes",
+        "market_boundary": "La recurrencia describe únicamente esta muestra; no predice contratación ni demanda amplia.",
+        "market_route": "Ruta para cerrar brechas",
+        "market_route_steps": ("Confirmar la brecha", "Elegir una prueba", "Practicar el ejemplo", "Revisar la evidencia"),
+        "market_limited": "Limitación de la muestra",
     },
     "en": {
         "coverage_title": "Section coverage", "availability": "Availability", "reason": "Reason",
@@ -153,7 +167,26 @@ COPY = {
         "prompt": "Coaching prompt", "template": "Private template",
         "market_title": "Market evidence unavailable",
         "market_body": "This dossier includes no market evidence. Continue with the profile evidence already reviewed.",
+        "market_summary": "Reviewed vacancy sample",
+        "market_alignment": "Documented alignment",
+        "market_evidence": "Profile evidence",
+        "market_recurrence": "Recurrence in this sample",
+        "market_matrix": "Requirements and evidence matrix",
+        "market_key": "Vacancy key",
+        "market_boundary": "Recurrence describes this sample only; it does not predict hiring or broad market demand.",
+        "market_route": "Gap-closure route",
+        "market_route_steps": ("Confirm the gap", "Choose evidence", "Practice the example", "Review the evidence"),
+        "market_limited": "Sample limitation",
     },
+}
+
+MATRIX_STATE_COPY = {
+    "verified_match": ("✓", "Evidencia directa", "Direct evidence"),
+    "candidate_reported_match": ("●", "Reportado por cliente", "Candidate reported"),
+    "adjacent_evidence": ("≈", "Evidencia adyacente", "Adjacent evidence"),
+    "explicit_gap": ("!", "Brecha confirmada", "Confirmed gap"),
+    "unknown": ("?", "No verificado", "Not verified"),
+    "not_required": ("—", "No solicitado", "Not requested"),
 }
 
 
@@ -162,6 +195,23 @@ def _validate_and_freeze(dossier: Mapping[str, object]) -> Mapping[str, object]:
     if errors:
         raise DossierValidationError(errors)
     return BASE._mapping(BASE._freeze(dossier))
+
+
+def _validate_and_freeze_market(
+    dossier: Mapping[str, object], market_dossier: Mapping[str, object],
+) -> Mapping[str, object]:
+    """Accept only a market artifact bound to this exact executive dossier."""
+    errors = MARKET.validate_market_dossier(market_dossier)
+    if errors:
+        raise DossierValidationError(errors)
+    if market_dossier.get("locale") != dossier.get("locale"):
+        raise DossierValidationError(["market dossier locale does not match dossier"])
+    if market_dossier.get("as_of_date") != dossier.get("evidence_as_of"):
+        raise DossierValidationError(["market dossier date does not match dossier"])
+    snapshot = SNAPSHOTS.snapshot_for_dossier(_plain(dossier))
+    if market_dossier.get("source_executive_dossier_snapshot") != snapshot:
+        raise DossierValidationError(["market dossier snapshot does not match dossier"])
+    return BASE._mapping(BASE._freeze(copy.deepcopy(dict(market_dossier))))
 
 
 def _plain(value: object) -> object:
@@ -240,17 +290,88 @@ def _render_market_evidence_unavailable(locale: str) -> str:
     </div>'''
 
 
-def _render_main(dossier: Mapping[str, object], locale: str) -> str:
+def _market_state_copy(state: object, locale: str) -> tuple[str, str]:
+    symbol, spanish, english = MATRIX_STATE_COPY.get(str(state), MATRIX_STATE_COPY["unknown"])
+    return symbol, spanish if locale == "es" else english
+
+
+def _render_market_context(market_dossier: Mapping[str, object], locale: str) -> str:
+    """Render the already-validated market artifact without recomputing it."""
+    if market_dossier.get("state") == "market_evidence_unavailable":
+        return _render_market_evidence_unavailable(locale)
+    labels = COPY[locale]
+    cards = BASE._rows(market_dossier["vacancy_cards"])
+    summary = BASE._mapping(market_dossier["search_summary"])
+    card_html: list[str] = []
+    key_rows: list[str] = []
+    for index, card_value in enumerate(cards, start=1):
+        card = BASE._mapping(card_value)
+        heading_id = f"market-vacancy-title-{index}"
+        short_key = f"V{index}"
+        employer = html.escape(str(card["employer_name"]), quote=True)
+        title = html.escape(str(card["title"]), quote=True)
+        score = int(card["alignment_percent"])
+        card_html.append(f'''<article class="vacancy-alignment-card" aria-labelledby="{heading_id}">
+          <p class="market-vacancy-key">{short_key}</p><h3 id="{heading_id}">{employer} — {title}</h3>
+          <p>{labels['market_alignment']}: <strong>{score} {'de' if locale == 'es' else 'out of'} 100</strong></p>
+          <progress max="100" value="{score}" aria-labelledby="{heading_id}">{score}</progress>
+        </article>''')
+        key_rows.append(f"<li><strong>{short_key}</strong> — {employer} — {title}</li>")
+
+    column_keys = [f"V{index}" for index in range(1, len(cards) + 1)]
+    column_labels = {
+        f"V{index}": f"V{index}: {card['employer_name']} — {card['title']}"
+        for index, card in enumerate(cards, start=1)
+    }
+    header_cells = "".join(f"<th scope=\"col\">{key}</th>" for key in column_keys)
+    matrix_rows: list[str] = []
+    for row_value in BASE._rows(market_dossier["matrix_rows"]):
+        row = BASE._mapping(row_value)
+        symbol, state_label = _market_state_copy(row["support_state"], locale)
+        profile_cell = f'<td data-label="{html.escape(labels["market_evidence"], quote=True)}"><span aria-hidden="true">{symbol}</span> {state_label}</td>'
+        cells: list[str] = [profile_cell]
+        for index, cell_value in enumerate(BASE._rows(row["cells"]), start=1):
+            required = BASE._mapping(cell_value)["required"]
+            required_symbol, required_label = _market_state_copy("verified_match" if required else "not_required", locale)
+            data_label = f"{column_labels[f'V{index}']}: {required_label}"
+            cells.append(f'<td data-label="{html.escape(data_label, quote=True)}"><span aria-hidden="true">{required_symbol}</span> {required_label}</td>')
+        matrix_rows.append(f'''<tr><th scope="row">{html.escape(str(row['signal']), quote=True)}<span class="market-state"> {symbol} {state_label}</span></th>{''.join(cells)}</tr>''')
+
+    recurrence: list[str] = []
+    for row_value in BASE._rows(market_dossier["recurrence_rows"]):
+        row = BASE._mapping(row_value)
+        occurrences, sample_size = int(row["occurrences"]), int(row["sample_size"])
+        recurrence.append(f'''<li class="recurrence-row"><span>{html.escape(str(row['signal']), quote=True)}</span>
+          <progress value="{occurrences}" max="{sample_size}">{occurrences}/{sample_size}</progress><strong>{occurrences}/{sample_size}</strong></li>''')
+    limitation = ""
+    if market_dossier.get("state") == "limited_market_evidence":
+        limitation = f'<p class="market-limitation"><strong>{labels["market_limited"]}:</strong> {html.escape(str(summary["limitation"]), quote=True)}</p>'
+    route = "".join(f"<li>{html.escape(step, quote=True)}</li>" for step in labels["market_route_steps"])
+    return f'''<section class="market-summary section-block" aria-labelledby="market-summary-title">
+      <h2 id="market-summary-title">{labels['market_summary']}</h2>
+      <p>{len(cards)} {'vacantes' if locale == 'es' else 'vacancies'}</p>{limitation}
+      <div class="vacancy-alignment-list">{''.join(card_html)}</div>
+      <section class="market-key" aria-labelledby="market-key-title"><h3 id="market-key-title">{labels['market_key']}</h3><ol>{''.join(key_rows)}</ol></section>
+      <section class="market-matrix-wrap" aria-labelledby="market-matrix-title"><h3 id="market-matrix-title">{labels['market_matrix']}</h3>
+        <table class="market-matrix"><thead><tr><th scope="col">{'Señal' if locale == 'es' else 'Signal'}</th><th scope="col">{labels['market_evidence']}</th>{header_cells}</tr></thead>
+        <tbody>{''.join(matrix_rows)}</tbody></table></section>
+      <section aria-labelledby="market-recurrence-title"><h3 id="market-recurrence-title">{labels['market_recurrence']}</h3><ul class="recurrence-list">{''.join(recurrence)}</ul><p class="market-boundary">{labels['market_boundary']}</p></section>
+      <section class="gap-closure-route" aria-labelledby="gap-closure-route-title"><h3 id="gap-closure-route-title">{labels['market_route']}</h3><ol>{route}</ol></section>
+    </section>'''
+
+
+def _render_main(dossier: Mapping[str, object], locale: str, market_dossier: Mapping[str, object] | None = None) -> str:
     projected = COMPAT.project_v2_to_v1(BASE._mapping(_plain(dossier)))
     opening = BASE._render_verdict(projected, locale) + BASE._render_recruiter_scan(projected, locale)
     bridge_holds = BASE._render_holds(projected, locale) + BASE._render_screen_bridge(projected, locale)
     market_context = projected.get("market_context")
-    market_surface = (
+    legacy_market_surface = (
         BASE._render_market_context(BASE._mapping(BASE._freeze(projected)), locale)
         if isinstance(market_context, Mapping)
         and market_context.get("state") == "dated_vacancy_evidence"
         else _render_market_evidence_unavailable(locale)
     )
+    market_surface = _render_market_context(market_dossier, locale) if market_dossier is not None else legacy_market_surface
     return f'''<main id="main-content" class="shell" tabindex="-1">
       <div class="dossier-grid">{opening}</div>
       {_render_section_coverage(dossier, locale)}
@@ -294,21 +415,23 @@ def build_chat_summary(dossier: Mapping[str, object]) -> str:
     return summary
 
 
-def render_dossier_html(dossier: Mapping[str, object]) -> str:
+def render_dossier_html(dossier: Mapping[str, object], market_dossier: Mapping[str, object] | None = None) -> str:
     frozen = _validate_and_freeze(dossier)
+    frozen_market = _validate_and_freeze_market(frozen, market_dossier) if market_dossier is not None else None
     locale = str(frozen["locale"])
     template = BASE.ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, TEMPLATE_PATH)
     base_css = BASE.ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, BASE_CSS_PATH)
     extension_css = BASE.ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, CSS_PATH)
+    market_css = BASE.ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, MARKET_CSS_PATH) if frozen_market is not None else ""
     static_tokens = BASE.STATIC_TEMPLATE_TOKEN.findall(template)
     if sorted(static_tokens) != sorted(BASE.TEMPLATE_TOKENS):
         raise RuntimeError("dossier template token contract is invalid")
     substitutions = {
         "{{LANG}}": locale,
         "{{TITLE}}": BASE.COPY[locale]["title"],
-        "{{INLINE_CSS}}": base_css + extension_css,
+        "{{INLINE_CSS}}": base_css + extension_css + market_css,
         "{{HEADER}}": BASE._render_header(locale),
-        "{{MAIN}}": _render_main(frozen, locale),
+        "{{MAIN}}": _render_main(frozen, locale, frozen_market),
         "{{INLINE_SCRIPT}}": BASE.INLINE_SCRIPT,
     }
     return BASE.STATIC_TEMPLATE_TOKEN.sub(lambda match: substitutions[match.group(0)], template)
@@ -318,6 +441,7 @@ def write_dossier_html(
     dossier_path: Path,
     output_path: Path,
     *,
+    market_dossier_path: Path | None = None,
     force: bool = False,
 ) -> RenderReceipt:
     dossier = VALIDATOR.load_dossier(Path(dossier_path))
@@ -329,7 +453,13 @@ def write_dossier_html(
     except RuntimeError as error:
         raise OSError("output path is unavailable") from error
     output = Path(os.path.abspath(os.fspath(expanded_output)))
-    rendered = render_dossier_html(dossier)
+    market_dossier = None
+    if market_dossier_path is not None:
+        try:
+            market_dossier = MARKET.load_market_dossier(Path(market_dossier_path))
+        except ValueError as error:
+            raise DossierValidationError(["market learning dossier could not be loaded"]) from error
+    rendered = render_dossier_html(dossier, market_dossier)
     summary = build_chat_summary(dossier)
     BASE._atomic_private_write(output, rendered.encode("utf-8"), force=force)
     return RenderReceipt(output, "text/html", str(dossier["locale"]), summary)
@@ -339,10 +469,11 @@ def _cli(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Render a private career dossier v2.")
     parser.add_argument("dossier", type=Path)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--market-dossier", type=Path)
     parser.add_argument("--force", action="store_true")
     arguments = parser.parse_args(argv)
     try:
-        receipt = write_dossier_html(arguments.dossier, arguments.output, force=arguments.force)
+        receipt = write_dossier_html(arguments.dossier, arguments.output, market_dossier_path=arguments.market_dossier, force=arguments.force)
     except OSError:
         print("cannot write dossier artifact", file=sys.stderr)
         return 3

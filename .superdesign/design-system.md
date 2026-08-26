@@ -49,6 +49,14 @@ The dated market table keeps native table semantics and, at screen widths up to
 labels. The print layout remains tabular, and the responsive treatment does not
 depend on horizontal scrolling.
 
+The five-vacancy evidence composition is an optional, separately validated
+layer. It uses native progress elements, short V1--V5 matrix headers with a
+visible adjacent key, explicit text/symbol states, actual-sample recurrence,
+and a four-stage private gap-closure route. At small widths it preserves table
+semantics while exposing each cell label in the rendered reading order; no
+horizontal scrolling, color-only meaning, source snapshots, or external action
+is introduced.
+
 ## Visual language
 
 - Preserve the existing editorial document aesthetic: calm, sober, private,

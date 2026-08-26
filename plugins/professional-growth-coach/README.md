@@ -69,6 +69,13 @@ public-source provenance, and exposes only `complete`,
 snapshot is suitable for downstream dossier work; it never performs external
 actions or infers candidate eligibility.
 
+The v2 renderer can optionally compose a validated
+`career-market-learning-dossier-v1` with `--market-dossier`. The composition
+shows documented alignment cards, a semantic vacancy matrix, exact sample
+recurrence, and a four-stage gap-closure route. Locale, evidence date, and the
+executive-dossier snapshot must match before any HTML is written; omitting the
+option preserves the existing no-market render byte-for-byte.
+
 ## Coach mode example
 
 Use coach mode when helping multiple people:

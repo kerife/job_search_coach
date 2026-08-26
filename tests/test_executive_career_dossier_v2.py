@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import html
 import importlib.util
 import json
@@ -24,6 +25,7 @@ VALIDATOR_PATH = SCRIPTS / "validate_executive_career_dossier_v2.py"
 RENDERER_PATH = SCRIPTS / "render_executive_career_dossier_v2.py"
 FIXTURE_ROOT = REPO_ROOT / "tests" / "evals" / "with-skill" / "fixtures" / "executive-career-dossier"
 V2_FIXTURE_ROOT = FIXTURE_ROOT.with_name("executive-career-dossier-v2")
+MARKET_FIXTURE_ROOT = FIXTURE_ROOT.with_name("career-market-learning-dossier")
 
 UNSAFE_COACHING_PROSE = (
     (
@@ -170,6 +172,16 @@ def make_market_v2_dossier(locale: str = "en") -> dict[str, object]:
     dossier["evidence"].append(market_evidence)
     dossier["market_context"] = copy.deepcopy(source["market_context"])
     return dossier
+
+
+def make_composable_market_dossier(name: str, dossier: dict[str, object]) -> dict[str, object]:
+    """Bind a synthetic market fixture to this exact, validated v2 dossier."""
+    market = json.loads((MARKET_FIXTURE_ROOT / name).read_text(encoding="utf-8"))
+    market["locale"] = dossier["locale"]
+    market["as_of_date"] = dossier["evidence_as_of"]
+    canonical = json.dumps(dossier, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    market["source_executive_dossier_snapshot"] = "snap-dossier-sha256-" + hashlib.sha256(canonical).hexdigest()
+    return market
 
 
 def load_validator() -> object:
@@ -655,6 +667,57 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
                 for label in labels:
                     self.assertIn(f'<td data-label="{label}">', rendered)
 
+    def test_optional_market_dossier_renders_complete_cards_matrix_and_recurrence(self) -> None:
+        dossier = make_v2_dossier("es")
+        market = make_composable_market_dossier("complete-five-es.json", dossier)
+        rendered = self.renderer.render_dossier_html(dossier, market)
+
+        self.assertEqual(rendered.count('class="vacancy-alignment-card"'), 5)
+        self.assertEqual(rendered.count('<progress max="100"'), 5)
+        self.assertIn('class="market-matrix"', rendered)
+        self.assertIn('class="recurrence-row"', rendered)
+        self.assertIn('class="gap-closure-route"', rendered)
+        for short_key in ("V1", "V2", "V3", "V4", "V5"):
+            self.assertIn(f">{short_key}<", rendered)
+        self.assertIn("Evidencia directa", rendered)
+        self.assertIn("1/5", rendered)
+        self.assertNotIn("snap-market-sha256", rendered)
+        self.assertNotIn("E-001", visible_text(rendered))
+
+    def test_optional_market_dossier_limited_and_unavailable_states_do_not_pad_or_score(self) -> None:
+        english = make_v2_dossier("en")
+        limited = make_composable_market_dossier("limited-four-en.json", english)
+        limited_html = self.renderer.render_dossier_html(english, limited)
+        self.assertEqual(limited_html.count('class="vacancy-alignment-card"'), 4)
+        self.assertEqual(limited_html.count('<progress max="100"'), 4)
+        self.assertNotIn(">V5<", limited_html)
+        self.assertIn('class="market-limitation"', limited_html)
+
+        spanish = make_v2_dossier("es")
+        unavailable = make_composable_market_dossier("unavailable-es.json", spanish)
+        unavailable_html = self.renderer.render_dossier_html(spanish, unavailable)
+        self.assertIn('class="card market-unavailable-card span-12"', unavailable_html)
+        self.assertNotIn('class="vacancy-alignment-card"', unavailable_html)
+        self.assertNotIn('class="market-matrix"', unavailable_html)
+        self.assertNotIn('<progress max="100"', unavailable_html)
+        self.assertNotIn('class="gap-closure-route"', unavailable_html)
+
+    def test_optional_market_dossier_rejects_mismatched_boundaries_without_echoing_values(self) -> None:
+        dossier = make_v2_dossier("es")
+        market = make_composable_market_dossier("complete-five-es.json", dossier)
+        market["locale"] = "en"
+        with self.assertRaises(self.renderer.DossierValidationError) as context:
+            self.renderer.render_dossier_html(dossier, market)
+        self.assertIn("market dossier locale does not match dossier", context.exception.errors)
+        self.assertNotIn("complete-five", "\n".join(context.exception.errors))
+
+    def test_no_market_argument_keeps_existing_render_bytes(self) -> None:
+        dossier = make_v2_dossier("es")
+        self.assertEqual(
+            self.renderer.render_dossier_html(dossier),
+            self.renderer.render_dossier_html(dossier, None),
+        )
+
     def test_shipped_fixtures_have_complete_resolved_noninteractive_dom(self) -> None:
         for name in ("scenario-a-es.json", "scenario-c-en.json"):
             with self.subTest(name=name):
@@ -761,6 +824,32 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
             )
             self.assertEqual(stat.S_IMODE(output.stat().st_mode), 0o600)
             self.assertEqual(receipt.artifact_type, "text/html")
+
+    def test_writer_accepts_a_bound_market_path_and_rejects_a_stale_one_before_writing(self) -> None:
+        dossier = make_v2_dossier("es")
+        market = make_composable_market_dossier("complete-five-es.json", dossier)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            dossier_path = root / "dossier.json"
+            market_path = root / "market.json"
+            output = root / "market.html"
+            dossier_path.write_text(json.dumps(dossier), encoding="utf-8")
+            market_path.write_text(json.dumps(market), encoding="utf-8")
+            receipt = self.renderer.write_dossier_html(
+                dossier_path, output, market_dossier_path=market_path,
+            )
+            self.assertEqual(stat.S_IMODE(output.stat().st_mode), 0o600)
+            self.assertEqual(receipt.artifact_type, "text/html")
+            self.assertIn('class="vacancy-alignment-card"', output.read_text(encoding="utf-8"))
+
+            market["source_executive_dossier_snapshot"] = "snap-dossier-sha256-" + "0" * 64
+            market_path.write_text(json.dumps(market), encoding="utf-8")
+            stale_output = root / "stale.html"
+            with self.assertRaises(self.renderer.DossierValidationError):
+                self.renderer.write_dossier_html(
+                    dossier_path, stale_output, market_dossier_path=market_path,
+                )
+            self.assertFalse(stale_output.exists())
 
 
 class ExecutiveCareerDossierV2LoadAndCliTests(unittest.TestCase):
