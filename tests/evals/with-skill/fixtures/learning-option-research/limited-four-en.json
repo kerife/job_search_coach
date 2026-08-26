@@ -2,7 +2,7 @@
   "schema_version": "learning-option-research-v1",
   "locale": "en",
   "as_of_date": "2026-08-13",
-  "source_market_snapshot": "snap-market-sha256-2222222222222222222222222222222222222222222222222222222222222222",
+  "source_market_snapshot": "snap-market-sha256-fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210",
   "candidate_preferences": {"weekly_time_budget": "3_to_5_hours", "money_budget": "limited", "currency": "unknown", "purchase_authorized": false},
   "options": [
     {"option_id": "LO-101", "gap_signal": "observability", "option_type": "free_resource", "provider": "Fixture Learning Platform", "option": "Synthetic observability guide", "source_title": "Synthetic guide", "source_date": "2026-08-13", "source_state": "synthetic", "url": "https://example.com/fixtures/guide", "geography": "unknown", "availability": "unknown", "role": "unknown", "seniority": "unknown", "current_cost": "not_applicable", "currency": "not_applicable", "tax": "not_applicable", "duration": "unknown", "duration_basis": "provider_duration_unknown", "prerequisite": "unknown", "renewal": "not_applicable", "maintenance": "not_applicable", "unknowns": ["synthetic fixture"], "proof_artifact": "Synthetic notes", "action_gate": {"external_action_authorized": false, "exact_authorization_required": true, "ownership_review": "not_applicable", "secrets_review": "required", "confidentiality_review": "required", "customer_data_review": "required", "rights_holder_review": "not_applicable", "publication_authorized": false}},

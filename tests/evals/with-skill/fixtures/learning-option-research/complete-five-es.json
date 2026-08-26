@@ -2,7 +2,7 @@
   "schema_version": "learning-option-research-v1",
   "locale": "es",
   "as_of_date": "2026-08-13",
-  "source_market_snapshot": "snap-market-sha256-1111111111111111111111111111111111111111111111111111111111111111",
+  "source_market_snapshot": "snap-market-sha256-abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789",
   "candidate_preferences": {"weekly_time_budget": "unknown", "money_budget": "unknown", "currency": "unknown", "purchase_authorized": false},
   "options": [
     {"option_id": "LO-001", "gap_signal": "terraform_iac", "option_type": "candidate_owned_project", "provider": "Fixture University", "option": "Synthetic infrastructure proof project", "source_title": "Synthetic project brief", "source_date": "2026-08-13", "source_state": "synthetic", "url": "https://example.com/fixtures/project", "geography": "unknown", "availability": "unknown", "role": "unknown", "seniority": "unknown", "current_cost": "not_applicable", "currency": "not_applicable", "tax": "not_applicable", "duration": "5 private days", "duration_basis": "candidate_estimated", "prerequisite": "unknown", "renewal": "not_applicable", "maintenance": "not_applicable", "unknowns": ["current provider availability is synthetic"], "proof_artifact": "Synthetic private infrastructure evidence", "action_gate": {"external_action_authorized": false, "exact_authorization_required": true, "ownership_review": "required", "secrets_review": "required", "confidentiality_review": "required", "customer_data_review": "required", "rights_holder_review": "required", "publication_authorized": false}},
