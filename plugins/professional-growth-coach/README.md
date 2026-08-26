@@ -57,6 +57,11 @@ with localized labels while preserving its semantic and print layouts. The
 section-coverage facts also collapse to one column at 640px and below so the
 17-section ledger remains readable without horizontal scrolling.
 
+The dossier schemas keep the source contract closed: methodology categories
+must be present in the official registry, and secondary market sources must
+use HTTPS. Unknown categories and non-HTTPS URLs are rejected by both schema
+and runtime validation before rendering.
+
 ## Coach mode example
 
 Use coach mode when helping multiple people:

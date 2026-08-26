@@ -47,6 +47,74 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
     def _schema(self, name):
         return json.loads((ROOT / "schemas" / name).read_text(encoding="utf-8"))
 
+    def test_dossier_methodology_categories_keep_schema_runtime_and_registry_in_lockstep(self):
+        helper = _load_v2_dossier_helper()
+        validator = helper.load_validator()
+        expected = {
+            "ai_hiring_agents",
+            "cover_image",
+            "featured_section",
+            "good_profile",
+            "job_match",
+            "job_seeker_hirer_connection",
+            "profile_photo",
+            "skills",
+        }
+        registry = json.loads(
+            (ROOT / "scripts" / "linkedin_source_registry.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(expected, set(validator._v1.METHOD_CATEGORIES))
+        self.assertEqual(expected, set(registry["official_categories"]))
+
+        cases = (
+            (
+                "executive-career-dossier-v1.schema.json",
+                helper.load_v1_fixture("scenario-a-es.json"),
+                validator._v1.validate_dossier,
+            ),
+            (
+                "executive-career-dossier-v2.schema.json",
+                helper.make_v2_dossier(),
+                validator.validate_dossier,
+            ),
+        )
+        for schema_name, dossier, validate_dossier in cases:
+            with self.subTest(schema=schema_name):
+                schema = self._schema(schema_name)
+                enum = schema["properties"]["methodology_source_categories"]["items"]["enum"]
+                self.assertEqual(expected, set(enum))
+                self.assertEqual([], validate_schema_instance(dossier, schema))
+
+                invalid = copy.deepcopy(dossier)
+                invalid["methodology_source_categories"] = ["not_a_real_category"]
+                self.assertTrue(validate_schema_instance(invalid, schema))
+                self.assertTrue(validate_dossier(invalid))
+
+    def test_dossier_market_source_urls_keep_https_boundary_in_schema_and_runtime(self):
+        helper = _load_v2_dossier_helper()
+        validator = helper.load_validator()
+        cases = (
+            (
+                "executive-career-dossier-v1.schema.json",
+                helper.load_v1_fixture("scenario-market-en.json"),
+                validator._v1.validate_dossier,
+            ),
+            (
+                "executive-career-dossier-v2.schema.json",
+                helper.make_market_v2_dossier("en"),
+                validator.validate_dossier,
+            ),
+        )
+        for schema_name, dossier, validate_dossier in cases:
+            with self.subTest(schema=schema_name):
+                schema = self._schema(schema_name)
+                self.assertEqual([], validate_schema_instance(dossier, schema))
+                for unsafe_url in ("javascript:alert(1)", "http://example.com/source"):
+                    invalid = copy.deepcopy(dossier)
+                    invalid["market_context"]["public_sources"][0]["url"] = unsafe_url
+                    self.assertTrue(validate_schema_instance(invalid, schema))
+                    self.assertTrue(validate_dossier(invalid))
+
     def test_executive_dossier_v2_schema_accepts_ledger_and_closes_new_fields(self):
         helper = _load_v2_dossier_helper()
         dossier = helper.make_v2_dossier()

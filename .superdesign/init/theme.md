@@ -1319,6 +1319,10 @@ dd { margin: .15rem 0 0; font-weight: 600; }
   .section-coverage-ledger, .section-coverage-list, .section-coverage-row, .section-coverage-row article, .coach-priorities, .coach-priority-card, .coach-template { min-width: 0; }
 }
 
+@media screen and (max-width: 640px) {
+  .section-coverage-facts { grid-template-columns: 1fr; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .section-coverage-row article, .coach-priority-card, .coach-template { animation: none !important; transition: none !important; transform: none !important; }
 }
