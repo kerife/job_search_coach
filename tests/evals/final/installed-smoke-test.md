@@ -16,23 +16,23 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T13:25:19-06:00`
+release_timestamp: `2026-08-27T13:53:06-06:00`
 
-source_commit: `1194b7faaed66ef4264251fbd233fe69aec7cdf0`
+source_commit: `289c3a1499efc31c7fe5553503c0c92cc589bcbd`
 
-source_tree: `701ef3bca4e4ae361f88dd50162a8f8df6c0eedd`
+source_tree: `06a19178ff433b89d668bc678fb7171c7a613446`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827131354`
+installed_cache_version: `0.2.0+codex.20260827135027`
 
 installed_enabled: `true`
 
-source_file_count: `164`
+source_file_count: `170`
 
-installed_file_count: `164`
+installed_file_count: `170`
 
-normalized_source_cache_sha256: `2abb9e9726bf3ef5cef2cd7d60cdafd8f30efd32b26a6ced8ed644f34def15d9`
+normalized_source_cache_sha256: `15de8e9231c51c48a89bf41f28efe80c50323d1582764ddc5dac2a38e18b4ab0`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -124,6 +124,8 @@ installed_duplicate_employer_source_url_smoke: `1/1 installed market validator r
 installed_screen_debrief_smoke: `4/4 installed EN/ES builder, validator, and renderer; target-fact ownership, requested-screen receipt, future-date, explicit-checkpoint, and 0600 boundaries remain fail-closed`
 
 installed_feedback_sensitive_continuity_rail_smoke: `6/6 ES/EN feedback labels render one deterministic three-step rail with closed pending/blocked state copy`
+
+installed_next_stage_review_smoke: `1/1 installed EN/ES-compatible next-stage review build, validator, and renderer; explicit stage transition, debrief binding, private redaction, and manual-only boundary`
 
 fresh_agent_smoke: `not_run`
 
