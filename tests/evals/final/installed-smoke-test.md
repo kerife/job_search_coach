@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T09:16:00-06:00`
+release_timestamp: `2026-08-27T09:45:00-06:00`
 
-source_commit: `72d7df285c74712fb458ff945b0b4d8720352b40`
+source_commit: `53b494c294395844e21c19cdfac9b39bb38e32eb`
 
-source_tree: `35049f9039e31183d6b6fd27832855e121013e0b`
+source_tree: `22234c0465fc3ddc98d1d18b1122a9c0cceed77a`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827170000`
+installed_cache_version: `0.2.0+codex.20260827180000`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `139`
 
 installed_file_count: `139`
 
-normalized_source_cache_sha256: `03f0ff360ab11a5398ac798e4108e39529e8589636bc556083e91a66c9b3a49e`
+normalized_source_cache_sha256: `486ba5cac0a10c1f53a5732bcc681246ff40324a3d7101307328b2ef3a6421eb`
 
 normalized_excludes: `__pycache__`
 
@@ -98,6 +98,10 @@ installed_private_validator_argument_privacy_smoke: `3/3 private validators retu
 installed_private_json_loader_hardening_smoke: `7/7 installed private loaders and dossier/practice renderers reject oversized-integer JSON with fixed opaque errors; no traceback, raw-content echo, or output artifact`
 
 installed_action_aligned_rail_smoke: `11/11 installed EN/ES outcome/checkpoint rails select closed action copy, stop renders a terminal recorded rail, dark surface and forced-colors hooks are present, and non-finite schema numbers are rejected`
+
+installed_continuity_rail_semantics_smoke: `2/2 installed EN/ES outcome/checkpoint rails expose recorded -> pending -> blocked states with exactly one aria-current="step" pending safe step; terminal stop remains recorded`
+
+installed_duplicate_vacancy_source_url_smoke: `1/1 installed market validator rejects duplicate normalized vacancy source URLs even when vacancy IDs and fingerprints differ`
 
 installed_screen_debrief_smoke: `2/2 installed EN/ES completed screen_attended checkpoints render the closed debrief_after_screen action, preserve manual-only follow-up boundaries, and reject preparation routing`
 
