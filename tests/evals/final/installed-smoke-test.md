@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T07:09:20-06:00`
+release_timestamp: `2026-08-27T07:52:45-06:00`
 
-source_commit: `572db0eda0fc1b4df8ab5d9f5d7ecb7d0f14ca73`
+source_commit: `a6517f8d6e72e69f87b876ceec429cce0f37de06`
 
-source_tree: `21955819b2f1cf19beb5d20f5a15793fdd52a8f5`
+source_tree: `020fbae9bfd6f4e7b635546cb1112f85f733ce6a`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827070920`
+installed_cache_version: `0.2.0+codex.20260827075245`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `136`
 
 installed_file_count: `136`
 
-normalized_source_cache_sha256: `a5c7d69f1ceb716d9d292ea13b75f69c2cd1e67c71ccc268bf415917b414e689`
+normalized_source_cache_sha256: `19216235392df3deeb6813443d1e47b8da429cde66c43a9f53d869255a0d91c7`
 
 active_config: `canonical_and_public_enabled`
 release_smoke_plugin: `professional-growth-coach@professional-growth-coach-local`
@@ -70,6 +70,8 @@ installed_triage_first_answer_outline_smoke: `2/2 ES/EN installed builder, valid
 installed_private_cli_receipt_smoke: `2/2 ES/EN installed builder, validator, and renderer receipts; renderer outputs 0600; malformed direct CLI arguments return fixed opaque errors`
 
 installed_private_json_loader_hardening_smoke: `6/6 installed private loaders reject deep and oversized-integer JSON with fixed opaque errors; no traceback, raw-content echo, or output artifact`
+
+installed_feedback_sensitive_continuity_rail_smoke: `6/6 ES/EN feedback labels render one deterministic three-step rail with closed pending/blocked state copy`
 
 fresh_agent_smoke: `not_run`
 
