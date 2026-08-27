@@ -163,6 +163,33 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
         english = build_screen_debrief(valid_checkpoint(), RECEIPT, english_intake, valid_debrief())
         self.assertIn("Private screen debrief", render_screen_debrief_html(english, RECEIPT, english_intake))
 
+    def test_renderer_covers_every_supported_stage_in_both_locales(self) -> None:
+        stage_labels = {
+            "recruiter_screen": ("Filtro con reclutador", "Recruiter screen"),
+            "first_interview": ("Primera entrevista", "First interview"),
+            "technical_screen": ("Filtro técnico", "Technical screen"),
+            "hiring_manager": ("Entrevista con hiring manager", "Hiring manager interview"),
+            "technical_deep_dive": ("Profundización técnica", "Technical deep dive"),
+            "take_home": ("Ejercicio para casa", "Take-home exercise"),
+            "system_design": ("Diseño de sistemas", "System design"),
+            "behavioral_loop": ("Ronda conductual", "Behavioral loop"),
+            "panel": ("Panel de entrevistas", "Interview panel"),
+            "offer_stage": ("Etapa de oferta", "Offer stage"),
+        }
+        english_gate = build_decision_gate(build_shortlist("en", "2026-08-27", valid_plan(), valid_targets()))
+        for stage, (spanish_label, english_label) in stage_labels.items():
+            context = valid_screen_intake()
+            context["stated_stage"] = stage
+            spanish_intake = build_screen_intake(self.gate, "T-001", context)
+            spanish_artifact = build_screen_debrief(valid_checkpoint(), RECEIPT, spanish_intake, valid_debrief())
+            self.assertIn(spanish_label, render_screen_debrief_html(spanish_artifact, RECEIPT, spanish_intake))
+
+            english_intake = build_screen_intake(english_gate, "T-001", context)
+            english_artifact = build_screen_debrief(valid_checkpoint(), RECEIPT, english_intake, valid_debrief())
+            rendered = render_screen_debrief_html(english_artifact, RECEIPT, english_intake)
+            self.assertIn(english_label, rendered)
+            self.assertNotIn(f">{stage}<", rendered)
+
     def test_cli_unknown_arguments_are_opaque(self) -> None:
         from validate_private_recruiter_screen_debrief import _cli
 
@@ -179,6 +206,12 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
         routed = route_recruiter_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, paused)
         self.assertEqual("needs_intake", routed["case_state"])
         self.assertEqual("collect_debrief_context", routed["next_action"])
+
+        stopped = valid_debrief()
+        stopped["decision"] = "stop"
+        routed = route_recruiter_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, stopped)
+        self.assertEqual("stopped", routed["case_state"])
+        self.assertEqual("record_stop_decision", routed["next_action"])
 
 
 if __name__ == "__main__":

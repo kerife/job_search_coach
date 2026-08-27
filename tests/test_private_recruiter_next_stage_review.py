@@ -187,6 +187,13 @@ class PrivateRecruiterNextStageReviewTests(unittest.TestCase):
         self.assertEqual("ready", routed["case_state"])
         self.assertEqual("manual_prepare_next_stage_review", routed["next_action"])
 
+        stopped = valid_debrief()
+        stopped["decision"] = "stop"
+        stopped_debrief = build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, stopped)
+        routed = route_recruiter_next_stage_review(stopped_debrief, RECEIPT, self.intake, valid_checkpoint(), "first_interview")
+        self.assertEqual("stopped", routed["case_state"])
+        self.assertEqual("record_stop_decision", routed["next_action"])
+
 
 if __name__ == "__main__":
     unittest.main()

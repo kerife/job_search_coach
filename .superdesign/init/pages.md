@@ -135,7 +135,7 @@ Dependencies:
 - `plugins/professional-growth-coach/assets/private-recruiter-screen-debrief-v1.html`
 - `plugins/professional-growth-coach/assets/private-recruiter-screen-debrief-v1.css`
 
-The debrief is a private post-screen bridge bound to a completed `screen_attended` checkpoint and a ready target-specific intake. It records exactly three coverage topics, bounded unknown counts, supported fact counts, and a manual decision. Complete coverage exposes only `manual_prepare_next_stage_review`; incomplete or stop decisions remain context collection or terminal recording. The renderer hides all internal IDs and notes and performs no follow-up action.
+The debrief is a private post-screen bridge bound to a completed `screen_attended` checkpoint and a ready target-specific intake. It records exactly three coverage topics, bounded unknown counts, supported fact counts, and a manual decision. Complete coverage exposes `ready` with `manual_prepare_next_stage_review`; incomplete coverage exposes `needs_intake` for context collection; stop decisions expose terminal `stopped` with recording only. The renderer hides all internal IDs and notes and performs no follow-up action.
 
 The renderer validates a candidate-supplied outcome, computes the localized evidence-count label, and writes a compact offline receipt. The default CLI receipt is path-free; `--include-artifact-path` is an explicit trusted-caller opt-in.
 
@@ -155,7 +155,7 @@ The review requires a manually selected forward stage transition and a validated
 Outcome and follow-through receipts share a non-interactive continuity rail:
 the supplied observation/receipt is `recorded`, one manual safe step is
 `pending` and marked with `aria-current="step"`, and manual review is
-`blocked`. A stop decision is a terminal recorded rail with no continuation.
+`blocked`. A stop decision is a terminal `stopped` recorded rail with no continuation.
 
 Recruiter practice sessions and triage handoffs reuse the same visual contract:
 completed evidence is `recorded`, the next private rehearsal/re-entry is the

@@ -177,9 +177,10 @@ def route_recruiter_screen_debrief(
             "artifact": None,
         }
     ready = artifact["decision"] == "continue_review"
+    stopped = artifact["decision"] == "stop"
     return {
         "route_kind": "private_recruiter_screen_debrief",
-        "case_state": "ready" if ready else "needs_intake",
+        "case_state": "stopped" if stopped else ("ready" if ready else "needs_intake"),
         "selected_module": "track-career-outcomes",
         "next_action": artifact["handoff"]["next_safe_action"],
         "authorization_required": False,
@@ -207,9 +208,10 @@ def route_recruiter_next_stage_review(
             "artifact": None,
         }
     ready = artifact["review_state"] == "ready"
+    stopped = artifact["handoff"]["next_safe_action"] == "record_stop_decision"
     return {
         "route_kind": "private_recruiter_next_stage_review",
-        "case_state": "ready" if ready else "needs_intake",
+        "case_state": "stopped" if stopped else ("ready" if ready else "needs_intake"),
         "selected_module": "prepare-role-interviews",
         "next_action": artifact["handoff"]["next_safe_action"],
         "authorization_required": False,

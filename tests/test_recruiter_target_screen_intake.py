@@ -126,6 +126,35 @@ class RecruiterTargetScreenIntakeTests(unittest.TestCase):
         english = build_screen_intake(english_gate, "T-001", valid_screen_intake())
         self.assertIn("Prepare interview for review", render_screen_intake_html(english))
 
+    def test_renderer_localizes_internal_checks_company_state_and_stage(self) -> None:
+        stages = {
+            "recruiter_screen": ("Filtro con reclutador", "Recruiter screen"),
+            "first_interview": ("Primera entrevista", "First interview"),
+            "technical_screen": ("Filtro técnico", "Technical screen"),
+            "hiring_manager": ("Entrevista con hiring manager", "Hiring manager interview"),
+            "technical_deep_dive": ("Profundización técnica", "Technical deep dive"),
+            "take_home": ("Ejercicio para casa", "Take-home exercise"),
+            "system_design": ("Diseño de sistemas", "System design"),
+            "behavioral_loop": ("Ronda conductual", "Behavioral loop"),
+            "panel": ("Panel de entrevistas", "Interview panel"),
+            "offer_stage": ("Etapa de oferta", "Offer stage"),
+        }
+        internal_tokens = ("target_context", "proof_packet", "low_friction_ask", "screen_readiness", "verified")
+        for stage, (spanish_label, english_label) in stages.items():
+            context = valid_screen_intake()
+            context["stated_stage"] = stage
+            rendered = render_screen_intake_html(build_screen_intake(self.gate(), "T-001", context))
+            self.assertIn(spanish_label, rendered)
+            self.assertNotIn(f">{stage}<", rendered)
+            for token in internal_tokens:
+                self.assertNotIn(f">{token}<", rendered)
+
+            english_gate = build_decision_gate(build_shortlist("en", "2026-08-27", valid_plan(), valid_targets()))
+            english = dict(context)
+            english_rendered = render_screen_intake_html(build_screen_intake(english_gate, "T-001", english))
+            self.assertIn(english_label, english_rendered)
+            self.assertNotIn(f">{stage}<", english_rendered)
+
     def test_route_returns_manual_or_blocked_state_only(self) -> None:
         ready = route_recruiter_screen_intake(self.gate(), "T-001", valid_screen_intake())
         self.assertEqual("ready", ready["case_state"])

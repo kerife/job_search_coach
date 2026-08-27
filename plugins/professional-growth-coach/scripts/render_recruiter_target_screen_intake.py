@@ -80,6 +80,13 @@ COPY = {
         "stop_next": "Registrar la decisión y no contactar mientras esta condición siga vigente.",
         "boundary": "Este brief sólo organiza evidencia por objetivo. No autoriza contacto, no prepara automáticamente y no predice una entrevista.",
         "footer": "Sin mensajes, conexiones, calendario ni respuestas guardadas.",
+        "check_names": {"target_context": "Contexto del objetivo", "proof_packet": "Paquete de pruebas", "low_friction_ask": "Pregunta de baja fricción", "screen_readiness": "Preparación para el filtro"},
+        "company_states": {"verified": "Verificada", "candidate_reported": "Reportada por el candidato", "unknown": "Aún desconocida"},
+        "stages": {
+            "recruiter_screen": "Filtro con reclutador", "first_interview": "Primera entrevista", "technical_screen": "Filtro técnico",
+            "hiring_manager": "Entrevista con hiring manager", "technical_deep_dive": "Profundización técnica", "take_home": "Ejercicio para casa",
+            "system_design": "Diseño de sistemas", "behavioral_loop": "Ronda conductual", "panel": "Panel de entrevistas", "offer_stage": "Etapa de oferta",
+        },
     },
     "en": {
         "skip": "Skip to preparation brief",
@@ -108,6 +115,13 @@ COPY = {
         "stop_next": "Record the decision and do not contact while this condition remains.",
         "boundary": "This brief organizes evidence by target only. It does not authorize contact, prepare automatically, or predict an interview.",
         "footer": "No messages, connections, calendar actions, or saved answers.",
+        "check_names": {"target_context": "Target context", "proof_packet": "Proof packet", "low_friction_ask": "Low-friction ask", "screen_readiness": "Screen readiness"},
+        "company_states": {"verified": "Verified", "candidate_reported": "Candidate-reported", "unknown": "Still unknown"},
+        "stages": {
+            "recruiter_screen": "Recruiter screen", "first_interview": "First interview", "technical_screen": "Technical screen",
+            "hiring_manager": "Hiring manager interview", "technical_deep_dive": "Technical deep dive", "take_home": "Take-home exercise",
+            "system_design": "System design", "behavioral_loop": "Behavioral loop", "panel": "Interview panel", "offer_stage": "Offer stage",
+        },
     },
 }
 
@@ -126,7 +140,7 @@ def render_screen_intake_html(value: Mapping[str, object]) -> str:
     for check in value["checks"]:
         label = labels[str(check["status"])] if check["status"] != "stop" else labels["stop_check"]
         check_items.append(
-            f'<li class="screen-check screen-check--{html.escape(str(check["status"]))}"><strong>{html.escape(str(check["check"]))}</strong><span>{html.escape(label)}</span><p>{html.escape(str(check["evidence_note"]), quote=True)}</p></li>'
+            f'<li class="screen-check screen-check--{html.escape(str(check["status"]))}"><strong>{html.escape(labels["check_names"][str(check["check"])])}</strong><span>{html.escape(label)}</span><p>{html.escape(str(check["evidence_note"]), quote=True)}</p></li>'
         )
     requirement_items = "".join(f"<li>{html.escape(str(item), quote=True)}</li>" for item in intake["vacancy_requirements"])
     fact_count = str(len(intake["candidate_fact_ids"]))
@@ -149,9 +163,9 @@ def render_screen_intake_html(value: Mapping[str, object]) -> str:
         "{{FACTS_LABEL}}": html.escape(labels["facts"]),
         "{{FACT_COUNT}}": html.escape(fact_count),
         "{{COMPANY_LABEL}}": html.escape(labels["company"]),
-        "{{COMPANY_STATE}}": html.escape(str(intake["company_evidence_state"])),
+        "{{COMPANY_STATE}}": html.escape(labels["company_states"][str(intake["company_evidence_state"])]),
         "{{STAGE_LABEL}}": html.escape(labels["stage"]),
-        "{{STAGE}}": html.escape(str(intake["stated_stage"])),
+        "{{STAGE}}": html.escape(labels["stages"][str(intake["stated_stage"])]),
         "{{CHECKS_LABEL}}": html.escape(labels["checks"]),
         "{{CHECKS}}": "".join(check_items),
         "{{NEXT_LABEL}}": html.escape(labels["next"]),

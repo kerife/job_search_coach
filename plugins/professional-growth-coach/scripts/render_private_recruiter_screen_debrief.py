@@ -61,7 +61,11 @@ COPY = {
         "next": "Siguiente paso seguro", "next_action": {"manual_prepare_next_stage_review": "Preparar la siguiente etapa para revisión manual", "collect_debrief_context": "Recopilar contexto del debrief", "record_stop_decision": "Registrar la decisión de detenerse"},
         "boundary": "Este debrief registra sólo cobertura estructurada. No conserva texto crudo, no contacta, no agenda y no prepara automáticamente.",
         "footer": "Revisión manual requerida · sin mensajes · sin calendario · sin predicciones",
-        "stages": {"recruiter_screen": "Filtro con reclutador", "first_interview": "Primera entrevista", "technical_screen": "Filtro técnico"},
+        "stages": {
+            "recruiter_screen": "Filtro con reclutador", "first_interview": "Primera entrevista", "technical_screen": "Filtro técnico",
+            "hiring_manager": "Entrevista con hiring manager", "technical_deep_dive": "Profundización técnica", "take_home": "Ejercicio para casa",
+            "system_design": "Diseño de sistemas", "behavioral_loop": "Ronda conductual", "panel": "Panel de entrevistas", "offer_stage": "Etapa de oferta",
+        },
         "topics": {"requirement": "Requisitos", "scope": "Alcance y éxito", "team_context": "Contexto del equipo"},
     },
     "en": {
@@ -72,7 +76,11 @@ COPY = {
         "next": "Safe next step", "next_action": {"manual_prepare_next_stage_review": "Prepare the next stage for manual review", "collect_debrief_context": "Collect debrief context", "record_stop_decision": "Record the stop decision"},
         "boundary": "This debrief records structured coverage only. It keeps no raw text, contacts, calendars, or automatic preparation.",
         "footer": "Manual review required · no messages · no calendar · no predictions",
-        "stages": {"recruiter_screen": "Recruiter screen", "first_interview": "First interview", "technical_screen": "Technical screen"},
+        "stages": {
+            "recruiter_screen": "Recruiter screen", "first_interview": "First interview", "technical_screen": "Technical screen",
+            "hiring_manager": "Hiring manager interview", "technical_deep_dive": "Technical deep dive", "take_home": "Take-home exercise",
+            "system_design": "System design", "behavioral_loop": "Behavioral loop", "panel": "Interview panel", "offer_stage": "Offer stage",
+        },
         "topics": {"requirement": "Requirements", "scope": "Scope and success", "team_context": "Team context"},
     },
 }
