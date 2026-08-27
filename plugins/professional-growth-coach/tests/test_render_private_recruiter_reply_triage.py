@@ -23,6 +23,17 @@ spec.loader.exec_module(renderer)
 
 
 class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
+    def test_handoff_sequence_exposes_recorded_to_pending_accessible_states(self):
+        for locale in ("en", "es"):
+            value = json.loads((FIXTURES / f"ready-{locale}.json").read_text(encoding="utf-8"))
+            rendered = renderer.render_triage_html(value)
+            sequence = rendered.split('<ol class="triage-handoff-sequence"', 1)[1].split("</ol>", 1)[0]
+            self.assertIn('data-state="recorded"', sequence)
+            self.assertIn('data-state="pending" aria-current="step"', sequence)
+            self.assertEqual(1, sequence.count('aria-current="step"'))
+            self.assertNotIn("D-104", sequence)
+            self.assertNotIn("F-105", sequence)
+
     def test_normal_states_show_employment_continuity_and_stop_keeps_specific_scope(self):
         expected = {
             "en": "This analysis evaluates professional options; it does not recommend resigning, leaving a job, or stopping your job search; you decide what comes next.",

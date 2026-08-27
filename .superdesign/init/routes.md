@@ -24,4 +24,8 @@ Both compact receipt routes use the same static continuity semantics (`recorded`
 then `pending` then `blocked`) and expose exactly one current step to assistive
 technology; terminal stop receipts remain recorded.
 
+Practice and triage routes now share that state vocabulary for their private
+handoffs, so users can scan evidence already recorded and the one safe next
+step without losing the read-only boundary.
+
 No router config file exists, so there is no router source to include. All renderer CLIs keep local artifact paths out of successful receipts by default; a trusted caller that needs a verified local link must pass `--include-artifact-path`. Unknown arguments use the same fixed opaque diagnostic boundary and never echo rejected values.

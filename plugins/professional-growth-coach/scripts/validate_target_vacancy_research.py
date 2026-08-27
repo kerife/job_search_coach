@@ -251,6 +251,7 @@ def _validate_employers(value: object, evidence_mode: str, errors: list[str]) ->
         errors.append("employers must be an array")
         return set()
     ids: set[str] = set()
+    source_urls: set[str] = set()
     fields = frozenset({"employer_id", "display_name", "qualification_type", "qualification_observation", "official_source_title", "official_source_url", "source_date", "access_date"})
     for index, item in enumerate(value):
         path = f"employers[{index}]"
@@ -270,6 +271,13 @@ def _validate_employers(value: object, evidence_mode: str, errors: list[str]) ->
         url_error = _url_error(row.get("official_source_url"), evidence_mode=evidence_mode)
         if url_error:
             errors.append(url_error if url_error == "live evidence cannot use a reserved source domain" else f"{path}.official_source_url is invalid")
+        else:
+            normalized_url = _normalized_source_url(row.get("official_source_url"))
+            if normalized_url is not None:
+                if normalized_url in source_urls:
+                    errors.append("duplicate employer source URL")
+                else:
+                    source_urls.add(normalized_url)
         source_date = _date(row.get("source_date"), f"{path}.source_date", errors, live=evidence_mode == "live")
         access_date = _date(row.get("access_date"), f"{path}.access_date", errors, live=evidence_mode == "live")
         if source_date and access_date and source_date > access_date:

@@ -533,14 +533,15 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
             rendered.count('class="continuity-rail continuity-rail--feedback-available"'), 1
         )
         self.assertEqual(rendered.count('class="continuity-step continuity-step--'), 3)
-        self.assertIn('data-stage="evidence" data-state="current"', rendered)
-        self.assertIn('data-stage="decision" data-state="current"', rendered)
-        self.assertIn('data-stage="next-rehearsal" data-state="pending"', rendered)
+        self.assertIn('data-stage="evidence" data-state="recorded"', rendered)
+        self.assertIn('data-stage="decision" data-state="recorded"', rendered)
+        self.assertIn('data-stage="next-rehearsal" data-state="pending" aria-current="step"', rendered)
+        self.assertEqual(1, rendered.count('aria-current="step"'))
         self.assertNotIn("D-104", rendered)
         self.assertNotIn("F-105", rendered)
 
     def test_feedback_continuity_rail_matches_governing_label_in_both_locales(self):
-        expected_stage_states = (("evidence", "current"), ("decision", "current"))
+        expected_stage_states = (("evidence", "recorded"), ("decision", "recorded"))
         for locale in ("es", "en"):
             for kind in renderer.QUESTION_KINDS:
                 for label in renderer.FEEDBACK_LABELS:
@@ -577,6 +578,7 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
                             f'data-stage="next-rehearsal" data-state="{final_state}"',
                             rail,
                         )
+                        self.assertEqual(1, rail.count('aria-current="step"'))
                         self.assertIn(final_title, rail)
                         self.assertIn(final_description, rail)
                         self.assertNotIn("PRIVATE-ANSWER-SENTINEL", rail)
@@ -604,9 +606,10 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
                     'class="continuity-rail continuity-rail--feedback-available"',
                     rendered,
                 )
-                self.assertIn('data-stage="evidence" data-state="current"', rail)
-                self.assertIn('data-stage="rehearsal" data-state="current"', rail)
-                self.assertIn('data-stage="next-version" data-state="pending"', rail)
+                self.assertIn('data-stage="evidence" data-state="recorded"', rail)
+                self.assertIn('data-stage="rehearsal" data-state="recorded"', rail)
+                self.assertIn('data-stage="next-version" data-state="pending" aria-current="step"', rail)
+                self.assertEqual(1, rail.count('aria-current="step"'))
                 for stage, _, title, description in renderer.CONTINUITY_COPY["es"]["steps"]:
                     self.assertIn(f'data-stage="{stage}"', rail)
                     self.assertIn(title, rail)

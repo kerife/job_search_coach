@@ -97,3 +97,8 @@ Outcome and follow-through receipts share a non-interactive continuity rail:
 the supplied observation/receipt is `recorded`, one manual safe step is
 `pending` and marked with `aria-current="step"`, and manual review is
 `blocked`. A stop decision is a terminal recorded rail with no continuation.
+
+Recruiter practice sessions and triage handoffs reuse the same visual contract:
+completed evidence is `recorded`, the next private rehearsal/re-entry is the
+single pending or blocked `aria-current="step"`, and no step becomes an action
+control.

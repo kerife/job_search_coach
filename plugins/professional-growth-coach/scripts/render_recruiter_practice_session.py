@@ -433,30 +433,30 @@ CONTINUITY_COPY = {
     "en": {
         "title": "Manual continuity route",
         "kicker": "Route at a glance",
-        "states": {"current": "Current", "pending": "Pending", "blocked": "Blocked"},
+        "states": {"current": "Current", "recorded": "Recorded", "pending": "Pending", "blocked": "Blocked"},
         "steps": (
-            ("evidence", "current", "Supplied evidence", "Use only the evidence already in the private session."),
-            ("rehearsal", "current", "Rehearsal", "Practice the bounded answer structure without saving it."),
+            ("evidence", "recorded", "Supplied evidence", "Use only the evidence already in the private session."),
+            ("rehearsal", "recorded", "Rehearsal", "Practice the bounded answer structure without saving it."),
             ("next-version", "pending", "Next version", "Review the next answer privately before any external action."),
         ),
         "feedback": {
             "title": "Manual continuity route",
             "kicker": "Session state",
-            "states": {"current": "Current", "pending": "Pending", "blocked": "Blocked"},
+            "states": {"current": "Current", "recorded": "Recorded", "pending": "Pending", "blocked": "Blocked"},
             "steps": {
                 "solid": (
-                    ("evidence", "current", "Supplied evidence", "Use only the evidence already in the private session."),
-                    ("decision", "current", "Reviewed decision", "The governing feedback signal has been reviewed."),
+                    ("evidence", "recorded", "Supplied evidence", "Use only the evidence already in the private session."),
+                    ("decision", "recorded", "Reviewed decision", "The governing feedback signal has been reviewed."),
                     ("next-rehearsal", "pending", "Next private rehearsal", "Review the next answer privately before any external action."),
                 ),
                 "confirm": (
-                    ("evidence", "current", "Supplied evidence", "Use only the evidence already in the private session."),
-                    ("decision", "current", "Reviewed decision", "The governing feedback signal has been reviewed."),
+                    ("evidence", "recorded", "Supplied evidence", "Use only the evidence already in the private session."),
+                    ("decision", "recorded", "Reviewed decision", "The governing feedback signal has been reviewed."),
                     ("next-rehearsal", "blocked", "Next private rehearsal", "Confirm or narrow the uncertain point before the next private rehearsal."),
                 ),
                 "do_not_assert": (
-                    ("evidence", "current", "Supplied evidence", "Use only the evidence already in the private session."),
-                    ("decision", "current", "Reviewed decision", "The governing feedback signal has been reviewed."),
+                    ("evidence", "recorded", "Supplied evidence", "Use only the evidence already in the private session."),
+                    ("decision", "recorded", "Reviewed decision", "The governing feedback signal has been reviewed."),
                     ("next-rehearsal", "blocked", "Next private rehearsal", "Remove the unsupported claim before the next private rehearsal."),
                 ),
             },
@@ -465,30 +465,30 @@ CONTINUITY_COPY = {
     "es": {
         "title": "Ruta de continuidad manual",
         "kicker": "Ruta de un vistazo",
-        "states": {"current": "Actual", "pending": "Pendiente", "blocked": "Bloqueada"},
+        "states": {"current": "Actual", "recorded": "Registrado", "pending": "Pendiente", "blocked": "Bloqueada"},
         "steps": (
-            ("evidence", "current", "Evidencia suministrada", "Usa solo la evidencia ya presente en la sesión privada."),
-            ("rehearsal", "current", "Ensayo", "Practica la estructura acotada sin guardarla."),
+            ("evidence", "recorded", "Evidencia suministrada", "Usa solo la evidencia ya presente en la sesión privada."),
+            ("rehearsal", "recorded", "Ensayo", "Practica la estructura acotada sin guardarla."),
             ("next-version", "pending", "Siguiente versión", "Revisa en privado la próxima respuesta antes de cualquier acción externa."),
         ),
         "feedback": {
             "title": "Ruta de continuidad manual",
             "kicker": "Estado de la sesión",
-            "states": {"current": "Actual", "pending": "Pendiente", "blocked": "Bloqueada"},
+            "states": {"current": "Actual", "recorded": "Registrado", "pending": "Pendiente", "blocked": "Bloqueada"},
             "steps": {
                 "solid": (
-                    ("evidence", "current", "Evidencia suministrada", "Usa solo la evidencia ya presente en la sesión privada."),
-                    ("decision", "current", "Decisión revisada", "La señal prioritaria de comentarios fue revisada."),
+                    ("evidence", "recorded", "Evidencia suministrada", "Usa solo la evidencia ya presente en la sesión privada."),
+                    ("decision", "recorded", "Decisión revisada", "La señal prioritaria de comentarios fue revisada."),
                     ("next-rehearsal", "pending", "Próximo ensayo privado", "Revisa en privado la próxima respuesta antes de cualquier acción externa."),
                 ),
                 "confirm": (
-                    ("evidence", "current", "Evidencia suministrada", "Usa solo la evidencia ya presente en la sesión privada."),
-                    ("decision", "current", "Decisión revisada", "La señal prioritaria de comentarios fue revisada."),
+                    ("evidence", "recorded", "Evidencia suministrada", "Usa solo la evidencia ya presente en la sesión privada."),
+                    ("decision", "recorded", "Decisión revisada", "La señal prioritaria de comentarios fue revisada."),
                     ("next-rehearsal", "blocked", "Próximo ensayo privado", "Confirma o acota el punto incierto antes del próximo ensayo privado."),
                 ),
                 "do_not_assert": (
-                    ("evidence", "current", "Evidencia suministrada", "Usa solo la evidencia ya presente en la sesión privada."),
-                    ("decision", "current", "Decisión revisada", "La señal prioritaria de comentarios fue revisada."),
+                    ("evidence", "recorded", "Evidencia suministrada", "Usa solo la evidencia ya presente en la sesión privada."),
+                    ("decision", "recorded", "Decisión revisada", "La señal prioritaria de comentarios fue revisada."),
                     ("next-rehearsal", "blocked", "Próximo ensayo privado", "Quita la afirmación sin respaldo antes del próximo ensayo privado."),
                 ),
             },
@@ -642,7 +642,7 @@ def _continuity_rail(
         steps = labels["steps"]
         rail_class = "continuity-rail"
     steps_html = "".join(
-        f'<li class="continuity-step continuity-step--{state}" data-stage="{stage}" data-state="{state}">'
+        f'<li class="continuity-step continuity-step--{state}" data-stage="{stage}" data-state="{state}"{(" aria-current=\"step\"" if state in {"pending", "blocked"} else "")}>'
         f'<span class="continuity-step-state">{labels["states"][state]}</span>'
         f'<strong>{title}</strong><p>{description}</p></li>'
         for stage, state, title, description in steps

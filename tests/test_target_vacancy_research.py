@@ -170,6 +170,14 @@ class TargetVacancyResearchTests(unittest.TestCase):
 
         self.assertIn("duplicate vacancy source URL", " ".join(errors))
 
+    def test_duplicate_employer_source_urls_fail_even_when_ids_differ(self) -> None:
+        value = load_fixture("complete-five-es.json")
+        value["employers"][1]["official_source_url"] = value["employers"][0]["official_source_url"]
+
+        errors = validate_research(value)
+
+        self.assertIn("duplicate employer source URL", " ".join(errors))
+
     def test_repeated_employer_requires_exhaustion_and_distinct_postings(self) -> None:
         value = load_fixture("complete-five-es.json")
         value["vacancies"][1]["employer_id"] = value["vacancies"][0]["employer_id"]

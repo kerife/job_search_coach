@@ -71,6 +71,12 @@ class _PrivateArgumentParser(argparse.ArgumentParser):
         raise _ArgumentError
 
 
+HANDOFF_STATE_LABELS = {
+    "en": ("Recorded", "Recorded", "Pending"),
+    "es": ("Registrado", "Registrado", "Pendiente"),
+}
+
+
 @dataclass(frozen=True, slots=True)
 class RenderReceipt:
     artifact_path: Path
@@ -420,12 +426,13 @@ def _render_main(
                 <li>{labels[f"answer_path_{answer_path_family}_3"]}</li>
               </ol>
             </section>'''
+        handoff_states = HANDOFF_STATE_LABELS[locale]
         handoff = f'''<aside class="triage-section triage-handoff" aria-labelledby="handoff-title" aria-describedby="handoff-description">
         <h2 id="handoff-title">{labels["handoff"]}</h2>
         <p>{labels["handoff_text"]}</p>
         <p id="handoff-description">{labels["handoff_scope"]} {labels["handoff_reentry"]}</p>
         <ol class="triage-handoff-sequence" aria-label="{labels["handoff"]}">
-          <li><span class="triage-handoff-step-label">{labels["sequence_conditions"]}</span>
+          <li data-state="recorded"><span class="triage-handoff-step-label">{handoff_states[0]} · {labels["sequence_conditions"]}</span>
             <section class="triage-handoff-readiness" aria-labelledby="handoff-readiness-title">
               <h3 id="handoff-readiness-title">{labels["readiness"]}</h3>
               <dl>
@@ -435,13 +442,13 @@ def _render_main(
               </dl>
             </section>
           </li>
-          <li><span class="triage-handoff-step-label">{labels["sequence_focus"]}</span>
+          <li data-state="recorded"><span class="triage-handoff-step-label">{handoff_states[1]} · {labels["sequence_focus"]}</span>
             <section class="triage-handoff-focus" aria-labelledby="handoff-focus-title">
               <h3 id="handoff-focus-title">{labels["focus"]}</h3>
               <p>{labels[CLASSIFICATION_FOCUS_KEYS[classification]]}</p>
             </section>
           </li>
-          <li><span class="triage-handoff-step-label">{labels["sequence_reentry"]}</span>
+          <li data-state="pending" aria-current="step"><span class="triage-handoff-step-label">{handoff_states[2]} · {labels["sequence_reentry"]}</span>
             <section class="triage-handoff-next-step" aria-labelledby="handoff-next-step-title">
               <h3 id="handoff-next-step-title">{labels["next_step"]}</h3>
               <p>{labels["next_step_text"]}</p>

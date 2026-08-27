@@ -87,10 +87,18 @@ Current vacancy research also rejects duplicate normalized `source_url` values
 before market alignment, so one public posting cannot inflate the evidence
 sample under different vacancy IDs or fingerprints.
 
+Employer qualification evidence applies the same uniqueness rule to
+`official_source_url`, preserving distinct-employer sampling when different
+employer records point to the same public page.
+
 Private recruiter outcome and follow-through receipts expose a static continuity
 rail with the explicit sequence `recorded -> pending -> blocked`. The pending
 safe step is the single `aria-current="step"` landmark; terminal stop records
 remain recorded and do not reopen a continuation route.
+
+Recruiter practice and private triage handoffs use the same accessible language:
+recorded evidence/decisions precede one pending or blocked next step, with no
+interactive controls or automatic external action.
 
 ## Installation
 
