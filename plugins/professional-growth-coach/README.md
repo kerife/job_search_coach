@@ -124,7 +124,14 @@ an explicit non-current-provider boundary in the rendered dossier.
 Each evaluated card now includes provider, option, source title/date, geography,
 role, seniority, and any recorded unknowns when present. Vacancy cards expose
 documented alignment alongside evidence coverage and qualitative band; the
-visible legend keeps this directional evidence separate from hiring fit.
+visible legend keeps this directional evidence separate from hiring fit. Each
+vacancy card also retains its location, arrangement, and source type, while a
+separate boundary states that eligibility and work authorization are not
+inferred.
+The follow-through checkpoint validator also exposes a pure `replay_fingerprint`
+for the validated receipt/checkpoint pair. Equal keys are safe no-op replays;
+changed structural fields produce a distinct key without persisting raw prose or
+candidate identity.
 
 Private recruiter outcome receipts, follow-through checkpoints, and practice
 sessions also include a static, localized continuity rail. Compact outcome and

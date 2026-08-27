@@ -686,6 +686,9 @@ details summary {
 .market-alignment-facts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .3rem .75rem; margin: .75rem 0 0; }
 .market-alignment-facts dt { color: var(--muted); font-size: .875rem; font-weight: 700; }
 .market-alignment-facts dd { margin: 0; overflow-wrap: anywhere; }
+.market-vacancy-context { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .25rem .75rem; margin: .75rem 0 0; padding-top: .65rem; border-top: 1px solid var(--muted); }
+.market-vacancy-context dt { color: var(--muted); font-size: .875rem; font-weight: 700; }
+.market-vacancy-context dd { margin: 0; overflow-wrap: anywhere; }
 .market-directional-legend { margin-top: .5rem; }
 .market-key, .market-matrix-wrap, .gap-closure-route { margin-top: 1.25rem; min-width: 0; }
 .market-key ol, .gap-closure-route ol { margin: .5rem 0 0; padding-left: 1.25rem; }
@@ -724,6 +727,13 @@ details summary {
 .learning-provenance-facts dd { margin: 0; overflow-wrap: anywhere; }
 .learning-reuse ul { display: grid; gap: .35rem; margin: .5rem 0 0; padding-left: 1.25rem; }
 
+@media screen and (prefers-color-scheme: dark) {
+  .learning-decision-row--consider .learning-option-type,
+  .learning-decision-row--recommended .learning-option-type { color: var(--gold); }
+  .learning-decision-row--pause .learning-option-type,
+  .learning-decision-row--apply-with-boundary .learning-option-type { color: var(--coral); }
+}
+
 @media screen and (max-width: 680px) {
   .vacancy-alignment-list { grid-template-columns: 1fr; }
   .market-matrix, .market-matrix tbody, .market-matrix tr, .market-matrix th, .market-matrix td { display: block; width: 100%; }
@@ -732,7 +742,7 @@ details summary {
   .market-matrix td { display: grid; grid-template-columns: minmax(7rem, .4fr) minmax(0, 1fr); gap: .75rem; border: 0; }
   .market-matrix td::before { content: attr(data-label); color: var(--muted); font-size: .8125rem; font-weight: 700; }
   .market-alignment-line { align-items: flex-start; flex-direction: column; gap: .2rem; }
-  .market-alignment-facts, .learning-provenance-facts { grid-template-columns: 1fr; gap: .2rem; }
+  .market-alignment-facts, .market-vacancy-context, .learning-provenance-facts { grid-template-columns: 1fr; gap: .2rem; }
   .recurrence-row { grid-template-columns: 1fr; gap: .35rem; }
   .learning-decision-list { grid-template-columns: 1fr; }
   .learning-decision-facts { grid-template-columns: 1fr; gap: .2rem; }
@@ -745,9 +755,9 @@ details summary {
 @media print { .market-summary, .market-key, .market-matrix-wrap, .gap-closure-route, .market-learning-roi, .learning-decision-row, .vacancy-alignment-card, .recurrence-row { break-inside: avoid; page-break-inside: avoid; } .market-matrix thead { display: table-header-group; } }
 
 @media (forced-colors: active) {
-  .market-summary, .vacancy-alignment-card, .recurrence-row, .gap-closure-route, .market-learning-roi, .learning-coach-decision, .learning-proof-sprint, .learning-reuse, .learning-decision-row, .learning-provenance, .market-matrix th, .market-matrix td, .market-alignment-score, .market-recurrence-count { background: Canvas; color: CanvasText; border-color: CanvasText; }
+  .market-summary, .vacancy-alignment-card, .recurrence-row, .gap-closure-route, .market-learning-roi, .learning-coach-decision, .learning-proof-sprint, .learning-reuse, .learning-decision-row, .learning-provenance, .market-matrix th, .market-matrix td, .market-alignment-score, .market-recurrence-count, .market-vacancy-context { background: Canvas; color: CanvasText; border-color: CanvasText; }
   .market-boundary, .market-limitation, .gap-closure-route { border-left-color: Highlight; }
-  .learning-option-type { color: CanvasText; border-color: CanvasText; }
+  .learning-decision-row .learning-option-type { color: CanvasText; border-color: CanvasText; }
 }
 
 @media (prefers-contrast: more) { .market-summary, .vacancy-alignment-card, .recurrence-row, .market-learning-roi, .learning-coach-decision, .learning-proof-sprint, .learning-reuse, .learning-decision-row, .market-matrix th, .market-matrix td { border-width: 2px; } }

@@ -94,6 +94,21 @@ class FollowthroughCheckpointContractTests(unittest.TestCase):
         item.update(action_state="completed", next_measurement_event="screen_prepared", next_safe_action="route_to_prepare-role-interviews")
         self.assertEqual([], checkpoint.validate_checkpoint(item, self.receipt, as_of=dt.date(2026, 8, 8)))
 
+    def test_replay_fingerprint_is_stable_and_changes_when_pair_semantics_change(self):
+        first = checkpoint.replay_fingerprint(self.valid, self.receipt)
+        second = checkpoint.replay_fingerprint(copy.deepcopy(self.valid), copy.deepcopy(self.receipt))
+        self.assertRegex(first, r"^replay-sha256-[0-9a-f]{64}$")
+        self.assertEqual(first, second)
+
+        changed_checkpoint = copy.deepcopy(self.valid)
+        changed_checkpoint["action_state"] = "deferred"
+        changed_checkpoint["next_safe_action"] = "clarify_context_before_reply"
+        self.assertNotEqual(first, checkpoint.replay_fingerprint(changed_checkpoint, self.receipt))
+
+        changed_receipt = copy.deepcopy(self.receipt)
+        changed_receipt["source_version"] = "draft-v2"
+        self.assertNotEqual(first, checkpoint.replay_fingerprint(self.valid, changed_receipt))
+
     def test_symlink_inputs_are_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory) / "target.json"

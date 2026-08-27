@@ -749,6 +749,11 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         self.assertEqual(rendered.count("Cobertura de evidencia"), 5)
         self.assertEqual(rendered.count("Banda cualitativa"), 5)
         self.assertIn("La evidencia es direccional y no representa ajuste de contratación.", visible_text(rendered))
+        self.assertEqual(rendered.count('class="market-vacancy-context"'), 5)
+        self.assertIn("Ubicación", visible_text(rendered))
+        self.assertIn("Arreglo", visible_text(rendered))
+        self.assertIn("Tipo de fuente", visible_text(rendered))
+        self.assertIn("La elegibilidad y la autorización laboral no se infieren.", visible_text(rendered))
         for short_key in ("V1", "V2", "V3", "V4", "V5"):
             self.assertIn(f">{short_key}<", rendered)
         self.assertIn("Evidencia directa", rendered)
@@ -795,6 +800,9 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         self.assertIn(".learning-decision-row--project-first", css)
         self.assertIn(".learning-decision-row--consider", css)
         self.assertIn(".learning-decision-row--not-needed", css)
+        self.assertIn(".learning-decision-row--consider .learning-option-type", css)
+        self.assertIn("color: var(--gold);", css)
+        self.assertIn(".learning-decision-row .learning-option-type { color: CanvasText; border-color: CanvasText; }", css)
 
     def test_learning_decision_cards_expose_decision_type_and_basis(self) -> None:
         dossier = make_v2_dossier("es")

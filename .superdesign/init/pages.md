@@ -20,6 +20,11 @@ composes the same document shell after validating the complete section ledger
 and coaching extensions. Its market region is conditional: `not_researched`
 renders one bounded unavailable state, while validated dated vacancy evidence
 uses the base comparison table without changing the LinkedIn score.
+When a validated market-learning dossier is supplied, each vacancy card adds
+location, arrangement, source type, alignment, evidence coverage, and a
+qualitative band; learning decision cards expose provider/source provenance and
+recorded unknowns. Directional evidence and non-inferred eligibility remain
+visible boundaries.
 At screen widths up to 680px, its signal cells stack with localized labels;
 print keeps the semantic table layout and no horizontal-scroll affordance is
 required.

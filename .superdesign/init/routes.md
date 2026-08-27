@@ -6,7 +6,7 @@ This plugin exposes no HTTP routes, SPA routes, framework page files, or router 
 
 | Logical artifact | Renderer entry | Template | Layout |
 | --- | --- | --- | --- |
-| `/executive-career-dossier` | `plugins/professional-growth-coach/scripts/render_executive_career_dossier.py` | `plugins/professional-growth-coach/assets/executive-career-dossier-v1.html` | `ExecutiveCareerDossierDocument` |
+| `/executive-career-dossier` | `plugins/professional-growth-coach/scripts/render_executive_career_dossier.py` (v1) or `render_executive_career_dossier_v2.py` (v2) | `plugins/professional-growth-coach/assets/executive-career-dossier-v1.html` | `ExecutiveCareerDossierDocument` |
 | `/recruiter-practice-session` | `plugins/professional-growth-coach/scripts/render_recruiter_practice_session.py` | `plugins/professional-growth-coach/assets/recruiter-practice-session-v1.html` | `RecruiterPracticeSessionDocument` |
 | `/private-recruiter-reply-triage` | `plugins/professional-growth-coach/scripts/render_private_recruiter_reply_triage.py` | `plugins/professional-growth-coach/assets/private-recruiter-reply-triage-v1.html` | `PrivateRecruiterReplyTriageDocument` |
 | `/private-recruiter-followthrough-checkpoint` | `plugins/professional-growth-coach/scripts/render_private_recruiter_followthrough_checkpoint.py` | `plugins/professional-growth-coach/assets/private-recruiter-followthrough-checkpoint-v1.html` | `PrivateRecruiterFollowthroughCheckpointDocument` |
@@ -14,7 +14,7 @@ This plugin exposes no HTTP routes, SPA routes, framework page files, or router 
 
 ## Key artifact summaries
 
-- **Executive career dossier:** a private strategic LinkedIn analysis with an executive verdict, scorecard, priorities, copy studio, evidence/limits, and printable document treatment. The v2 renderer keeps an honest unavailable-market state unless validated dated vacancy context is present, in which case it renders the separate comparison table and sanitized public sources.
+- **Executive career dossier:** a private strategic LinkedIn analysis with an executive verdict, scorecard, priorities, copy studio, evidence/limits, and printable document treatment. The v2 renderer keeps an honest unavailable-market state unless validated dated vacancy context is present, in which case it renders separate vacancy cards with location/arrangement/source context, alignment coverage/band, sanitized public sources, and optional learning provenance. Eligibility and hiring fit are never inferred.
 - **Recruiter practice session:** one-question private recruiter-screen rehearsal with state, prompt, rehearsal cues, evidence boundaries, and feedback states.
 - **Private recruiter reply triage:** a closed decision card that communicates safe next steps and, when applicable, a manual preparation handoff.
 - **Follow-through checkpoint:** a compact candidate-supplied state, next measurement event, date, and safe-next-step receipt.

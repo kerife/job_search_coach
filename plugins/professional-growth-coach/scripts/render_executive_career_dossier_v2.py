@@ -152,6 +152,10 @@ COPY = {
         "market_body": "Este dossier no incluye evidencia de mercado. Continúa con la evidencia del perfil ya revisada.",
         "market_summary": "Muestra de vacantes revisada",
         "market_alignment": "Alineación documentada",
+        "market_location": "Ubicación",
+        "market_arrangement": "Arreglo",
+        "market_source_kind": "Tipo de fuente",
+        "market_eligibility_boundary": "La elegibilidad y la autorización laboral no se infieren.",
         "market_evidence_coverage": "Cobertura de evidencia",
         "market_qualitative_band": "Banda cualitativa",
         "market_directional_legend": "La evidencia es direccional y no representa ajuste de contratación.",
@@ -201,6 +205,10 @@ COPY = {
         "market_body": "This dossier includes no market evidence. Continue with the profile evidence already reviewed.",
         "market_summary": "Reviewed vacancy sample",
         "market_alignment": "Documented alignment",
+        "market_location": "Location",
+        "market_arrangement": "Arrangement",
+        "market_source_kind": "Source type",
+        "market_eligibility_boundary": "Eligibility and work authorization are not inferred.",
         "market_evidence_coverage": "Evidence coverage",
         "market_qualitative_band": "Qualitative band",
         "market_directional_legend": "Evidence is directional and does not represent hiring fit.",
@@ -257,6 +265,21 @@ QUALITATIVE_BAND_COPY = {
     "moderate_documented_alignment": ("Alineación documentada moderada", "Moderate documented alignment"),
     "lower_documented_alignment": ("Menor alineación documentada", "Lower documented alignment"),
     "insufficient_evidence": ("Evidencia insuficiente", "Insufficient evidence"),
+}
+
+ARRANGEMENT_COPY = {
+    "remote": ("remoto", "remote"),
+    "hybrid": ("híbrido", "hybrid"),
+    "onsite": ("presencial", "on-site"),
+    "unknown": ("No verificado", "Not verified"),
+    "not_applicable": ("No aplica", "Not applicable"),
+}
+
+SOURCE_KIND_COPY = {
+    "official_employer": ("Empleador oficial", "Official employer"),
+    "employer_ats": ("ATS del empleador", "Employer ATS"),
+    "linkedin_jobs": ("LinkedIn Jobs", "LinkedIn Jobs"),
+    "aggregator": ("Agregador", "Aggregator"),
 }
 
 
@@ -524,11 +547,25 @@ def _render_market_context(market_dossier: Mapping[str, object], locale: str) ->
         if band is not None:
             spanish_band, english_band = QUALITATIVE_BAND_COPY.get(str(band), QUALITATIVE_BAND_COPY["insufficient_evidence"])
             alignment_facts.append(f'<dt>{labels["market_qualitative_band"]}</dt><dd>{spanish_band if locale == "es" else english_band}</dd>')
+        location = card.get("location")
+        arrangement = card.get("arrangement")
+        source_kind = card.get("source_kind")
+        context_rows: list[str] = []
+        if location is not None and str(location).strip():
+            context_rows.append(f'<dt>{labels["market_location"]}</dt><dd>{html.escape(str(location), quote=True)}</dd>')
+        if arrangement is not None and str(arrangement).strip():
+            arrangement_es, arrangement_en = ARRANGEMENT_COPY.get(str(arrangement), (str(arrangement), str(arrangement)))
+            context_rows.append(f'<dt>{labels["market_arrangement"]}</dt><dd>{html.escape(arrangement_es if locale == "es" else arrangement_en, quote=True)}</dd>')
+        if source_kind is not None and str(source_kind).strip():
+            source_es, source_en = SOURCE_KIND_COPY.get(str(source_kind), (str(source_kind), str(source_kind)))
+            context_rows.append(f'<dt>{labels["market_source_kind"]}</dt><dd>{html.escape(source_es if locale == "es" else source_en, quote=True)}</dd>')
+        vacancy_context = f'<dl class="market-vacancy-context">{"".join(context_rows)}</dl>' if context_rows else ""
         card_html.append(f'''<article class="vacancy-alignment-card" aria-labelledby="{heading_id}">
           <p class="market-vacancy-key">{short_key}</p><h3 id="{heading_id}">{employer} — {title}</h3>
           <p class="market-alignment-line"><span>{labels['market_alignment']}</span><strong class="market-alignment-score" id="{score_id}">{score} {'de' if locale == 'es' else 'out of'} 100</strong></p>
           <progress max="100" value="{score}" aria-labelledby="{heading_id} {score_id}">{score}</progress>
           <dl class="market-alignment-facts">{''.join(alignment_facts)}</dl>
+          {vacancy_context}
         </article>''')
         key_rows.append(f"<li><strong>{short_key}</strong> — {employer} — {title}</li>")
 
@@ -571,7 +608,7 @@ def _render_market_context(market_dossier: Mapping[str, object], locale: str) ->
     learning_surface = _render_learning_roi(market_dossier, locale)
     return f'''<section class="market-summary section-block" aria-labelledby="market-summary-title">
       <h2 id="market-summary-title">{labels['market_summary']}</h2>
-      <p>{len(cards)} {'vacantes' if locale == 'es' else 'vacancies'}</p><p class="market-directional-legend market-boundary">{labels['market_directional_legend']}</p>{synthetic_boundary}{limitation}
+      <p>{len(cards)} {'vacantes' if locale == 'es' else 'vacancies'}</p><p class="market-directional-legend market-boundary">{labels['market_directional_legend']}</p><p class="market-eligibility-boundary market-boundary">{labels['market_eligibility_boundary']}</p>{synthetic_boundary}{limitation}
       <div class="vacancy-alignment-list">{''.join(card_html)}</div>
       <section class="market-key" aria-labelledby="market-key-title"><h3 id="market-key-title">{labels['market_key']}</h3><ol>{''.join(key_rows)}</ol></section>
       <section class="market-matrix-wrap" aria-labelledby="market-matrix-title"><h3 id="market-matrix-title">{labels['market_matrix']}</h3>

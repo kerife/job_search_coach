@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import hashlib
 import importlib.util
 import json
 import re
@@ -171,6 +172,24 @@ def _expected_action(state: object, event: object, receipt_event: object = None)
             return "record_stop_decision"
         return "clarify_context_before_reply"
     return None
+
+
+def replay_fingerprint(checkpoint: Mapping[str, object], receipt: Mapping[str, object]) -> str:
+    """Return a stable, identity-free key for one validated receipt/checkpoint pair."""
+    if not isinstance(checkpoint, Mapping) or not isinstance(receipt, Mapping):
+        raise TypeError("checkpoint and receipt must be mappings")
+    payload = {
+        "receipt": {
+            key: receipt.get(key)
+            for key in ("locale", "event_date", "event_type", "source_artifact_id", "source_version", "fact_ids", "observation_state", "next_safe_action")
+        },
+        "checkpoint": {
+            key: checkpoint.get(key)
+            for key in ("locale", "source_receipt", "action_state", "observed_date", "next_measurement_event", "next_safe_action", "delivery")
+        },
+    }
+    encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return "replay-sha256-" + hashlib.sha256(encoded).hexdigest()
 
 
 def validate_checkpoint(value: object, receipt: object, *, as_of: dt.date | None = None) -> list[str]:
