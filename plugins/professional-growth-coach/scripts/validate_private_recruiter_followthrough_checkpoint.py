@@ -153,7 +153,9 @@ def _walk_strings(value: object):
             yield from _walk_strings(child)
 
 
-def _expected_action(state: object, event: object) -> str | None:
+def _expected_action(state: object, event: object, receipt_event: object = None) -> str | None:
+    if receipt_event == "stop_decision":
+        return "record_stop_decision"
     if state == "accepted":
         return "manual_reenter_private_prep"
     if state == "deferred":
@@ -221,7 +223,12 @@ def validate_checkpoint(value: object, receipt: object, *, as_of: dt.date | None
         errors.append("observed_date cannot precede receipt date")
     if receipt.get("event_type") == "stop_decision" and not _enum(state, {"declined", "completed"}):
         errors.append("stop receipt requires declined or completed action_state")
-    if _expected_action(state, event) != item.get("next_safe_action"):
+    if receipt.get("event_type") == "stop_decision":
+        if item.get("next_safe_action") != "record_stop_decision":
+            errors.append("stop receipt requires next_safe_action=record_stop_decision")
+        if event in {"screen_prepared", "screen_attended", "interview_requested"}:
+            errors.append("stop receipt blocks preparation next_measurement_event")
+    if _expected_action(state, event, receipt.get("event_type")) != item.get("next_safe_action"):
         errors.append("next_safe_action does not match action_state and next_measurement_event")
     delivery = _closed(item.get("delivery"), "delivery", frozenset(DELIVERY), errors)
     if delivery is not None:

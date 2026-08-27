@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import datetime as dt
+import math
 import re
 from collections.abc import Mapping
 
@@ -29,6 +30,7 @@ def _keyword_shapes_valid(schema: Mapping[str, object]) -> bool:
         value = schema.get(keyword)
         if value is not None and (
             not isinstance(value, (int, float)) or isinstance(value, bool)
+            or (isinstance(value, float) and not math.isfinite(value))
         ):
             return False
     for keyword in ("minLength", "maxLength", "minItems", "maxItems"):
@@ -70,7 +72,11 @@ def _type_ok(value: object, expected: object) -> bool:
         "string": isinstance(value, str),
         "boolean": isinstance(value, bool),
         "integer": isinstance(value, int) and not isinstance(value, bool),
-        "number": isinstance(value, (int, float)) and not isinstance(value, bool),
+        "number": (
+            isinstance(value, (int, float))
+            and not isinstance(value, bool)
+            and (not isinstance(value, float) or math.isfinite(value))
+        ),
         "null": value is None,
     }.get(expected, True)
 
@@ -172,6 +178,8 @@ def _validate(
     ):
         errors.append(f"{path}: enum mismatch")
     if isinstance(value, (int, float)) and not isinstance(value, bool):
+        if isinstance(value, float) and not math.isfinite(value):
+            errors.append(f"{path}: non-finite number")
         if "minimum" in schema and value < schema["minimum"]:
             errors.append(f"{path}: number below minimum")
         if "maximum" in schema and value > schema["maximum"]:

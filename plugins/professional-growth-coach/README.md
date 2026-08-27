@@ -123,11 +123,15 @@ its decision basis and opportunity cost. Synthetic provider research receives
 an explicit non-current-provider boundary in the rendered dossier.
 
 Private recruiter outcome receipts, follow-through checkpoints, and practice
-sessions also include a static, localized continuity rail. It separates the
-recorded evidence, the safe route, and the manual next action with textual
-`current`, `pending`, or `blocked` states. The rail is explanatory only: it
-does not store answers, expose private identifiers, auto-start preparation, or
-create a message, calendar, or other external action.
+sessions also include a static, localized continuity rail. Compact outcome and
+checkpoint rails select one closed copy set from the validated
+`next_safe_action`, separating the recorded evidence, the safe route, and the
+manual review with textual states. `record_stop_decision` is terminal and uses
+Recorded/Registrado copy without continuation language. The rail is
+explanatory only: it does not store answers, expose private identifiers,
+auto-start preparation, or create a message, calendar, or other external
+action. Its surface token remains readable in dark mode and its borders/text
+remain explicit in print, forced-colors, and higher-contrast modes.
 
 When feedback is available, the practice rail remains the same three-step
 private map but reflects the validated governing label in its final state:

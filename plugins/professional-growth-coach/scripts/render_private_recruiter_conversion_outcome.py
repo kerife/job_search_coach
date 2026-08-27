@@ -25,8 +25,8 @@ def _load_asset_loader() -> Any:
 ASSET_LOADER = _load_asset_loader()
 
 EVENT_LABELS = {
-    "en": {"contact_received": "Contact received", "reply_received": "Reply received", "referral_received": "Referral received", "screen_requested": "Screen requested", "interview_requested": "Interview requested", "stop_decision": "Stop decision"},
-    "es": {"contact_received": "Recibimos un contacto", "reply_received": "Recibimos una respuesta", "referral_received": "Recibimos una referencia", "screen_requested": "Solicitaron un filtro", "interview_requested": "Solicitaron una entrevista", "stop_decision": "Decisión de detenerse"},
+    "en": {"contact_received": "Contact received", "reply_received": "Reply received", "referral_received": "Referral received", "screen_requested": "Screen requested", "interview_requested": "Interview request observed", "stop_decision": "Stop decision"},
+    "es": {"contact_received": "Recibimos un contacto", "reply_received": "Recibimos una respuesta", "referral_received": "Recibimos una referencia", "screen_requested": "Solicitaron un filtro", "interview_requested": "Solicitud de entrevista observada", "stop_decision": "Decisión de detenerse"},
 }
 ACTION_LABELS = {
     "en": {"clarify_context_before_reply": "Clarify context before replying", "prepare_fact_checked_summary": "Prepare a fact-checked summary", "route_to_prepare-role-interviews": "Route to interview preparation", "record_stop_decision": "Record the stop decision"},
@@ -39,7 +39,7 @@ COPY = {
         "event": "Observed event", "date": "Event date", "action": "Safe next step",
         "evidence": "Evidence count", "boundary": "Candidate-supplied observation only. No external action was taken.",
         "manual_next_step_heading": "Manual next step",
-        "manual_next_step_body": "Return to the private Codex conversation, re-enter interview preparation manually, and answer the one safe recruiter-screen question. This receipt does not contact, send, or schedule anything.",
+        "manual_next_step_body": "Return to the private Codex conversation and re-enter preparation manually to review the reported request. This receipt does not contact, send, or schedule anything.",
         "employment_boundary": "This analysis evaluates professional options; it does not recommend resigning, leaving a job, or stopping your job search; you decide what comes next.",
         "save": "Local saving is disabled.",
     },
@@ -49,20 +49,96 @@ COPY = {
         "event": "Evento observado", "date": "Fecha del evento", "action": "Siguiente paso seguro",
         "evidence": "Evidencia", "boundary": "Solo observación reportada por la persona. No se realizó ninguna acción externa.",
         "manual_next_step_heading": "Siguiente paso manual",
-        "manual_next_step_body": "Regresa a la conversación privada de Codex, vuelve a entrar manualmente a la preparación de entrevista y responde la única pregunta segura de filtro inicial. Este recibo no contacta, envía ni agenda nada.",
+        "manual_next_step_body": "Regresa a la conversación privada de Codex y vuelve a entrar manualmente a la preparación para revisar la solicitud reportada. Este recibo no contacta, envía ni agenda nada.",
         "employment_boundary": "Este análisis evalúa opciones profesionales; no recomienda renunciar, dejar un empleo ni abandonar tu búsqueda; tú decides qué sigue.",
         "save": "El guardado local está deshabilitado.",
     },
 }
 STOP_COPY = {
     "en": {
-        "action": "Record this recruiter-process outcome privately; do not continue this preparation path.",
+        "action": "Record this recruiter-process outcome privately.",
         "boundary": "Scope: this records one recruiter-process outcome only. It is not advice to resign, leave a job, or stop your job search; you decide what comes next.",
     },
     "es": {
-        "action": "Registra en privado el resultado de este proceso de reclutamiento; no continúes por esta vía de preparación.",
+        "action": "Registra en privado el resultado de este proceso de reclutamiento.",
         "boundary": "Alcance: esto solo registra un resultado de este proceso de reclutamiento. No es una recomendación de renunciar, dejar un empleo ni abandonar tu búsqueda; tú decides qué sigue.",
     },
+}
+
+ACTION_RAIL_COPY = {
+    "en": {
+        "clarify_context_before_reply": {
+            "title": "Clarify context before replying",
+            "kicker": "Safe clarification route",
+            "steps": (
+                ("observation", "current", "Observation", "The supplied observation is recorded."),
+                ("safe-step", "current", "Clarify context", "Clarify only the missing context before replying."),
+                ("review", "blocked", "Manual review", "Re-enter the private conversation manually before replying."),
+            ),
+        },
+        "prepare_fact_checked_summary": {
+            "title": "Prepare a fact-checked summary",
+            "kicker": "Safe preparation route",
+            "steps": (
+                ("observation", "current", "Observation", "The supplied observation is recorded."),
+                ("safe-step", "current", "Fact check", "Prepare a fact-checked summary from supplied facts only."),
+                ("review", "blocked", "Manual review", "Review the summary privately before any next step."),
+            ),
+        },
+        "route_to_prepare-role-interviews": {
+            "title": "Route to private preparation",
+            "kicker": "Safe preparation route",
+            "steps": (
+                ("observation", "current", "Observation", "The supplied observation is recorded."),
+                ("safe-step", "current", "Preparation", "Re-enter private preparation manually to review the reported next step."),
+                ("review", "blocked", "Manual review", "Review the preparation privately before any next step."),
+            ),
+        },
+        "record_stop_decision": {
+            "title": "Outcome recorded",
+            "kicker": "Terminal record",
+            "steps": (("record", "recorded", "Outcome recorded", "The recruiter-process outcome is recorded privately."),),
+        },
+    },
+    "es": {
+        "clarify_context_before_reply": {
+            "title": "Aclara el contexto antes de responder",
+            "kicker": "Ruta segura de aclaración",
+            "steps": (
+                ("observation", "current", "Observación", "La observación reportada queda registrada."),
+                ("safe-step", "current", "Aclaración", "Aclara solo el contexto faltante antes de responder."),
+                ("review", "blocked", "Revisión manual", "Vuelve a entrar manualmente a la conversación privada antes de responder."),
+            ),
+        },
+        "prepare_fact_checked_summary": {
+            "title": "Prepara un resumen verificado",
+            "kicker": "Ruta segura de preparación",
+            "steps": (
+                ("observation", "current", "Observación", "La observación reportada queda registrada."),
+                ("safe-step", "current", "Verificación", "Prepara un resumen verificado solo con hechos reportados."),
+                ("review", "blocked", "Revisión manual", "Revisa el resumen en privado antes de cualquier siguiente paso."),
+            ),
+        },
+        "route_to_prepare-role-interviews": {
+            "title": "Dirige a preparación privada",
+            "kicker": "Ruta segura de preparación",
+            "steps": (
+                ("observation", "current", "Observación", "La observación reportada queda registrada."),
+                ("safe-step", "current", "Preparación", "Vuelve a entrar manualmente a la preparación para revisar el siguiente paso reportado."),
+                ("review", "blocked", "Revisión manual", "Revisa la preparación en privado antes de cualquier siguiente paso."),
+            ),
+        },
+        "record_stop_decision": {
+            "title": "Resultado registrado",
+            "kicker": "Registro terminal",
+            "steps": (("record", "recorded", "Resultado registrado", "El resultado del proceso de reclutamiento queda registrado en privado."),),
+        },
+    },
+}
+
+RAIL_STATES = {
+    "en": {"current": "Current", "blocked": "Blocked", "recorded": "Recorded"},
+    "es": {"current": "Actual", "blocked": "Bloqueada", "recorded": "Registrado"},
 }
 
 EVIDENCE_COUNT_COPY = {
@@ -70,49 +146,30 @@ EVIDENCE_COUNT_COPY = {
     "es": ("{count} hecho reportado por la persona", "{count} hechos reportados por la persona"),
 }
 
-CONTINUITY_COPY = {
-    "en": {
-        "title": "Manual continuity route",
-        "kicker": "Route at a glance",
-        "states": {"current": "Current", "pending": "Pending", "blocked": "Blocked"},
-        "steps": (
-            ("observation", "current", "Observation", "The supplied event is recorded."),
-            ("safe-route", "current", "Safe route", "The next step stays inside the private boundary."),
-            ("manual-action", "blocked", "Manual action", "Continue only after an explicit private review."),
-        ),
-    },
-    "es": {
-        "title": "Ruta de continuidad manual",
-        "kicker": "Ruta de un vistazo",
-        "states": {"current": "Actual", "pending": "Pendiente", "blocked": "Bloqueada"},
-        "steps": (
-            ("observation", "current", "Observación", "El evento reportado queda registrado."),
-            ("safe-route", "current", "Ruta segura", "El siguiente paso permanece dentro del límite privado."),
-            ("manual-action", "blocked", "Acción manual", "Continúa solo después de una revisión privada explícita."),
-        ),
-    },
-}
-
-
 def _evidence_count_copy(locale: str, count: int) -> str:
     singular, plural = EVIDENCE_COUNT_COPY[locale]
     return (singular if count == 1 else plural).format(count=count)
 
 
-def _continuity_rail(locale: str) -> str:
-    labels = CONTINUITY_COPY[locale]
+def _action_rail(locale: str, action: str, *, terminal: bool = False) -> str:
+    labels = ACTION_RAIL_COPY[locale][action]
     steps = "".join(
         f'<li class="continuity-step continuity-step--{state}" data-stage="{stage}" data-state="{state}">'
-        f'<span class="continuity-step-state">{labels["states"][state]}</span>'
-        f'<strong>{title}</strong><p>{description}</p></li>'
+        f'<span class="continuity-step-state">{RAIL_STATES[locale][state]}</span>'
+        f'<strong>{html.escape(title)}</strong><p>{html.escape(description)}</p></li>'
         for stage, state, title, description in labels["steps"]
     )
+    terminal_attribute = ' data-terminal="true"' if terminal else ''
     return (
-        '<section class="continuity-rail" aria-labelledby="continuity-rail-title">'
-        f'<p class="continuity-rail-kicker">{labels["kicker"]}</p>'
-        f'<h2 id="continuity-rail-title">{labels["title"]}</h2>'
+        f'<section class="continuity-rail" aria-labelledby="continuity-rail-title"{terminal_attribute}>'
+        f'<p class="continuity-rail-kicker">{html.escape(labels["kicker"])}</p>'
+        f'<h2 id="continuity-rail-title">{html.escape(labels["title"])}</h2>'
         f'<ol class="continuity-rail-list">{steps}</ol></section>'
     )
+
+
+def _terminal_rail(locale: str) -> str:
+    return _action_rail(locale, "record_stop_decision", terminal=True)
 
 
 def _load_validator() -> Any:
@@ -140,8 +197,8 @@ def render_outcome_html(item: Mapping[str, object], *, today: dt.date | None = N
     value = _validated(item, today=today)
     locale = value["locale"]
     labels, event, action = COPY[locale], value["event_type"], value["next_safe_action"]
-    stop_copy = STOP_COPY[locale] if event == "stop_decision" else None
-    manual_next_step = _continuity_rail(locale)
+    stop_copy = STOP_COPY[locale] if action == "record_stop_decision" else None
+    manual_next_step = _terminal_rail(locale) if action == "record_stop_decision" else _action_rail(locale, action)
     if action == "route_to_prepare-role-interviews":
         manual_next_step += (
             '<section class="outcome-manual-next-step" '
@@ -222,10 +279,10 @@ def _cli(argv=None) -> int:
     except SystemExit as error:
         return 0 if error.code == 0 else 3
     try: item = VALIDATOR.load_outcome(args.input); receipt = write_outcome_html(item, args.output, today=args.as_of, force=args.force)
-    except ValueError:
-        print("--as-of must use YYYY-MM-DD", file=sys.stderr); return 3
     except (OSError, VALIDATOR.OutcomeLoadError): print("cannot render private recruiter outcome", file=sys.stderr); return 3
     except OutcomeRenderValidationError as error: print("\n".join(error.errors), file=sys.stderr); return 2
+    except ValueError:
+        print("--as-of must use YYYY-MM-DD", file=sys.stderr); return 3
     print(json.dumps({"artifact_path": str(receipt.artifact_path), "artifact_type": receipt.artifact_type, "locale": receipt.locale}, separators=(",", ":"))); return 0
 
 

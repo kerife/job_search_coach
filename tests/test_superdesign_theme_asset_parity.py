@@ -149,6 +149,36 @@ class SuperdesignThemeAssetParityTests(unittest.TestCase):
                 breakpoint = match.group(1).strip()
                 self.assertEqual(breakpoint, "641px")
 
+    def test_compact_action_rails_use_surface_and_non_color_recorded_state(self):
+        for name in (
+            "private-recruiter-followthrough-checkpoint-v1.css",
+            "private-recruiter-conversion-outcome-v1.css",
+        ):
+            with self.subTest(name=name):
+                css = (ASSETS / name).read_text(encoding="utf-8")
+                self.assertRegex(
+                    css,
+                    r"\.continuity-step\s*\{[^}]*background:\s*var\(--surface\);",
+                )
+                self.assertNotRegex(
+                    css,
+                    r"\.continuity-step\s*\{[^}]*background:\s*#f4f6fa;",
+                )
+                self.assertRegex(
+                    css,
+                    r"\.continuity-step--recorded\s*\{[^}]*border-style:\s*double;",
+                )
+                contrast = css[css.index("@media (prefers-contrast: more)") :]
+                forced = css[css.index("@media (forced-colors: active)") :]
+                self.assertRegex(
+                    contrast,
+                    r"\.continuity-step--recorded\s*\{[^}]*border-color:\s*var\(--ink\);[^}]*color:\s*var\(--ink\);",
+                )
+                self.assertRegex(
+                    forced,
+                    r"\.continuity-step--recorded\s*\{[^}]*border-color:\s*CanvasText;[^}]*color:\s*CanvasText;[^}]*border-style:\s*double;",
+                )
+
     def test_theme_dump_set_covers_every_shipped_css_asset(self):
         self.assertEqual(
             _theme_asset_names(),

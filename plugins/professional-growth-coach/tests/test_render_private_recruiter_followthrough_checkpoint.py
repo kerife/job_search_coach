@@ -21,6 +21,63 @@ spec.loader.exec_module(renderer)
 
 
 class FollowthroughCheckpointRendererTests(unittest.TestCase):
+    def test_interview_requested_uses_neutral_observed_request_label_in_both_locales(self):
+        expected = {
+            "en": "Interview request observed",
+            "es": "Solicitud de entrevista observada",
+        }
+        for locale, label in expected.items():
+            with self.subTest(locale=locale):
+                item = copy.deepcopy(self.item)
+                item.update(
+                    locale=locale,
+                    action_state="completed",
+                    next_measurement_event="interview_requested",
+                    next_safe_action="route_to_prepare-role-interviews",
+                )
+                rendered = renderer.render_checkpoint_html(item, self.receipt, as_of=dt.date(2026, 8, 8))
+                self.assertIn(label, rendered)
+                self.assertNotIn("Solicitaron entrevista", rendered)
+
+    def test_action_rail_is_selected_by_closed_next_safe_action_copy(self):
+        expected = {
+            "manual_reenter_private_prep": "Re-enter private preparation manually.",
+            "clarify_context_before_reply": "Clarify only the missing context before replying.",
+            "route_to_prepare-role-interviews": "Re-enter private preparation manually to review the reported next step.",
+        }
+        for action, expected_copy in expected.items():
+            with self.subTest(action=action):
+                item = copy.deepcopy(self.item)
+                item.update(
+                    action_state="accepted" if action == "manual_reenter_private_prep" else "deferred" if action == "clarify_context_before_reply" else "completed",
+                    next_measurement_event="unknown" if action != "route_to_prepare-role-interviews" else "screen_prepared",
+                    next_safe_action=action,
+                )
+                rendered = renderer.render_checkpoint_html(item, self.receipt, as_of=dt.date(2026, 8, 8))
+                self.assertIn(expected_copy, rendered)
+                self.assertEqual(rendered.count('class="continuity-rail"'), 1)
+
+    def test_stop_action_uses_terminal_recorded_rail_without_continuation_copy(self):
+        stop_receipt = json.loads(
+            (ROOT / "tests/fixtures/private-recruiter-conversion-outcome/stop-decision-en.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        item = copy.deepcopy(self.item)
+        item.update(
+            action_state="completed",
+            next_measurement_event="stop_decision",
+            next_safe_action="record_stop_decision",
+            source_receipt={
+                "id": stop_receipt["source_artifact_id"],
+                "source_version": stop_receipt["source_version"],
+                "event_type": stop_receipt["event_type"],
+            },
+        )
+        rendered = renderer.render_checkpoint_html(item, stop_receipt, as_of=dt.date(2026, 8, 8))
+        self.assertIn("Recorded", rendered)
+        self.assertIn("recorded privately", rendered)
+        self.assertNotRegex(rendered, r"(?i)continuation|continue|manual action|continúa|acción manual")
     def test_cli_normalizes_invalid_as_of_to_input_error(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "out.html"
@@ -64,11 +121,11 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
         )
         expected = {
             "en": {
-                "action": "Record this recruiter-process outcome privately; do not continue this preparation path.",
+                "action": "Record this recruiter-process outcome privately.",
                 "boundary": "Scope: this records one recruiter-process outcome only. It is not advice to resign, leave a job, or stop your job search; you decide what comes next.",
             },
             "es": {
-                "action": "Registra en privado el resultado de este proceso de reclutamiento; no continúes por esta vía de preparación.",
+                "action": "Registra en privado el resultado de este proceso de reclutamiento.",
                 "boundary": "Alcance: esto solo registra un resultado de este proceso de reclutamiento. No es una recomendación de renunciar, dejar un empleo ni abandonar tu búsqueda; tú decides qué sigue.",
             },
         }
@@ -126,7 +183,6 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
         normal_states = (
             ("accepted", "unknown", "manual_reenter_private_prep"),
             ("deferred", "unknown", "clarify_context_before_reply"),
-            ("declined", "unknown", "record_stop_decision"),
             ("completed", "screen_prepared", "route_to_prepare-role-interviews"),
         )
         for state, event, action in normal_states:
@@ -164,8 +220,8 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
         self.assertEqual(rendered.count('class="continuity-rail"'), 1)
         self.assertEqual(rendered.count('class="continuity-step continuity-step--'), 3)
         self.assertIn('data-stage="receipt" data-state="current"', rendered)
-        self.assertIn('data-stage="checkpoint" data-state="current"', rendered)
-        self.assertIn('data-stage="manual-action" data-state="blocked"', rendered)
+        self.assertIn('data-stage="safe-step" data-state="current"', rendered)
+        self.assertIn('data-stage="review" data-state="blocked"', rendered)
         self.assertNotIn("D-104", rendered)
         self.assertNotIn("screen_requested", rendered)
 
@@ -241,11 +297,11 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
         expected = {
             "en": (
                 "Manual next step",
-                "Return to the private Codex conversation, re-enter interview preparation manually, and answer the one safe recruiter-screen question. This receipt does not contact, send, or schedule anything.",
+                "Return to the private Codex conversation and re-enter preparation manually to review the reported request. This receipt does not contact, send, or schedule anything.",
             ),
             "es": (
                 "Siguiente paso manual",
-                "Regresa a la conversación privada de Codex, vuelve a entrar manualmente a la preparación de entrevista y responde la única pregunta segura de filtro inicial. Este recibo no contacta, envía ni agenda nada.",
+                "Regresa a la conversación privada de Codex y vuelve a entrar manualmente a la preparación para revisar la solicitud reportada. Este recibo no contacta, envía ni agenda nada.",
             ),
         }
         for locale, (heading, body) in expected.items():
@@ -279,7 +335,6 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
         states = (
             ("accepted", "unknown", "manual_reenter_private_prep"),
             ("deferred", "unknown", "clarify_context_before_reply"),
-            ("declined", "unknown", "record_stop_decision"),
         )
         for locale in ("en", "es"):
             for state, event, action in states:

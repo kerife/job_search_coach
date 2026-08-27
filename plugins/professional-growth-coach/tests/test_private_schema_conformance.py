@@ -755,6 +755,20 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         ):
             self.assertTrue(any(expected in error for error in validate_schema_instance(value, schema)), (value, expected))
 
+    def test_dependency_free_checker_rejects_non_finite_numbers_and_bounds(self):
+        import math
+
+        number_schema = {"type": "number", "minimum": 0, "maximum": 5}
+        for value in (math.nan, math.inf, -math.inf):
+            with self.subTest(value=value):
+                self.assertTrue(validate_schema_instance(value, number_schema))
+        for boundary in (math.nan, math.inf, -math.inf):
+            with self.subTest(boundary=boundary):
+                self.assertIn(
+                    "schema keyword is invalid",
+                    validate_schema_instance(3, {"type": "number", "minimum": boundary}),
+                )
+
     def test_dependency_free_checker_enforces_strict_json_types_and_const(self):
         self.assertEqual(
             [], validate_schema_instance(1, {"type": "integer", "const": 1})

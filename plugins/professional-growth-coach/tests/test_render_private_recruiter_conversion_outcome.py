@@ -13,6 +13,47 @@ FIXTURES = ROOT / "tests/fixtures/private-recruiter-conversion-outcome"
 
 
 class ConversionOutcomeRendererTests(unittest.TestCase):
+    def test_interview_requested_uses_neutral_observed_request_label_in_both_locales(self):
+        expected = {
+            "en": "Interview request observed",
+            "es": "Solicitud de entrevista observada",
+        }
+        source = load_outcome(FIXTURES / "interview-requested-es.json")
+        for locale, label in expected.items():
+            with self.subTest(locale=locale):
+                item = copy.deepcopy(source)
+                item["locale"] = locale
+                rendered = render_outcome_html(item, today=dt.date(2026, 8, 9))
+                self.assertIn(label, rendered)
+                self.assertNotIn("Solicitaron una entrevista", rendered)
+
+    def test_action_rail_is_selected_by_closed_next_safe_action_copy(self):
+        expected = {
+            "clarify_context_before_reply": "Clarify only the missing context before replying.",
+            "prepare_fact_checked_summary": "Prepara un resumen verificado solo con hechos reportados.",
+            "route_to_prepare-role-interviews": "Re-enter private preparation manually to review the reported next step.",
+        }
+        fixtures = {
+            "clarify_context_before_reply": "contact-received-en.json",
+            "prepare_fact_checked_summary": "referral-received-es.json",
+            "route_to_prepare-role-interviews": "screen-requested-en.json",
+        }
+        for action, fixture in fixtures.items():
+            with self.subTest(action=action):
+                rendered = render_outcome_html(
+                    load_outcome(FIXTURES / fixture), today=dt.date(2026, 8, 9)
+                )
+                self.assertIn(expected[action], rendered)
+                self.assertEqual(rendered.count('class="continuity-rail"'), 1)
+                self.assertNotIn("continuation", rendered.lower())
+
+    def test_stop_action_uses_terminal_recorded_rail_without_continuation_copy(self):
+        rendered = render_outcome_html(
+            load_outcome(FIXTURES / "stop-decision-en.json"), today=dt.date(2026, 8, 9)
+        )
+        self.assertIn("Recorded", rendered)
+        self.assertIn("recorded privately", rendered)
+        self.assertNotRegex(rendered, r"(?i)continuation|continue|manual action|continúa|acción manual")
     def test_cli_normalizes_invalid_as_of_to_input_error(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "out.html"
@@ -30,35 +71,59 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
             missing_as_of = subprocess.run([sys.executable, "-B", str(ROOT / "scripts/render_private_recruiter_conversion_outcome.py"), str(FIXTURES / "contact-received-en.json"), "--output", str(output)], capture_output=True, text=True)
             self.assertEqual(missing_as_of.returncode, 3)
             self.assertFalse(output.exists())
+
+    def test_cli_normalizes_malformed_json_to_input_error(self):
+        with tempfile.TemporaryDirectory() as directory:
+            input_path = Path(directory) / "malformed.json"
+            output = Path(directory) / "out.html"
+            input_path.write_text("{", encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, "-B", str(ROOT / "scripts/render_private_recruiter_conversion_outcome.py"), str(input_path), "--output", str(output), "--as-of", "2026-08-09"],
+                capture_output=True, text=True,
+            )
+            self.assertEqual(result.returncode, 3)
+            self.assertIn("cannot render private recruiter outcome", result.stderr)
+            self.assertNotIn("Traceback", result.stderr)
+            self.assertFalse(output.exists())
     def test_six_events_have_fixed_localized_labels_and_actions(self):
         actions = {
-            "contact_received": "Clarify context before replying",
-            "reply_received": "Clarify context before replying",
-            "referral_received": "Prepare a fact-checked summary",
-            "screen_requested": "Route to interview preparation",
-            "interview_requested": "Route to interview preparation",
-            "stop_decision": "Record this recruiter-process outcome privately; do not continue this preparation path.",
+            "en": {
+                "contact_received": "Clarify context before replying",
+                "reply_received": "Clarify context before replying",
+                "referral_received": "Prepare a fact-checked summary",
+                "screen_requested": "Route to interview preparation",
+                "interview_requested": "Route to interview preparation",
+                "stop_decision": "Record this recruiter-process outcome privately.",
+            },
+            "es": {
+                "contact_received": "Aclara el contexto antes de responder",
+                "reply_received": "Aclara el contexto antes de responder",
+                "referral_received": "Prepara un resumen verificado",
+                "screen_requested": "Dirige a preparación de entrevista",
+                "interview_requested": "Dirige a preparación de entrevista",
+                "stop_decision": "Registra en privado el resultado de este proceso de reclutamiento.",
+            },
         }
         seen = set()
         for path in FIXTURES.glob("*.json"):
             item = load_outcome(path)
             html = render_outcome_html(item, today=dt.date(2026, 8, 9))
-            expected = actions[item["event_type"]] if item["locale"] == "en" else {"referral_received": "Prepara un resumen verificado", "interview_requested": "Dirige a preparación de entrevista"}[item["event_type"]]
+            expected = actions[item["locale"]][item["event_type"]]
             self.assertIn(expected, html)
             self.assertIn(item["event_date"], html)
             self.assertIn("Evidence count" if item["locale"] == "en" else "Evidencia", html)
             seen.add(item["event_type"])
-        self.assertEqual(set(actions), seen)
+        self.assertEqual(set(actions["en"]), seen)
 
     def test_stop_decision_copy_preserves_employment_continuity_in_english_and_spanish(self):
         item = load_outcome(FIXTURES / "stop-decision-en.json")
         expected = {
             "en": {
-                "action": "Record this recruiter-process outcome privately; do not continue this preparation path.",
+                "action": "Record this recruiter-process outcome privately.",
                 "boundary": "Scope: this records one recruiter-process outcome only. It is not advice to resign, leave a job, or stop your job search; you decide what comes next.",
             },
             "es": {
-                "action": "Registra en privado el resultado de este proceso de reclutamiento; no continúes por esta vía de preparación.",
+                "action": "Registra en privado el resultado de este proceso de reclutamiento.",
                 "boundary": "Alcance: esto solo registra un resultado de este proceso de reclutamiento. No es una recomendación de renunciar, dejar un empleo ni abandonar tu búsqueda; tú decides qué sigue.",
             },
         }
@@ -129,8 +194,8 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
         self.assertEqual(rendered.count('class="continuity-rail"'), 1)
         self.assertEqual(rendered.count('class="continuity-step continuity-step--'), 3)
         self.assertIn('data-stage="observation" data-state="current"', rendered)
-        self.assertIn('data-stage="safe-route" data-state="current"', rendered)
-        self.assertIn('data-stage="manual-action" data-state="blocked"', rendered)
+        self.assertIn('data-stage="safe-step" data-state="current"', rendered)
+        self.assertIn('data-stage="review" data-state="blocked"', rendered)
         self.assertNotIn("D-104", rendered)
         self.assertNotIn("contact_received", rendered)
 
@@ -215,11 +280,11 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
         expected = {
             "screen-requested-en.json": (
                 "Manual next step",
-                "Return to the private Codex conversation, re-enter interview preparation manually, and answer the one safe recruiter-screen question. This receipt does not contact, send, or schedule anything.",
+                "Return to the private Codex conversation and re-enter preparation manually to review the reported request. This receipt does not contact, send, or schedule anything.",
             ),
             "interview-requested-es.json": (
                 "Siguiente paso manual",
-                "Regresa a la conversación privada de Codex, vuelve a entrar manualmente a la preparación de entrevista y responde la única pregunta segura de filtro inicial. Este recibo no contacta, envía ni agenda nada.",
+                "Regresa a la conversación privada de Codex y vuelve a entrar manualmente a la preparación para revisar la solicitud reportada. Este recibo no contacta, envía ni agenda nada.",
             ),
         }
         for fixture, (heading, body) in expected.items():

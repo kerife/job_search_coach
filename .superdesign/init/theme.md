@@ -23,7 +23,7 @@ This plugin has **no shared Tailwind config, CSS module system, theme provider, 
 - **Radius:** dossier/practice/triage remain square; compact receipt cards use `1rem`.
 - **Shadows:** dossier none; practice/triage `0 1px 0 rgb(23 62 48 / 10%)`; compact cards `0 .5rem 2rem rgb(23 32 51 / .08)`.
 - Learning cards lead with readable decision and option-type labels; decision basis and opportunity cost remain visible without new shadows or decorative effects.
-- Private recruiter receipts and practice sessions use a static three-stage continuity rail with textual current/pending/blocked states; it reuses each family’s existing accent tokens and never becomes an action control.
+- Private recruiter receipts and practice sessions use a static continuity rail with textual states; compact outcome/checkpoint rails select closed copy from `next_safe_action`, while `record_stop_decision` renders a terminal Recorded/Registrado state with no continuation language. Rails reuse each family’s accent tokens, remain non-interactive, use surface tokens in dark mode, and preserve print, forced-colors, and higher-contrast readability.
 - Practice sessions also use a four-cell first-conversation readiness card with textual current/pending states; it is derived from validated state, remains private, and never becomes an action control.
 - **Breakpoints:** dossier: 900px, 680px, 480px; practice/triage: 640px; compact receipts: `min-width: 641px` (one column through 640px). All families include print, reduced-motion, forced-color, and high-contrast handling.
 
@@ -1461,11 +1461,13 @@ dd { margin: .15rem 0 0; font-weight: 600; }
 .continuity-rail-kicker { margin: 0; color: var(--accent); font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .continuity-rail h2 { margin: .25rem 0 0; font-size: 1.2rem; }
 .continuity-rail-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; margin: .75rem 0 0; padding: 0; list-style: none; counter-reset: continuity-step; }
-.continuity-step { counter-increment: continuity-step; position: relative; min-width: 0; padding: .75rem .75rem .75rem 2.75rem; border: 1px solid var(--line); background: #f4f6fa; }
+.continuity-step { counter-increment: continuity-step; position: relative; min-width: 0; padding: .75rem .75rem .75rem 2.75rem; border: 1px solid var(--line); background: var(--surface); }
 .continuity-step::before { content: counter(continuity-step); display: inline-grid; position: absolute; top: .75rem; left: .75rem; width: 1.5rem; height: 1.5rem; place-items: center; border: 1px solid var(--accent); border-radius: 50%; color: var(--accent); font-weight: 800; line-height: 1; }
 .continuity-step--current { border-left: .25rem solid var(--accent); }
 .continuity-step--pending { border-left: .25rem solid var(--accent); }
 .continuity-step--blocked { border-left: .25rem solid var(--accent); }
+.continuity-step--recorded { border-style: double; border-width: 3px; }
+.continuity-step--recorded .continuity-step-state { text-decoration: underline; text-decoration-thickness: .15em; text-underline-offset: .15em; }
 .continuity-step-state { display: block; color: var(--muted); font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
 .continuity-step strong { display: block; margin-top: .2rem; }
 .continuity-step p { margin: .35rem 0 0; color: var(--muted); font-size: .9rem; }
@@ -1479,10 +1481,10 @@ dd { margin: .15rem 0 0; font-weight: 600; }
   .checkpoint-card { box-shadow: 0 .5rem 2rem rgb(0 0 0 / .35); }
 }
 @page { size: auto; margin: 14mm; }
-@media print { html { background: #fff; } .checkpoint-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .checkpoint-manual-next-step { break-inside: avoid; page-break-inside: avoid; } .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .checkpoint-footer { break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
+@media print { html { background: #fff; } .checkpoint-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .checkpoint-manual-next-step { break-inside: avoid; page-break-inside: avoid; } .continuity-rail, .continuity-step { break-inside: avoid; page-break-inside: avoid; } .checkpoint-footer { break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
-@media (prefers-contrast: more) { .checkpoint-card { border: 2px solid var(--ink); box-shadow: none; } .checkpoint-facts div { border-top: 2px solid var(--ink); } .checkpoint-boundary { border-left-width: .5rem; color: var(--ink); } .checkpoint-manual-next-step { border-left-width: .5rem; color: var(--ink); } }
-@media (forced-colors: active) { .checkpoint-card { background: Canvas; color: CanvasText; border: 1px solid CanvasText; } .checkpoint-boundary { color: CanvasText; border: 1px solid CanvasText; border-left-width: .25rem; } .checkpoint-manual-next-step { border: 1px solid CanvasText; border-left-width: .25rem; color: CanvasText; } .continuity-rail, .continuity-step { border: 1px solid CanvasText; color: CanvasText; background: Canvas; } .continuity-step::before { border-color: CanvasText; color: CanvasText; } .checkpoint-kicker, .continuity-rail-kicker { color: LinkText; } main:focus-visible { outline-color: Highlight; } .skip-link { background: Canvas; border-color: CanvasText; color: CanvasText; } .skip-link:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; } }
+@media (prefers-contrast: more) { .checkpoint-card { border: 2px solid var(--ink); box-shadow: none; } .checkpoint-facts div { border-top: 2px solid var(--ink); } .checkpoint-boundary { border-left-width: .5rem; color: var(--ink); } .checkpoint-manual-next-step { border-left-width: .5rem; color: var(--ink); } .continuity-rail { border-color: var(--ink); color: var(--ink); } .continuity-step, .continuity-step--recorded { border-color: var(--ink); color: var(--ink); } .continuity-step--recorded { border-style: double; border-width: 3px; } .continuity-step-state, .continuity-step p { color: var(--ink); } }
+@media (forced-colors: active) { .checkpoint-card { background: Canvas; color: CanvasText; border: 1px solid CanvasText; } .checkpoint-boundary { color: CanvasText; border: 1px solid CanvasText; border-left-width: .25rem; } .checkpoint-manual-next-step { border: 1px solid CanvasText; border-left-width: .25rem; color: CanvasText; } .continuity-rail, .continuity-step { border: 1px solid CanvasText; color: CanvasText; background: Canvas; } .continuity-step--recorded { border-color: CanvasText; color: CanvasText; border-style: double; border-width: 3px; } .continuity-step-state, .continuity-step p { color: CanvasText; } .continuity-step::before { border-color: CanvasText; color: CanvasText; } .checkpoint-kicker, .continuity-rail-kicker { color: LinkText; } main:focus-visible { outline-color: Highlight; } .skip-link { background: Canvas; border-color: CanvasText; color: CanvasText; } .skip-link:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; } }
 ```
 
 ### `plugins/professional-growth-coach/assets/private-recruiter-conversion-outcome-v1.css`
@@ -1511,11 +1513,13 @@ dd { margin: .15rem 0 0; font-weight: 600; }
 .continuity-rail-kicker { margin: 0; color: var(--accent); font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .continuity-rail h2 { margin: .25rem 0 0; font-size: 1.2rem; }
 .continuity-rail-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; margin: .75rem 0 0; padding: 0; list-style: none; counter-reset: continuity-step; }
-.continuity-step { counter-increment: continuity-step; position: relative; min-width: 0; padding: .75rem .75rem .75rem 2.75rem; border: 1px solid var(--line); background: #f4f6fa; }
+.continuity-step { counter-increment: continuity-step; position: relative; min-width: 0; padding: .75rem .75rem .75rem 2.75rem; border: 1px solid var(--line); background: var(--surface); }
 .continuity-step::before { content: counter(continuity-step); display: inline-grid; position: absolute; top: .75rem; left: .75rem; width: 1.5rem; height: 1.5rem; place-items: center; border: 1px solid var(--accent); border-radius: 50%; color: var(--accent); font-weight: 800; line-height: 1; }
 .continuity-step--current { border-left: .25rem solid var(--accent); }
 .continuity-step--pending { border-left: .25rem solid var(--accent); }
 .continuity-step--blocked { border-left: .25rem solid var(--accent); }
+.continuity-step--recorded { border-style: double; border-width: 3px; }
+.continuity-step--recorded .continuity-step-state { text-decoration: underline; text-decoration-thickness: .15em; text-underline-offset: .15em; }
 .continuity-step-state { display: block; color: var(--muted); font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
 .continuity-step strong { display: block; margin-top: .2rem; }
 .continuity-step p { margin: .35rem 0 0; color: var(--muted); font-size: .9rem; }
@@ -1529,10 +1533,10 @@ dd { margin: .15rem 0 0; font-weight: 600; }
   .outcome-card { box-shadow: 0 .5rem 2rem rgb(0 0 0 / .35); }
 }
 @page { size: auto; margin: 14mm; }
-@media print { html { background: #fff; } .outcome-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .outcome-manual-next-step { break-inside: avoid; page-break-inside: avoid; } .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .outcome-footer { break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
+@media print { html { background: #fff; } .outcome-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .outcome-manual-next-step { break-inside: avoid; page-break-inside: avoid; } .continuity-rail, .continuity-step { break-inside: avoid; page-break-inside: avoid; } .outcome-footer { break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
-@media (prefers-contrast: more) { .outcome-card { border: 2px solid var(--ink); box-shadow: none; } .outcome-facts div { border-top: 2px solid var(--ink); } .outcome-boundary { border-left-width: .5rem; color: var(--ink); } .outcome-manual-next-step { border-left-width: .5rem; color: var(--ink); } }
-@media (forced-colors: active) { .outcome-card { background: Canvas; color: CanvasText; border: 1px solid CanvasText; } .outcome-boundary { color: CanvasText; border: 1px solid CanvasText; border-left-width: .25rem; } .outcome-manual-next-step { border: 1px solid CanvasText; border-left-width: .25rem; color: CanvasText; } .continuity-rail, .continuity-step { border: 1px solid CanvasText; color: CanvasText; background: Canvas; } .continuity-step::before { border-color: CanvasText; color: CanvasText; } .outcome-kicker, .continuity-rail-kicker { color: LinkText; } main:focus-visible { outline-color: Highlight; } .skip-link { background: Canvas; border-color: CanvasText; color: CanvasText; } .skip-link:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; } }
+@media (prefers-contrast: more) { .outcome-card { border: 2px solid var(--ink); box-shadow: none; } .outcome-facts div { border-top: 2px solid var(--ink); } .outcome-boundary { border-left-width: .5rem; color: var(--ink); } .outcome-manual-next-step { border-left-width: .5rem; color: var(--ink); } .continuity-rail { border-color: var(--ink); color: var(--ink); } .continuity-step, .continuity-step--recorded { border-color: var(--ink); color: var(--ink); } .continuity-step--recorded { border-style: double; border-width: 3px; } .continuity-step-state, .continuity-step p { color: var(--ink); } }
+@media (forced-colors: active) { .outcome-card { background: Canvas; color: CanvasText; border: 1px solid CanvasText; } .outcome-boundary { color: CanvasText; border: 1px solid CanvasText; border-left-width: .25rem; } .outcome-manual-next-step { border: 1px solid CanvasText; border-left-width: .25rem; color: CanvasText; } .continuity-rail, .continuity-step { border: 1px solid CanvasText; color: CanvasText; background: Canvas; } .continuity-step--recorded { border-color: CanvasText; color: CanvasText; border-style: double; border-width: 3px; } .continuity-step-state, .continuity-step p { color: CanvasText; } .continuity-step::before { border-color: CanvasText; color: CanvasText; } .outcome-kicker, .continuity-rail-kicker { color: LinkText; } main:focus-visible { outline-color: Highlight; } .skip-link { background: Canvas; border-color: CanvasText; color: CanvasText; } .skip-link:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; } }
 ```
 
 

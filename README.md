@@ -79,6 +79,9 @@ input diagnostic: return code `3`, empty stdout, no traceback, and no echo of
 raw values, paths, or identifiers. Valid inputs retain their existing
 validation and rendering behavior. Repair the private input locally and rerun;
 do not paste rejected JSON into chat, logs, or a client-facing artifact.
+The dependency-free schema subset also rejects non-finite numeric values
+(`NaN`, positive infinity, and negative infinity), including non-finite schema
+numeric bounds.
 
 ## Installation
 

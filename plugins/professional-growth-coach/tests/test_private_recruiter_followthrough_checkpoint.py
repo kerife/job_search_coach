@@ -146,6 +146,30 @@ class FollowthroughCheckpointContractTests(unittest.TestCase):
             item = copy.deepcopy(self.valid); item["source_receipt"]["event_type"] = "stop_decision"
             self.assertTrue(any("stop" in e for e in checkpoint.validate_checkpoint(item, receipt, as_of=dt.date(2026, 8, 8))))
 
+    def test_stop_receipt_precedes_preparation_action_and_measurement(self):
+        receipt = json.loads((FIXTURES / "stop-decision-en.json").read_text())
+        item = copy.deepcopy(self.valid)
+        item["source_receipt"] = {
+            "id": receipt["source_artifact_id"],
+            "source_version": receipt["source_version"],
+            "event_type": receipt["event_type"],
+        }
+        item.update(action_state="completed", next_measurement_event="screen_prepared", next_safe_action="route_to_prepare-role-interviews")
+        errors = checkpoint.validate_checkpoint(item, receipt, as_of=dt.date(2026, 8, 8))
+        self.assertTrue(any("record_stop_decision" in error for error in errors))
+        self.assertTrue(any("preparation" in error for error in errors))
+
+    def test_stop_receipt_accepts_terminal_record_action(self):
+        receipt = json.loads((FIXTURES / "stop-decision-en.json").read_text())
+        item = copy.deepcopy(self.valid)
+        item["source_receipt"] = {
+            "id": receipt["source_artifact_id"],
+            "source_version": receipt["source_version"],
+            "event_type": receipt["event_type"],
+        }
+        item.update(action_state="completed", next_measurement_event="stop_decision", next_safe_action="record_stop_decision")
+        self.assertEqual([], checkpoint.validate_checkpoint(item, receipt, as_of=dt.date(2026, 8, 8)))
+
     def test_closed_types_and_forbidden_content(self):
         for key, value in [("extra", True), ("source_receipt", "D-104"), ("candidate_id", "C-001"), ("raw_event", "raw"), ("answer", "send this"), ("outcome", "guaranteed offer"), ("score", 99)]:
             item = copy.deepcopy(self.valid); item[key] = value
