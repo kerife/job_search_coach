@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T09:00:37-06:00`
+release_timestamp: `2026-08-27T13:00:00-06:00`
 
-source_commit: `24ed0fb2329657b6968fe75a5135792a27d75a1a`
+source_commit: `52b218464f8e359ce50669fb3a385bacbeb0f71a`
 
-source_tree: `f1669517a1962d21fe06fa12a0eafa44d9bf3160`
+source_tree: `60d797a1ae1abe9e8dd0dcb9276ad0723d520c8d`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827090037`
+installed_cache_version: `0.2.0+codex.20260827130000`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `137`
 
 installed_file_count: `137`
 
-normalized_source_cache_sha256: `4902d608151342c11ca7a6df07dca50ff7af6952516d2eeb7bc0e6e41ef3ae6e`
+normalized_source_cache_sha256: `45a17bae31792da9353d1377c94f4fe5c8116397e82da8dbb885ae3fcf4b9d0b`
 
 active_config: `canonical_and_public_enabled`
 release_smoke_plugin: `professional-growth-coach@professional-growth-coach-local`
@@ -70,6 +70,8 @@ installed_triage_first_answer_outline_smoke: `2/2 ES/EN installed builder, valid
 installed_private_cli_receipt_smoke: `2/2 ES/EN installed builder, validator, and renderer receipts; renderer outputs 0600; malformed direct CLI arguments return fixed opaque errors`
 
 installed_private_json_loader_hardening_smoke: `7/7 installed private loaders and dossier/practice renderers reject oversized-integer JSON with fixed opaque errors; no traceback, raw-content echo, or output artifact`
+
+installed_action_aligned_rail_smoke: `11/11 installed EN/ES outcome/checkpoint rails select closed action copy, stop renders a terminal recorded rail, dark surface and forced-colors hooks are present, and non-finite schema numbers are rejected`
 
 installed_feedback_sensitive_continuity_rail_smoke: `6/6 ES/EN feedback labels render one deterministic three-step rail with closed pending/blocked state copy`
 
