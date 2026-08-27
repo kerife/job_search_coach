@@ -82,6 +82,9 @@ class RecruiterTargetScreenIntakeTests(unittest.TestCase):
         tampered["source_gate"]["locale"] = "en"
         self.assertIn("embedded source gate does not match source gate", validate_screen_intake(tampered, source_gate=self.gate()))
         tampered = copy.deepcopy(intake)
+        tampered["source_gate"]["decision_rows"][0]["decision_reason"] = "mutated"
+        self.assertIn("embedded source gate does not match source gate", validate_screen_intake(tampered, source_gate=self.gate()))
+        tampered = copy.deepcopy(intake)
         tampered["locale"] = "en"
         self.assertIn("locale does not match source gate", validate_screen_intake(tampered))
 
@@ -91,6 +94,7 @@ class RecruiterTargetScreenIntakeTests(unittest.TestCase):
         malformed["target_decision"] = []
         malformed["intake"]["candidate_fact_ids"] = [{}]
         malformed["checks"][0]["check"] = {}
+        malformed["checks"][1]["status"] = []
         errors = validate_screen_intake(malformed)
         self.assertTrue(errors)
         self.assertTrue(all(isinstance(error, str) for error in errors))

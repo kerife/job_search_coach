@@ -163,7 +163,7 @@ def validate_screen_intake(value: object, *, source_gate: Mapping[str, object] |
                 errors.append(f"checks[{index}].check has invalid or duplicated value")
             else:
                 seen.add(name)
-            if check.get("status") not in {"pass", "clarify", "stop"}:
+            if not isinstance(check.get("status"), str) or check.get("status") not in {"pass", "clarify", "stop"}:
                 errors.append(f"checks[{index}].status has invalid value")
             _safe_text(check.get("evidence_note"), f"checks[{index}].evidence_note", errors, 240)
             checks.append(check)
@@ -217,10 +217,7 @@ def validate_screen_intake(value: object, *, source_gate: Mapping[str, object] |
         gate_errors = GATE.validate_decision_gate(source_gate, as_of=as_of)
         if gate_errors:
             errors.append("source gate is invalid")
-        elif isinstance(embedded_gate, Mapping) and any(
-            embedded_gate.get(field) != source_gate.get(field)
-            for field in ("source_snapshot", "locale", "as_of_date")
-        ):
+        elif isinstance(embedded_gate, Mapping) and json.dumps(embedded_gate, sort_keys=True, separators=(",", ":")) != json.dumps(source_gate, sort_keys=True, separators=(",", ":")):
             errors.append("embedded source gate does not match source gate")
         elif snapshot != source_gate.get("source_snapshot"):
             errors.append("source_gate_snapshot does not match source gate")
