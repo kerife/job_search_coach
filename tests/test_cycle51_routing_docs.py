@@ -34,6 +34,9 @@ class RecruiterShortlistRoutingDocsTests(unittest.TestCase):
             "rendered_html",
             "no_message_action=true",
             "no_calendar_action=true",
+            "closed contracts",
+            "forward transition matrix",
+            "schema-only",
         ):
             self.assertIn(token, text)
 

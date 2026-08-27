@@ -48,3 +48,10 @@ this contract; invalid intake remains artifact-free but includes fixed
 clear. Recovery text never echoes rejected values. The HTML is a review
 surface, not a public serialization format, and keeps IDs, snapshots, contact
 details, URLs, and external actions out of the rendered document.
+
+The embedded recruiter snapshots are closed contracts in both JSON Schema and
+runtime validation: unknown fields in shortlist, gate, intake, receipt,
+checkpoint, or debrief envelopes are rejected. Schema conditionals mirror the
+decision/event/safe-action rules and the forward-stage matrix; hashes, dates,
+and cross-artifact equality still require the runtime validator. Schema
+acceptance alone never authorizes preparation or an external action.

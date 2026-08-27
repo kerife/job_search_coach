@@ -35,6 +35,16 @@ list and one localized `intake_question`. The question explains the missing
 safe context without reflecting malformed input, private identifiers, or raw
 conversation text, so a client can recover without guessing what to submit.
 
+The recruiter snapshot chain is closed at both contract layers: embedded
+`source_shortlist`, `source_gate`, `source_intake`, `source_receipt`,
+`source_checkpoint`, and `source_debrief` envelopes reject unknown fields in
+the JSON Schemas as well as in the runtime validators. The debrief schema
+reconciles its decision, measurement event, and safe action; the next-stage
+schema reconciles its ready/blocked action and enumerates the same forward
+stage transitions as the runtime taxonomy. Runtime validation remains
+authoritative for dates, hashes, and cross-artifact provenance; schema-only
+acceptance never grants preparation or external-action authorization.
+
 After a validated `screen_attended` checkpoint, `route_recruiter_screen_debrief` can build `private-recruiter-screen-debrief-v1`. The private bilingual debrief records only structured coverage, unknown topics, supported facts used, and a manual `continue_review|pause|stop` decision. Complete coverage returns `ready` for `manual_prepare_next_stage_review`; incomplete coverage returns `needs_intake` for context collection, while a stop decision returns terminal `stopped` with `record_stop_decision`. No raw conversation text, contacts, messages, calendar actions, automatic preparation, or outcome prediction is retained.
 
 When a next stage is explicitly selected, `route_recruiter_next_stage_review` builds `private-recruiter-next-stage-review-v1` from that debrief. It exposes a bilingual, checklist-based `ready|blocked` review for a closed forward transition such as `technical_screen → hiring_manager`, `technical_deep_dive`, `take_home`, `system_design`, `behavioral_loop`, `panel`, or `offer_stage`. The rendered header repeats both current and target stages so the candidate can verify the handoff. A blocked review returns `needs_intake`, while a stop decision returns terminal `stopped` with `record_stop_decision`; neither asks for more context. A blocked review also lists only the structured topics that must be clarified, never the raw unknown-topic notes. The current stage and backward transitions are rejected, and only a manual `prepare-role-interviews` cue can proceed.

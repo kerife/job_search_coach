@@ -49,6 +49,39 @@ V2_TRIAGE_PRACTICE_SNAPSHOT = (
 )
 
 
+def _build_recruiter_handoff_chain():
+    shortlist = build_shortlist("es", "2026-08-27", valid_plan(), valid_targets())
+    gate = build_decision_gate(shortlist)
+    intake = build_screen_intake(gate, "T-001", {
+        "stated_stage": "recruiter_screen",
+        "vacancy_requirements": ["V-001: Platform reliability scope."],
+        "candidate_fact_ids": ["F-001"],
+        "company_evidence_state": "verified",
+        "source_date": "2026-08-27",
+        "checks": [
+            {"check": "target_context", "status": "pass", "evidence_note": "Named context supplied."},
+            {"check": "proof_packet", "status": "pass", "evidence_note": "Supported fact mapped."},
+            {"check": "low_friction_ask", "status": "pass", "evidence_note": "Process question only."},
+            {"check": "screen_readiness", "status": "pass", "evidence_note": "Stage is explicit."},
+        ],
+    })
+    receipt = json.loads((ROOT / "tests/fixtures/private-recruiter-conversion-outcome/screen-requested-en.json").read_text(encoding="utf-8"))
+    checkpoint = json.loads((ROOT / "tests/fixtures/private-recruiter-followthrough-checkpoint/completed-screen-attended-en.json").read_text(encoding="utf-8"))
+    debrief = build_screen_debrief(checkpoint, receipt, intake, {
+        "observed_date": "2026-08-27",
+        "coverage": [
+            {"topic": "requirement", "status": "discussed", "note": "Requirements discussed."},
+            {"topic": "scope", "status": "discussed", "note": "Scope discussed."},
+            {"topic": "team_context", "status": "discussed", "note": "Team context discussed."},
+        ],
+        "unknown_topics": [],
+        "facts_used": ["F-001"],
+        "decision": "continue_review",
+    })
+    review = build_next_stage_review(debrief, receipt, intake, checkpoint, "first_interview")
+    return shortlist, gate, intake, receipt, checkpoint, debrief, review
+
+
 class PrivateSchemaConformanceTests(unittest.TestCase):
     def _schema(self, name):
         return json.loads((ROOT / "schemas" / name).read_text(encoding="utf-8"))
@@ -184,6 +217,41 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         invalid = copy.deepcopy(review)
         invalid["next_stage"] = "not_a_stage"
         self.assertTrue(validate_schema_instance(invalid, schema))
+
+    def test_recruiter_snapshot_schemas_reject_unknown_nested_fields(self):
+        shortlist, gate, intake, _, _, debrief, review = _build_recruiter_handoff_chain()
+        cases = (
+            (shortlist, "recruiter-target-shortlist-v1.schema.json", ("network_plan",)),
+            (gate, "recruiter-target-decision-gate-v1.schema.json", ("source_shortlist",)),
+            (intake, "recruiter-target-screen-intake-v1.schema.json", ("source_gate",)),
+            (debrief, "private-recruiter-screen-debrief-v1.schema.json", ("source_receipt", "source_checkpoint", "source_intake")),
+            (review, "private-recruiter-next-stage-review-v1.schema.json", ("source_debrief", "source_intake")),
+        )
+        for value, schema_name, fields in cases:
+            schema = self._schema(schema_name)
+            for field in fields:
+                with self.subTest(schema=schema_name, field=field):
+                    invalid = copy.deepcopy(value)
+                    invalid[field]["unexpected_extension"] = "must be rejected"
+                    self.assertTrue(validate_schema_instance(invalid, schema))
+
+    def test_recruiter_schema_contracts_reject_impossible_state_combinations(self):
+        _, _, _, _, _, debrief, review = _build_recruiter_handoff_chain()
+        debrief_schema = self._schema("private-recruiter-screen-debrief-v1.schema.json")
+        invalid_debrief = copy.deepcopy(debrief)
+        invalid_debrief["decision"] = "stop"
+        invalid_debrief["measurement_event"] = "next_stage_review"
+        self.assertTrue(validate_schema_instance(invalid_debrief, debrief_schema))
+
+        review_schema = self._schema("private-recruiter-next-stage-review-v1.schema.json")
+        invalid_review = copy.deepcopy(review)
+        invalid_review["review_state"] = "ready"
+        invalid_review["handoff"]["next_safe_action"] = "collect_debrief_context"
+        self.assertTrue(validate_schema_instance(invalid_review, review_schema))
+
+        invalid_transition = copy.deepcopy(review)
+        invalid_transition["next_stage"] = "offer_stage"
+        self.assertTrue(validate_schema_instance(invalid_transition, review_schema))
 
     def test_dossier_methodology_categories_keep_schema_runtime_and_registry_in_lockstep(self):
         helper = _load_v2_dossier_helper()

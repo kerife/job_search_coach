@@ -126,6 +126,15 @@ After a completed `screen_attended` checkpoint, `route_recruiter_screen_debrief`
 
 `route_recruiter_next_stage_review` consumes that debrief only with a manually selected forward transition from the closed recruiter-stage taxonomy (`recruiter_screen`, `first_interview`, `technical_screen`, `hiring_manager`, `technical_deep_dive`, `take_home`, `system_design`, `behavioral_loop`, `panel`, `offer_stage`) and builds `private-recruiter-next-stage-review-v1`. A validated artifact returns the private in-memory `rendered_html` for ready, blocked, and terminal stop states. It returns a private `ready|blocked` checklist, maps blocked reviews to `case_state=needs_intake`, maps stop decisions to terminal `case_state=stopped`, rejects same-stage and backward transitions plus stale dates, and preserves the manual-only `prepare-role-interviews` boundary. The rendered header shows `current stage → target stage` in localized copy without identifiers.
 
+The JSON Schemas are closed contracts at the same snapshot boundaries as runtime: the
+embedded shortlist, gate, intake, receipt, checkpoint, and debrief envelopes
+reject unknown fields. Schema conditionals keep debrief decision → event →
+safe action and next-stage state → handoff action coherent, and enumerate the
+forward transition matrix. Runtime validation remains authoritative for
+snapshot hashes, dates, and cross-artifact equality; schema-valid input never
+authorizes preparation, messaging, scheduling, or another external action.
+schema-only acceptance is therefore not an authorization signal.
+
 ## Recruiter reply and send-now routing
 
 When neither an explicit private recruiter-practice request nor an explicit private recruiter-reply triage request is present, inbound recruiter replies, recruiter screen invitations, proposed times, and user requests to send, reply, confirm, accept, schedule, book, or create a calendar item route to `optimize-professional-profile` first so the response includes `recruiter_reply_triage`. Use `awaiting_authorization` only after the exact recipient, finalized draft, action, and target are known; otherwise keep the safe next step as triage or clarification. In all of these cases set `authorization_required: true` because the user is asking for an external action. For a proposed time, keep `proposed_time_state=do_not_accept_or_propose_time_without_exact_authorization`, `no_calendar_action=true`, and `draft_only=true`; do not report that a message was sent, a screen was scheduled, a time was accepted, or a calendar event was created. A prior approval or general send instruction is insufficient unless immediately before execution it names the exact action, exact target, and exact final content or asset identity when content or assets apply.
