@@ -103,10 +103,6 @@ Workstream rows use `coach_weekly_workstream=weekly_execution_lane` and cover ex
 
 Choose exactly one `case_state` in this order:
 
-## Explicit recruiter-network shortlist route
-
-When a request explicitly asks to expand a recruiter/referral network, find recruiters, or prepare for a first recruiter screen, route to the private `recruiter-target-shortlist-v1` flow before ordinary outreach prose. `route_recruiter_request` is the deterministic local handoff: with three to six candidate-supplied targets and a valid `recruiter_network_expansion_plan`, it returns `case_state=ready`, `selected_module=optimize-professional-profile`, `next_action=render_recruiter_target_shortlist`, and a validated offline artifact. If the bounded target set or context is missing, return `case_state=needs_intake`, `next_action=ask_one_intake_question`, and one localized intake question; do not invent identities, contact details, or URLs. The rendered artifact is a private review surface only. It must preserve `draft_only=true`, `consent=not_granted`, `authorization_required=true`, `no_message_action=true`, and `no_calendar_action=true` on every row, and only `advance` rows may hand off to `recruiter_target_decision_gate`.
-
 For a normal local LinkedIn diagnostic with at least one inspectable or supplied LinkedIn section, a conflicting or unsupported claim remains `unknown` and blocked for public copy but does not block the entire honest diagnostic. The case may remain `ready` for a private partial dossier when the unresolved issue can be isolated: mark affected copy `requires_confirmation` or `omit`, keep every other claim within its evidence boundary, and put at most the first decision-changing question in chat. Use `blocked_on_evidence` only when the unresolved issue blocks the entire honest diagnostic. If there is no other inspectable or supplied evidence, do not create a dossier; ask exactly one useful intake question.
 
 Outside that narrow partial-dossier exception:
@@ -117,6 +113,10 @@ Outside that narrow partial-dossier exception:
 4. Otherwise use `ready`.
 
 Route a source conflict to `optimize-professional-profile`; ask for confirmation and do not draft the disputed section as ready public copy. The private partial dossier exception above may still diagnose supported sections and hold the disputed copy. Set `authorization_required: true` independently whenever the request includes an external action, even if an unresolved conflict or intake gap wins the `case_state`. Drafting and analysis alone require `false`.
+
+## Explicit recruiter-network shortlist route
+
+When a request explicitly asks to expand a recruiter/referral network, find recruiters, or prepare for a first recruiter screen, route to the private `recruiter-target-shortlist-v1` flow before ordinary outreach prose. `route_recruiter_request` is the deterministic local handoff: with three to six candidate-supplied targets and a valid `recruiter_network_expansion_plan`, it returns `case_state=ready`, `selected_module=optimize-professional-profile`, `next_action=render_recruiter_target_shortlist`, and a validated offline artifact. If the bounded target set or context is missing, return `case_state=needs_intake`, `next_action=ask_one_intake_question`, and one localized intake question; do not invent identities, contact details, or URLs. The rendered artifact is a private review surface only. It must preserve `draft_only=true`, `consent=not_granted`, `authorization_required=true`, `no_message_action=true`, and `no_calendar_action=true` on every row, and only `advance` rows may hand off to `recruiter_target_decision_gate`.
 
 ## Recruiter reply and send-now routing
 
