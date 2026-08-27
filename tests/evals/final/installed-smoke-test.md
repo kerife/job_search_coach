@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T11:25:39-06:00`
+release_timestamp: `2026-08-27T11:50:00-06:00`
 
-source_commit: `a7143daab6e8ca3692ef887207905a70c27e2cba`
+source_commit: `e2e9d0ff4e013febff4422b4d76033e9729999bf`
 
-source_tree: `efc53c72f84552bdcc4d19eae651ccaf136206e4`
+source_tree: `ab50998242290bd907c8f26ee45df3c58d658e47`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827112539`
+installed_cache_version: `0.2.0+codex.20260827115000`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `146`
 
 installed_file_count: `146`
 
-normalized_source_cache_sha256: `dc5980efd634b6d033002c6b505e20f0bdfde93907863299f2a88b4aa48aeb87`
+normalized_source_cache_sha256: `e7551cf85c3ededf614cabd68a2da1048ed49ea05210b6a7a701bc2c025cfe9f`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -113,6 +113,7 @@ installed_practice_continuity_accessibility_smoke: `2/2 installed EN/ES practice
 installed_triage_handoff_continuity_smoke: `2/2 installed EN/ES triage handoffs expose recorded -> recorded -> pending states with one aria-current="step" re-entry stage and preserve manual-only boundaries`
 
 installed_shortlist_artifact_smoke: `1/1 installed EN/ES shortlist builder, validator, and offline renderer; rows retain draft-only/no-message/no-calendar controls and HTML omits target/fact identifiers`
+installed_shortlist_boundary_smoke: `4/4 installed shortlist rejects asset symlinks, output-parent symlinks, non-HTTP URI prose, and future-dated direct renders`
 
 installed_duplicate_employer_source_url_smoke: `1/1 installed market validator rejects duplicate normalized employer official_source_url values without echoing the URL`
 
