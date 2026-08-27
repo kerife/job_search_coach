@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T15:28:22-06:00`
+release_timestamp: `2026-08-27T15:38:21-06:00`
 
-source_commit: `df2bd603fab4cabcfa06969254f2741261ff92c8`
+source_commit: `5fbfd74002c736edf5a2f21d32282664b3323b6c`
 
-source_tree: `7140a5e80df801f5f21f990dc6df4383f18beeed`
+source_tree: `e089034e11aa7f7ff006ce737d25df94a97f6415`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827152822`
+installed_cache_version: `0.2.0+codex.20260827153821`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `171`
 
 installed_file_count: `171`
 
-normalized_source_cache_sha256: `8d0017f7c28fc12a7d9790827c8a53b11fcca77fdeebb6dcada0e560624c0d82`
+normalized_source_cache_sha256: `32ad44e7bed51f1b4c11aa4386345e2cb0a0795dc092c99db4715e9c3de68b50`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -138,6 +138,8 @@ installed_shortlist_route_e2e_smoke: `5/5 installed route runs builder → valid
 installed_shortlist_accessibility_print_smoke: `8/8 installed shortlist renderer checks pass: skip link, focusable landmark, ordered target list, print-safe card/footer continuity, and identifier redaction`
 
 installed_recruiter_review_design_token_smoke: `5/5 recruiter review stylesheets are covered by the installed family allowlist`
+
+installed_recruiter_handoff_render_smoke: `16/16 installed decision-gate, screen-intake, debrief, and next-stage routes return private HTML only for validated artifacts; IDs, placeholders, and internal action tokens stay absent`
 
 fresh_agent_smoke: `not_run`
 
