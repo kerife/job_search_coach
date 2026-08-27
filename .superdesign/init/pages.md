@@ -96,6 +96,8 @@ Dependencies:
 - `plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.html`
 - `plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css`
 
+The shortlist route is intentionally static and offline: `route_recruiter_request` supplies a validated artifact to `render_recruiter_target_shortlist.py`; no network or external-action surface is part of the page.
+
 The renderer validates a candidate-supplied outcome, computes the localized evidence-count label, and writes a compact offline receipt. The default CLI receipt is path-free; `--include-artifact-path` is an explicit trusted-caller opt-in.
 
 Outcome and follow-through receipts share a non-interactive continuity rail:

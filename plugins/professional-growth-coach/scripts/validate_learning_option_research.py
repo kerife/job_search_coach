@@ -149,7 +149,9 @@ def _url_error(value: object, source_state: object, evidence_mode: object) -> st
         return "learning source URL is invalid"
     if host == "example.com" or host.endswith(".example.com") or host == "example.org" or host.endswith(".example.org") or host == "example.net" or host.endswith(".example.net"):
         return "learning source URL is invalid"
-    if re.fullmatch(r"(?:0x[0-9a-f]+|[0-9]+)(?:\.(?:0x[0-9a-f]+|[0-9]+)){1,3}", host, re.I):
+    if re.fullmatch(r"(?:0x[0-9a-f]+|[0-9]+)(?:\.(?:0x[0-9a-f]+|[0-9]+)){0,3}", host, re.I):
+        return "learning source URL is invalid"
+    if "." not in host or host.endswith((".internal", ".local", ".home", ".lan")):
         return "learning source URL is invalid"
     try:
         address = ipaddress.ip_address(host)

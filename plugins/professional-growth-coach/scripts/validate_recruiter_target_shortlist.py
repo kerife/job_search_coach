@@ -134,6 +134,8 @@ def validate_shortlist(value: object, *, as_of: dt.date | None = None) -> list[s
         segments = plan.get("target_segments")
         if not isinstance(segments, list) or not 1 <= len(segments) <= 5 or not all(isinstance(v, str) for v in segments):
             errors.append("network_plan.target_segments has invalid value")
+        elif any(not _text(segment, f"network_plan.target_segments[{index}]", errors, 80) for index, segment in enumerate(segments)):
+            pass
         queries = plan.get("source_queries")
         if not isinstance(queries, list) or not 3 <= len(queries) <= 5:
             errors.append("network_plan.source_queries must contain three to five queries")

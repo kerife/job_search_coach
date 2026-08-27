@@ -24,6 +24,8 @@ The plugin can prepare drafts, plans, rubrics, and analyses. It must ask again b
 
 The recruiter-networking flow includes a private `recruiter-target-shortlist-v1` artifact for manually supplied targets. It is a deterministic three-to-six-row review batch with `advance`, `clarify`, `pause`, or `stop` decisions. The builder and validator keep each row draft-only, consent-not-granted, authorization-required, and blocked from message or calendar actions; the bilingual offline renderer omits target identifiers, contact details, and URLs.
 
+Explicit requests to expand a network or prepare for a first recruiter screen route through `scripts/route_recruiter_target_shortlist.py`. The route either builds the validated private artifact or asks one bounded intake question; it does not infer recipients. The rendered card localizes the next safe action and summarizes the four decision counts before the manual `recruiter_target_decision_gate` handoff.
+
 ## Installation
 
 This source tree is repo-local at `plugins/professional-growth-coach`. Source edits do not update the installed plugin cache. A separate explicitly authorized installation is required to publish a source increment into the local marketplace cache; existing chats may continue using their loaded version, so verify the new installation from a fresh chat. Use the repo-local marketplace workflow only after the exact target and command are approved.

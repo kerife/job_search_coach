@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import datetime as dt
 import importlib.util
 import json
 import os
@@ -37,6 +38,12 @@ def build_shortlist(
     targets: Sequence[Mapping[str, object]],
 ) -> dict[str, object]:
     """Return a closed shortlist; target order is score-descending and deterministic."""
+    try:
+        reference_date = dt.date.fromisoformat(as_of_date)
+    except ValueError as error:
+        raise ValueError("as_of_date must be an ISO date") from error
+    if reference_date > dt.date.today():
+        raise ValueError("as_of_date cannot be in the future")
     ordered = sorted(
         (copy.deepcopy(dict(target)) for target in targets),
         key=lambda target: (-int(target.get("priority_score", -1)), str(target.get("target_label", ""))),
@@ -65,7 +72,7 @@ def build_shortlist(
         "top_priority_target_id": rows[0]["target_id"] if rows else None,
         "delivery": copy.deepcopy(VALIDATOR.DELIVERY),
     }
-    errors = VALIDATOR.validate_shortlist(output)
+    errors = VALIDATOR.validate_shortlist(output, as_of=reference_date)
     if errors:
         raise ValueError("recruiter target shortlist is invalid")
     return output

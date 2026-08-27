@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import copy
+import datetime as dt
 import sys
+import tempfile
 import unittest
 from datetime import date
 from pathlib import Path
@@ -13,8 +15,11 @@ SCRIPTS = ROOT / "plugins" / "professional-growth-coach" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 from build_recruiter_target_shortlist import build_shortlist  # noqa: E402
-from render_recruiter_target_shortlist import render_shortlist_html  # noqa: E402
+from render_recruiter_target_shortlist import _cli as render_cli, render_shortlist_html, write_shortlist_html  # noqa: E402
 from validate_recruiter_target_shortlist import validate_shortlist  # noqa: E402
+
+
+from route_recruiter_target_shortlist import route_recruiter_request  # noqa: E402
 
 
 def valid_plan() -> dict[str, object]:
@@ -132,3 +137,58 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertIn("Recruiter target shortlist", english_rendered)
         self.assertIn("Do not contact yet", english_rendered)
 
+    def test_validator_rejects_restricted_or_unbounded_target_segments(self) -> None:
+        value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
+        value["network_plan"]["target_segments"] = ["https://private.example/profile"]
+        errors = validate_shortlist(value, as_of=dt.date(2026, 8, 27))
+        self.assertIn("network_plan.target_segments[0] contains restricted material", errors)
+
+    def test_builder_rejects_future_as_of_date(self) -> None:
+        with self.assertRaises(ValueError):
+            build_shortlist("en", "2999-01-01", valid_plan(), valid_targets())
+
+    def test_renderer_localizes_safe_actions_and_shows_decision_counts(self) -> None:
+        value = build_shortlist("es", "2026-08-27", valid_plan(), valid_targets())
+        rendered = render_shortlist_html(value)
+        self.assertIn("Revisar borrador", rendered)
+        self.assertIn("Recopilar contexto", rendered)
+        self.assertIn("Avanzar", rendered)
+        self.assertNotIn("draft_only_review", rendered)
+        self.assertNotIn("collect_recipient_context", rendered)
+        self.assertIn("shortlist-decision-counts", rendered)
+
+    def test_root_route_builds_ready_artifact_or_one_intake_question(self) -> None:
+        ready = route_recruiter_request(
+            "Quiero expandir mi red de recruiters para conseguir un primer filtro.",
+            locale="en",
+            as_of_date="2026-08-27",
+            network_plan=valid_plan(),
+            targets=valid_targets(),
+        )
+        self.assertEqual("recruiter_target_shortlist", ready["route_kind"])
+        self.assertEqual("ready", ready["case_state"])
+        self.assertIsNotNone(ready["artifact"])
+        intake = route_recruiter_request("Quiero buscar recruiters.", locale="es", as_of_date="2026-08-27")
+        self.assertEqual("needs_intake", intake["case_state"])
+        self.assertEqual("ask_one_intake_question", intake["next_action"])
+        self.assertIsNone(intake["artifact"])
+
+    def test_renderer_rejects_symlinked_output_parent(self) -> None:
+        value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
+        with tempfile.TemporaryDirectory() as directory:
+            real_parent = Path(directory) / "real"
+            real_parent.mkdir()
+            link_parent = Path(directory) / "link"
+            link_parent.symlink_to(real_parent, target_is_directory=True)
+            with self.assertRaises(OSError):
+                write_shortlist_html(value, link_parent / "artifact.html")
+            self.assertFalse((real_parent / "artifact.html").exists())
+
+    def test_renderer_cli_rejects_oversized_and_duplicate_json(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            oversized = Path(directory) / "oversized.json"
+            oversized.write_text("{" + "\"x\":\"" + ("a" * 70_000) + "\"}", encoding="utf-8")
+            self.assertEqual(3, render_cli([str(oversized), str(Path(directory) / "out.html")]))
+            duplicate = Path(directory) / "duplicate.json"
+            duplicate.write_text('{"locale":"en","locale":"es"}', encoding="utf-8")
+            self.assertEqual(3, render_cli([str(duplicate), str(Path(directory) / "duplicate.html")]))

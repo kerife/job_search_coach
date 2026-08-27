@@ -31,6 +31,10 @@ When `selected_module=optimize-professional-profile` and `case_state=ready`, def
 
 For a ready multi-module request in the artifact branch, the dossier remains the entire LinkedIn client delivery. Do not append router, canonical, or later-module rows after the artifact link; resume later modules in a separate response or artifact when the user requests them. In coach mode, create one isolated temporary dossier and one generic private artifact for each candidate, never a combined report. With no inspectable or supplied LinkedIn evidence, do not mark the case ready: ask exactly one decision-changing intake question. Partial evidence may render now, but unavailable sections stay unscored rather than becoming zero.
 
+## Route explicit recruiter-network requests
+
+Use the private recruiter shortlist route described in [routing.md](references/routing.md) for explicit network-expansion or first-screen requests; keep intake bounded and all external actions disabled.
+
 ## Return the router contract
 
 Build all five fields—`case_state`, `evidence_gaps`, `selected_module`, `next_action`, and `authorization_required`—internally for every candidate, including every candidate in coach mode. Return them for every non-artifact response; never return them in a normal HTML dossier chat. Private practice and private recruiter-reply triage are the exceptions: emit no router fields there, ready or intake. Private practice is the exception: emit no router fields there, ready or intake. Never substitute a prose module description. Choose `case_state` by the routing precedence. Select exactly one canonical module name from the routing reference and a non-external next action. Mark profile wording as a draft, not an edit. After a visible router contract, prefix every material recommendation or draft with `inferred:` or `unknown:`; put procedural limits only under an `Action boundary:` label. Do not promise outcomes or assert unsupported skills, results, scale, seniority, production ownership, compensation, or market demand.

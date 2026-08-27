@@ -183,6 +183,11 @@ the print rendering stays tabular.
         <div><dt>{{QUERIES_LABEL}}</dt><dd><ul>{{QUERIES}}</ul></dd></div>
         <div><dt>{{BATCH_LABEL}}</dt><dd>{{BATCH}}</dd></div>
       </dl>
+      <div class="shortlist-priority-card">{{PRIORITY}}</div>
+      <div class="shortlist-decision-summary">
+        <h3>{{COUNT_LABEL}}</h3>
+        <ul class="shortlist-decision-counts">{{DECISION_COUNTS}}</ul>
+      </div>
     </section>
     <section aria-label="{{HEADING}}">
       <div class="target-shortlist-list">{{TARGETS}}</div>
