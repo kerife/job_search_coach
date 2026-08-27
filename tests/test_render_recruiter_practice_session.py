@@ -305,6 +305,55 @@ class RecruiterPracticeSessionRendererTests(unittest.TestCase):
         )
         self.assertIn("No afirmar todavía", decision)
 
+    def test_feedback_available_renders_closed_next_version_bridge_in_each_locale(self) -> None:
+        for locale in ("es", "en"):
+            for kind in self.renderer.QUESTION_KINDS:
+                for label in self.renderer.FEEDBACK_LABELS:
+                    session = self.feedback_session()
+                    session["locale"] = locale
+                    session["question"]["kind"] = kind
+                    session["facts"][0]["state"] = (
+                        "verified" if kind == "proof_example" else "candidate_reported"
+                    )
+                    session["feedback"]["observations"] = [{
+                        "label": label,
+                        "statement": "PRIVATE-FEEDBACK-SENTINEL",
+                        "source_refs": ["OBS-001", "RB-001"],
+                    }]
+                    session["observed_answer"]["text"] = "PRIVATE-ANSWER-SENTINEL"
+                    with self.subTest(locale=locale, kind=kind, label=label):
+                        rendered = self.renderer.render_session_html(session)
+                        self.assertEqual(rendered.count('class="practice-next-version"'), 1)
+                        bridge = rendered.split(
+                            '<section class="practice-next-version"', 1
+                        )[1].split("</section>", 1)[0]
+                        self.assertIn(self.renderer.NEXT_VERSION_COPY[locale]["kicker"], bridge)
+                        self.assertIn(self.renderer.NEXT_VERSION_COPY[locale]["title"], bridge)
+                        self.assertIn(self.renderer.NEXT_VERSION_COPY[locale]["intro"], bridge)
+                        self.assertIn('aria-labelledby="next-version-title"', bridge)
+                        self.assertLess(
+                            rendered.index('<section class="practice-decision"'),
+                            rendered.index('<section class="practice-next-version"'),
+                        )
+                        self.assertLess(
+                            rendered.index('<section class="practice-next-version"'),
+                            rendered.index('<section class="continuity-rail"'),
+                        )
+                        self.assertNotIn("PRIVATE-ANSWER-SENTINEL", bridge)
+                        self.assertNotIn("PRIVATE-FEEDBACK-SENTINEL", bridge)
+                        self.assertNotRegex(bridge, r"\b(?:Q|R|F|C|E|OBS|RB)-\d{3}\b")
+                        self.assertNotRegex(bridge.casefold(), r"https?://|www\.")
+                        self.assertNotRegex(bridge.casefold(), r"<(?:form|input|textarea|button|script)\b")
+
+    def test_next_version_bridge_is_feedback_only(self) -> None:
+        for state in ("ready_to_practice", "awaiting_answer"):
+            session = copy.deepcopy(self.awaiting_session)
+            session["state"] = state
+            with self.subTest(state=state):
+                rendered = self.renderer.render_session_html(session)
+                self.assertNotIn('class="practice-next-version"', rendered)
+                self.assertNotIn("practice-next-action--feedback_available", rendered)
+
     def test_decision_explanation_is_exact_in_both_locales(self) -> None:
         explanations = {
             "es": "Cuando aparecen varias señales, la que requiere más cautela guía la siguiente versión.",

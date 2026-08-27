@@ -450,6 +450,81 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
         self.assertEqual(rendered.count("href="), 1)
         self.assertNotRegex(rendered, r"\b(?:Q|R|F|C|E|OBS|RB)-\d{3}\b")
 
+    def test_feedback_available_renders_one_closed_next_version_bridge(self):
+        for locale in ("es", "en"):
+            for kind in renderer.QUESTION_KINDS:
+                for label in renderer.FEEDBACK_LABELS:
+                    session = self._feedback_session([self._observation(label)])
+                    session["locale"] = locale
+                    session["question"]["kind"] = kind
+                    session["facts"][0]["state"] = (
+                        "verified" if kind == "proof_example" else "candidate_reported"
+                    )
+                    session["observed_answer"]["text"] = "PRIVATE-ANSWER-SENTINEL"
+                    session["feedback"]["observations"][0]["statement"] = (
+                        "PRIVATE-FEEDBACK-SENTINEL"
+                    )
+                    with self.subTest(locale=locale, kind=kind, label=label):
+                        rendered = renderer.render_session_html(session)
+                        self.assertEqual(rendered.count('class="practice-next-version"'), 1)
+                        bridge = rendered.split(
+                            '<section class="practice-next-version"', 1
+                        )[1].split("</section>", 1)[0]
+                        self.assertIn(
+                            renderer.NEXT_VERSION_COPY[locale]["kicker"], bridge
+                        )
+                        self.assertIn(
+                            renderer.NEXT_VERSION_COPY[locale]["title"], bridge
+                        )
+                        self.assertIn(
+                            renderer.NEXT_VERSION_COPY[locale]["intro"], bridge
+                        )
+                        for heading, copy in renderer._next_version_steps(
+                            locale, kind, label
+                        ):
+                            self.assertIn(heading, bridge)
+                            self.assertIn(copy, bridge)
+                        self.assertLess(
+                            rendered.index('<section class="practice-decision"'),
+                            rendered.index('<section class="practice-next-version"'),
+                        )
+                        self.assertLess(
+                            rendered.index('<section class="practice-next-version"'),
+                            rendered.index('<section class="continuity-rail"'),
+                        )
+                        self.assertIn('aria-labelledby="next-version-title"', bridge)
+                        self.assertNotIn("PRIVATE-ANSWER-SENTINEL", bridge)
+                        self.assertNotIn("PRIVATE-FEEDBACK-SENTINEL", bridge)
+                        self.assertNotRegex(bridge, r"\b(?:Q|R|F|C|E|OBS|RB)-\d{3}\b")
+                        self.assertNotRegex(bridge.casefold(), r"https?://|www\.")
+                        self.assertNotRegex(bridge.casefold(), r"<(?:form|input|textarea|button|script)\b")
+                        ids = re.findall(r'\bid="([^"]+)"', rendered)
+                        self.assertEqual(len(ids), len(set(ids)))
+
+    def test_next_version_bridge_is_absent_before_feedback_and_fails_closed(self):
+        for state in ("ready_to_practice", "awaiting_answer"):
+            session = self._feedback_session([])
+            session["state"] = state
+            session["observed_answer"] = None
+            session["feedback"] = {
+                "score": "unknown", "score_state": "unknown", "observations": []
+            }
+            with self.subTest(state=state):
+                rendered = renderer.render_session_html(session)
+                self.assertNotIn('class="practice-next-version"', rendered)
+                self.assertNotIn("practice-next-action--feedback_available", rendered)
+
+        for call, expected, private_value in (
+            (lambda: renderer._next_version_steps("xx-private", "proof_example", "solid"), "unsupported locale", "xx-private"),
+            (lambda: renderer._next_version_steps("es", "private-kind", "solid"), "unsupported question kind", "private-kind"),
+            (lambda: renderer._next_version_steps("es", "proof_example", "private-label"), "unsupported feedback label", "private-label"),
+        ):
+            with self.subTest(expected=expected):
+                with self.assertRaises(ValueError) as captured:
+                    call()
+                self.assertEqual(str(captured.exception), expected)
+                self.assertNotIn(private_value, str(captured.exception))
+
     def test_continuity_rail_shows_practice_route_and_keeps_next_step_manual(self):
         rendered = renderer.render_session_html(
             self._feedback_session([self._observation("solid")])

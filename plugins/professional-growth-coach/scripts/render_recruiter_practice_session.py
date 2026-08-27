@@ -297,6 +297,138 @@ DECISION_ACTION_COPY = {
     },
 }
 
+NEXT_VERSION_COPY = {
+    "es": {
+        "kicker": "Antes de volver a practicar",
+        "title": "Siguiente versión",
+        "intro": "Haz un solo ajuste; conserva la evidencia ya confirmada.",
+        "steps": {"keep": "Conserva", "adjust": "Ajusta", "check": "Comprueba"},
+    },
+    "en": {
+        "kicker": "Before you rehearse again",
+        "title": "Next version",
+        "intro": "Make one adjustment; keep the confirmed evidence already in place.",
+        "steps": {"keep": "Keep", "adjust": "Adjust", "check": "Check"},
+    },
+}
+
+NEXT_VERSION_STEP_COPY = {
+    "es": {
+        "screen_opening": {
+            "solid": (
+                ("Conserva", "Conserva el alcance respaldado por la evidencia suministrada."),
+                ("Ajusta", "Mantén una apertura breve y un puente relevante hacia la conversación."),
+                ("Comprueba", "Comprueba que no agregas resultados, alcance ni disponibilidad no confirmados."),
+            ),
+            "confirm": (
+                ("Conserva", "Conserva únicamente el alcance respaldado por la evidencia suministrada."),
+                ("Ajusta", "Presenta el enfoque de la apertura como pendiente de confirmación."),
+                ("Comprueba", "Comprueba que la versión no presenta el enfoque pendiente como un hecho."),
+            ),
+            "do_not_assert": (
+                ("Conserva", "Conserva únicamente la evidencia suministrada."),
+                ("Ajusta", "Quita de la apertura cualquier ajuste, propiedad, disponibilidad o resultado sin respaldo."),
+                ("Comprueba", "Comprueba que la versión usa solo evidencia confirmada o una aclaración acotada."),
+            ),
+        },
+        "proof_example": {
+            "solid": (
+                ("Conserva", "Conserva el contexto confirmado, la acción concreta y el impacto observado."),
+                ("Ajusta", "Mantén el ejemplo en tres movimientos fáciles de seguir."),
+                ("Comprueba", "Comprueba que el impacto sigue siendo observado directamente."),
+            ),
+            "confirm": (
+                ("Conserva", "Conserva el contexto y la acción ya respaldados."),
+                ("Ajusta", "Presenta el alcance o el impacto pendiente como algo por confirmar."),
+                ("Comprueba", "Comprueba que el impacto pendiente no se presenta como un hecho."),
+            ),
+            "do_not_assert": (
+                ("Conserva", "Conserva únicamente la evidencia confirmada."),
+                ("Ajusta", "Quita del ejemplo cualquier alcance o impacto sin respaldo."),
+                ("Comprueba", "Comprueba que la versión usa evidencia confirmada o una aclaración acotada."),
+            ),
+        },
+        "eligibility_boundary": {
+            "solid": (
+                ("Conserva", "Conserva el dato suministrado y el límite de elegibilidad conocido."),
+                ("Ajusta", "Mantén una sola pregunta de aclaración para la condición pendiente."),
+                ("Comprueba", "Comprueba que no afirmas elegibilidad, autorización o disponibilidad no confirmadas."),
+            ),
+            "confirm": (
+                ("Conserva", "Conserva únicamente el dato de elegibilidad ya suministrado."),
+                ("Ajusta", "Presenta la condición pendiente como una pregunta acotada."),
+                ("Comprueba", "Comprueba que la condición pendiente no se presenta como un hecho."),
+            ),
+            "do_not_assert": (
+                ("Conserva", "Conserva únicamente la evidencia suministrada."),
+                ("Ajusta", "Quita cualquier afirmación de elegibilidad, autorización o disponibilidad sin respaldo."),
+                ("Comprueba", "Comprueba que la versión usa una aclaración acotada o pausa la respuesta."),
+            ),
+        },
+        "compensation_boundary": {
+            "solid": (
+                ("Conserva", "Conserva la evidencia suministrada y el límite de decisión conocido."),
+                ("Ajusta", "Mantén una sola aclaración para la condición de compensación pendiente."),
+                ("Comprueba", "Comprueba que no agregas monto, rango, moneda o aceptación no confirmados."),
+            ),
+            "confirm": (
+                ("Conserva", "Conserva únicamente la evidencia de compensación ya suministrada."),
+                ("Ajusta", "Presenta la condición, el rango o el contexto pendiente como una aclaración."),
+                ("Comprueba", "Comprueba que la condición pendiente no se presenta como un hecho."),
+            ),
+            "do_not_assert": (
+                ("Conserva", "Conserva únicamente la evidencia suministrada."),
+                ("Ajusta", "Quita cualquier monto, rango, moneda o aceptación sin respaldo."),
+                ("Comprueba", "Comprueba que la versión usa una aclaración acotada o pausa la respuesta."),
+            ),
+        },
+        "missing_detail": {
+            "solid": (
+                ("Conserva", "Conserva el mínimo suministrado."),
+                ("Ajusta", "Mantén un solo detalle que aún necesita aclaración."),
+                ("Comprueba", "Comprueba que no agregas detalles no confirmados."),
+            ),
+            "confirm": (
+                ("Conserva", "Conserva únicamente el mínimo ya suministrado."),
+                ("Ajusta", "Presenta el detalle pendiente como una sola aclaración."),
+                ("Comprueba", "Comprueba que el detalle pendiente no se presenta como un hecho."),
+            ),
+            "do_not_assert": (
+                ("Conserva", "Conserva únicamente la evidencia suministrada."),
+                ("Ajusta", "Quita el detalle sin respaldo."),
+                ("Comprueba", "Comprueba que la versión pide una sola aclaración o pausa la respuesta."),
+            ),
+        },
+    },
+    "en": {
+        "screen_opening": {
+            "solid": (("Keep", "Keep the scope supported by the supplied evidence."), ("Adjust", "Keep a brief opening and a relevant bridge into the conversation."), ("Check", "Check that you do not add unconfirmed outcomes, scope, or availability.")),
+            "confirm": (("Keep", "Keep only the scope supported by the supplied evidence."), ("Adjust", "Present the opening focus as pending confirmation."), ("Check", "Check that the version does not present the pending focus as fact.")),
+            "do_not_assert": (("Keep", "Keep only the supplied evidence."), ("Adjust", "Remove any unsupported fit, ownership, availability, or outcome claim from the opening."), ("Check", "Check that the version uses only confirmed evidence or a bounded clarification.")),
+        },
+        "proof_example": {
+            "solid": (("Keep", "Keep the confirmed context, concrete action, and observed impact."), ("Adjust", "Keep the example in three easy-to-follow moves."), ("Check", "Check that the impact remains directly observed.")),
+            "confirm": (("Keep", "Keep the already-supported context and action."), ("Adjust", "Present the pending scope or impact as needing confirmation."), ("Check", "Check that the pending impact is not presented as fact.")),
+            "do_not_assert": (("Keep", "Keep only confirmed evidence."), ("Adjust", "Remove any unsupported scope or impact from the example."), ("Check", "Check that the version uses confirmed evidence or a bounded clarification.")),
+        },
+        "eligibility_boundary": {
+            "solid": (("Keep", "Keep the supplied fact and the known eligibility boundary."), ("Adjust", "Keep one clarification question for the pending condition."), ("Check", "Check that you do not assert unconfirmed eligibility, authorization, or availability.")),
+            "confirm": (("Keep", "Keep only the supplied eligibility fact."), ("Adjust", "Present the pending condition as one bounded question."), ("Check", "Check that the pending condition is not presented as fact.")),
+            "do_not_assert": (("Keep", "Keep only the supplied evidence."), ("Adjust", "Remove any unsupported eligibility, authorization, or availability claim."), ("Check", "Check that the version uses a bounded clarification or pauses the answer.")),
+        },
+        "compensation_boundary": {
+            "solid": (("Keep", "Keep the supplied evidence and the known decision boundary."), ("Adjust", "Keep one clarification for the pending compensation condition."), ("Check", "Check that you do not add an unconfirmed amount, range, currency, or acceptance.")),
+            "confirm": (("Keep", "Keep only the supplied compensation evidence."), ("Adjust", "Present the pending condition, range, or context as a clarification."), ("Check", "Check that the pending condition is not presented as fact.")),
+            "do_not_assert": (("Keep", "Keep only the supplied evidence."), ("Adjust", "Remove any unsupported amount, range, currency, or acceptance."), ("Check", "Check that the version uses a bounded clarification or pauses the answer.")),
+        },
+        "missing_detail": {
+            "solid": (("Keep", "Keep the supplied minimum."), ("Adjust", "Keep one detail that still needs clarification."), ("Check", "Check that you do not add unconfirmed details.")),
+            "confirm": (("Keep", "Keep only the already-supplied minimum."), ("Adjust", "Present the pending detail as one clarification."), ("Check", "Check that the pending detail is not presented as fact.")),
+            "do_not_assert": (("Keep", "Keep only the supplied evidence."), ("Adjust", "Remove the unsupported detail."), ("Check", "Check that the version asks one clarification or pauses the answer.")),
+        },
+    },
+}
+
 CONTINUITY_COPY = {
     "en": {
         "title": "Manual continuity route",
@@ -662,6 +794,32 @@ def _render_decision(
     </section>'''
 
 
+def _next_version_steps(
+    locale: str, question_kind: str, governing_label: str
+) -> tuple[tuple[str, str], ...]:
+    _require_locale(locale)
+    _require_question_kind(question_kind)
+    _require_feedback_label(governing_label)
+    return NEXT_VERSION_STEP_COPY[locale][question_kind][governing_label]
+
+
+def _render_next_version(
+    locale: str, question_kind: str, governing_label: str
+) -> str:
+    steps = _next_version_steps(locale, question_kind, governing_label)
+    copy = NEXT_VERSION_COPY[locale]
+    items = "".join(
+        f"<li><strong>{html.escape(label)}</strong><p>{html.escape(instruction)}</p></li>"
+        for label, instruction in steps
+    )
+    return f'''<section class="practice-next-version" aria-labelledby="next-version-title">
+      <p class="practice-next-version-kicker">{copy["kicker"]}</p>
+      <h2 id="next-version-title">{copy["title"]}</h2>
+      <p class="practice-next-version-intro">{copy["intro"]}</p>
+      <ol>{items}</ol>
+    </section>'''
+
+
 def _render_rehearsal_scaffold(
     locale: str, question_kind: str, labels: Mapping[str, str]
 ) -> str:
@@ -737,7 +895,8 @@ def _render_main(
         governing_label = _governing_feedback_label(feedback_labels)
         feedback = _render_feedback(locale, question_kind, feedback_labels, labels)
         decision = _render_decision(locale, question_kind, governing_label, labels)
-        practice_sequence = f"{claim_guardrail}{first_answer_outline}{triage_route}{handoff}{rehearsal}{feedback}{decision}"
+        next_version = _render_next_version(locale, question_kind, governing_label)
+        practice_sequence = f"{claim_guardrail}{first_answer_outline}{triage_route}{handoff}{rehearsal}{feedback}{decision}{next_version}"
     elif sourced:
         next_action = _render_next_action(state, labels, sourced=sourced)
         practice_sequence = f"{claim_guardrail}{first_answer_outline}{triage_route}{handoff}{next_action}{rehearsal}"
