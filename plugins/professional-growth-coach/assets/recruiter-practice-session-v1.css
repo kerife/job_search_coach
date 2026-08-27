@@ -330,7 +330,7 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-handoff,
   .recruiter-practice-document .practice-feedback,
   .recruiter-practice-document .feedback-item,
-  .recruiter-practice-document .practice-decision,
+  .recruiter-practice-document .practice-decision { border-width: 2px; }
   .recruiter-practice-document .screen-readiness,
   .recruiter-practice-document .screen-readiness-item { border-width: 2px; }
   .recruiter-practice-document .feedback-label { text-decoration: underline; text-decoration-thickness: 0.12em; }
