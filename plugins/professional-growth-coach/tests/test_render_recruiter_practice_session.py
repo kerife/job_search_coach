@@ -143,6 +143,15 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "URL"):
             renderer.render_session_html(session)
 
+    def test_triage_answer_boundary_rejects_www_url_without_echoing_it(self):
+        session = self._triage_practice_session("en")
+        unsafe_summary = "Verified result www.example.invalid/path"
+        session["facts"][0]["summary"] = unsafe_summary
+
+        with self.assertRaisesRegex(ValueError, "URL") as error:
+            renderer.render_session_html(session)
+        self.assertNotIn(unsafe_summary, str(error.exception))
+
     def test_invalid_utf8_input_is_reported_without_traceback(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "invalid.json"
