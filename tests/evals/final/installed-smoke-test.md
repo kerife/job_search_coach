@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T15:09:32-06:00`
+release_timestamp: `2026-08-27T15:15:27-06:00`
 
-source_commit: `33dd45992c4d49ca172ed15fba7796725d6ffdca`
+source_commit: `107ba23a0ad6afb5eadccd4783448bdfea06fe5e`
 
-source_tree: `471d55fdf3b437ba43f48380687b19c3350ecfd5`
+source_tree: `0809f671808f7e708f963f3a782ea33eb974cda5`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827150932`
+installed_cache_version: `0.2.0+codex.20260827151527`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `171`
 
 installed_file_count: `171`
 
-normalized_source_cache_sha256: `a76b59fc27fa47f9cdb97d96d17ffea51f54cb417dba81df8e4c63a066fcd514`
+normalized_source_cache_sha256: `cbaf839382a1036ae1ff122398d37afaf6cb6e890c4f647d249854f0153bc9be`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -134,6 +134,8 @@ installed_stage_transition_smoke: `2/2 installed technical-screen to hiring-mana
 installed_stage_label_localization_smoke: `13/13 installed EN/ES intake and debrief renderers cover all supported stages without visible internal stage/check/state tokens; stop routes remain terminal`
 
 installed_shortlist_route_e2e_smoke: `5/5 installed route runs builder → validator → renderer, returns private HTML without placeholders/IDs/action tokens, and rejects unrelated network or technical-interview phrasing`
+
+installed_shortlist_accessibility_print_smoke: `8/8 installed shortlist renderer checks pass: skip link, focusable landmark, ordered target list, print-safe card/footer continuity, and identifier redaction`
 
 fresh_agent_smoke: `not_run`
 
