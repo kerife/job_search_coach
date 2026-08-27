@@ -16,23 +16,25 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T10:37:21-06:00`
+release_timestamp: `2026-08-27T11:07:18-06:00`
 
-source_commit: `be8490ab6bdcaeb498ee6506106c3310df46124c`
+source_commit: `2dcd29029f155455ac10e53587fcc97692b6e18c`
 
-source_tree: `819771ca9528040cd05de8d28cda13f6087cfb04`
+source_tree: `c97b66569ee12ee1097cb874bb93a5220b638344`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827103721`
+installed_cache_version: `0.2.0+codex.20260827110718`
 
 installed_enabled: `true`
 
-source_file_count: `139`
+source_file_count: `145`
 
-installed_file_count: `139`
+installed_file_count: `145`
 
-normalized_source_cache_sha256: `f136e5e73fe3c0c734059a5263dbaf130dd6dcdaa20ff5512e6068e9992e138e`
+normalized_source_cache_sha256: `52d14c3191f94f9c2df0e982354f22f8137b6d3a94558c62330789e194317199`
+
+normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
 normalized_excludes: `__pycache__`
 
@@ -109,6 +111,8 @@ installed_duplicate_vacancy_source_url_smoke: `1/1 installed market validator re
 installed_practice_continuity_accessibility_smoke: `2/2 installed EN/ES practice rails expose recorded evidence/decision states and exactly one pending-or-blocked aria-current="step" without private identifiers or interactive controls`
 
 installed_triage_handoff_continuity_smoke: `2/2 installed EN/ES triage handoffs expose recorded -> recorded -> pending states with one aria-current="step" re-entry stage and preserve manual-only boundaries`
+
+installed_recruiter_target_shortlist_smoke: `1/1 installed EN/ES shortlist builder, validator, and offline renderer; rows retain draft-only/no-message/no-calendar controls and HTML omits target/fact identifiers`
 
 installed_duplicate_employer_source_url_smoke: `1/1 installed market validator rejects duplicate normalized employer official_source_url values without echoing the URL`
 
