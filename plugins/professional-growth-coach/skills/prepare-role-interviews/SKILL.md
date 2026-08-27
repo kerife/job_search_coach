@@ -52,8 +52,6 @@ The ready re-entry receipt is **manual input only** to a later, explicit `prepar
 
 An explicit follow-through checkpoint is manual input only. Validate its linked receipt and process the same pair idempotently: replay must not duplicate a route, CSV row, packet, answer, score, or outcome claim. Only completed `screen_requested` or `interview_requested` may cue manual preparation; completed `screen_attended` exposes only `debrief_after_screen` to record discussion and unknowns privately. The candidate must re-request preparation with vacancy and fact inputs; neither cue sends or schedules follow-up. `declined` and every `stop_decision` source block preparation and record the stop. `accepted` and `deferred` do not authorize preparation. Never infer stage, answer, identity, or readiness from a checkpoint.
 
-After `screen_attended`, `private-recruiter-screen-debrief-v1` allows only a manual next-stage review when the linked intake is ready, all coverage is discussed, and no unknowns remain; otherwise collect context or record a stop. It never stores raw answers or performs external actions.
-
 ## Required response
 
 Return these exact sections:
