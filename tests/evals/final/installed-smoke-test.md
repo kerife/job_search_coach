@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T17:26:46-06:00`
+release_timestamp: `2026-08-27T17:35:55-06:00`
 
-source_commit: `b5640e9d0419fb10442e6644e72e632acb7798cf`
+source_commit: `94cdb97a07d67fd9ac3d76f8754c0e0104676e29`
 
-source_tree: `bdc46c83e7f9196628660123db5552e1c332512a`
+source_tree: `991a50f353b850c8e1cac8182ae22d05e1f989a5`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827172635`
+installed_cache_version: `0.2.0+codex.20260827173305`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `172`
 
 installed_file_count: `172`
 
-normalized_source_cache_sha256: `48ce182a55c46b40457ac9bdeb7690ed4b5a6af76e60cac0412bf92e45c7cde6`
+normalized_source_cache_sha256: `bbc3419fbfa6f6eb6f6eba88fa6df82e368df62b1edcc4e25fba272180b64b6e`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -120,6 +120,8 @@ installed_decision_gate_smoke: `3/3 installed EN/ES decision-gate builder, valid
 installed_screen_intake_smoke: `3/3 installed EN/ES target-specific intake builder, validator, and renderer; advance-only manual handoff, snapshot/locale binding, private IDs hidden, and 0600 output`
 
 installed_screen_debrief_intake_smoke: `4/4 installed artifact-free EN/ES attended-screen bridge; screen_requested and interview_requested receipts carry forward, structured coverage is the only next input, malformed recovery stays bounded`
+
+installed_debrief_locale_binding_smoke: `3/3 installed valid ES, mixed-locale recovery, interview_requested carry-forward`
 
 installed_next_stage_schema_typed_closure_smoke: `2/2 installed next-stage schema rejects object-shaped network_goal and coverage note values while accepting the canonical handoff`
 
