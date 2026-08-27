@@ -27,6 +27,15 @@ FIXTURE_ROOT = REPO_ROOT / "tests" / "evals" / "with-skill" / "fixtures" / "exec
 V2_FIXTURE_ROOT = FIXTURE_ROOT.with_name("executive-career-dossier-v2")
 MARKET_FIXTURE_ROOT = FIXTURE_ROOT.with_name("career-market-learning-dossier")
 MARKET_V2_FIXTURE_ROOT = FIXTURE_ROOT.with_name("career-market-learning-dossier-v2")
+OVERSIZED_INTEGER_FIXTURE = (
+    REPO_ROOT
+    / "plugins"
+    / "professional-growth-coach"
+    / "tests"
+    / "fixtures"
+    / "private-json"
+    / "oversized-integer.json"
+)
 
 UNSAFE_COACHING_PROSE = (
     (
@@ -644,6 +653,28 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
                 errors = "\n".join(context.exception.errors)
                 self.assertIn(f"priorities[0].{field} {diagnostic}", errors)
                 self.assertNotIn(value, errors)
+
+    def test_renderer_cli_oversized_integer_exits_three_without_echo_or_artifact(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            dossier_path = root / "oversized-integer.json"
+            output = root / "executive-career-dossier-v2.html"
+            dossier_path.write_bytes(OVERSIZED_INTEGER_FIXTURE.read_bytes())
+
+            result = subprocess.run(
+                [sys.executable, "-B", str(RENDERER_PATH), str(dossier_path), "--output", str(output)],
+                cwd=REPO_ROOT,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+
+            self.assertEqual(result.returncode, 3)
+            self.assertEqual(result.stdout, "")
+            self.assertNotIn("Traceback", result.stderr)
+            self.assertNotIn("opaque-private-input", result.stderr)
+            self.assertNotIn(str(dossier_path), result.stderr)
+            self.assertFalse(output.exists())
 
     def test_market_placeholder_is_one_bounded_non_recommendation_state(self) -> None:
         for name in ("scenario-a-es.json", "scenario-c-en.json"):

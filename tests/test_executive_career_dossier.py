@@ -31,6 +31,15 @@ FIXTURE_ROOT = (
     / "fixtures"
     / "executive-career-dossier"
 )
+OVERSIZED_INTEGER_FIXTURE = (
+    REPO_ROOT
+    / "plugins"
+    / "professional-growth-coach"
+    / "tests"
+    / "fixtures"
+    / "private-json"
+    / "oversized-integer.json"
+)
 MARKDOWN_VALIDATOR_PATH = (
     REPO_ROOT
     / "plugins"
@@ -2692,7 +2701,23 @@ class ExecutiveCareerDossierCliTests(unittest.TestCase):
             self.assertFalse(output.exists())
             self.assertNotIn("Traceback", result.stderr)
 
-    def test_symlink_input_exits_two_without_rendering_target(self) -> None:
+    def test_oversized_integer_input_exits_three_without_echo_or_artifact(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            dossier_path = root / "oversized-integer.json"
+            output = root / "executive-career-dossier.html"
+            dossier_path.write_bytes(OVERSIZED_INTEGER_FIXTURE.read_bytes())
+
+            result = self.run_cli(dossier_path, "--output", output)
+
+            self.assertEqual(result.returncode, 3)
+            self.assertEqual(result.stdout, "")
+            self.assertNotIn("Traceback", result.stderr)
+            self.assertNotIn("opaque-private-input", result.stderr)
+            self.assertNotIn(str(dossier_path), result.stderr)
+            self.assertFalse(output.exists())
+
+    def test_symlink_input_exits_three_without_rendering_target(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             target = root / "target.json"
@@ -2709,7 +2734,7 @@ class ExecutiveCareerDossierCliTests(unittest.TestCase):
 
             result = self.run_cli(link, "--output", output)
 
-            self.assertEqual(result.returncode, 2)
+            self.assertEqual(result.returncode, 3)
             self.assertEqual(result.stdout, "")
             self.assertIn("symlink", result.stderr)
             self.assertFalse(output.exists())

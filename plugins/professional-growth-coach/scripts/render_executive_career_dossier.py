@@ -1266,9 +1266,10 @@ def _cli(argv: list[str] | None = None) -> int:
     except (VALIDATOR.DossierLoadError, DossierValidationError) as error:
         if isinstance(error, DossierValidationError):
             print("\n".join(error.errors), file=sys.stderr)
+            return 2
         else:
             print(str(error), file=sys.stderr)
-        return 2
+            return 3
     payload = {
         "artifact_path": str(receipt.artifact_path),
         "artifact_type": receipt.artifact_type,
