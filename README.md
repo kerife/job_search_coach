@@ -69,13 +69,16 @@ The plugin can prepare drafts, plans, rubrics, and analyses. It must ask again b
 
 ### Private JSON boundary
 
-The private recruiter-triage, triage-to-practice builder, and handoff validator
-all treat JSON input as an untrusted local boundary. Each loader fails closed:
-it rejects duplicate keys, symlinks, files over its bounded size, invalid UTF-8,
-invalid JSON, and unsafe nesting before any validation or rendering. Their CLI
-errors are deliberately short and opaque: they do not echo supplied content,
-input paths, or tracebacks. Repair the private input locally and rerun; do not
-paste rejected JSON into chat, logs, or a client-facing artifact.
+The private recruiter-triage, triage-to-practice, follow-through checkpoint,
+recruiter-practice, and dossier validators all treat JSON input as an untrusted
+local boundary. Each loader fails closed: it rejects duplicate keys, symlinks,
+files over its bounded size, invalid UTF-8, invalid JSON, oversized integer
+values, and unsafe nesting before any validation or rendering. The affected
+validator and renderer CLIs map those failures to their fixed opaque invalid-
+input diagnostic: return code `3`, empty stdout, no traceback, and no echo of
+raw values, paths, or identifiers. Valid inputs retain their existing
+validation and rendering behavior. Repair the private input locally and rerun;
+do not paste rejected JSON into chat, logs, or a client-facing artifact.
 
 ## Installation
 

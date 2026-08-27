@@ -38,12 +38,15 @@ must still be the exact validated references. Do not convert `clarify_first`,
 `stop`, candidate-reported evidence, snapshot drift, or any mismatched reference
 into a practice session.
 
-The triage, handoff builder, and handoff validator are a shared private JSON
-boundary. Treat every supplied file as untrusted and fail closed before the
-composition: duplicate keys, symlinks, oversized files, invalid UTF-8, invalid
-JSON, and excessive nesting are rejected. On a loader failure, keep the error
-opaque: never relay rejected content, a local path, or a traceback. Ask for a
-fresh private input only when the candidate explicitly chooses to retry.
+The triage, handoff builder, handoff validator, follow-through checkpoint, and
+practice-session loaders are a shared private JSON boundary. Treat every
+supplied file as untrusted and fail closed before composition: duplicate keys,
+symlinks, oversized files, invalid UTF-8, invalid JSON, oversized integer
+values, and excessive nesting are rejected. On a loader or renderer CLI
+failure, preserve the opaque boundary: use the existing return code `3` and
+fixed diagnostic with empty stdout; never relay rejected content, a local
+path, an identifier, or a traceback. Ask for a fresh private input only when
+the candidate explicitly chooses to retry.
 
 The composed session is private and unanswered: it is
 `ready_to_practice`, has `observed_answer=null`, and keeps pre-answer feedback

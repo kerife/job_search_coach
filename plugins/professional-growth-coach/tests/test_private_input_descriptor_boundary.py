@@ -155,7 +155,7 @@ CLI_RECURSION_CASES = (
         _expected_decoder_or_post_decode_messages(
             "dossier must be valid UTF-8 JSON", "dossier must be a JSON object"
         ),
-        2,
+        3,
     ),
 )
 
