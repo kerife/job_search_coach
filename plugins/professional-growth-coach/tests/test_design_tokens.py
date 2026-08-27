@@ -19,6 +19,26 @@ def load_checker():
 
 
 class DesignTokenContractTests(unittest.TestCase):
+    def test_recruiter_review_family_covers_the_complete_review_flow(self):
+        checker = load_checker()
+
+        expected = {
+            "assets/recruiter-target-shortlist-v1.css",
+            "assets/recruiter-target-decision-gate-v1.css",
+            "assets/recruiter-target-screen-intake-v1.css",
+            "assets/private-recruiter-screen-debrief-v1.css",
+            "assets/private-recruiter-next-stage-review-v1.css",
+        }
+        self.assertEqual(expected, set(checker.FAMILY_ASSETS["recruiter_review"]))
+
+    def test_recruiter_review_assets_are_represented_in_superdesign_theme(self):
+        checker = load_checker()
+        theme = (ROOT / ".superdesign" / "init" / "theme.md").read_text(encoding="utf-8")
+
+        for asset in checker.FAMILY_ASSETS["recruiter_review"]:
+            with self.subTest(asset=asset):
+                self.assertIn(asset, theme)
+
     def test_dossier_family_includes_the_v2_extension(self):
         checker = load_checker()
 

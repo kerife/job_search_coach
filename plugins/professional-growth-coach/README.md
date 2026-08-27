@@ -46,6 +46,14 @@ The recruiter shortlist renderer reads its HTML and CSS only through the same
 package-local regular-file boundary, and rejects future-dated artifacts even
 when called directly instead of through the builder.
 
+The visual release gate treats the full recruiter review flow as one
+`recruiter_review` family: shortlist, decision gate, screen intake, screen
+debrief, and next-stage review. `scripts/validate_design_tokens.py` checks all
+five co-located stylesheets against their declared palette, while
+`.superdesign/init/theme.md` records the corresponding source surfaces and
+tokens. A new recruiter surface or color must update both records and its
+parity tests before release.
+
 Rendering CLIs write the requested private artifact but omit its absolute local
 path from the success receipt by default. A trusted caller that already knows
 the output target may opt in with `--include-artifact-path`; in-process render

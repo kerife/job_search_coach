@@ -103,6 +103,11 @@ collapsed control.
   - **Compact receipts:** the separate blue receipt family uses ink
     `#172033`, accent `#315bd6`, muted `#536174`, line `#d9dfeb`, and paper
     `#f4f6fa`.
+  - **Recruiter review:** the complete shortlist → decision gate → screen
+    intake → debrief → next-stage review flow is registered as one checked
+    family. Its five co-located stylesheets retain their established light,
+    dark, status, forced-colors, contrast, and print tokens; additions must be
+    declared in `scripts/validate_design_tokens.py` before they can ship.
 - Do not copy a color between families without a visual and print review. The
   allowlist is a consistency guard, not permission to recolor an artifact.
 - Display headings use `Georgia, "Times New Roman", Times, serif`.
