@@ -173,6 +173,31 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertEqual("ask_one_intake_question", intake["next_action"])
         self.assertIsNone(intake["artifact"])
 
+    def test_root_route_renders_private_surface_before_returning_ready(self) -> None:
+        ready = route_recruiter_request(
+            "Quiero expandir mi red de recruiters para conseguir un primer filtro.",
+            locale="es",
+            as_of_date="2026-08-27",
+            network_plan=valid_plan(),
+            targets=valid_targets(),
+        )
+        self.assertEqual("ready", ready["case_state"])
+        self.assertIn("Objetivos de reclutamiento", ready["rendered_html"])
+        self.assertNotIn("{{", ready["rendered_html"])
+        self.assertNotIn("T-001", ready["rendered_html"])
+        self.assertNotIn("draft_only_review", ready["rendered_html"])
+        self.assertEqual("review_recruiter_target_shortlist", ready["next_action"])
+
+    def test_root_route_requires_compound_recruiter_intent(self) -> None:
+        for request in (
+            "Necesito un Network Engineer para mi CV.",
+            "Quiero trabajar en mi network de datos.",
+            "Ayúdame a preparar una entrevista técnica.",
+        ):
+            routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-27")
+            with self.subTest(request=request):
+                self.assertEqual("ordinary_professional_growth", routed["route_kind"])
+
     def test_renderer_rejects_symlinked_output_parent(self) -> None:
         value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
         with tempfile.TemporaryDirectory() as directory:

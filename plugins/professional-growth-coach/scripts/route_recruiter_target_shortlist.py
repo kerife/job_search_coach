@@ -28,7 +28,17 @@ GATE_BUILDER = _sibling("build_recruiter_target_decision_gate.py")
 SCREEN_INTAKE_BUILDER = _sibling("build_recruiter_target_screen_intake.py")
 SCREEN_DEBRIEF_BUILDER = _sibling("build_private_recruiter_screen_debrief.py")
 NEXT_STAGE_REVIEW_BUILDER = _sibling("build_private_recruiter_next_stage_review.py")
-INTENT = re.compile(r"(?:recruiter|recruiting|reclutador|reclutadora|network|red de|first interview|first screen|primer filtro|primera entrevista)", re.I)
+RENDERER = _sibling("render_recruiter_target_shortlist.py")
+INTENT = re.compile(
+    r"(?:\b(?:expand(?:ir|iendo)?|ampliar|crecer)\s+(?:mi\s+)?(?:red|network)\s+(?:de\s+)?(?:recruiters?|reclutadores?)\b|"
+    r"\b(?:find|buscar|encontrar|identificar)\s+(?:a\s+)?(?:recruiters?|reclutadores?)\b|"
+    r"\b(?:recruiter|recruiting|reclutador(?:a|es)?)\s+(?:screen|filtro|entrevista)\b|"
+    r"\b(?:first\s+(?:recruiter\s+)?screen|primer\s+filtro(?:\s+con\s+(?:un\s+)?reclutador)?)\b|"
+    r"\b(?:red|network)\s+de\s+(?:recruiters?|reclutadores?)\b)",
+    re.I,
+)
+TECHNICAL_INTENT = re.compile(r"\b(?:technical|t[eé]cnica|t[eé]cnico)\b", re.I)
+EXPLICIT_RECRUITER_INTENT = re.compile(r"\b(?:recruiter|recruiting|reclutador(?:a|es)?)\b", re.I)
 INTAKE = {
     "es": "Comparte de tres a seis objetivos manuales con contexto visible o proporcionado por ti y el tema de prueba que quieres revisar primero.",
     "en": "Share three to six manually supplied targets with visible or candidate-provided context and the proof theme you want reviewed first.",
@@ -56,6 +66,19 @@ def route_recruiter_request(
             "evidence_gaps": [],
             "artifact": None,
         }
+    recruiter_intent = INTENT.search(request) is not None
+    if recruiter_intent and TECHNICAL_INTENT.search(request) and not EXPLICIT_RECRUITER_INTENT.search(request):
+        recruiter_intent = False
+    if not recruiter_intent:
+        return {
+            "route_kind": "ordinary_professional_growth",
+            "case_state": "not_applicable",
+            "selected_module": None,
+            "next_action": "continue_normal_routing",
+            "authorization_required": False,
+            "evidence_gaps": [],
+            "artifact": None,
+        }
     if network_plan is None or targets is None or not 3 <= len(targets) <= 6:
         return {
             "route_kind": "recruiter_target_shortlist",
@@ -69,6 +92,7 @@ def route_recruiter_request(
         }
     try:
         artifact = BUILDER.build_shortlist(locale, as_of_date, copy.deepcopy(dict(network_plan)), copy.deepcopy(list(targets)))
+        rendered_html = RENDERER.render_shortlist_html(artifact)
     except (TypeError, ValueError):
         return {
             "route_kind": "recruiter_target_shortlist",
@@ -84,10 +108,11 @@ def route_recruiter_request(
         "route_kind": "recruiter_target_shortlist",
         "case_state": "ready",
         "selected_module": "optimize-professional-profile",
-        "next_action": "render_recruiter_target_shortlist",
+        "next_action": "review_recruiter_target_shortlist",
         "authorization_required": False,
         "evidence_gaps": [],
         "artifact": artifact,
+        "rendered_html": rendered_html,
     }
 
 

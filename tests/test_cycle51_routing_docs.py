@@ -15,7 +15,7 @@ class RecruiterShortlistRoutingDocsTests(unittest.TestCase):
         for token in (
             "recruiter-target-shortlist-v1",
             "ask_one_intake_question",
-            "render_recruiter_target_shortlist",
+            "review_recruiter_target_shortlist",
             "recruiter_target_decision_gate",
             "recruiter-target-screen-intake-v1",
             "route_recruiter_screen_intake",
