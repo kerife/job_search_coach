@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T09:02:23-06:00`
+release_timestamp: `2026-08-27T09:16:00-06:00`
 
-source_commit: `4fe94261e9512caa0b36c38637dd25377b8b2cc2`
+source_commit: `72d7df285c74712fb458ff945b0b4d8720352b40`
 
-source_tree: `21bdc823c9896615594ffdedb0e866e19d83a9e5`
+source_tree: `35049f9039e31183d6b6fd27832855e121013e0b`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827160000`
+installed_cache_version: `0.2.0+codex.20260827170000`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `139`
 
 installed_file_count: `139`
 
-normalized_source_cache_sha256: `65880269fed8b2ed06ad6cdf2d5be9add4881af34d627708eeec6a1ba51f0f7b`
+normalized_source_cache_sha256: `03f0ff360ab11a5398ac798e4108e39529e8589636bc556083e91a66c9b3a49e`
 
 normalized_excludes: `__pycache__`
 
@@ -43,11 +43,9 @@ source_cache_equivalence: `diff_qr_silent`
 
 installed_renderer_smokes: `6/6 triage validator/renderer fixtures`
 
-installed_reading_path_smoke: `4/4 localized fragment links; aria-current fallback; IntersectionObserver enhancement`
+installed_reading_path_smoke: `4/4 localized fragment links; aria-current fallback; nearest-target IntersectionObserver enhancement; print/mobile offsets`
 
 installed_dossier_v2_smoke: `4/4 EN/ES validator and renderer`
-
-installed_reading_path_smoke: `2/2 EN/ES landmarks with four unique anchors; unknown-argument diagnostic remains opaque`
 
 installed_market_next_research_smoke: `2/2 EN/ES unavailable-market cards expose bounded scope, sample, sources, date, and read-only boundary`
 
