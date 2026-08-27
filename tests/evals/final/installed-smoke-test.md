@@ -16,23 +16,23 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T12:45:15-06:00`
+release_timestamp: `2026-08-27T13:25:19-06:00`
 
-source_commit: `3e8c977baa2f340cf5ea64314f4c8438453be31e`
+source_commit: `1194b7faaed66ef4264251fbd233fe69aec7cdf0`
 
-source_tree: `24f7a5a699668ae6ebd93f1ed20cc61f681cd567`
+source_tree: `701ef3bca4e4ae361f88dd50162a8f8df6c0eedd`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827124515`
+installed_cache_version: `0.2.0+codex.20260827131354`
 
 installed_enabled: `true`
 
-source_file_count: `158`
+source_file_count: `164`
 
-installed_file_count: `158`
+installed_file_count: `164`
 
-normalized_source_cache_sha256: `bdcd38842af987810360ca0f9d8090749a171a9020eafc04a9b329cd0f084faf`
+normalized_source_cache_sha256: `2abb9e9726bf3ef5cef2cd7d60cdafd8f30efd32b26a6ced8ed644f34def15d9`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -121,7 +121,7 @@ installed_screen_intake_smoke: `3/3 installed EN/ES target-specific intake build
 
 installed_duplicate_employer_source_url_smoke: `1/1 installed market validator rejects duplicate normalized employer official_source_url values without echoing the URL`
 
-installed_screen_debrief_smoke: `2/2 installed EN/ES completed screen_attended checkpoints render the closed debrief_after_screen action, preserve manual-only follow-up boundaries, and reject preparation routing`
+installed_screen_debrief_smoke: `4/4 installed EN/ES builder, validator, and renderer; target-fact ownership, requested-screen receipt, future-date, explicit-checkpoint, and 0600 boundaries remain fail-closed`
 
 installed_feedback_sensitive_continuity_rail_smoke: `6/6 ES/EN feedback labels render one deterministic three-step rail with closed pending/blocked state copy`
 
