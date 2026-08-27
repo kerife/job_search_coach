@@ -80,6 +80,27 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
         errors = validate_decision_gate(gate)
         self.assertIn("delivery.external_actions_authorized has immutable value", errors)
 
+    def test_screen_context_rejects_contact_and_path_shaped_text(self) -> None:
+        for value in ("jane.doe@example.com", "+52 55 1234 5678", "/Users/example/private.txt"):
+            with self.subTest(value=value):
+                with self.assertRaises(ValueError):
+                    build_decision_gate(
+                        self.shortlist(),
+                        screen_context={
+                            "vacancy_summary": value,
+                            "confirmed_fact_summary": "Bounded platform reliability context.",
+                        },
+                    )
+        gate = build_decision_gate(
+            self.shortlist(),
+            screen_context={
+                "vacancy_summary": "Platform reliability role with an initial recruiter screen.",
+                "confirmed_fact_summary": "Candidate supplied a verified delivery outcome.",
+            },
+        )
+        gate["screen_context"]["confirmed_fact_summary"] = "jane.doe@example.com"
+        self.assertIn("screen_context.confirmed_fact_summary must be bounded safe context", validate_decision_gate(gate))
+
     def test_schema_is_closed_at_the_gate_boundary(self) -> None:
         gate = build_decision_gate(self.shortlist())
         schema = json.loads(

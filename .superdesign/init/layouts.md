@@ -58,10 +58,11 @@ the print rendering stays tabular.
       <p class="next-stage-stage"><span>{{STAGE_LABEL}}</span> <strong>{{STAGE}}</strong></p>
       <p class="next-stage-date"><span>{{DATE_LABEL}}</span> <time datetime="{{DATE}}">{{DATE}}</time></p>
     </header>
-    <section class="next-stage-card next-stage-summary" aria-labelledby="summary-title">
+    <section class="next-stage-card {{SUMMARY_CLASS}}" aria-labelledby="summary-title">
       <p class="next-stage-state">{{STATE}}</p>
       <h2 id="summary-title">{{NEXT_LABEL}}</h2>
       <p class="next-stage-action">{{ACTION}}</p>
+      {{BLOCKED_GUIDANCE}}
     </section>
     <section class="next-stage-card" aria-labelledby="context-title">
       <h2 id="context-title">{{OWNER_LABEL}}</h2>

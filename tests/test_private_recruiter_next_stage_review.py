@@ -54,6 +54,19 @@ class PrivateRecruiterNextStageReviewTests(unittest.TestCase):
         self.assertEqual("collect_debrief_context", artifact["handoff"]["next_safe_action"])
         self.assertEqual([], validate_next_stage_review(artifact, debrief, RECEIPT, self.intake, valid_checkpoint(), as_of=date(2026, 8, 27)))
 
+    def test_blocked_renderer_explains_structured_topics_to_clarify(self) -> None:
+        paused = valid_debrief()
+        paused["decision"] = "pause"
+        paused["unknown_topics"] = ["Decision criteria remain unknown."]
+        paused["coverage"][1]["status"] = "unclear"
+        debrief = build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, paused)
+        artifact = build_next_stage_review(debrief, RECEIPT, self.intake, valid_checkpoint(), "technical_screen")
+        rendered = render_next_stage_review_html(artifact, debrief, RECEIPT, self.intake, valid_checkpoint())
+        self.assertIn("Aclara estos temas", rendered)
+        self.assertIn("Alcance y éxito", rendered)
+        self.assertNotIn("Decision criteria remain unknown", rendered)
+        self.assertIn("next-stage-summary--blocked", rendered)
+
     def test_stage_must_be_explicit_and_next_stage_only(self) -> None:
         with self.assertRaises(ValueError):
             build_next_stage_review(self.debrief, RECEIPT, self.intake, valid_checkpoint(), "recruiter_screen")

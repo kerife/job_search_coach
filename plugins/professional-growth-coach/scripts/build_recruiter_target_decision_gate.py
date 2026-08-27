@@ -68,7 +68,7 @@ _STRATEGY = {
 
 
 def _safe_context(value: object, label: str) -> str:
-    if not isinstance(value, str) or not value.strip() or len(value) > 280:
+    if not GATE.screen_context_is_safe(value):
         raise ValueError(f"{label} is unavailable")
     lowered = value.casefold()
     if any(marker in lowered for marker in ("://", "www.", "linkedin.com/", "file:", "ssh:", "ftp:", "mailto:", "javascript:", "data:")):

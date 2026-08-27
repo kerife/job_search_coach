@@ -109,7 +109,7 @@ Dependencies:
 - `plugins/professional-growth-coach/assets/recruiter-target-decision-gate-v1.html`
 - `plugins/professional-growth-coach/assets/recruiter-target-decision-gate-v1.css`
 
-The gate is a static decision brief: it binds and revalidates the full shortlist snapshot, presents reconciled decision counts and one row per target, then stops at a manual screen-context or interview-preparation review boundary. It contains no controls, network calls, contact details, URLs, message actions, or calendar actions.
+The gate is a static decision brief: it binds and revalidates the full shortlist snapshot, presents reconciled decision counts and one row per target, then stops at a manual screen-context or interview-preparation review boundary. Its legacy screen context accepts only bounded, non-contact-shaped prose; it contains no controls, network calls, contact details, URLs, message actions, or calendar actions.
 
 ## /recruiter-target-screen-intake (offline artifact)
 
@@ -150,7 +150,7 @@ Dependencies:
 - `plugins/professional-growth-coach/assets/private-recruiter-next-stage-review-v1.html`
 - `plugins/professional-growth-coach/assets/private-recruiter-next-stage-review-v1.css`
 
-The review requires a manually selected next stage and a validated source debrief. It renders the localized target-stage label in the header plus a three-topic checklist with ready/blocked state, preserves the source snapshot and replay binding, and exposes no raw answers or external controls.
+The review requires a manually selected next stage and a validated source debrief. It renders the localized target-stage label in the header plus a three-topic checklist with ready/blocked state; when blocked, a structured “clarify before continuing” list names only the pending topics. It preserves the source snapshot and replay binding, and exposes no raw answers or external controls.
 
 Outcome and follow-through receipts share a non-interactive continuity rail:
 the supplied observation/receipt is `recorded`, one manual safe step is

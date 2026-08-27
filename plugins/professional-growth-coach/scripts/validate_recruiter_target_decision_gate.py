@@ -8,6 +8,7 @@ import datetime as dt
 import hashlib
 import importlib.util
 import json
+import re
 import sys
 from collections.abc import Mapping
 from pathlib import Path
@@ -34,6 +35,11 @@ ROW_FIELDS = frozenset({
 })
 COUNT_FIELDS = frozenset({"advance", "clarify", "pause", "stop"})
 SCREEN_FIELDS = frozenset({"vacancy_summary", "confirmed_fact_summary"})
+_SCREEN_CONTEXT_SUSPICIOUS = re.compile(
+    r"@|https?://|(?:^|\s)\+?\d[\d .()_-]{6,}\d|"
+    r"(?:^|[\\/])(?:users|private|tmp|home|var|opt|applications|volumes|root|srv|usr)[\\/]",
+    re.IGNORECASE,
+)
 HANDOFF_FIELDS = frozenset({
     "screen_context_state", "next_safe_action", "manual_review_required", "selected_module",
     "draft_only", "external_actions_authorized", "no_message_action", "no_calendar_action",
@@ -80,6 +86,16 @@ def _text(value: object, path: str, errors: list[str], maximum: int) -> bool:
         errors.append(f"{path} must be bounded safe text")
         return False
     return True
+
+
+def screen_context_is_safe(value: object) -> bool:
+    return (
+        isinstance(value, str)
+        and bool(value.strip())
+        and len(value) <= 280
+        and PROSE.is_safe_prose_text(value)
+        and not _SCREEN_CONTEXT_SUSPICIOUS.search(value)
+    )
 
 
 def _date(value: object, path: str, errors: list[str], reference: dt.date | None) -> None:
@@ -176,8 +192,9 @@ def validate_decision_gate(value: object, *, as_of: dt.date | None = None) -> li
     if screen is not None:
         screen = _closed(screen, "screen_context", SCREEN_FIELDS, errors)
         if screen is not None:
-            _text(screen.get("vacancy_summary"), "screen_context.vacancy_summary", errors, 280)
-            _text(screen.get("confirmed_fact_summary"), "screen_context.confirmed_fact_summary", errors, 280)
+            for field in SCREEN_FIELDS:
+                if not screen_context_is_safe(screen.get(field)):
+                    errors.append(f"screen_context.{field} must be bounded safe context")
 
     handoff = _closed(item.get("handoff"), "handoff", HANDOFF_FIELDS, errors)
     if handoff is not None:

@@ -27,7 +27,7 @@ This plugin exposes no HTTP routes, SPA routes, framework page files, or router 
 - **Recruiter target decision gate:** a private decision brief bound to a validated shortlist snapshot; it reconciles four decision states, shows the next safe input, and exposes only a manual `prepare-role-interviews` review handoff.
 - **Recruiter target screen intake:** a target-specific, four-check bridge that requires vacancy requirements, candidate fact IDs, company evidence, and a stated stage before any manual interview-preparation review.
 - **Private recruiter screen debrief:** a post-`screen_attended` structured coverage brief that records unknowns and a manual next-stage decision without retaining raw conversation text.
-- **Private recruiter next-stage review:** an explicit first-interview or technical-screen checklist derived from a debrief; its header repeats the selected target stage, and it remains ready/blocked and manual-only.
+- **Private recruiter next-stage review:** an explicit first-interview or technical-screen checklist derived from a debrief; its header repeats the selected target stage, and blocked reviews list only the structured topics to clarify. It remains ready/blocked and manual-only.
 
 Both compact receipt routes use the same static continuity semantics (`recorded`
 then `pending` then `blocked`) and expose exactly one current step to assistive
