@@ -112,7 +112,7 @@ installed_practice_continuity_accessibility_smoke: `2/2 installed EN/ES practice
 
 installed_triage_handoff_continuity_smoke: `2/2 installed EN/ES triage handoffs expose recorded -> recorded -> pending states with one aria-current="step" re-entry stage and preserve manual-only boundaries`
 
-installed_recruiter_target_shortlist_smoke: `1/1 installed EN/ES shortlist builder, validator, and offline renderer; rows retain draft-only/no-message/no-calendar controls and HTML omits target/fact identifiers`
+installed_shortlist_artifact_smoke: `1/1 installed EN/ES shortlist builder, validator, and offline renderer; rows retain draft-only/no-message/no-calendar controls and HTML omits target/fact identifiers`
 
 installed_duplicate_employer_source_url_smoke: `1/1 installed market validator rejects duplicate normalized employer official_source_url values without echoing the URL`
 
