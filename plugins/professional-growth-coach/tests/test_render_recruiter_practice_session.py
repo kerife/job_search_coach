@@ -115,6 +115,54 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
                 self.assertNotIn("https://", guardrail)
                 self.assertNotRegex(guardrail, r"<(?:form|button|script)\b")
 
+    def test_triage_answer_boundary_has_accessible_visual_contract(self):
+        css = renderer.CSS_PATH.read_text(encoding="utf-8")
+        selector = r"\.recruiter-practice-document \.practice-claim-guardrail"
+        self.assertRegex(
+            css,
+            selector + r"\s*\{[^}]*border: 1px solid var\(--coral\);[^}]*border-left: 4px solid var\(--coral\);[^}]*background: var\(--coral-soft\);",
+        )
+        self.assertRegex(
+            css,
+            selector + r"\s*\{[^}]*max-width: var\(--measure\);",
+        )
+        self.assertRegex(
+            css,
+            r"(?s)@media screen and \(prefers-color-scheme: dark\).*?"
+            + selector
+            + r"\s*\{[^}]*background: var\(--coral-soft\);[^}]*color: var\(--ink\);",
+        )
+        self.assertRegex(
+            css,
+            r"(?s)@media \(max-width: 640px\).*?"
+            + selector
+            + r"\s*\{[^}]*padding: .875rem;",
+        )
+        self.assertRegex(
+            css,
+            r"(?s)@media \(forced-colors: active\).*?"
+            + selector
+            + r"\s*\{[^}]*border-color: CanvasText;[^}]*background: Canvas;[^}]*color: CanvasText;",
+        )
+        self.assertRegex(
+            css,
+            r"(?s)@media \(prefers-contrast: more\).*?"
+            + selector
+            + r"\s*\{[^}]*border-width: 2px;[^}]*border-left-width: .5rem;",
+        )
+        self.assertRegex(
+            css,
+            r"(?s)@media print.*?"
+            + selector
+            + r"\s*\{[^}]*break-inside: avoid;[^}]*page-break-inside: avoid;",
+        )
+        self.assertRegex(
+            css,
+            r"(?s)@media \(prefers-reduced-motion: reduce\).*?"
+            + selector
+            + r"\s*\{[^}]*transition: none !important;",
+        )
+
     def test_answer_boundary_is_absent_for_dossier_and_unsourced_practice(self):
         session = self._feedback_session([self._observation("solid")])
         unsourced_html = renderer.render_session_html(session)

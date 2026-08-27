@@ -928,6 +928,15 @@ html { color-scheme: light; background: var(--paper); }
 .recruiter-practice-document .practice-evidence li + li { margin-top: 0.5rem; }
 .recruiter-practice-document .practice-boundary { background: var(--coral-soft); border-color: var(--coral); }
 .recruiter-practice-document .practice-boundary p { margin: 0.45rem 0 0; }
+.recruiter-practice-document .practice-claim-guardrail {
+  max-width: var(--measure);
+  padding: 1rem;
+  border: 1px solid var(--coral);
+  border-left: 4px solid var(--coral);
+  background: var(--coral-soft);
+}
+.recruiter-practice-document .practice-claim-guardrail h2 { font-size: 1.2rem; }
+.recruiter-practice-document .practice-claim-guardrail p { margin: .45rem 0 0; }
 .recruiter-practice-document .practice-feedback { border-left: 4px solid var(--coral); }
 .recruiter-practice-document .practice-decision {
   padding: 1rem;
@@ -1022,6 +1031,7 @@ html { color-scheme: light; background: var(--paper); }
   }
   .recruiter-practice-document .feedback-label--confirm { color: var(--ink); }
   .recruiter-practice-document .practice-boundary { background: var(--coral-soft); }
+  .recruiter-practice-document .practice-claim-guardrail { background: var(--coral-soft); color: var(--ink); }
   .recruiter-practice-document .practice-footer { color: var(--muted); border-color: var(--forest); }
 }
 
@@ -1038,6 +1048,7 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .screen-readiness-grid { grid-template-columns: 1fr 1fr; }
   .recruiter-practice-document .triage-practice-route-list { grid-template-columns: 1fr; }
   .recruiter-practice-document .continuity-rail-list { grid-template-columns: 1fr; }
+  .recruiter-practice-document .practice-claim-guardrail { padding: .875rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1048,6 +1059,7 @@ html { color-scheme: light; background: var(--paper); }
     transition: none !important;
     scroll-behavior: auto !important;
   }
+  .recruiter-practice-document .practice-claim-guardrail { transition: none !important; }
 }
 
 @media (forced-colors: active) {
@@ -1082,6 +1094,8 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .feedback-label--solid,
   .recruiter-practice-document .feedback-label--confirm,
   .recruiter-practice-document .feedback-label--do_not_assert { color: CanvasText; }
+  .recruiter-practice-document .practice-claim-guardrail { border-color: CanvasText; background: Canvas; color: CanvasText; }
+  .recruiter-practice-document .practice-claim-guardrail h2 { color: CanvasText; }
   .recruiter-practice-document .practice-footer { color: CanvasText; border-color: CanvasText; }
 }
 
@@ -1098,6 +1112,7 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .screen-readiness-item,
   .recruiter-practice-document .triage-practice-route,
   .recruiter-practice-document .triage-practice-route-step { border-width: 2px; }
+  .recruiter-practice-document .practice-claim-guardrail { border-width: 2px; border-left-width: .5rem; }
   .recruiter-practice-document .feedback-label { text-decoration: underline; text-decoration-thickness: 0.12em; }
 }
 
@@ -1159,6 +1174,10 @@ html { color-scheme: light; background: var(--paper); }
   }
   .recruiter-practice-document .practice-session { box-shadow: none; }
   .recruiter-practice-document .practice-footer {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .recruiter-practice-document .practice-claim-guardrail {
     break-inside: avoid;
     page-break-inside: avoid;
   }
