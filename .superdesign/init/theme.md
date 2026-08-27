@@ -700,6 +700,9 @@ h1, h2 { line-height: 1.2; }
 h1 { margin: .35rem 0; font-size: clamp(1.8rem, 5vw, 3rem); }
 h2 { margin-top: 0; font-size: 1.2rem; }
 .next-stage-date { color: var(--next-muted); }
+.next-stage-stage { display: inline-flex; flex-wrap: wrap; gap: .45rem; align-items: baseline; margin: .75rem 0 .25rem; padding: .45rem .65rem; border: 1px solid var(--next-border); border-radius: .4rem; }
+.next-stage-stage span { color: var(--next-muted); font-size: .9rem; }
+.next-stage-stage strong { color: var(--next-text); }
 .next-stage-card { background: var(--next-surface); border: 1px solid var(--next-border); border-radius: .8rem; padding: 1.25rem; margin: 1rem 0; }
 .next-stage-summary { border-left: .35rem solid var(--next-accent); }
 .next-stage-summary:has(.next-stage-state) { border-left-color: var(--next-accent); }

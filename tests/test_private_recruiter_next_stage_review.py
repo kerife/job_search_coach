@@ -8,6 +8,7 @@ import sys
 import unittest
 from datetime import date
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "plugins" / "professional-growth-coach" / "scripts"
@@ -16,6 +17,7 @@ sys.path.insert(0, str(SCRIPTS))
 from build_private_recruiter_next_stage_review import build_next_stage_review  # noqa: E402
 from build_private_recruiter_screen_debrief import build_screen_debrief  # noqa: E402
 from build_recruiter_target_shortlist import build_shortlist  # noqa: E402
+from render_private_recruiter_next_stage_review import _cli as render_cli  # noqa: E402
 from render_private_recruiter_next_stage_review import render_next_stage_review_html  # noqa: E402
 from route_recruiter_target_shortlist import route_recruiter_next_stage_review  # noqa: E402
 from validate_private_recruiter_next_stage_review import validate_next_stage_review  # noqa: E402
@@ -116,10 +118,36 @@ class PrivateRecruiterNextStageReviewTests(unittest.TestCase):
         english = build_next_stage_review(english_debrief, RECEIPT, english_intake, valid_checkpoint(), "first_interview")
         self.assertIn("Next-stage review", render_next_stage_review_html(english, english_debrief, RECEIPT, english_intake, valid_checkpoint()))
 
+    def test_renderer_shows_selected_next_stage_in_localized_summary(self) -> None:
+        first = build_next_stage_review(self.debrief, RECEIPT, self.intake, valid_checkpoint(), "first_interview")
+        first_html = render_next_stage_review_html(first, self.debrief, RECEIPT, self.intake, valid_checkpoint())
+        self.assertIn("Primera entrevista", first_html)
+        technical = build_next_stage_review(self.debrief, RECEIPT, self.intake, valid_checkpoint(), "technical_screen")
+        technical_html = render_next_stage_review_html(technical, self.debrief, RECEIPT, self.intake, valid_checkpoint())
+        self.assertIn("Filtro técnico", technical_html)
+
     def test_cli_unknown_arguments_are_opaque(self) -> None:
         from validate_private_recruiter_next_stage_review import _cli
 
         self.assertEqual(3, _cli(["--private-token-value"]))
+
+    def test_renderer_cli_rejects_duplicate_json_keys(self) -> None:
+        artifact = build_next_stage_review(self.debrief, RECEIPT, self.intake, valid_checkpoint(), "first_interview")
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            input_path = root / "review.json"
+            duplicate = json.dumps(artifact, ensure_ascii=False)
+            duplicate = duplicate.replace("{\"schema_version\":", "{\"schema_version\":\"forged\",\"schema_version\":", 1)
+            input_path.write_text(duplicate, encoding="utf-8")
+            paths = {}
+            for name, value in (("debrief", self.debrief), ("receipt", RECEIPT), ("intake", self.intake), ("checkpoint", valid_checkpoint())):
+                path = root / f"{name}.json"
+                path.write_text(json.dumps(value, ensure_ascii=False), encoding="utf-8")
+                paths[name] = path
+            output = root / "review.html"
+            result = render_cli([str(input_path), "--debrief", str(paths["debrief"]), "--receipt", str(paths["receipt"]), "--intake", str(paths["intake"]), "--checkpoint", str(paths["checkpoint"]), "--output", str(output)])
+            self.assertEqual(3, result)
+            self.assertFalse(output.exists())
 
     def test_route_exposes_only_manual_or_blocked_states(self) -> None:
         routed = route_recruiter_next_stage_review(self.debrief, RECEIPT, self.intake, valid_checkpoint(), "first_interview")

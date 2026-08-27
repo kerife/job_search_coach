@@ -150,7 +150,7 @@ Dependencies:
 - `plugins/professional-growth-coach/assets/private-recruiter-next-stage-review-v1.html`
 - `plugins/professional-growth-coach/assets/private-recruiter-next-stage-review-v1.css`
 
-The review requires a manually selected next stage and a validated source debrief. It renders a three-topic checklist with ready/blocked state, preserves the source snapshot and replay binding, and exposes no raw answers or external controls.
+The review requires a manually selected next stage and a validated source debrief. It renders the localized target-stage label in the header plus a three-topic checklist with ready/blocked state, preserves the source snapshot and replay binding, and exposes no raw answers or external controls.
 
 Outcome and follow-through receipts share a non-interactive continuity rail:
 the supplied observation/receipt is `recorded`, one manual safe step is

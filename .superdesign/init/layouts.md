@@ -55,6 +55,7 @@ the print rendering stays tabular.
     <header class="next-stage-header">
       <p class="next-stage-kicker">{{KICKER}}</p>
       <h1>{{HEADING}}</h1>
+      <p class="next-stage-stage"><span>{{STAGE_LABEL}}</span> <strong>{{STAGE}}</strong></p>
       <p class="next-stage-date"><span>{{DATE_LABEL}}</span> <time datetime="{{DATE}}">{{DATE}}</time></p>
     </header>
     <section class="next-stage-card next-stage-summary" aria-labelledby="summary-title">
