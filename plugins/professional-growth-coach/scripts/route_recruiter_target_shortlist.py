@@ -354,7 +354,7 @@ def route_recruiter_screen_debrief_intake(
             raise ValueError("receipt is not an interview request")
         if intake.get("readiness_decision") != "ready":
             raise ValueError("screen intake is not ready")
-        if checkpoint.get("locale") != receipt.get("locale"):
+        if not (checkpoint.get("locale") == receipt.get("locale") == intake.get("locale")):
             raise ValueError("debrief locale is not reconciled")
     except (TypeError, ValueError):
         return _artifact_free_intake(

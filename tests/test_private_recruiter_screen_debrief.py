@@ -73,7 +73,11 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
         self.intake = build_screen_intake(self.gate, "T-001", valid_screen_intake())
 
     def test_attended_screen_starts_artifact_free_debrief_intake(self) -> None:
-        routed = route_recruiter_screen_debrief_intake(valid_checkpoint(), RECEIPT, self.intake)
+        receipt = copy.deepcopy(RECEIPT)
+        receipt["locale"] = self.intake["locale"]
+        checkpoint = valid_checkpoint()
+        checkpoint["locale"] = self.intake["locale"]
+        routed = route_recruiter_screen_debrief_intake(checkpoint, receipt, self.intake)
         self.assertEqual("private_recruiter_screen_debrief", routed["route_kind"])
         self.assertEqual("needs_intake", routed["case_state"])
         self.assertEqual("collect_debrief_context", routed["next_action"])
@@ -102,6 +106,12 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
         mismatched_intake = copy.deepcopy(self.intake)
         mismatched_intake["intake"]["stated_stage"] = "technical_screen"
         self.assertIsNone(route_recruiter_screen_debrief_intake(valid_checkpoint(), RECEIPT, mismatched_intake)["artifact"])
+        mixed_locale = copy.deepcopy(self.intake)
+        mixed_locale["locale"] = "es"
+        self.assertEqual(
+            ["validated_screen_checkpoint_receipt_intake"],
+            route_recruiter_screen_debrief_intake(valid_checkpoint(), RECEIPT, mixed_locale)["evidence_gaps"],
+        )
 
     def test_interview_requested_debrief_intake_preserves_event_context(self) -> None:
         receipt = copy.deepcopy(RECEIPT)
@@ -109,25 +119,18 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
         receipt["next_safe_action"] = "route_to_prepare-role-interviews"
         checkpoint = valid_checkpoint()
         checkpoint["source_receipt"]["event_type"] = "interview_requested"
+        receipt["locale"] = self.intake["locale"]
+        checkpoint["locale"] = self.intake["locale"]
         routed = route_recruiter_screen_debrief_intake(checkpoint, receipt, self.intake)
         self.assertEqual("collect_debrief_context", routed["next_action"])
         self.assertIsNone(routed["artifact"])
         self.assertIn("Entrevista registrada", routed["intake_question"])
         english_gate = build_decision_gate(build_shortlist("en", "2026-08-27", valid_plan(), valid_targets()))
         english_intake = build_screen_intake(english_gate, "T-001", valid_screen_intake())
-        english = route_recruiter_screen_debrief_intake(checkpoint, receipt, english_intake)
+        english_checkpoint = valid_checkpoint()
+        english_checkpoint["source_receipt"]["event_type"] = "interview_requested"
+        english = route_recruiter_screen_debrief_intake(english_checkpoint, receipt, english_intake)
         self.assertIn("Interview request recorded", english["intake_question"])
-
-    def test_interview_requested_debrief_intake_preserves_event_context(self) -> None:
-        receipt = copy.deepcopy(RECEIPT)
-        receipt["event_type"] = "interview_requested"
-        receipt["next_safe_action"] = "route_to_prepare-role-interviews"
-        checkpoint = valid_checkpoint()
-        checkpoint["source_receipt"]["event_type"] = "interview_requested"
-        routed = route_recruiter_screen_debrief_intake(checkpoint, receipt, self.intake)
-        self.assertEqual("collect_debrief_context", routed["next_action"])
-        self.assertIsNone(routed["artifact"])
-        self.assertIn("Entrevista registrada", routed["intake_question"])
 
     def test_complete_debrief_allows_manual_next_stage_review(self) -> None:
         artifact = build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, valid_debrief())
