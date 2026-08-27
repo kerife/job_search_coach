@@ -75,6 +75,67 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
                     r"(?s)@media print.*?\.triage-practice-route[^}]*\{[^}]*break-inside: avoid;",
                 )
 
+    def test_triage_practice_shows_localized_answer_boundary_after_question(self):
+        expected = {
+            "es": {
+                "title": "Límite de tu respuesta",
+                "label": "Usa solo evidencia confirmada",
+                "instruction": "No agregues resultados, alcance ni disponibilidad que no estén confirmados.",
+            },
+            "en": {
+                "title": "Your answer boundary",
+                "label": "Use only confirmed evidence",
+                "instruction": "Do not add outcomes, scope, or availability that are not confirmed.",
+            },
+        }
+        for locale, copy in expected.items():
+            with self.subTest(locale=locale):
+                session = self._triage_practice_session(locale)
+                session["facts"][0]["summary"] = 'Verified <evidence> & "scope"'
+                rendered = renderer.render_session_html(session)
+                guardrail = rendered.split(
+                    '<section class="practice-claim-guardrail"', 1
+                )[1].split("</section>", 1)[0]
+                self.assertEqual(rendered.count('class="practice-claim-guardrail"'), 1)
+                self.assertLess(
+                    rendered.index('id="practice-question-text"'),
+                    rendered.index('<section class="practice-claim-guardrail"'),
+                )
+                self.assertLess(
+                    rendered.index('<section class="practice-claim-guardrail"'),
+                    rendered.index('<section class="triage-practice-route"'),
+                )
+                self.assertIn(copy["title"], guardrail)
+                self.assertIn(copy["label"], guardrail)
+                self.assertIn(copy["instruction"], guardrail)
+                self.assertIn('Verified &lt;evidence&gt; &amp; &quot;scope&quot;', guardrail)
+                self.assertNotIn('Verified <evidence>', guardrail)
+                self.assertNotRegex(guardrail, r"\b(?:Q|R|F|C|E|OBS|RB)-\d{3}\b")
+                self.assertNotIn("snap-triage-sha256-", guardrail)
+                self.assertNotIn("https://", guardrail)
+                self.assertNotRegex(guardrail, r"<(?:form|button|script)\b")
+
+    def test_answer_boundary_is_absent_for_dossier_and_unsourced_practice(self):
+        session = self._feedback_session([self._observation("solid")])
+        unsourced_html = renderer.render_session_html(session)
+        self.assertNotIn('class="practice-claim-guardrail"', unsourced_html)
+
+        sourced = copy.deepcopy(session)
+        sourced["handoff_context"] = {
+            "source": "executive_career_dossier",
+            "source_snapshot": "snap-dossier-sha256-873fb8cf4957d72c0aa06a15b253716a3d0397d45997073adb0b8e486decfa25",
+            "question_rank": 1,
+            "question_id": "Q-001",
+            "requirement_id": "R-001",
+            "fact_ids": ["F-001"],
+            "claim_ids": ["C-001"],
+            "evidence_ids": ["E-001"],
+            "draft_only": True,
+            "external_actions_authorized": False,
+        }
+        dossier_html = renderer.render_session_html(sourced)
+        self.assertNotIn('class="practice-claim-guardrail"', dossier_html)
+
     def test_invalid_utf8_input_is_reported_without_traceback(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "invalid.json"

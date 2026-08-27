@@ -336,6 +336,30 @@ TRIAGE_ROUTE_COPY = {
 }
 
 
+CLAIM_GUARDRAIL_COPY = {
+    "en": {
+        "title": "Your answer boundary",
+        "label": "Use only confirmed evidence",
+        "instruction": "Do not add outcomes, scope, or availability that are not confirmed.",
+    },
+    "es": {
+        "title": "Límite de tu respuesta",
+        "label": "Usa solo evidencia confirmada",
+        "instruction": "No agregues resultados, alcance ni disponibilidad que no estén confirmados.",
+    },
+}
+
+
+def _render_claim_guardrail(locale: str, fact: Mapping[str, object]) -> str:
+    labels = CLAIM_GUARDRAIL_COPY[locale]
+    summary = html.escape(_text(fact["summary"]))
+    return f'''<section class="practice-claim-guardrail" aria-labelledby="practice-claim-guardrail-title">
+      <h2 id="practice-claim-guardrail-title">{labels["title"]}</h2>
+      <p><strong>{labels["label"]}:</strong> <span>{summary}</span></p>
+      <p>{labels["instruction"]}</p>
+    </section>'''
+
+
 def _render_triage_practice_route(locale: str) -> str:
     labels = TRIAGE_ROUTE_COPY[locale]
     steps = "".join(
@@ -622,6 +646,7 @@ def _render_main(
     rehearsal = _render_rehearsal_scaffold(locale, question_kind, labels)
     sourced = session.get("handoff_context") is not None
     handoff = ""
+    claim_guardrail = ""
     triage_route = ""
     if sourced:
         source = _text(_mapping(session["handoff_context"])["source"])
@@ -629,6 +654,7 @@ def _render_main(
         source_class = "reply" if source == "private_recruiter_reply_triage" else "dossier"
         handoff = f'''<aside class="practice-handoff practice-handoff--{source_class}" aria-labelledby="practice-handoff-title" aria-describedby="prompt-title practice-question-text"><h2 id="practice-handoff-title">{labels["handoff_title"]}</h2><p>{labels[text_key]}</p></aside>'''
         if source == "private_recruiter_reply_triage":
+            claim_guardrail = _render_claim_guardrail(locale, fact)
             triage_route = _render_triage_practice_route(locale)
     if state == "feedback_available":
         feedback_data = _mapping(session["feedback"])
@@ -637,10 +663,10 @@ def _render_main(
         governing_label = _governing_feedback_label(feedback_labels)
         feedback = _render_feedback(locale, question_kind, feedback_labels, labels)
         decision = _render_decision(locale, question_kind, governing_label, labels)
-        practice_sequence = f"{triage_route}{handoff}{rehearsal}{feedback}{decision}"
+        practice_sequence = f"{claim_guardrail}{triage_route}{handoff}{rehearsal}{feedback}{decision}"
     elif sourced:
         next_action = _render_next_action(state, labels, sourced=sourced)
-        practice_sequence = f"{triage_route}{handoff}{next_action}{rehearsal}"
+        practice_sequence = f"{claim_guardrail}{triage_route}{handoff}{next_action}{rehearsal}"
     else:
         next_action = _render_next_action(state, labels, sourced=sourced)
         practice_sequence = f"{rehearsal}{next_action}"
