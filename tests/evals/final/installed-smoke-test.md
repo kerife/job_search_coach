@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T10:10:00-06:00`
+release_timestamp: `2026-08-27T10:37:21-06:00`
 
-source_commit: `4dd0b4bb64068bc64f3dd537e37fa65a38ed4315`
+source_commit: `be8490ab6bdcaeb498ee6506106c3310df46124c`
 
-source_tree: `0ed7bcf80def7adf6c7134ffccf40fae180a29cb`
+source_tree: `819771ca9528040cd05de8d28cda13f6087cfb04`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827190000`
+installed_cache_version: `0.2.0+codex.20260827103721`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `139`
 
 installed_file_count: `139`
 
-normalized_source_cache_sha256: `50f86822e59cc7c0ef47e9aad82205b74803946cfe2e1b6fa4e3d3e553f60388`
+normalized_source_cache_sha256: `f136e5e73fe3c0c734059a5263dbaf130dd6dcdaa20ff5512e6068e9992e138e`
 
 normalized_excludes: `__pycache__`
 
@@ -62,6 +62,9 @@ installed_market_learning_smoke: `2/2 complete/limited builder and validator`
 installed_market_renderer_smoke: `2/2 complete/limited market composition`
 
 installed_v2_context_smoke: `2/2 EN/ES provenance, alignment coverage, vacancy context, public-source links, dates, and directional legend`
+installed_vacancy_freshness_smoke: `2/2 EN/ES per-vacancy access/publication dates, 90-day status text, unknown-date boundary, and title-contextual source aria-label`
+installed_learning_source_identity_smoke: `1/1 installed learning validator rejects trailing-slash and percent-decoded equivalent source URLs`
+installed_release_digest_documentation_smoke: `1/1 release runner validator digests match the release documentation`
 
 installed_replay_fingerprint_smoke: `1/1 stable identity-free receipt/checkpoint replay key`
 installed_source_traceability_smoke: `2/2 EN/ES public-source links and research dates`
