@@ -21,6 +21,27 @@ recruiter-screen stage, evidence confirmation state, private-only boundary, and
 manual next step. The card is derived from validated session state and must not
 expose internal references, raw answers, or external-action controls.
 
+### Recruiter-reply triage composition
+
+`private-recruiter-triage-practice-handoff-v1` may compose exactly one private
+rehearsal only from a validated `private-recruiter-reply-triage-v2` in
+`ready_for_private_prep` with `handoff_allowed=true` and one `verified` fact.
+Recalculate the triage snapshot first; the source, packet, and re-entry snapshot
+must match, and the selected `F-001`, `Q-001`, and permitted preparation scope
+must still be the exact validated references. Do not convert `clarify_first`,
+`stop`, candidate-reported evidence, snapshot drift, or any mismatched reference
+into a practice session.
+
+The composed session is private and unanswered: it is
+`ready_to_practice`, has `observed_answer=null`, and keeps pre-answer feedback
+and scoring unknown. Preserve only the validated question, fixed scope-specific
+guidance, verified-fact summary, and exact snapshot provenance. Never copy raw
+reply material, identifiers, URLs, calendar or time details, or a prior answer.
+The handoff is `draft_only=true`, has no external actions, does not save locally,
+and never auto-starts practice. It is a manual re-entry cue for a later explicit
+private rehearsal request; it is not an execution control, authorization, or
+prediction about interview readiness or outcome.
+
 The sequence is one-question/one-answer. Before the candidate answers, feedback and any score remain `unknown` (`score_state=unknown`); after the observed answer, feedback may reference only the observed answer and the rubric. In `feedback_available`, keep `score=unknown` and use `score_state=categorical` with only the rubric labels `solid`, `confirm`, or `do_not_assert`; numeric scores are invalid. Keep the answer ephemeral and no-save-by-default. The client-facing result contains only the private-session summary and verified local artifact link, never internal identifiers or raw vacancy or candidate-fact text. No external action is performed.
 
 In feedback_available, visible feedback uses fixed bilingual guidance selected

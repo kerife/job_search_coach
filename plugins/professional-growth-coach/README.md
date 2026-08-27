@@ -135,6 +135,23 @@ needs confirmation, the private-only boundary, and the manual next step. It is
 derived from validated state only; it never displays internal IDs or raw answers
 and never sends, schedules, or saves anything.
 
+`private-recruiter-triage-practice-handoff-v1` is the closed composition
+boundary from a private recruiter-reply triage into one private rehearsal. It
+accepts only a validated `ready_for_private_prep` triage with
+`handoff_allowed=true` and exactly one verified fact. Before composition, it
+recalculates the triage snapshot and requires the packet and re-entry snapshots,
+question, fact, and preparation scope to agree. The resulting practice session
+is unanswered (`ready_to_practice` with unknown pre-answer feedback), carries
+only the safe question and verified-fact context, and records the exact triage
+snapshot as provenance. It never copies raw reply material, source identifiers,
+URLs, or a candidate answer.
+
+The handoff is draft-only and local: it cannot send, schedule, upload, save, or
+auto-start anything. Rehearsal begins only after the candidate manually re-enters
+the validated context in a later private practice request. Snapshot drift,
+candidate-reported facts, non-ready triage states, or mismatched handoff
+references are rejected rather than converted into practice material.
+
 The default composition begins with `learning_state=not_evaluated`. If bounded
 market research cannot finish, the plugin preserves the valid profile dossier
 and renders the limited or unavailable market state with one bounded reason;
