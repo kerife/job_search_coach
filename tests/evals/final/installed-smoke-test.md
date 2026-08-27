@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T15:15:27-06:00`
+release_timestamp: `2026-08-27T15:28:22-06:00`
 
-source_commit: `107ba23a0ad6afb5eadccd4783448bdfea06fe5e`
+source_commit: `df2bd603fab4cabcfa06969254f2741261ff92c8`
 
-source_tree: `0809f671808f7e708f963f3a782ea33eb974cda5`
+source_tree: `7140a5e80df801f5f21f990dc6df4383f18beeed`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827151527`
+installed_cache_version: `0.2.0+codex.20260827152822`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `171`
 
 installed_file_count: `171`
 
-normalized_source_cache_sha256: `cbaf839382a1036ae1ff122398d37afaf6cb6e890c4f647d249854f0153bc9be`
+normalized_source_cache_sha256: `8d0017f7c28fc12a7d9790827c8a53b11fcca77fdeebb6dcada0e560624c0d82`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -136,6 +136,8 @@ installed_stage_label_localization_smoke: `13/13 installed EN/ES intake and debr
 installed_shortlist_route_e2e_smoke: `5/5 installed route runs builder → validator → renderer, returns private HTML without placeholders/IDs/action tokens, and rejects unrelated network or technical-interview phrasing`
 
 installed_shortlist_accessibility_print_smoke: `8/8 installed shortlist renderer checks pass: skip link, focusable landmark, ordered target list, print-safe card/footer continuity, and identifier redaction`
+
+installed_recruiter_review_design_token_smoke: `5/5 recruiter review stylesheets are covered by the installed family allowlist`
 
 fresh_agent_smoke: `not_run`
 
