@@ -184,6 +184,34 @@ class CareerMarketLearningDossierTests(unittest.TestCase):
                 self.assertEqual(expected_count, len({row["vacancy_id"] for row in built["vacancy_cards"]}))
                 self.assertEqual([], built["recurrence_rows"] if expected_count == 0 else []) if expected_count == 0 else self.assertTrue(built["recurrence_rows"])
 
+    def test_builder_propagates_per_vacancy_freshness_and_never_marks_unknown_publication_current(self) -> None:
+        research = valid_research()
+        dossier = valid_dossier()
+        built = build_market_dossier(research, dossier, bindings_for(research, dossier))
+
+        first = built["vacancy_cards"][0]
+        self.assertEqual("2026-08-13", first["access_date"])
+        self.assertEqual("2026-08-10", first["publication_date"])
+        self.assertEqual("current", first["freshness_status"])
+        self.assertEqual("publication_date", first["freshness_basis"])
+        self.assertEqual(90, first["freshness_window_days"])
+        self.assertEqual("publication_date_within_window", first["freshness_reason"])
+
+        unknown_publication = copy.deepcopy(built)
+        unknown_publication["vacancy_cards"][0]["publication_date"] = None
+        unknown_publication["vacancy_cards"][0]["freshness_status"] = "current"
+        errors = validate_market_dossier(unknown_publication)
+        self.assertIn("vacancy_cards[0].freshness_status cannot be current without publication_date", errors)
+
+    def test_builder_marks_publication_outside_window_unconfirmed(self) -> None:
+        research = valid_research()
+        research["vacancies"][0]["publication_date"] = "2026-04-15"
+        dossier = valid_dossier()
+        built = build_market_dossier(research, dossier, bindings_for(research, dossier))
+        first = next(card for card in built["vacancy_cards"] if card["vacancy_id"] == "V-001")
+        self.assertEqual("unknown", first["freshness_status"])
+        self.assertEqual("outside_window", first["freshness_reason"])
+
     def test_builder_rejects_stale_snapshot_unknown_evidence_and_state_mismatch(self) -> None:
         research = valid_research()
         dossier = valid_dossier()

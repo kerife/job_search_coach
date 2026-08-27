@@ -112,6 +112,14 @@ class LearningOptionResearchTests(unittest.TestCase):
         stale["options"][0]["source_state"] = "stale"
         self.assertTrue(validate_research(stale))
 
+    def test_research_rejects_equivalent_source_urls_after_canonicalization(self) -> None:
+        source = load_fixture("complete-five-es.json")
+        equivalent = copy.deepcopy(source)
+        equivalent["options"][0]["url"] = "https://example.com/fixtures/project/"
+        equivalent["options"][1]["url"] = "https://example.com/fixtures/%70roject"
+        errors = validate_research(equivalent)
+        self.assertIn("duplicate source URLs", " ".join(errors))
+
     def test_research_rejects_unsafe_commercial_and_geography_claims(self) -> None:
         source = load_fixture("complete-five-es.json")
         project = copy.deepcopy(source)

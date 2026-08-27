@@ -12,6 +12,7 @@ import secrets
 import stat
 import sys
 from collections.abc import Mapping
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -51,6 +52,42 @@ ALIGNMENT_FIELDS = frozenset({
 })
 BINDING_FIELDS = frozenset({"signal", "support_state", "evidence_ids"})
 SUPPORT_STATES = frozenset(OUTPUT.SUPPORT_NUMERATORS)
+FRESHNESS_WINDOW_DAYS = 90
+
+
+def _freshness_metadata(vacancy: Mapping[str, object], as_of_date: str) -> dict[str, object]:
+    """Carry source dates forward and make stale/unknown publication explicit."""
+    access_date = str(vacancy["access_date"])
+    publication = vacancy.get("publication_date")
+    publication_date = str(publication) if publication is not None else None
+    source_status = vacancy.get("freshness_status")
+    if publication_date is None:
+        return {
+            "access_date": access_date,
+            "publication_date": None,
+            "freshness_status": "unknown",
+            "freshness_basis": "unknown",
+            "freshness_window_days": FRESHNESS_WINDOW_DAYS,
+            "freshness_reason": "publication_date_unknown_verified_open_on_access_date",
+        }
+    age_days = (date.fromisoformat(as_of_date) - date.fromisoformat(publication_date)).days
+    if source_status == "current" and 0 <= age_days <= FRESHNESS_WINDOW_DAYS:
+        status = "current"
+        reason = "publication_date_within_window"
+    elif age_days > FRESHNESS_WINDOW_DAYS:
+        status = "unknown"
+        reason = "outside_window"
+    else:
+        status = "unknown"
+        reason = "source_status_unknown"
+    return {
+        "access_date": access_date,
+        "publication_date": publication_date,
+        "freshness_status": status,
+        "freshness_basis": "publication_date",
+        "freshness_window_days": FRESHNESS_WINDOW_DAYS,
+        "freshness_reason": reason,
+    }
 
 
 def _unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
@@ -331,6 +368,7 @@ def build_market_dossier(
             "arrangement": vacancy["arrangement"],
             "source_kind": vacancy["source_kind"],
             "source_url": vacancy["source_url"],
+            **_freshness_metadata(vacancy, research_copy["as_of_date"]),
             "requirements": requirements,
             "earned_points": earned,
             "maximum_points": maximum,

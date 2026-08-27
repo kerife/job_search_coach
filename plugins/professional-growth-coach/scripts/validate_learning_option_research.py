@@ -160,6 +160,24 @@ def _url_error(value: object, source_state: object, evidence_mode: object) -> st
     return None
 
 
+def _source_url_identity(value: str) -> str:
+    """Canonicalize policy-approved HTTPS URLs for duplicate detection only."""
+    from urllib.parse import unquote, urlsplit
+
+    parsed = urlsplit(value)
+    host = (parsed.hostname or "").casefold().rstrip(".")
+    path = unquote(parsed.path) or "/"
+    if len(path) > 1:
+        path = path.rstrip("/") or "/"
+    port = parsed.port
+    authority = host
+    if ":" in host and not host.startswith("["):
+        authority = f"[{host}]"
+    if port not in {None, 443}:
+        authority = f"{authority}:{port}"
+    return f"https://{authority}{path}"
+
+
 def _validate_preferences(value: object, errors: list[str]) -> None:
     row = _closed(value, "candidate_preferences", PREFERENCE_FIELDS, errors)
     if row is None:
@@ -245,9 +263,10 @@ def _validate_option(value: object, index: int, as_of: date | None, evidence_mod
     elif _url_error(url, source_state, evidence_mode):
         errors.append(f"{path}.url is invalid")
     elif isinstance(url, str):
-        if url in seen_urls:
+        identity = _source_url_identity(url)
+        if identity in seen_urls:
             errors.append("learning options must not duplicate source URLs")
-        seen_urls.add(url)
+        seen_urls.add(identity)
     if option_type in {"candidate_owned_project", "lab", "free_resource"}:
         if any(row.get(field) != "not_applicable" for field in ("current_cost", "currency", "tax")):
             errors.append(f"{option_type} option must not claim a price")

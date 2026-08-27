@@ -44,10 +44,10 @@ EXPECTED_RELEASE_REQUIREMENT = (
     "--hash=sha256:652cb6edd41e718550aad172851962662ff2681490a8a711af6a4d288dd96824\n"
 )
 EXPECTED_SKILL_VALIDATOR_SHA256 = (
-    "6cc9dc3199c935916cf6f73fcbbbb0e3bb1b58c8f5109fefa499978908164f51"
+    "1fd66498c219616fd9249eacdf16c458412ea9065a9d887fd716aeef03907762"
 )
 EXPECTED_PLUGIN_VALIDATOR_SHA256 = (
-    "ebda00d55d7518b127f675f062fb5c6e7a1ffdc0a99df1a55ac594400d7d3228"
+    "6ff4bc1cc8ca94827c30c8299951efdac900ff38a5069c03e9a6554fc194a723"
 )
 EXPECTED_SKILLS: tuple[str, ...] = (
     "professional-growth-coach",
@@ -926,6 +926,18 @@ raise SystemExit(64)
             self.assertNotEqual(0, result.returncode)
             self.assertIn("VALIDATOR_CHECKSUM_MISMATCH", result.stderr)
             self.assertFalse(sentinel.exists())
+
+    def test_release_validator_digests_match_runner_and_documentation(self) -> None:
+        runner = RELEASE_RUNNER_PATH.read_text(encoding="utf-8")
+        documentation = RELEASE_DOCUMENTATION_PATH.read_text(encoding="utf-8")
+        for variable, label in (
+            ("EXPECTED_SKILL_SHA256", "quick_validate.py"),
+            ("EXPECTED_PLUGIN_SHA256", "validate_plugin.py"),
+        ):
+            match = re.search(rf'{variable}="([0-9a-f]{{64}})"', runner)
+            self.assertIsNotNone(match, variable)
+            digest = match.group(1)
+            self.assertIn(f"- `{label}`: `{digest}`", documentation)
 
     def test_bootstrap_replaces_stale_final_environment_and_is_repeatable(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:

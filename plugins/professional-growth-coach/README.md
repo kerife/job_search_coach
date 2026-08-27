@@ -46,7 +46,9 @@ arguments: they return the fixed `invalid_arguments` diagnostic without
 reflecting the rejected value. The LinkedIn client-report validator also caps
 multi-error stderr at the shared 16 KiB diagnostic budget and emits a stable
 truncation marker, so malformed private fixtures cannot flood a terminal or
-log sink.
+log sink. Learning-option evidence deduplicates source URLs by a normalized
+HTTPS identity (host, default port, decoded path, and trailing slash), so
+equivalent public URLs cannot masquerade as independent options.
 Renderer modules can also be imported directly from an installed checkout;
 sibling safety helpers resolve relative to the module when no `PYTHONPATH` is
 configured.
@@ -165,8 +167,13 @@ vacancy card also retains its location, arrangement, and source type, while a
 separate boundary states that eligibility and work authorization are not
 inferred.
 Each card also exposes a passive, accessible link to its validated public source
-and the sample's research date. The link is for auditability only: it does not
-open an application flow, send a message, or authorize any external action.
+and the sample's research date. New builder output preserves the access date,
+publication date when known, a 90-day freshness window, and an explicit
+`current`/`unknown` reason. Unknown publication dates are rendered as
+“publication date: unknown” and never presented as current; the source link's
+accessible name includes the vacancy title for auditability. The link is for
+auditability only: it does not open an application flow, send a message, or
+authorize any external action.
 Canonical source labels remain localized for `official_employer`,
 `employer_operated_ats`, and `linkedin_jobs_backup`.
 The follow-through checkpoint validator also exposes a pure `replay_fingerprint`

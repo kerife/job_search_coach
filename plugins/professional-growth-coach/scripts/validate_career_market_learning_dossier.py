@@ -63,6 +63,23 @@ TOP_FIELDS = frozenset({
     "recurrence_rows", "learning_state", "learning_decisions", "methodology_boundary",
     "privacy_boundary", "no_external_action",
 })
+BASE_CARD_FIELDS = frozenset({
+    "vacancy_id", "employer_name", "title", "location", "arrangement", "source_kind", "source_url",
+    "requirements", "earned_points", "maximum_points", "known_points", "alignment_percent",
+    "evidence_coverage_percent", "interpretation", "qualitative_band",
+})
+FRESHNESS_FIELDS = frozenset({
+    "access_date", "publication_date", "freshness_status", "freshness_basis",
+    "freshness_window_days", "freshness_reason",
+})
+FRESHNESS_STATUSES = frozenset({"current", "unknown"})
+FRESHNESS_BASES = frozenset({"publication_date", "access_date", "unknown"})
+FRESHNESS_REASONS = frozenset({
+    "publication_date_within_window",
+    "publication_date_unknown_verified_open_on_access_date",
+    "outside_window",
+    "source_status_unknown",
+})
 
 
 def rounded_percent(numerator: int, denominator: int) -> int:
@@ -127,13 +144,20 @@ def recurrence_rows(vacancies: Sequence[object], bindings: Mapping[str, object])
     return sorted(rows, key=lambda row: (-int(row["occurrences"]), str(row["signal"])))
 
 
-def _closed(value: object, path: str, fields: frozenset[str], errors: list[str]) -> Mapping[str, object] | None:
+def _closed(
+    value: object,
+    path: str,
+    fields: frozenset[str],
+    errors: list[str],
+    *,
+    required_fields: frozenset[str] | None = None,
+) -> Mapping[str, object] | None:
     if not isinstance(value, Mapping):
         errors.append(f"{path} must be an object")
         return None
     if set(value) - fields:
         errors.append(f"{path} has unsupported fields")
-    if fields - set(value):
+    if (required_fields if required_fields is not None else fields) - set(value):
         errors.append(f"{path} is missing required fields")
     return value
 
@@ -317,7 +341,13 @@ def validate_market_dossier(value: object) -> list[str]:
         else:
             seen_cards: set[str] = set()
             for index, item in enumerate(cards_value):
-                row = _closed(item, f"vacancy_cards[{index}]", frozenset({"vacancy_id", "employer_name", "title", "location", "arrangement", "source_kind", "source_url", "requirements", "earned_points", "maximum_points", "known_points", "alignment_percent", "evidence_coverage_percent", "interpretation", "qualitative_band"}), errors)
+                row = _closed(
+                    item,
+                    f"vacancy_cards[{index}]",
+                    BASE_CARD_FIELDS | FRESHNESS_FIELDS,
+                    errors,
+                    required_fields=BASE_CARD_FIELDS,
+                )
                 if row is None:
                     continue
                 vacancy_id = row.get("vacancy_id")
@@ -336,6 +366,35 @@ def validate_market_dossier(value: object) -> list[str]:
                 if source_error:
                     errors.append(source_error if "reserved domain" in source_error else f"vacancy_cards[{index}].source_url is invalid")
                 requirements = _card_requirements(row.get("requirements"), f"vacancy_cards[{index}].requirements", errors)
+                present_freshness = FRESHNESS_FIELDS & set(row)
+                if present_freshness:
+                    if present_freshness != FRESHNESS_FIELDS:
+                        errors.append(f"vacancy_cards[{index}] freshness fields must be complete")
+                    access_date = _date(row.get("access_date"), f"vacancy_cards[{index}].access_date", errors)
+                    as_of_date = _date(value.get("as_of_date"), "as_of_date", errors)
+                    if access_date and as_of_date and access_date != as_of_date:
+                        errors.append(f"vacancy_cards[{index}].access_date must equal as_of_date")
+                    publication = row.get("publication_date")
+                    publication_date = None if publication is None else _date(publication, f"vacancy_cards[{index}].publication_date", errors)
+                    if publication_date and as_of_date and publication_date > as_of_date:
+                        errors.append(f"vacancy_cards[{index}].publication_date cannot be after as_of_date")
+                    status = row.get("freshness_status")
+                    if status not in FRESHNESS_STATUSES:
+                        errors.append(f"vacancy_cards[{index}].freshness_status has invalid value")
+                    if row.get("freshness_basis") not in FRESHNESS_BASES:
+                        errors.append(f"vacancy_cards[{index}].freshness_basis has invalid value")
+                    window = row.get("freshness_window_days")
+                    if type(window) is not int or not 1 <= window <= 365:
+                        errors.append(f"vacancy_cards[{index}].freshness_window_days has invalid value")
+                    if row.get("freshness_reason") not in FRESHNESS_REASONS:
+                        errors.append(f"vacancy_cards[{index}].freshness_reason has invalid value")
+                    if status == "current" and publication_date is None:
+                        errors.append(f"vacancy_cards[{index}].freshness_status cannot be current without publication_date")
+                    if status == "current" and publication_date and as_of_date and type(window) is int:
+                        if not 0 <= (as_of_date - publication_date).days <= window:
+                            errors.append(f"vacancy_cards[{index}].freshness_status does not reconcile with publication_date")
+                    if row.get("freshness_reason") == "publication_date_unknown_verified_open_on_access_date" and publication_date is not None:
+                        errors.append(f"vacancy_cards[{index}].freshness_reason requires unknown publication_date")
                 row = dict(row)
                 row["requirements"] = requirements
                 cards.append(row)

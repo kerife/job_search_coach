@@ -25,8 +25,11 @@ When a validated market-learning dossier is supplied, each vacancy card adds
 location, arrangement, source type, alignment, evidence coverage, and a
 qualitative band, plus a passive public-source link and the sample research
 date; learning decision cards expose provider/source provenance and recorded
-unknowns. Directional evidence and non-inferred eligibility remain visible
-boundaries. Source labels are localized from the closed market enums.
+unknowns. Each new vacancy card also renders a textual access/publication
+freshness line (90-day window, or an explicit unknown publication date) and a
+title-contextual accessible source name. Directional evidence and
+non-inferred eligibility remain visible boundaries. Source labels are localized
+from the closed market enums.
 At screen widths up to 680px, its signal cells stack with localized labels;
 print keeps the semantic table layout and no horizontal-scroll affordance is
 required.

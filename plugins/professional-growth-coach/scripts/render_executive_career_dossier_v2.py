@@ -11,6 +11,7 @@ import json
 import os
 import sys
 from collections.abc import Mapping
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -213,6 +214,13 @@ COPY = {
         "market_source_kind": "Tipo de fuente",
         "market_source": "Ver fuente pública",
         "market_researched": "Fecha de investigación",
+        "market_access_checked": "Verificada abierta al",
+        "market_publication_date": "Publicada",
+        "market_publication_unknown": "Fecha de publicación: desconocida",
+        "market_freshness": "Vigencia",
+        "market_freshness_current": "actual",
+        "market_freshness_unconfirmed": "no confirmada",
+        "market_freshness_window": "ventana",
         "market_eligibility_boundary": "La elegibilidad y la autorización laboral no se infieren.",
         "market_evidence_coverage": "Cobertura de evidencia",
         "market_qualitative_band": "Banda cualitativa",
@@ -281,6 +289,13 @@ COPY = {
         "market_source_kind": "Source type",
         "market_source": "View public source",
         "market_researched": "Research date",
+        "market_access_checked": "Verified open when checked",
+        "market_publication_date": "Published",
+        "market_publication_unknown": "Publication date: unknown",
+        "market_freshness": "Freshness",
+        "market_freshness_current": "current",
+        "market_freshness_unconfirmed": "unconfirmed",
+        "market_freshness_window": "window",
         "market_eligibility_boundary": "Eligibility and work authorization are not inferred.",
         "market_evidence_coverage": "Evidence coverage",
         "market_qualitative_band": "Qualitative band",
@@ -644,10 +659,31 @@ def _render_market_context(market_dossier: Mapping[str, object], locale: str) ->
         vacancy_context = f'<dl class="market-vacancy-context">{"".join(context_rows)}</dl>' if context_rows else ""
         source_url = html.escape(str(card["source_url"]), quote=True)
         researched_date = html.escape(str(market_dossier["as_of_date"]), quote=True)
+        freshness_text = ""
+        access_date = card.get("access_date")
+        freshness_status = card.get("freshness_status")
+        if access_date is not None and freshness_status in {"current", "unknown"}:
+            access_display = html.escape(str(access_date), quote=True)
+            publication = card.get("publication_date")
+            if publication is None:
+                publication_text = labels["market_publication_unknown"]
+            else:
+                publication_display = html.escape(str(publication), quote=True)
+                publication_text = f'{labels["market_publication_date"]}: {publication_display}'
+            status_label = labels["market_freshness_current"] if freshness_status == "current" else labels["market_freshness_unconfirmed"]
+            window = card.get("freshness_window_days")
+            age_text = ""
+            if publication is not None and window is not None:
+                try:
+                    age_days = (date.fromisoformat(str(market_dossier["as_of_date"])) - date.fromisoformat(str(publication))).days
+                    age_text = f" ({age_days} {'días' if locale == 'es' else 'days'} / {labels['market_freshness_window']} {int(window)} {'días' if locale == 'es' else 'days'})"
+                except (TypeError, ValueError):
+                    age_text = ""
+            freshness_text = f'<span class="market-freshness">{labels["market_access_checked"]} {access_display} · {publication_text} · {labels["market_freshness"]}: {status_label}{age_text}</span>'
         source_meta = (
-            f'<p class="market-source-meta"><a class="market-source-link" href="{source_url}" rel="noreferrer">'
+            f'<p class="market-source-meta"><a class="market-source-link" href="{source_url}" rel="noreferrer" aria-label="{labels["market_source"]}: {title}">'
             f'{labels["market_source"]}</a><span>{labels["market_researched"]}: '
-            f'<time datetime="{researched_date}">{researched_date}</time></span></p>'
+            f'<time datetime="{researched_date}">{researched_date}</time></span>{freshness_text}</p>'
         )
         card_html.append(f'''<article class="vacancy-alignment-card" aria-labelledby="{heading_id}">
           <p class="market-vacancy-key">{short_key}</p><h3 id="{heading_id}">{employer} — {title}</h3>

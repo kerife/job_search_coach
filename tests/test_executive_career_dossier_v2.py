@@ -829,6 +829,41 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         self.assertNotIn("snap-market-sha256", rendered)
         self.assertNotIn("E-001", visible_text(rendered))
 
+    def test_market_cards_render_per_vacancy_freshness_and_contextual_source_names(self) -> None:
+        dossier = make_v2_dossier("es")
+        market = make_composable_market_dossier("complete-five-es.json", dossier)
+        for card in market["vacancy_cards"]:
+            card.update({
+                "access_date": market["as_of_date"],
+                "publication_date": "2026-08-05",
+                "freshness_status": "current",
+                "freshness_basis": "publication_date",
+                "freshness_window_days": 90,
+                "freshness_reason": "publication_date_within_window",
+            })
+        rendered = self.renderer.render_dossier_html(dossier, market)
+        visible = visible_text(rendered)
+        self.assertEqual(5, visible.count("Verificada abierta al"))
+        self.assertEqual(5, visible.count("Publicada"))
+        self.assertEqual(5, visible.count("Vigencia"))
+        self.assertIn('aria-label="Ver fuente pública: Reliability Engineer"', rendered)
+
+        english = make_v2_dossier("en")
+        english_market = make_composable_market_dossier("limited-four-en.json", english)
+        english_market["vacancy_cards"][0].update({
+            "access_date": english_market["as_of_date"],
+            "publication_date": None,
+            "freshness_status": "unknown",
+            "freshness_basis": "unknown",
+            "freshness_window_days": 90,
+            "freshness_reason": "publication_date_unknown_verified_open_on_access_date",
+        })
+        english_rendered = self.renderer.render_dossier_html(english, english_market)
+        english_visible = visible_text(english_rendered)
+        self.assertIn("Publication date: unknown", english_visible)
+        self.assertIn("Freshness: unconfirmed", english_visible)
+        self.assertIn('aria-label="View public source: Reliability Engineer"', english_rendered)
+
     def test_market_source_kind_enums_are_localized_and_not_exposed_raw(self) -> None:
         dossier = make_v2_dossier("en")
         market = make_composable_market_dossier("complete-five-es.json", dossier)

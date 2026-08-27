@@ -15,8 +15,8 @@ bash scripts/bootstrap_release_validation.sh
 The executable release runner verifies these SHA-256 digests before either
 validator can execute:
 
-- `quick_validate.py`: `6cc9dc3199c935916cf6f73fcbbbb0e3bb1b58c8f5109fefa499978908164f51`
-- `validate_plugin.py`: `ebda00d55d7518b127f675f062fb5c6e7a1ffdc0a99df1a55ac594400d7d3228`
+- `quick_validate.py`: `1fd66498c219616fd9249eacdf16c458412ea9065a9d887fd716aeef03907762`
+- `validate_plugin.py`: `6ff4bc1cc8ca94827c30c8299951efdac900ff38a5069c03e9a6554fc194a723`
 
 With `CODEX_SYSTEM_SKILLS_ROOT` set to the system skills directory, run:
 
