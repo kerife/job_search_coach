@@ -44,18 +44,47 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
             "manual_reenter_private_prep": "Re-enter private preparation manually.",
             "clarify_context_before_reply": "Clarify only the missing context before replying.",
             "route_to_prepare-role-interviews": "Re-enter private preparation manually to review the reported next step.",
+            "debrief_after_screen": "Record what was discussed and what remains unknown, privately.",
         }
         for action, expected_copy in expected.items():
             with self.subTest(action=action):
                 item = copy.deepcopy(self.item)
                 item.update(
                     action_state="accepted" if action == "manual_reenter_private_prep" else "deferred" if action == "clarify_context_before_reply" else "completed",
-                    next_measurement_event="unknown" if action != "route_to_prepare-role-interviews" else "screen_prepared",
+                    next_measurement_event="unknown" if action in {"manual_reenter_private_prep", "clarify_context_before_reply"} else "screen_attended" if action == "debrief_after_screen" else "screen_prepared",
                     next_safe_action=action,
                 )
                 rendered = renderer.render_checkpoint_html(item, self.receipt, as_of=dt.date(2026, 8, 8))
                 self.assertIn(expected_copy, rendered)
                 self.assertEqual(rendered.count('class="continuity-rail"'), 1)
+
+    def test_screen_attended_uses_private_debrief_action_and_never_promises_follow_up(self):
+        expected = {
+            "en": (
+                "Debrief the screen privately",
+                "Record what was discussed and what remains unknown, privately.",
+                "Review the debrief before any follow-up.",
+            ),
+            "es": (
+                "Haz un debrief privado del filtro",
+                "Registra en privado lo que se habló y lo que sigue desconocido.",
+                "Revisa el debrief antes de cualquier seguimiento.",
+            ),
+        }
+        for locale, copy_set in expected.items():
+            with self.subTest(locale=locale):
+                item = copy.deepcopy(self.item)
+                item.update(
+                    locale=locale,
+                    action_state="completed",
+                    next_measurement_event="screen_attended",
+                    next_safe_action="debrief_after_screen",
+                )
+                rendered = renderer.render_checkpoint_html(item, self.receipt, as_of=dt.date(2026, 8, 8))
+                for text in copy_set:
+                    self.assertIn(text, rendered)
+                self.assertNotIn("Clarify context before replying", rendered)
+                self.assertNotRegex(rendered, r"(?i)send|schedule|calendar|auto-start|contact")
 
     def test_stop_action_uses_terminal_recorded_rail_without_continuation_copy(self):
         stop_receipt = json.loads(
@@ -74,10 +103,18 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
                 "event_type": stop_receipt["event_type"],
             },
         )
-        rendered = renderer.render_checkpoint_html(item, stop_receipt, as_of=dt.date(2026, 8, 8))
-        self.assertIn("Recorded", rendered)
-        self.assertIn("recorded privately", rendered)
-        self.assertNotRegex(rendered, r"(?i)continuation|continue|manual action|continúa|acción manual")
+        for locale in ("en", "es"):
+            with self.subTest(locale=locale):
+                localized = copy.deepcopy(item)
+                localized["locale"] = locale
+                rendered = renderer.render_checkpoint_html(localized, stop_receipt, as_of=dt.date(2026, 8, 8))
+                body = rendered.split("</style>", 1)[1]
+                self.assertEqual(body.count('class="continuity-rail"'), 1)
+                self.assertEqual(body.count('data-terminal="true"'), 1)
+                self.assertEqual(body.count("continuity-step--recorded"), 1)
+                self.assertIn("Recorded" if locale == "en" else "Registrado", rendered)
+                self.assertIn("recorded privately" if locale == "en" else "queda registrado en privado", rendered)
+                self.assertNotRegex(rendered, r"(?i)continuation|continue|manual action|continúa|acción manual")
     def test_cli_normalizes_invalid_as_of_to_input_error(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "out.html"
@@ -104,7 +141,7 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
         }
 
     def test_all_states_and_locales_use_fixed_labels_and_omit_private_values(self):
-        mapping = [("accepted", "unknown", "manual_reenter_private_prep"), ("deferred", "unknown", "clarify_context_before_reply"), ("declined", "unknown", "record_stop_decision"), ("completed", "screen_prepared", "route_to_prepare-role-interviews")]
+        mapping = [("accepted", "unknown", "manual_reenter_private_prep"), ("deferred", "unknown", "clarify_context_before_reply"), ("declined", "unknown", "record_stop_decision"), ("completed", "screen_prepared", "route_to_prepare-role-interviews"), ("completed", "screen_attended", "debrief_after_screen")]
         for locale in ("en", "es"):
             for state, event, action in mapping:
                 item = copy.deepcopy(self.item); item.update(locale=locale, action_state=state, next_measurement_event=event, next_safe_action=action)

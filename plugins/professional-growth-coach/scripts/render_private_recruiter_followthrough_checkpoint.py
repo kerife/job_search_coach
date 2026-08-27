@@ -42,7 +42,7 @@ LABELS = {
         "manual_next_step_heading": "Manual next step", "manual_next_step_body": "Return to the private Codex conversation and re-enter preparation manually to review the reported request. This receipt does not contact, send, or schedule anything.",
         "states": {"accepted": "Accepted", "deferred": "Deferred", "declined": "Declined", "completed": "Completed"},
         "events": {"screen_prepared": "Screen prepared", "screen_attended": "Screen attended", "interview_requested": "Interview request observed", "stop_decision": "Stop decision", "unknown": "Not specified"},
-        "actions": {"manual_reenter_private_prep": "Re-enter private preparation manually", "clarify_context_before_reply": "Clarify context before replying", "record_stop_decision": "Record the stop decision", "route_to_prepare-role-interviews": "Route to interview preparation"},
+        "actions": {"manual_reenter_private_prep": "Re-enter private preparation manually", "clarify_context_before_reply": "Clarify context before replying", "debrief_after_screen": "Debrief the screen privately", "record_stop_decision": "Record the stop decision", "route_to_prepare-role-interviews": "Route to interview preparation"},
     },
     "es": {
         "title": "Punto de control privado de seguimiento del reclutador", "skip": "Ir al punto de control",
@@ -52,7 +52,7 @@ LABELS = {
         "manual_next_step_heading": "Siguiente paso manual", "manual_next_step_body": "Regresa a la conversación privada de Codex y vuelve a entrar manualmente a la preparación para revisar la solicitud reportada. Este recibo no contacta, envía ni agenda nada.",
         "states": {"accepted": "Aceptado", "deferred": "Pospuesto", "declined": "Rechazado", "completed": "Completado"},
         "events": {"screen_prepared": "Filtro preparado", "screen_attended": "Filtro atendido", "interview_requested": "Solicitud de entrevista observada", "stop_decision": "Decisión de detenerse", "unknown": "No especificado"},
-        "actions": {"manual_reenter_private_prep": "Reingresa manualmente a la preparación privada", "clarify_context_before_reply": "Aclara el contexto antes de responder", "record_stop_decision": "Registra la decisión de detenerse", "route_to_prepare-role-interviews": "Dirige a preparación de entrevista"},
+        "actions": {"manual_reenter_private_prep": "Reingresa manualmente a la preparación privada", "clarify_context_before_reply": "Aclara el contexto antes de responder", "debrief_after_screen": "Haz un debrief privado del filtro", "record_stop_decision": "Registra la decisión de detenerse", "route_to_prepare-role-interviews": "Dirige a preparación de entrevista"},
     },
 }
 
@@ -79,6 +79,11 @@ ACTION_RAIL_COPY = {
             "kicker": "Safe clarification route",
             "steps": (("receipt", "current", "Receipt", "The supplied checkpoint is recorded."), ("safe-step", "current", "Clarify context", "Clarify only the missing context before replying."), ("review", "blocked", "Manual review", "Re-enter the private conversation manually before replying.")),
         },
+        "debrief_after_screen": {
+            "title": "Debrief the screen privately",
+            "kicker": "Manual debrief route",
+            "steps": (("receipt", "current", "Receipt", "The supplied checkpoint is recorded."), ("safe-step", "current", "Debrief", "Record what was discussed and what remains unknown, privately."), ("review", "blocked", "Manual review", "Review the debrief before any follow-up.")),
+        },
         "route_to_prepare-role-interviews": {
             "title": "Route to private preparation",
             "kicker": "Safe preparation route",
@@ -100,6 +105,11 @@ ACTION_RAIL_COPY = {
             "title": "Aclara el contexto antes de responder",
             "kicker": "Ruta segura de aclaración",
             "steps": (("receipt", "current", "Recibo", "El punto de control reportado queda registrado."), ("safe-step", "current", "Aclaración", "Aclara solo el contexto faltante antes de responder."), ("review", "blocked", "Revisión manual", "Vuelve a entrar manualmente a la conversación privada antes de responder.")),
+        },
+        "debrief_after_screen": {
+            "title": "Haz un debrief privado del filtro",
+            "kicker": "Ruta manual de debrief",
+            "steps": (("receipt", "current", "Recibo", "El punto de control reportado queda registrado."), ("safe-step", "current", "Debrief", "Registra en privado lo que se habló y lo que sigue desconocido."), ("review", "blocked", "Revisión manual", "Revisa el debrief antes de cualquier seguimiento.")),
         },
         "route_to_prepare-role-interviews": {
             "title": "Dirige a preparación privada",

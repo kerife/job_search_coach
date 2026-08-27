@@ -133,6 +133,12 @@ auto-start preparation, or create a message, calendar, or other external
 action. Its surface token remains readable in dark mode and its borders/text
 remain explicit in print, forced-colors, and higher-contrast modes.
 
+After a completed `screen_attended` checkpoint, the rail now uses the closed
+`debrief_after_screen` action: the candidate can privately record what was
+discussed and what remains unknown, then review it before any follow-up. This
+is still manual-only and does not send, schedule, auto-start preparation, or
+retain the screen conversation.
+
 When feedback is available, the practice rail remains the same three-step
 private map but reflects the validated governing label in its final state:
 `pending` for `solid`, or `blocked` for `confirm` and `do_not_assert`. Its

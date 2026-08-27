@@ -165,6 +165,8 @@ def _expected_action(state: object, event: object, receipt_event: object = None)
     if state == "completed":
         if event in {"screen_prepared", "interview_requested"}:
             return "route_to_prepare-role-interviews"
+        if event == "screen_attended":
+            return "debrief_after_screen"
         if event == "stop_decision":
             return "record_stop_decision"
         return "clarify_context_before_reply"
@@ -235,7 +237,7 @@ def validate_checkpoint(value: object, receipt: object, *, as_of: dt.date | None
         for key, expected in DELIVERY.items():
             if type(delivery.get(key)) is not type(expected) or delivery.get(key) != expected:
                 errors.append(f"delivery.{key} has immutable value")
-    structural = {SCHEMA_VERSION, "private_recruiter_followthrough_checkpoint", "en", "es", *STATES, *EVENTS, *DELIVERY.values(), *validator.EVENTS, *validator.ACTION_BY_EVENT.values(), "observed_candidate_reported", "draft-v1"}
+    structural = {SCHEMA_VERSION, "private_recruiter_followthrough_checkpoint", "en", "es", *STATES, *EVENTS, *DELIVERY.values(), *validator.EVENTS, *validator.ACTION_BY_EVENT.values(), "debrief_after_screen", "observed_candidate_reported", "draft-v1"}
     prose = "\n".join(text for text in _walk_strings(item) if text not in structural and not re.fullmatch(r"(?:D|F)-\d{3}|\d{4}-\d{2}-\d{2}", text))
     if FORBIDDEN.search(prose):
         errors.append("checkpoint contains forbidden raw, identity, action, outcome, answer, or score prose")

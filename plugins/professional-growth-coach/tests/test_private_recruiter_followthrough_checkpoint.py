@@ -82,7 +82,7 @@ class FollowthroughCheckpointContractTests(unittest.TestCase):
             ("completed", "screen_prepared", "route_to_prepare-role-interviews"),
             ("completed", "interview_requested", "route_to_prepare-role-interviews"),
             ("completed", "stop_decision", "record_stop_decision"),
-            ("completed", "screen_attended", "clarify_context_before_reply"),
+            ("completed", "screen_attended", "debrief_after_screen"),
         ]:
             item = copy.deepcopy(self.valid)
             item.update(action_state=state, next_measurement_event=event, next_safe_action=action)
@@ -270,6 +270,7 @@ class FollowthroughCheckpointContractTests(unittest.TestCase):
         for state, action in (("accepted", "manual_reenter_private_prep"), ("deferred", "clarify_context_before_reply"), ("declined", "record_stop_decision"), ("completed", "route_to_prepare-role-interviews")):
             self.assertIn(state, serialized)
             self.assertIn(action, serialized)
+        self.assertIn("debrief_after_screen", serialized)
         self.assertIn("unknown", serialized)
 
     def test_schema_dates_declare_format_date(self):

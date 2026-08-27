@@ -31,7 +31,8 @@ Create `private_recruiter_followthrough_checkpoint_v1`, a closed artifact with:
   deferred → `clarify_context_before_reply`; declined → `record_stop_decision`;
   completed with `screen_prepared`/`interview_requested` →
   `route_to_prepare-role-interviews`; completed with `stop_decision` →
-  `record_stop_decision`; all other completed cases →
+  `record_stop_decision`; completed with `screen_attended` →
+  `debrief_after_screen`; all other completed cases →
   `clarify_context_before_reply`.
 - For `accepted`, `deferred`, and `declined`, `next_measurement_event` must be
   `unknown`; only `completed` may name a concrete next event. A source

@@ -179,6 +179,33 @@ class SuperdesignThemeAssetParityTests(unittest.TestCase):
                     r"\.continuity-step--recorded\s*\{[^}]*border-color:\s*CanvasText;[^}]*color:\s*CanvasText;[^}]*border-style:\s*double;",
                 )
 
+    def test_compact_blocked_rails_use_dashed_state_across_accessibility_modes(self):
+        for name in (
+            "private-recruiter-followthrough-checkpoint-v1.css",
+            "private-recruiter-conversion-outcome-v1.css",
+        ):
+            with self.subTest(name=name):
+                css = (ASSETS / name).read_text(encoding="utf-8")
+                self.assertRegex(
+                    css,
+                    r"\.continuity-step--blocked\s*\{[^}]*border-left:\s*\.25rem dashed var\(--accent\);",
+                )
+                dark = css[css.index("@media screen and (prefers-color-scheme: dark)") : css.index("@page")]
+                self.assertRegex(
+                    dark,
+                    r"\.continuity-step--blocked\s*\{[^}]*border-left-color:\s*var\(--accent\);[^}]*border-left-style:\s*dashed;",
+                )
+                contrast = css[css.index("@media (prefers-contrast: more)") :]
+                self.assertRegex(
+                    contrast,
+                    r"\.continuity-step--blocked\s*\{[^}]*border-left:\s*\.5rem dashed var\(--ink\);",
+                )
+                forced = css[css.index("@media (forced-colors: active)") :]
+                self.assertRegex(
+                    forced,
+                    r"\.continuity-step--blocked\s*\{[^}]*border-left:\s*\.25rem dashed CanvasText;",
+                )
+
     def test_theme_dump_set_covers_every_shipped_css_asset(self):
         self.assertEqual(
             _theme_asset_names(),

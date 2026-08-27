@@ -13,13 +13,15 @@ The conversion receipt is a candidate-supplied observation only: one dated event
 
 ### Follow-through checkpoint (candidate-supplied, manual)
 
-When a separately supplied `private-recruiter-conversion-outcome-v1` receipt is followed by a `private-recruiter-followthrough-checkpoint-v1`, validate the receipt first and require exact source fields and event/action identity. The checkpoint is replay-safe: reprocessing the same receipt and checkpoint is idempotent and must not append a second event, change the CSV, aggregate candidates, or advance a route. A completed `screen_requested` or `interview_requested` observation may offer only a manual, explicit handoff to `prepare-role-interviews`; it does not start preparation or transfer an execution packet. `accepted` and `deferred` remain manual checkpoints, while `declined` and any `stop_decision` source block interview preparation and route only to recording the stop. Unknown or non-completed measurement events stay unknown. The ordinary CSV measurement path and ordinary recruiter-reply routes remain unchanged when this explicit pair of private artifacts is absent. No auto-start, send, schedule, calendar action, score, causality, outcome guarantee, or candidate aggregation is allowed.
+When a separately supplied `private-recruiter-conversion-outcome-v1` receipt is followed by a `private-recruiter-followthrough-checkpoint-v1`, validate the receipt first and require exact source fields and event/action identity. The checkpoint is replay-safe: reprocessing the same receipt and checkpoint is idempotent and must not append a second event, change the CSV, aggregate candidates, or advance a route. A completed `screen_requested` or `interview_requested` observation may offer only a manual, explicit handoff to `prepare-role-interviews`; a completed `screen_attended` observation offers only the manual `debrief_after_screen` cue to record what was discussed and what remains unknown. These cues do not start preparation, transfer an execution packet, send, or schedule follow-up. `accepted` and `deferred` remain manual checkpoints, while `declined` and any `stop_decision` source block interview preparation and route only to recording the stop. Unknown or non-completed measurement events stay unknown. The ordinary CSV measurement path and ordinary recruiter-reply routes remain unchanged when this explicit pair of private artifacts is absent. No auto-start, send, schedule, calendar action, score, causality, outcome guarantee, or candidate aggregation is allowed.
 
 The rendered receipt and checkpoint make that continuity legible with a static
-three-stage rail: recorded source, bounded route, and manual action. States are
-textual as well as visual and remain safe in narrow, print, forced-color, and
-high-contrast modes. This is a reading aid only; it does not change the
-checkpoint contract or authorize the next module.
+three-stage rail for non-terminal routes: recorded source, bounded route, and
+manual action. A `record_stop_decision` route is terminal and uses one recorded
+stage instead of a continuation rail. States are textual as well as visual and
+remain safe in narrow, print, forced-color, and high-contrast modes. This is a
+reading aid only; it does not change the checkpoint contract or authorize the
+next module.
 
 ## Required boundaries
 

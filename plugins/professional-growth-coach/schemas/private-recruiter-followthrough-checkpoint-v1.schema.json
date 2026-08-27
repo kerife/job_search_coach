@@ -13,7 +13,7 @@
     "action_state": {"enum": ["accepted", "deferred", "declined", "completed"]},
     "observed_date": {"type": "string", "format": "date", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
     "next_measurement_event": {"enum": ["screen_prepared", "screen_attended", "interview_requested", "stop_decision", "unknown"]},
-    "next_safe_action": {"enum": ["manual_reenter_private_prep", "clarify_context_before_reply", "record_stop_decision", "route_to_prepare-role-interviews"]},
+    "next_safe_action": {"enum": ["manual_reenter_private_prep", "clarify_context_before_reply", "debrief_after_screen", "record_stop_decision", "route_to_prepare-role-interviews"]},
     "delivery": {"$ref": "#/$defs/delivery"}
   },
   "allOf": [
@@ -22,7 +22,7 @@
     {"if": {"properties": {"action_state": {"const": "declined"}}, "required": ["action_state"]}, "then": {"properties": {"next_measurement_event": {"const": "unknown"}, "next_safe_action": {"const": "record_stop_decision"}}}},
     {"if": {"properties": {"action_state": {"const": "completed"}, "next_measurement_event": {"enum": ["screen_prepared", "interview_requested"]}}, "required": ["action_state", "next_measurement_event"]}, "then": {"properties": {"next_safe_action": {"const": "route_to_prepare-role-interviews"}}}},
     {"if": {"properties": {"action_state": {"const": "completed"}, "next_measurement_event": {"const": "stop_decision"}}, "required": ["action_state", "next_measurement_event"]}, "then": {"properties": {"next_safe_action": {"const": "record_stop_decision"}}}},
-    {"if": {"properties": {"action_state": {"const": "completed"}, "next_measurement_event": {"const": "screen_attended"}}, "required": ["action_state", "next_measurement_event"]}, "then": {"properties": {"next_safe_action": {"const": "clarify_context_before_reply"}}}},
+    {"if": {"properties": {"action_state": {"const": "completed"}, "next_measurement_event": {"const": "screen_attended"}}, "required": ["action_state", "next_measurement_event"]}, "then": {"properties": {"next_safe_action": {"const": "debrief_after_screen"}}}},
     {"if": {"properties": {"action_state": {"const": "completed"}, "next_measurement_event": {"const": "unknown"}}, "required": ["action_state", "next_measurement_event"]}, "then": {"properties": {"next_safe_action": {"const": "clarify_context_before_reply"}}}}
   ],
   "$defs": {

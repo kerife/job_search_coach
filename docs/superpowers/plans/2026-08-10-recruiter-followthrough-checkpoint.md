@@ -13,7 +13,7 @@
 - Source receipt is required and must validate before checkpoint validation.
 - Source receipt fields are closed: schema version, artifact kind, `D-###` ID, source version, and event type must match exactly.
 - States are exactly `accepted`, `deferred`, `declined`, `completed`.
-- Events are exactly `screen_prepared`, `screen_attended`, `interview_requested`, `stop_decision`, `unknown`.
+- Events are exactly `screen_prepared`, `screen_attended`, `interview_requested`, `stop_decision`, `unknown`; completed `screen_attended` uses the closed `debrief_after_screen` manual action.
 - Non-completed states require `next_measurement_event=unknown`; a source stop may only be declined/completed. Dates are real ISO dates, checkpoint date is on/after receipt date, and both are no later than injected `as_of`.
 - IDs stay in JSON only; HTML omits all IDs and raw data.
 - No auto-start, module packet, send, calendar, score, answer, outcome guarantee, CSV update, or candidate aggregation.

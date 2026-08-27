@@ -48,12 +48,19 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
                 self.assertNotIn("continuation", rendered.lower())
 
     def test_stop_action_uses_terminal_recorded_rail_without_continuation_copy(self):
-        rendered = render_outcome_html(
-            load_outcome(FIXTURES / "stop-decision-en.json"), today=dt.date(2026, 8, 9)
-        )
-        self.assertIn("Recorded", rendered)
-        self.assertIn("recorded privately", rendered)
-        self.assertNotRegex(rendered, r"(?i)continuation|continue|manual action|continúa|acción manual")
+        source = load_outcome(FIXTURES / "stop-decision-en.json")
+        for locale in ("en", "es"):
+            with self.subTest(locale=locale):
+                item = copy.deepcopy(source)
+                item["locale"] = locale
+                rendered = render_outcome_html(item, today=dt.date(2026, 8, 9))
+                body = rendered.split("</style>", 1)[1]
+                self.assertEqual(body.count('class="continuity-rail"'), 1)
+                self.assertEqual(body.count('data-terminal="true"'), 1)
+                self.assertEqual(body.count("continuity-step--recorded"), 1)
+                self.assertIn("Recorded" if locale == "en" else "Registrado", rendered)
+                self.assertIn("recorded privately" if locale == "en" else "queda registrado en privado", rendered)
+                self.assertNotRegex(rendered, r"(?i)continuation|continue|manual action|continúa|acción manual")
     def test_cli_normalizes_invalid_as_of_to_input_error(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "out.html"
