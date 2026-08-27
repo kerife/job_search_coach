@@ -129,6 +129,41 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
         self.assertNotIn("D-104", rendered)
         self.assertNotIn("F-105", rendered)
 
+    def test_first_screen_readiness_card_exposes_manual_conditions_in_both_locales(self):
+        for locale in ("es", "en"):
+            for fact_state in ("verified", "candidate_reported"):
+                session = self._feedback_session([self._observation("solid")])
+                session["locale"] = locale
+                session["question"]["kind"] = "screen_opening"
+                session["facts"][0]["state"] = fact_state
+                with self.subTest(locale=locale, fact_state=fact_state):
+                    rendered = renderer.render_session_html(session)
+                    self.assertEqual(rendered.count('class="screen-readiness"'), 1)
+                    readiness = rendered.split(
+                        '<section class="screen-readiness"', 1
+                    )[1].split("</section>", 1)[0]
+                    expected = {
+                        "es": {
+                            "title": "Preparación de primera conversación",
+                            "stage": "Filtro inicial",
+                            "evidence": "Confirmada" if fact_state == "verified" else "Por confirmar",
+                            "boundary": "Solo preparación privada",
+                            "next": "Revisión privada antes de cualquier acción externa",
+                        },
+                        "en": {
+                            "title": "First-conversation readiness",
+                            "stage": "Recruiter screen",
+                            "evidence": "Confirmed" if fact_state == "verified" else "Needs confirmation",
+                            "boundary": "Private preparation only",
+                            "next": "Private review before any external action",
+                        },
+                    }[locale]
+                    for value in expected.values():
+                        self.assertIn(value, readiness)
+                    self.assertIn('data-state="current"', readiness)
+                    self.assertIn('data-state="pending"', readiness)
+                    self.assertNotRegex(readiness, r"\b(?:Q|R|F|C|E|OBS|RB)-\d{3}\b")
+
     def test_decision_field_labels_are_exact_in_both_locales(self):
         expected_labels = {
             "es": (

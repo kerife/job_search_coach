@@ -286,6 +286,42 @@ CONTINUITY_COPY = {
 }
 
 
+READINESS_COPY = {
+    "en": {
+        "title": "First-conversation readiness",
+        "kicker": "Before rehearsal",
+        "intro": "Check the minimum conditions for a private recruiter-screen practice.",
+        "stage_label": "Stage",
+        "stage_value": "Recruiter screen",
+        "evidence_label": "Evidence",
+        "evidence_verified": "Confirmed",
+        "evidence_candidate_reported": "Needs confirmation",
+        "boundary_label": "Boundary",
+        "boundary_value": "Private preparation only",
+        "next_label": "Next",
+        "next_value": "Private review before any external action",
+        "current": "Current",
+        "pending": "Pending",
+    },
+    "es": {
+        "title": "Preparación de primera conversación",
+        "kicker": "Antes de ensayar",
+        "intro": "Comprueba las condiciones mínimas para una práctica privada de filtro inicial.",
+        "stage_label": "Etapa",
+        "stage_value": "Filtro inicial",
+        "evidence_label": "Evidencia",
+        "evidence_verified": "Confirmada",
+        "evidence_candidate_reported": "Por confirmar",
+        "boundary_label": "Límite",
+        "boundary_value": "Solo preparación privada",
+        "next_label": "Siguiente",
+        "next_value": "Revisión privada antes de cualquier acción externa",
+        "current": "Actual",
+        "pending": "Pendiente",
+    },
+}
+
+
 def _continuity_rail(locale: str) -> str:
     labels = CONTINUITY_COPY[locale]
     steps = "".join(
@@ -300,6 +336,34 @@ def _continuity_rail(locale: str) -> str:
         f'<h2 id="continuity-rail-title">{labels["title"]}</h2>'
         f'<ol class="continuity-rail-list">{steps}</ol></section>'
     )
+
+
+def _render_screen_readiness(
+    locale: str, state: str, fact_state: str
+) -> str:
+    labels = READINESS_COPY[locale]
+    evidence_state = "current" if fact_state == "verified" else "pending"
+    next_state = "pending" if state == "feedback_available" else "current"
+    evidence_value = labels[f"evidence_{fact_state}"]
+    return f'''<section class="screen-readiness" aria-labelledby="screen-readiness-title">
+      <p class="screen-readiness-kicker">{labels["kicker"]}</p>
+      <h2 id="screen-readiness-title">{labels["title"]}</h2>
+      <p class="screen-readiness-intro">{labels["intro"]}</p>
+      <div class="screen-readiness-grid">
+        <div class="screen-readiness-item screen-readiness-item--current" data-state="current">
+          <span class="screen-readiness-label">{labels["stage_label"]}</span><strong>{labels["stage_value"]}</strong><span class="screen-readiness-state">{labels["current"]}</span>
+        </div>
+        <div class="screen-readiness-item screen-readiness-item--{evidence_state}" data-state="{evidence_state}">
+          <span class="screen-readiness-label">{labels["evidence_label"]}</span><strong>{evidence_value}</strong><span class="screen-readiness-state">{labels[evidence_state]}</span>
+        </div>
+        <div class="screen-readiness-item screen-readiness-item--current" data-state="current">
+          <span class="screen-readiness-label">{labels["boundary_label"]}</span><strong>{labels["boundary_value"]}</strong><span class="screen-readiness-state">{labels["current"]}</span>
+        </div>
+        <div class="screen-readiness-item screen-readiness-item--{next_state}" data-state="{next_state}">
+          <span class="screen-readiness-label">{labels["next_label"]}</span><strong>{labels["next_value"]}</strong><span class="screen-readiness-state">{labels[next_state]}</span>
+        </div>
+      </div>
+    </section>'''
 
 
 REHEARSAL_COPY = {
@@ -527,6 +591,7 @@ def _render_main(
     fact = _rows(session["facts"])[0]
     rubric = _mapping(session["rubric"])
     state = _text(session["state"])
+    readiness = _render_screen_readiness(locale, state, _text(fact["state"]))
     rehearsal = _render_rehearsal_scaffold(locale, question_kind, labels)
     sourced = session.get("handoff_context") is not None
     handoff = ""
@@ -559,6 +624,7 @@ def _render_main(
         <p class="practice-label">{labels["focus"]}</p>
         <p class="practice-summary"{dynamic_lang}>{html.escape(_text(requirement["summary"]))}</p>
       </section>
+      {readiness}
       <section class="practice-prompt" aria-labelledby="prompt-title">
         <h2 id="prompt-title">{labels["prompt"]}</h2>
         <p class="practice-label">{labels["question_purpose"]}</p>

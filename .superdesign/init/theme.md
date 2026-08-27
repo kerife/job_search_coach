@@ -24,6 +24,7 @@ This plugin has **no shared Tailwind config, CSS module system, theme provider, 
 - **Shadows:** dossier none; practice/triage `0 1px 0 rgb(23 62 48 / 10%)`; compact cards `0 .5rem 2rem rgb(23 32 51 / .08)`.
 - Learning cards lead with readable decision and option-type labels; decision basis and opportunity cost remain visible without new shadows or decorative effects.
 - Private recruiter receipts and practice sessions use a static three-stage continuity rail with textual current/pending/blocked states; it reuses each family’s existing accent tokens and never becomes an action control.
+- Practice sessions also use a four-cell first-conversation readiness card with textual current/pending states; it is derived from validated state, remains private, and never becomes an action control.
 - **Breakpoints:** dossier: 900px, 680px, 480px; practice/triage: 640px; compact receipts: `min-width: 641px` (one column through 640px). All families include print, reduced-motion, forced-color, and high-contrast handling.
 
 ## Raw source dumps
@@ -881,6 +882,17 @@ html { color-scheme: light; background: var(--paper); }
 .recruiter-practice-document .practice-prompt { background: var(--forest-soft); border-left: 4px solid var(--forest); }
 .recruiter-practice-document .practice-prompt p { margin: 0.55rem 0 0; max-width: var(--measure); font-family: var(--serif); font-size: clamp(1.2rem, 2.5vw, 1.55rem); line-height: 1.25; }
 .recruiter-practice-document .practice-rehearsal { background: #f8f7f2; }
+.recruiter-practice-document .screen-readiness { padding: 1rem; border: 1px solid var(--line); border-left: 4px solid var(--decision-term); background: var(--paper); }
+.recruiter-practice-document .screen-readiness-kicker { margin: 0; color: var(--forest); font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.recruiter-practice-document .screen-readiness h2 { margin: .25rem 0 0; font-size: 1.3rem; }
+.recruiter-practice-document .screen-readiness-intro { max-width: var(--measure); margin: .45rem 0 0; color: #46534d; }
+.recruiter-practice-document .screen-readiness-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .65rem; margin: .8rem 0 0; }
+.recruiter-practice-document .screen-readiness-item { position: relative; min-width: 0; padding: .7rem; border: 1px solid var(--line); background: var(--surface); }
+.recruiter-practice-document .screen-readiness-item--current { border-top: 3px solid var(--forest); }
+.recruiter-practice-document .screen-readiness-item--pending { border-top: 3px solid var(--decision-term); }
+.recruiter-practice-document .screen-readiness-label { display: block; color: var(--forest); font-size: .78rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.recruiter-practice-document .screen-readiness-item strong { display: block; margin-top: .25rem; }
+.recruiter-practice-document .screen-readiness-state { display: block; margin-top: .35rem; color: #46534d; font-size: .75rem; font-weight: 700; text-transform: uppercase; }
 .recruiter-practice-document .practice-next-action { background: var(--forest); color: #fff; border: 1px solid var(--forest); padding: 1rem; }
 .recruiter-practice-document .practice-next-action h2 { color: #fff; }
 .recruiter-practice-document .practice-next-action p { max-width: var(--measure); margin: 0.45rem 0 0; }
@@ -989,6 +1001,7 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .state-chip--awaiting_answer { color: var(--decision-term); background: var(--forest-soft); }
   .recruiter-practice-document .practice-rehearsal,
   .recruiter-practice-document .practice-handoff { background: var(--surface); }
+  .recruiter-practice-document .screen-readiness { background: var(--surface); }
   .recruiter-practice-document .practice-rehearsal-hint { color: var(--muted); }
   .recruiter-practice-document .practice-next-action,
   .recruiter-practice-document .practice-decision { background: var(--forest-soft); color: var(--ink); }
@@ -1015,6 +1028,7 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-header { align-items: start; flex-direction: column; }
   .recruiter-practice-document .state-chip { text-align: left; }
   .recruiter-practice-document .practice-decision dl { grid-template-columns: 1fr; }
+  .recruiter-practice-document .screen-readiness-grid { grid-template-columns: 1fr 1fr; }
   .recruiter-practice-document .continuity-rail-list { grid-template-columns: 1fr; }
 }
 
@@ -1042,6 +1056,11 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-decision h2,
   .recruiter-practice-document .practice-decision dt,
   .recruiter-practice-document .practice-decision dd { color: CanvasText; }
+  .recruiter-practice-document .screen-readiness,
+  .recruiter-practice-document .screen-readiness-item { background: Canvas; color: CanvasText; border-color: CanvasText; }
+  .recruiter-practice-document .screen-readiness-kicker,
+  .recruiter-practice-document .screen-readiness-label,
+  .recruiter-practice-document .screen-readiness-state { color: CanvasText; }
   .recruiter-practice-document .continuity-rail,
   .recruiter-practice-document .continuity-step { background: Canvas; color: CanvasText; border-color: CanvasText; }
   .recruiter-practice-document .continuity-rail-kicker,
@@ -1059,7 +1078,9 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-handoff,
   .recruiter-practice-document .practice-feedback,
   .recruiter-practice-document .feedback-item,
-  .recruiter-practice-document .practice-decision { border-width: 2px; }
+  .recruiter-practice-document .practice-decision,
+  .recruiter-practice-document .screen-readiness,
+  .recruiter-practice-document .screen-readiness-item { border-width: 2px; }
   .recruiter-practice-document .feedback-label { text-decoration: underline; text-decoration-thickness: 0.12em; }
 }
 
@@ -1073,6 +1094,7 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-context,
   .recruiter-practice-document .practice-prompt,
   .recruiter-practice-document .practice-rehearsal,
+  .recruiter-practice-document .screen-readiness,
   .recruiter-practice-document .practice-next-action,
   .recruiter-practice-document .practice-evidence,
   .recruiter-practice-document .practice-boundary,

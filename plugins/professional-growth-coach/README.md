@@ -129,6 +129,12 @@ recorded evidence, the safe route, and the manual next action with textual
 does not store answers, expose private identifiers, auto-start preparation, or
 create a message, calendar, or other external action.
 
+Practice sessions also begin with a first-conversation readiness card. It shows
+the recruiter-screen stage, whether supplied evidence is confirmed or still
+needs confirmation, the private-only boundary, and the manual next step. It is
+derived from validated state only; it never displays internal IDs or raw answers
+and never sends, schedules, or saves anything.
+
 The default composition begins with `learning_state=not_evaluated`. If bounded
 market research cannot finish, the plugin preserves the valid profile dossier
 and renders the limited or unavailable market state with one bounded reason;
