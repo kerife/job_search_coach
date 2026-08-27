@@ -32,6 +32,10 @@ rejected; bytes are flushed before an atomic no-overwrite publication; and the
 result remains mode `0600`. A failed write removes its temporary file and does
 not alter an existing artifact.
 
+Bounded JSON validators and market-dossier builders also reject duplicate
+keys, oversized integers, and excessive nesting before validation or output;
+their command-line failures stay opaque and never echo supplied content.
+
 ## Starter prompts
 
 - “Analiza mi perfil de LinkedIn y entrégame una conclusión breve más un dossier HTML privado v2 y completo. No inventes datos ni realices acciones externas.”
@@ -150,10 +154,12 @@ action. Its surface token remains readable in dark mode and its borders/text
 remain explicit in print, forced-colors, and higher-contrast modes.
 
 After a completed `screen_attended` checkpoint, the rail now uses the closed
-`debrief_after_screen` action: the candidate can privately record what was
-discussed and what remains unknown, then review it before any follow-up. This
-is still manual-only and does not send, schedule, auto-start preparation, or
-retain the screen conversation.
+`debrief_after_screen` action: it is a cue to re-enter a private conversation
+and manually note what was discussed and what remains unknown. The checkpoint
+renderer does not capture, persist, or review those notes; any structured
+debrief artifact requires a separately specified contract. This is still
+manual-only and does not send, schedule, auto-start preparation, or retain the
+screen conversation.
 
 When feedback is available, the practice rail remains the same three-step
 private map but reflects the validated governing label in its final state:

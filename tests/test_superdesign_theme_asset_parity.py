@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 THEME = ROOT / ".superdesign" / "init" / "theme.md"
+COMPONENTS = ROOT / ".superdesign" / "init" / "components.md"
 LAYOUTS = ROOT / ".superdesign" / "init" / "layouts.md"
 ASSETS = ROOT / "plugins" / "professional-growth-coach" / "assets"
 ASSET_NAMES = (
@@ -73,6 +74,14 @@ def _layout_sources() -> dict[str, bytes]:
 
 
 class SuperdesignThemeAssetParityTests(unittest.TestCase):
+    def test_superdesign_docs_describe_current_asset_inventory_and_tokens(self):
+        components = COMPONENTS.read_text(encoding="utf-8")
+        theme = THEME.read_text(encoding="utf-8")
+        self.assertIn("seven standalone CSS files", components)
+        self.assertIn("--line #b8c7c0", theme)
+        self.assertIn("--decision-term #dfbf70", theme)
+        self.assertIn("--decision-term #f5d68a", theme)
+
     def test_next_version_bridge_keeps_the_responsive_accessibility_contract(self):
         css = (ASSETS / "recruiter-practice-session-v1.css").read_text(encoding="utf-8")
         selector = r"\.recruiter-practice-document \.practice-next-version"

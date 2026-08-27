@@ -447,7 +447,12 @@ def load_research(path: Path) -> dict[str, object]:
         raw = _loader.read_bounded_bytes(path, MAX_INPUT_BYTES)
     except _loader.PrivateInputError as exc:
         raise ValueError("research artifact exceeds input bound") from exc
-    value = json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_object)
+    try:
+        value = json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_object)
+        if not isinstance(value, dict) or not _depth(value):
+            raise ValueError("research artifact exceeds maximum nesting depth")
+    except (UnicodeDecodeError, json.JSONDecodeError, RecursionError, ValueError) as exc:
+        raise ValueError("research artifact could not be loaded") from exc
     if not isinstance(value, dict):
         raise ValueError("research artifact must be an object")
     return value

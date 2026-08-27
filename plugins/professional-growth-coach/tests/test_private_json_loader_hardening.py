@@ -36,6 +36,11 @@ CHECKPOINT = _load("validate_private_recruiter_followthrough_checkpoint")
 PRACTICE = _load("validate_recruiter_practice_session")
 DOSSIER_V1 = _load("validate_executive_career_dossier")
 DOSSIER_V2 = _load("validate_executive_career_dossier_v2")
+MARKET_V1 = _load("validate_career_market_learning_dossier")
+MARKET_V2 = _load("validate_career_market_learning_dossier_v2")
+LEARNING_RESEARCH = _load("validate_learning_option_research")
+TARGET_RESEARCH = _load("validate_target_vacancy_research")
+MARKET_BUILDER = _load("build_career_market_learning_dossier")
 
 
 def _ready_triage() -> dict[str, object]:
@@ -114,6 +119,46 @@ class PrivateJsonLoaderHardeningTests(unittest.TestCase):
             (SCRIPTS / "validate_executive_career_dossier.py", lambda path, directory: [str(path)]),
             (SCRIPTS / "validate_executive_career_dossier_v2.py", lambda path, directory: [str(path)]),
         )
+
+    def test_market_loaders_reject_excessive_depth_with_value_errors(self) -> None:
+        loaders = (
+            MARKET_V1.load_market_dossier,
+            MARKET_V2.load_learning_dossier,
+            LEARNING_RESEARCH.load_research,
+            TARGET_RESEARCH.load_research,
+            MARKET_BUILDER._load_alignment,
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            path = self._write(Path(temporary), "deep.json", self._deep_json())
+            for loader in loaders:
+                with self.subTest(loader=loader.__module__):
+                    with self.assertRaises(ValueError) as raised:
+                        loader(path)
+                    self.assertNotIn("RAW_PRIVATE_JSON_SENTINEL", str(raised.exception))
+
+    def test_market_clis_reject_extreme_json_without_traceback_or_echo(self) -> None:
+        commands = (
+            (SCRIPTS / "validate_career_market_learning_dossier.py", lambda path, directory: [str(path)]),
+            (SCRIPTS / "validate_career_market_learning_dossier_v2.py", lambda path, directory: [str(path)]),
+            (SCRIPTS / "validate_learning_option_research.py", lambda path, directory: [str(path)]),
+            (SCRIPTS / "validate_target_vacancy_research.py", lambda path, directory: [str(path)]),
+            (SCRIPTS / "build_career_market_learning_dossier.py", lambda path, directory: [str(path), str(path), str(path), "--output", str(directory / "dossier.json")]),
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            for label, raw in (("integer", self._oversized_integer_json()), ("deep", self._deep_json())):
+                path = self._write(directory, f"{label}.json", raw)
+                for script, arguments in commands:
+                    with self.subTest(payload=label, script=script.name):
+                        result = subprocess.run(
+                            [sys.executable, "-B", str(script), *arguments(path, directory)],
+                            text=True, capture_output=True, check=False,
+                        )
+                        self.assertNotEqual(0, result.returncode)
+                        self.assertEqual("", result.stdout)
+                        self.assertNotIn("Traceback", result.stderr)
+                        for sentinel in self.PRIVATE_SENTINELS:
+                            self.assertNotIn(sentinel, result.stderr)
 
     def test_new_validator_fixtures_remain_loadable(self) -> None:
         session_path = ROOT.parent.parent / "tests/evals/with-skill/fixtures/recruiter-practice-session/session-es.json"

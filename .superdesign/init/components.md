@@ -6,7 +6,7 @@ This is a Python-rendered static HTML/CSS plugin, not a React (or other client-f
 
 - **Framework / meta-framework:** none. There is no `package.json`, no framework configuration, and no file-based or client router.
 - **Component library:** none.
-- **CSS approach:** five standalone CSS files are read by Python renderers and inserted into matching HTML templates as `{{INLINE_CSS}}`.
+- **CSS approach:** seven standalone CSS files are read by Python renderers and inserted into matching HTML templates as `{{INLINE_CSS}}`.
 - **Shared JavaScript:** none. The dossier renderer may insert a page-specific inline script; there is no shared JS component directory.
 - **Reusable UI primitive directory:** none found.
 

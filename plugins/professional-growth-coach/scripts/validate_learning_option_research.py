@@ -327,7 +327,9 @@ def load_research(path: Path) -> dict[str, object]:
         raise ValueError("learning option research exceeds input bound") from exc
     try:
         value = json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_object)
-    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        if not isinstance(value, dict) or not _depth(value):
+            raise ValueError("learning option research exceeds maximum nesting depth")
+    except (UnicodeDecodeError, json.JSONDecodeError, RecursionError, ValueError) as exc:
         raise ValueError("learning option research could not be loaded") from exc
     if not isinstance(value, dict):
         raise ValueError("learning option research must be an object")

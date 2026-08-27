@@ -4227,6 +4227,7 @@ Action boundary: authorization required before action.
         self.assertIn("ordinary csv", combined)
         self.assertIn("ordinary recruiter-reply", combined)
         self.assertIn("no auto-start", combined)
+        self.assertIn("does not capture or persist debrief notes", combined)
 
     def test_private_schema_conformance_harness_is_exercised_by_full_gate(self) -> None:
         harness = PLUGIN_ROOT / "tests" / "test_private_schema_conformance.py"

@@ -63,8 +63,11 @@ def _within_depth(value: object, level: int = 0) -> bool:
 
 
 def _load_alignment(path: Path) -> dict[str, object]:
-    raw = _LOADER.read_bounded_bytes(path, MAX_INPUT_BYTES)
-    value = json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_object)
+    try:
+        raw = _LOADER.read_bounded_bytes(path, MAX_INPUT_BYTES)
+        value = json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_object)
+    except (_LOADER.PrivateInputError, UnicodeError, json.JSONDecodeError, RecursionError, ValueError) as exc:
+        raise ValueError("alignment input is invalid") from exc
     if not isinstance(value, dict) or not _within_depth(value):
         raise ValueError("alignment input is invalid")
     return value

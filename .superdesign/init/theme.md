@@ -9,7 +9,7 @@ This plugin has **no shared Tailwind config, CSS module system, theme provider, 
 | Family | Tokens / values |
 | --- | --- |
 | Dossier | light `--paper #f6f4ee`, `--forest #173e30`, `--ink #1a1a1a`, `--muted #e2ddd6`, `--muted-text #5d5a55`, `--line #c8c0b5`, `--coral #d96c52`, `--gold #be9338`, `--surface #ffffff`; dark `--paper #101521`, `--surface #182235`, `--ink #f3f6ff`, `--muted #b8c4d8`, `--muted-text #b8c4d8`, `--forest #8fc9b0`, `--coral #ff9f8d`, `--gold #f2c970`, `--line #5f718e` |
-| Practice / triage | light `--paper #f6f4ee`, `--surface #ffffff`, `--ink #1b1c1a`, `--forest #173e30`, `--forest-soft #dce5e0`, `--coral #b9513a`; dark `--paper #101521`, `--surface #182235`, `--ink #f3f6ff`, `--forest #8fc9b0`, `--coral #ff9f8d`, `--line #5f718e` |
+| Practice / triage | light `--paper #f6f4ee`, `--surface #ffffff`, `--ink #1b1c1a`, `--forest #173e30`, `--forest-soft #dce5e0`, `--coral #b9513a`, `--line #b8c7c0`, `--decision-term #dfbf70`; dark `--paper #101521`, `--surface #182235`, `--ink #f3f6ff`, `--forest #8fc9b0`, `--coral #ff9f8d`, `--line #5f718e`, `--decision-term #f5d68a` |
 | Checkpoint / outcome | `--ink #172033`, `--muted #536174`, `--surface #fff`, `--accent #315bd6`, `--line #d9dfeb`; document background `#f4f6fa` |
 
 ### Typography and dimensions

@@ -341,7 +341,9 @@ def load_learning_dossier(path: Path) -> dict[str, object]:
     try:
         raw = _LOADER.read_bounded_bytes(path, MAX_INPUT_BYTES)
         value = json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_object)
-    except (_LOADER.PrivateInputError, UnicodeError, json.JSONDecodeError, ValueError) as exc:
+        if not isinstance(value, dict) or not _depth(value):
+            raise ValueError("market learning dossier v2 exceeds maximum nesting depth")
+    except (_LOADER.PrivateInputError, UnicodeError, json.JSONDecodeError, RecursionError, ValueError) as exc:
         raise ValueError("market learning dossier v2 could not be loaded") from exc
     if not isinstance(value, dict):
         raise ValueError("market learning dossier v2 must be an object")
