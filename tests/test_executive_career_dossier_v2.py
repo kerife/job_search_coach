@@ -722,9 +722,11 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
                 text_value = visible_text(regions[0]).casefold()
                 self.assertNotIn("<progress", regions[0].casefold())
                 self.assertNotRegex(text_value, r"\d+(?:\.\d+)?%")
+                self.assertTrue(
+                    "siguiente investigación" in text_value or "next research" in text_value
+                )
                 for forbidden in (
-                    "score", "vacancy", "vacante", "employer", "empleador",
-                    "course", "curso", "paid", "pago",
+                    "score", "course", "curso", "paid", "pago",
                 ):
                     self.assertNotIn(forbidden, text_value)
 
@@ -942,6 +944,33 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         self.assertNotIn('class="market-matrix"', unavailable_html)
         self.assertNotIn('<progress max="100"', unavailable_html)
         self.assertNotIn('class="gap-closure-route"', unavailable_html)
+
+    def test_unavailable_market_state_exposes_a_localized_read_only_research_next_step(self) -> None:
+        expected = {
+            "es": (
+                "Siguiente investigación",
+                "SRE, Platform Engineering y DevOps en México o remoto declarado",
+                "Cinco vacantes de empleadores distintos",
+                "Sitio oficial del empleador y ATS operado por el empleador",
+                "Registrar la fecha de acceso de cada publicación",
+                "Solo lectura: no aplicar, contactar, seguir, publicar ni inferir elegibilidad.",
+            ),
+            "en": (
+                "Next research",
+                "SRE, Platform Engineering, and DevOps in Mexico or declared remote scope",
+                "Five vacancies from distinct employers",
+                "Employer official site and employer-operated ATS",
+                "Record the access date for each posting",
+                "Read-only: do not apply, contact, follow, publish, or infer eligibility.",
+            ),
+        }
+        for locale, labels in expected.items():
+            with self.subTest(locale=locale):
+                rendered = self.renderer.render_dossier_html(make_v2_dossier(locale))
+                self.assertEqual(1, rendered.count('class="market-next-investigation"'))
+                for label in labels:
+                    self.assertIn(label, rendered)
+                self.assertNotIn('class="gap-closure-route"', rendered)
 
     def test_optional_market_dossier_rejects_mismatched_boundaries_without_echoing_values(self) -> None:
         dossier = make_v2_dossier("es")

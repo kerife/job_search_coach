@@ -48,6 +48,19 @@ except ModuleNotFoundError:
     PrivateInputError = _loader_module.PrivateInputError
     read_bounded_bytes = _loader_module.read_bounded_bytes
 
+try:
+    from private_prose_safety import format_bounded_diagnostics
+except ModuleNotFoundError:
+    _prose_spec = importlib.util.spec_from_file_location(
+        "_pgc_private_prose_safety",
+        Path(__file__).with_name("private_prose_safety.py"),
+    )
+    if _prose_spec is None or _prose_spec.loader is None:
+        raise
+    _prose_module = importlib.util.module_from_spec(_prose_spec)
+    _prose_spec.loader.exec_module(_prose_module)
+    format_bounded_diagnostics = _prose_module.format_bounded_diagnostics
+
 
 REQUIRED_BUNDLE_FIELDS = frozenset({
     "schema_version", "fixture_id", "origin_class", "derivation",
@@ -3727,8 +3740,7 @@ def _cli(argv: list[str] | None = None) -> int:
         except Exception:
             errors.append("validation failed for malformed input")
     if errors:
-        for error in sorted(set(errors)):
-            print(error, file=sys.stderr)
+        sys.stderr.write(format_bounded_diagnostics(sorted(set(errors))))
         return 2
     return 0
 

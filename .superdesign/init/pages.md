@@ -18,7 +18,8 @@ The renderer validates a closed dossier payload, generates header/main HTML in P
 The v2 entry point `plugins/professional-growth-coach/scripts/render_executive_career_dossier_v2.py`
 composes the same document shell after validating the complete section ledger
 and coaching extensions. Its market region is conditional: `not_researched`
-renders one bounded unavailable state, while validated dated vacancy evidence
+renders one bounded unavailable state plus a static next-research panel with
+scope, sample, source, date, and read-only boundary, while validated dated vacancy evidence
 uses the base comparison table without changing the LinkedIn score.
 When a validated market-learning dossier is supplied, each vacancy card adds
 location, arrangement, source type, alignment, evidence coverage, and a

@@ -713,6 +713,8 @@ details summary {
 .recurrence-list { display: grid; gap: .6rem; margin: .5rem 0 0; padding: 0; list-style: none; }
 .recurrence-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(6rem, 2fr) auto; gap: .75rem; align-items: center; padding: .5rem; border: 1px solid var(--muted); break-inside: avoid; page-break-inside: avoid; }
 .market-boundary, .market-limitation { margin: .75rem 0 0; padding-left: .75rem; border-left: 4px solid var(--gold); }
+.market-next-investigation { margin-top: 1.25rem; padding: 1rem; border-left: 4px solid var(--gold); background: var(--gold-soft); }
+.market-next-investigation-facts { display: grid; grid-template-columns: minmax(10rem, .35fr) minmax(0, 1fr); gap: .5rem 1rem; margin: .75rem 0 0; }
 .gap-closure-route { padding: 1rem; border-left: 4px solid var(--forest); background: var(--paper); }
 .market-learning-roi { margin-top: 1.25rem; padding: 1rem; border: 1px solid var(--line); border-left: 4px solid var(--gold); background: var(--surface); break-inside: avoid; page-break-inside: avoid; }
 .market-learning-roi h3, .market-learning-roi h4 { color: var(--forest); }

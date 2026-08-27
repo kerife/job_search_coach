@@ -44,11 +44,13 @@ adding a form, fake button, link, persistence, automatic transfer, recruiter
 identity, or external action.
 
 The v2 renderer now keeps the honest unavailable-market card for
-`not_researched` inputs, while a validated `dated_vacancy_evidence` context
-renders the existing editorial comparison table and its sanitized public
-research links. Market rows remain separate from the LinkedIn score; no
-unvalidated vacancy, employer, salary, ranking, or eligibility claim may enter
-the surface.
+`not_researched` inputs and adds a static next-research panel with bounded
+SRE/Platform/DevOps Mexico-or-declared-remote scope, a five-employer sample
+target, official employer/ATS source priority, and an access-date requirement.
+A validated `dated_vacancy_evidence` context renders the existing editorial
+comparison table and its sanitized public research links. Market rows remain
+separate from the LinkedIn score; no unvalidated vacancy, employer, salary,
+ranking, or eligibility claim may enter the surface.
 
 The dated market table keeps native table semantics and, at screen widths up to
 680px, presents each signal cell as a labelled vertical stack using localized

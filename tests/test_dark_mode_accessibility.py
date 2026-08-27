@@ -59,6 +59,19 @@ class DarkModeAccessibilityTests(unittest.TestCase):
         self.assertIn("min-width: 0", compact)
         self.assertNotRegex(css, r"overflow-x:\s*(?:auto|scroll)|white-space:\s*nowrap")
 
+    def test_dossier_v2_unavailable_market_next_step_has_responsive_print_and_forced_color_contract(self) -> None:
+        css = (ASSETS / "executive-career-dossier-v2.css").read_text(encoding="utf-8")
+        self.assertIn(".market-next-investigation", css)
+        self.assertIn(".market-next-investigation-facts", css)
+        self.assertIn("@media screen and (max-width: 640px)", css)
+        self.assertIn("grid-template-columns: 1fr", css)
+        self.assertIn(".market-next-investigation", css[css.index("@media print"):])
+        forced = css[css.index("@media (forced-colors: active)"):]
+        self.assertIn(".market-next-investigation", forced)
+        self.assertIn("Canvas", forced)
+        contrast = css[css.index("@media (prefers-contrast: more)"):]
+        self.assertIn(".market-next-investigation", contrast)
+
     def test_market_composition_is_non_scrollable_and_forced_color_readable(self) -> None:
         css = (ASSETS / "career-market-learning-dossier-v1.css").read_text(encoding="utf-8")
         self.assertIn("@media screen and (max-width: 680px)", css)

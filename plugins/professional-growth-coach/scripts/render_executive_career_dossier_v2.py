@@ -163,6 +163,16 @@ COPY = {
         "observation": "Observación", "why": "Por qué importa", "prompt": "Pregunta de coaching",
         "template": "Plantilla privada", "market_title": "Evidencia de mercado no disponible",
         "market_body": "Este dossier no incluye evidencia de mercado. Continúa con la evidencia del perfil ya revisada.",
+        "market_next_title": "Siguiente investigación",
+        "market_next_scope": "Alcance",
+        "market_next_scope_value": "SRE, Platform Engineering y DevOps en México o remoto declarado",
+        "market_next_sample": "Muestra objetivo",
+        "market_next_sample_value": "Cinco vacantes de empleadores distintos",
+        "market_next_sources": "Fuentes prioritarias",
+        "market_next_sources_value": "Sitio oficial del empleador y ATS operado por el empleador",
+        "market_next_date": "Fecha",
+        "market_next_date_value": "Registrar la fecha de acceso de cada publicación",
+        "market_next_boundary": "Solo lectura: no aplicar, contactar, seguir, publicar ni inferir elegibilidad.",
         "market_summary": "Muestra de vacantes revisada",
         "market_alignment": "Alineación documentada",
         "market_location": "Ubicación",
@@ -221,6 +231,16 @@ COPY = {
         "prompt": "Coaching prompt", "template": "Private template",
         "market_title": "Market evidence unavailable",
         "market_body": "This dossier includes no market evidence. Continue with the profile evidence already reviewed.",
+        "market_next_title": "Next research",
+        "market_next_scope": "Scope",
+        "market_next_scope_value": "SRE, Platform Engineering, and DevOps in Mexico or declared remote scope",
+        "market_next_sample": "Target sample",
+        "market_next_sample_value": "Five vacancies from distinct employers",
+        "market_next_sources": "Priority sources",
+        "market_next_sources_value": "Employer official site and employer-operated ATS",
+        "market_next_date": "Date",
+        "market_next_date_value": "Record the access date for each posting",
+        "market_next_boundary": "Read-only: do not apply, contact, follow, publish, or infer eligibility.",
         "market_summary": "Reviewed vacancy sample",
         "market_alignment": "Documented alignment",
         "market_location": "Location",
@@ -400,6 +420,16 @@ def _render_market_evidence_unavailable(locale: str) -> str:
       <section class="card market-unavailable-card span-12" aria-labelledby="market-unavailable-title" id="market-evidence">
         <h2 id="market-unavailable-title">{labels['market_title']}</h2>
         <p>{labels['market_body']}</p>
+        <section class="market-next-investigation" aria-labelledby="market-next-investigation-title">
+          <h3 id="market-next-investigation-title">{labels['market_next_title']}</h3>
+          <dl class="market-next-investigation-facts">
+            <dt>{labels['market_next_scope']}</dt><dd>{labels['market_next_scope_value']}</dd>
+            <dt>{labels['market_next_sample']}</dt><dd>{labels['market_next_sample_value']}</dd>
+            <dt>{labels['market_next_sources']}</dt><dd>{labels['market_next_sources_value']}</dd>
+            <dt>{labels['market_next_date']}</dt><dd>{labels['market_next_date_value']}</dd>
+          </dl>
+          <p class="market-next-investigation-boundary market-boundary">{labels['market_next_boundary']}</p>
+        </section>
       </section>
     </div>'''
 

@@ -1567,6 +1567,25 @@ class LinkedInClientReportDecisionTests(unittest.TestCase):
                 self.assertIn(expected, result.stderr)
                 self.assertNotIn(sentinel, result.stderr)
 
+    def test_cli_bounds_large_report_diagnostic_output(self) -> None:
+        baseline = self.report("scenario-a-es.md")
+        extra_priorities = "".join(f"### {rank}. Titular\n\n" for rank in range(4, 5004))
+        report = baseline.replace("## Copy listo para revisar", extra_priorities + "## Copy listo para revisar", 1)
+        with tempfile.TemporaryDirectory() as temporary:
+            report_path = Path(temporary) / "oversized-diagnostics.md"
+            bundle_path = Path(temporary) / "bundle.json"
+            report_path.write_text(report, encoding="utf-8")
+            bundle_path.write_text(json.dumps(self.bundle("scenario-a.json")), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, "-B", str(VALIDATOR_PATH), str(report_path), str(bundle_path)],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+        self.assertEqual(2, result.returncode)
+        self.assertLessEqual(len(result.stderr.encode("utf-8")), 16_384)
+        self.assertTrue(result.stderr.endswith("validation diagnostics truncated; additional errors omitted\n"))
+
     def test_report_duplicate_reference_diagnostics_redact_untrusted_values_api_and_cli(self) -> None:
         sentinel = "/Users/PRIVATE_SENTINEL/reference.json"
         baseline = self.report("scenario-a-es.md")

@@ -43,7 +43,10 @@ keys, oversized integers, and excessive nesting before validation or output;
 their command-line failures stay opaque and never echo supplied content. All
 private validators and renderers apply the same boundary to unknown CLI
 arguments: they return the fixed `invalid_arguments` diagnostic without
-reflecting the rejected value.
+reflecting the rejected value. The LinkedIn client-report validator also caps
+multi-error stderr at the shared 16 KiB diagnostic budget and emits a stable
+truncation marker, so malformed private fixtures cannot flood a terminal or
+log sink.
 Renderer modules can also be imported directly from an installed checkout;
 sibling safety helpers resolve relative to the module when no `PYTHONPATH` is
 configured.
@@ -90,6 +93,13 @@ section coverage, coaching priorities, market evidence, and first-conversation
 preparation. The anchors are static fragment links, remain available in print,
 and stack into 44px touch targets at 640px and below; they do not hide or
 reorder any evidence.
+
+When market evidence is unavailable, the `Mercado`/`Market` region now keeps a
+static next-research card visible instead of ending at a generic notice. It
+states the bounded scope (SRE, Platform Engineering, and DevOps in Mexico or
+declared remote scope), a five-employer sample target, priority official
+employer/ATS sources, and the access-date requirement. The card is read-only:
+it never applies, contacts, follows, publishes, or infers eligibility.
 
 Current vacancy research uses the closed `target-vacancy-research-v1` artifact.
 It is identity-free, bounded to at most five distinct postings, records dated

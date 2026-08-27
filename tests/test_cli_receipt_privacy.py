@@ -23,6 +23,10 @@ TRIAGE = ROOT / "tests/evals/with-skill/fixtures/private-recruiter-reply-triage/
 OUTCOME = ROOT / "plugins/professional-growth-coach/tests/fixtures/private-recruiter-conversion-outcome/contact-received-en.json"
 CHECKPOINT = ROOT / "plugins/professional-growth-coach/tests/fixtures/private-recruiter-followthrough-checkpoint/completed-screen-attended-en.json"
 CHECKPOINT_RECEIPT = ROOT / "plugins/professional-growth-coach/tests/fixtures/private-recruiter-conversion-outcome/screen-requested-en.json"
+MARKET_V1 = ROOT / "tests/evals/with-skill/fixtures/career-market-learning-dossier/complete-five-es.json"
+MARKET_V2 = ROOT / "tests/evals/with-skill/fixtures/career-market-learning-dossier-v2/project-first-five-es.json"
+LEARNING_RESEARCH = ROOT / "tests/evals/with-skill/fixtures/learning-option-research/complete-five-es.json"
+VACANCY_RESEARCH = ROOT / "tests/evals/with-skill/fixtures/target-vacancy-research/complete-five-es.json"
 
 
 class CliReceiptPrivacyTests(unittest.TestCase):
@@ -164,6 +168,53 @@ class CliReceiptPrivacyTests(unittest.TestCase):
                 str(LINKEDIN_REPORT_VALIDATOR),
                 str(LINKEDIN_REPORT),
                 str(LINKEDIN_BUNDLE),
+                "--unexpected",
+                sentinel,
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(3, result.returncode)
+        self.assertEqual("", result.stdout)
+        self.assertEqual('{"error":{"code":"invalid_arguments"}}\n', result.stderr)
+        self.assertNotIn(sentinel, result.stderr)
+
+    def test_market_validators_return_opaque_unknown_argument_errors(self) -> None:
+        sentinel = "/private/hidden/market-bundle.json"
+        cases = (
+            (SCRIPTS / "validate_career_market_learning_dossier.py", [str(MARKET_V1)]),
+            (SCRIPTS / "validate_career_market_learning_dossier_v2.py", [str(MARKET_V2)]),
+            (SCRIPTS / "validate_learning_option_research.py", [str(LEARNING_RESEARCH)]),
+            (SCRIPTS / "validate_target_vacancy_research.py", [str(VACANCY_RESEARCH)]),
+        )
+        for script, arguments in cases:
+            with self.subTest(script=script.name):
+                result = subprocess.run(
+                    [sys.executable, "-B", str(script), *arguments, "--unexpected", sentinel],
+                    cwd=ROOT,
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                self.assertEqual(3, result.returncode)
+                self.assertEqual("", result.stdout)
+                self.assertEqual('{"error":{"code":"invalid_arguments"}}\n', result.stderr)
+                self.assertNotIn(sentinel, result.stderr)
+
+    def test_market_builder_returns_opaque_unknown_argument_errors(self) -> None:
+        sentinel = "/private/hidden/market-bundle.json"
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-B",
+                str(SCRIPTS / "build_career_market_learning_dossier.py"),
+                "research.json",
+                "dossier.json",
+                "alignment.json",
+                "--output",
+                "output.json",
                 "--unexpected",
                 sentinel,
             ],

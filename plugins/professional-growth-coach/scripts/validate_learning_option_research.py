@@ -16,6 +16,16 @@ from pathlib import Path
 from typing import Any
 
 
+class _ArgumentError(ValueError):
+    pass
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        del message
+        raise _ArgumentError
+
+
 def _sibling(name: str) -> Any:
     path = Path(__file__).with_name(name)
     spec = importlib.util.spec_from_file_location(f"_pgc_{path.stem}", path)
@@ -337,9 +347,15 @@ def load_research(path: Path) -> dict[str, object]:
 
 
 def _cli(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = _PrivateArgumentParser(description=__doc__)
     parser.add_argument("path", type=Path)
-    args = parser.parse_args(argv)
+    try:
+        args = parser.parse_args(argv)
+    except _ArgumentError:
+        print('{"error":{"code":"invalid_arguments"}}', file=sys.stderr)
+        return 3
+    except SystemExit as error:
+        return 0 if error.code == 0 else 3
     try:
         value = load_research(args.path)
     except (OSError, ValueError):
