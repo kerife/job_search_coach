@@ -16,23 +16,23 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T16:27:59-06:00`
+release_timestamp: `2026-08-27T16:57:30-06:00`
 
-source_commit: `ac186792fa0345afd111182613e753c69e030bc8`
+source_commit: `5e6fc23ac468d265bfb4853415c4d84a9dd13b31`
 
-source_tree: `9e1ef845cacba8f23e1d999a4d906a529388062e`
+source_tree: `27effc604a6aee472547b75cde28fab643d0a7bf`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827162759`
+installed_cache_version: `0.2.0+codex.20260827165607`
 
 installed_enabled: `true`
 
-source_file_count: `171`
+source_file_count: `172`
 
-installed_file_count: `171`
+installed_file_count: `172`
 
-normalized_source_cache_sha256: `0b02a2c89350611d706d3e3bce26da9a6aa019cbad04c1629534f0de67d84d1c`
+normalized_source_cache_sha256: `b4086f6cf7bf1167390d9ca02b628f63da4c0c561fb31feefc6b66a867d0abe4`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -143,9 +143,11 @@ installed_recruiter_handoff_render_smoke: `16/16 installed decision-gate, screen
 
 installed_recruiter_intake_hardening_smoke: `41/41 installed natural-language triggers, invalid target containers, and artifact-free downstream recovery responses stay bounded and actionable`
 
-installed_recruiter_recovery_smoke: `3/3 installed valid recruiter chain, route-specific ES/EN recovery copy, and taxonomy-derived invalid-transition recovery`
+installed_recruiter_recovery_smoke: `5/5 installed valid recruiter chain, route-specific ES/EN recovery copy, taxonomy-derived invalid-transition recovery, terminal offer-stage recovery, and malformed-input fail-closed behavior`
 
-installed_recruiter_schema_contract_smoke: `11/11 installed valid recruiter handoff chain accepted; unknown snapshot fields and impossible decision/state/forward-transition combinations rejected`
+installed_recruiter_schema_contract_smoke: `22/22 installed valid recruiter handoff chain accepted; unknown nested snapshot fields and impossible decision/state/forward-transition combinations rejected`
+
+installed_recruiter_continuity_rail_smoke: `5/5 installed recruiter surfaces render the shared ES/EN five-step rail with exactly one aria-current="step", identity-free labels, responsive/print/forced-colors hooks, and no interactive controls`
 
 fresh_agent_smoke: `not_run`
 
