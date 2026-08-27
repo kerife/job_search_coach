@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T07:24:28-06:00`
+release_timestamp: `2026-08-27T13:41:37-06:00`
 
-source_commit: `18cbd598bd76e1943326e39ed56e4dcefd7d9463`
+source_commit: `ae814e8bf1bea82a5dc4971e6a636ec85924fbb3`
 
-source_tree: `56e512284b7cf7ec8662d350a8eff8206c625581`
+source_tree: `cd675dba618f486fb51a50165f9f1fcafbf73390`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827072428`
+installed_cache_version: `0.2.0+codex.20260827134137`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `199`
 
 installed_file_count: `199`
 
-normalized_source_cache_sha256: `adade0761192ef9e6ce8d213e8a2f4a80e063b7b65262769d5b0347c70436a52`
+normalized_source_cache_sha256: `ed1806a6b8757671bb40d5b1cf59f1ab2ff2b7efa16cd040209b870f48bde740`
 
 active_config: `canonical_and_public_enabled`
 release_smoke_plugin: `professional-growth-coach@professional-growth-coach-local`
@@ -43,7 +43,7 @@ installed_renderer_smokes: `6/6 triage validator/renderer fixtures`
 
 installed_dossier_v2_smoke: `4/4 EN/ES validator and renderer`
 
-installed_reading_path_smoke: `2/2 EN/ES landmarks with unique anchors; unknown-argument diagnostic remains opaque`
+installed_reading_path_smoke: `2/2 EN/ES landmarks with four unique anchors; unknown-argument diagnostic remains opaque`
 
 installed_market_research_smoke: `2/2 complete/limited validator`
 
@@ -80,6 +80,8 @@ installed_triage_first_answer_outline_smoke: `2/2 ES/EN installed builder, valid
 installed_private_cli_receipt_smoke: `2/2 ES/EN installed builder, validator, and renderer receipts; renderer outputs 0600; malformed direct CLI arguments return fixed opaque errors`
 
 installed_cli_receipt_privacy_smoke: `5/5 default receipts omit absolute artifact path; explicit opt-in restores path`
+
+installed_private_validator_argument_privacy_smoke: `3/3 private validators return fixed opaque errors for unknown arguments`
 
 installed_private_json_loader_hardening_smoke: `7/7 installed private loaders and dossier/practice renderers reject oversized-integer JSON with fixed opaque errors; no traceback, raw-content echo, or output artifact`
 
