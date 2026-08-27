@@ -14,7 +14,7 @@ This plugin exposes no HTTP routes, SPA routes, framework page files, or router 
 
 ## Key artifact summaries
 
-- **Executive career dossier:** a private strategic LinkedIn analysis with an executive verdict, scorecard, priorities, copy studio, evidence/limits, and printable document treatment. The v2 renderer keeps an honest unavailable-market state unless validated dated vacancy context is present, in which case it renders separate vacancy cards with location/arrangement/source context, alignment coverage/band, sanitized public sources, and optional learning provenance. Eligibility and hiring fit are never inferred.
+- **Executive career dossier:** a private strategic LinkedIn analysis with an executive verdict, scorecard, priorities, copy studio, evidence/limits, and printable document treatment. The v2 renderer keeps an honest unavailable-market state unless validated dated vacancy context is present, in which case it renders separate vacancy cards with location/arrangement/source context, alignment coverage/band, a passive accessible link to each sanitized public source, the sample research date, and optional learning provenance. Eligibility and hiring fit are never inferred.
 - **Recruiter practice session:** one-question private recruiter-screen rehearsal with state, prompt, rehearsal cues, evidence boundaries, and feedback states.
 - **Private recruiter reply triage:** a closed decision card that communicates safe next steps and, when applicable, a manual preparation handoff.
 - **Follow-through checkpoint:** a compact candidate-supplied state, next measurement event, date, and safe-next-step receipt.

@@ -754,12 +754,28 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         self.assertIn("Arreglo", visible_text(rendered))
         self.assertIn("Tipo de fuente", visible_text(rendered))
         self.assertIn("La elegibilidad y la autorización laboral no se infieren.", visible_text(rendered))
+        self.assertEqual(rendered.count('class="market-source-link"'), 5)
+        self.assertEqual(rendered.count("Fecha de investigación"), 5)
+        self.assertIn('href="https://example.com/careers/v-001"', rendered)
+        self.assertIn('rel="noreferrer"', rendered)
         for short_key in ("V1", "V2", "V3", "V4", "V5"):
             self.assertIn(f">{short_key}<", rendered)
         self.assertIn("Evidencia directa", rendered)
         self.assertIn("1/5", rendered)
         self.assertNotIn("snap-market-sha256", rendered)
         self.assertNotIn("E-001", visible_text(rendered))
+
+    def test_market_source_kind_enums_are_localized_and_not_exposed_raw(self) -> None:
+        dossier = make_v2_dossier("en")
+        market = make_composable_market_dossier("complete-five-es.json", dossier)
+        market["vacancy_cards"][1]["source_kind"] = "employer_operated_ats"
+
+        rendered = self.renderer.render_dossier_html(dossier, market)
+        visible = visible_text(rendered)
+
+        self.assertIn("Employer-operated ATS", visible)
+        self.assertNotIn("employer_operated_ats", visible)
+        self.assertEqual(("LinkedIn Jobs (respaldo)", "LinkedIn Jobs backup"), self.renderer.SOURCE_KIND_COPY["linkedin_jobs_backup"])
 
     def test_evaluated_learning_market_renders_one_private_static_decision_region(self) -> None:
         dossier = make_v2_dossier("es")

@@ -128,6 +128,11 @@ visible legend keeps this directional evidence separate from hiring fit. Each
 vacancy card also retains its location, arrangement, and source type, while a
 separate boundary states that eligibility and work authorization are not
 inferred.
+Each card also exposes a passive, accessible link to its validated public source
+and the sample's research date. The link is for auditability only: it does not
+open an application flow, send a message, or authorize any external action.
+Canonical source labels remain localized for `official_employer`,
+`employer_operated_ats`, and `linkedin_jobs_backup`.
 The follow-through checkpoint validator also exposes a pure `replay_fingerprint`
 for the validated receipt/checkpoint pair. Equal keys are safe no-op replays;
 changed structural fields produce a distinct key without persisting raw prose or

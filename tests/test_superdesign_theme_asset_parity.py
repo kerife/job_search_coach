@@ -134,6 +134,14 @@ class SuperdesignThemeAssetParityTests(unittest.TestCase):
             ),
         )
 
+    def test_market_extension_declares_light_theme_tokens_for_borders_and_text(self):
+        base = (ASSETS / "executive-career-dossier-v1.css").read_text(encoding="utf-8")
+        market = (ASSETS / "career-market-learning-dossier-v1.css").read_text(encoding="utf-8")
+        self.assertRegex(base, r"--line:\s*#[0-9a-f]{6};")
+        self.assertRegex(base, r"--muted-text:\s*#[0-9a-f]{6};")
+        self.assertIn("color: var(--muted-text)", market)
+        self.assertIn(".market-source-meta", market)
+
     def test_compact_facts_keep_one_column_through_640px(self):
         for name, selector in (
             ("private-recruiter-followthrough-checkpoint-v1.css", ".checkpoint-facts"),

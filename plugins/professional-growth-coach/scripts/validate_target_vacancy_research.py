@@ -127,6 +127,11 @@ def _canonical_url_path(path: str) -> str | None:
     return None
 
 
+def _path_has_traversal(path: str) -> bool:
+    """Reject dot segments after URL decoding, including encoded traversal."""
+    return any(segment in {".", ".."} for segment in path.split("/"))
+
+
 def source_url_policy_error(
     value: object, *, source_kind: str | None = None, evidence_mode: str,
 ) -> str | None:
@@ -150,8 +155,11 @@ def source_url_policy_error(
         parsed.query
         or parsed.fragment
         or canonical_path is None
+        or _path_has_traversal(canonical_path)
         or RESTRICTED_OBSERVATION.search(canonical_path)
     ):
+        if canonical_path is not None and _path_has_traversal(canonical_path):
+            return "source URL contains path traversal"
         return "source URL contains restricted metadata"
     if evidence_mode == "synthetic" and not _reserved_domain(host):
         return "synthetic source URL must use a reserved domain"

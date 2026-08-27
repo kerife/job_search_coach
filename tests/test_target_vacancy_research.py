@@ -21,6 +21,7 @@ from validate_target_vacancy_research import (  # noqa: E402
     MAX_INPUT_BYTES,
     canonical_research_snapshot,
     load_research,
+    source_url_policy_error,
     snapshot_for_market_dossier,
     validate_research,
 )
@@ -229,6 +230,15 @@ class TargetVacancyResearchTests(unittest.TestCase):
                 errors = validate_research(value)
                 self.assertTrue(errors)
                 self.assertNotIn("private-marker", " ".join(errors))
+
+    def test_linkedin_backup_rejects_encoded_path_traversal(self) -> None:
+        error = source_url_policy_error(
+            "https://www.linkedin.com/jobs/%2e%2e/in/example",
+            source_kind="linkedin_jobs_backup",
+            evidence_mode="live",
+        )
+
+        self.assertEqual("source URL contains path traversal", error)
 
     def test_unknown_eligibility_cannot_contain_inferred_pass(self) -> None:
         value = load_fixture("complete-five-es.json")

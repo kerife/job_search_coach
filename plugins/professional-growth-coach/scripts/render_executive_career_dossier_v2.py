@@ -155,6 +155,8 @@ COPY = {
         "market_location": "Ubicación",
         "market_arrangement": "Arreglo",
         "market_source_kind": "Tipo de fuente",
+        "market_source": "Ver fuente pública",
+        "market_researched": "Fecha de investigación",
         "market_eligibility_boundary": "La elegibilidad y la autorización laboral no se infieren.",
         "market_evidence_coverage": "Cobertura de evidencia",
         "market_qualitative_band": "Banda cualitativa",
@@ -208,6 +210,8 @@ COPY = {
         "market_location": "Location",
         "market_arrangement": "Arrangement",
         "market_source_kind": "Source type",
+        "market_source": "View public source",
+        "market_researched": "Research date",
         "market_eligibility_boundary": "Eligibility and work authorization are not inferred.",
         "market_evidence_coverage": "Evidence coverage",
         "market_qualitative_band": "Qualitative band",
@@ -277,9 +281,8 @@ ARRANGEMENT_COPY = {
 
 SOURCE_KIND_COPY = {
     "official_employer": ("Empleador oficial", "Official employer"),
-    "employer_ats": ("ATS del empleador", "Employer ATS"),
-    "linkedin_jobs": ("LinkedIn Jobs", "LinkedIn Jobs"),
-    "aggregator": ("Agregador", "Aggregator"),
+    "employer_operated_ats": ("ATS operado por empleador", "Employer-operated ATS"),
+    "linkedin_jobs_backup": ("LinkedIn Jobs (respaldo)", "LinkedIn Jobs backup"),
 }
 
 
@@ -560,12 +563,20 @@ def _render_market_context(market_dossier: Mapping[str, object], locale: str) ->
             source_es, source_en = SOURCE_KIND_COPY.get(str(source_kind), (str(source_kind), str(source_kind)))
             context_rows.append(f'<dt>{labels["market_source_kind"]}</dt><dd>{html.escape(source_es if locale == "es" else source_en, quote=True)}</dd>')
         vacancy_context = f'<dl class="market-vacancy-context">{"".join(context_rows)}</dl>' if context_rows else ""
+        source_url = html.escape(str(card["source_url"]), quote=True)
+        researched_date = html.escape(str(market_dossier["as_of_date"]), quote=True)
+        source_meta = (
+            f'<p class="market-source-meta"><a class="market-source-link" href="{source_url}" rel="noreferrer">'
+            f'{labels["market_source"]}</a><span>{labels["market_researched"]}: '
+            f'<time datetime="{researched_date}">{researched_date}</time></span></p>'
+        )
         card_html.append(f'''<article class="vacancy-alignment-card" aria-labelledby="{heading_id}">
           <p class="market-vacancy-key">{short_key}</p><h3 id="{heading_id}">{employer} — {title}</h3>
           <p class="market-alignment-line"><span>{labels['market_alignment']}</span><strong class="market-alignment-score" id="{score_id}">{score} {'de' if locale == 'es' else 'out of'} 100</strong></p>
           <progress max="100" value="{score}" aria-labelledby="{heading_id} {score_id}">{score}</progress>
           <dl class="market-alignment-facts">{''.join(alignment_facts)}</dl>
           {vacancy_context}
+          {source_meta}
         </article>''')
         key_rows.append(f"<li><strong>{short_key}</strong> — {employer} — {title}</li>")
 

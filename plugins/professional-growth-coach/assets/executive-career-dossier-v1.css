@@ -3,6 +3,8 @@
   --forest: #173e30;
   --ink: #1a1a1a;
   --muted: #e2ddd6;
+  --muted-text: #5d5a55;
+  --line: #c8c0b5;
   --coral: #d96c52;
   --gold: #be9338;
   --surface: #ffffff;
@@ -426,6 +428,7 @@ details summary {
     --surface: #182235;
     --ink: #f3f6ff;
     --muted: #b8c4d8;
+    --muted-text: #b8c4d8;
     --line: #5f718e;
     --forest: #8fc9b0;
     --forest-soft: #223b35;
