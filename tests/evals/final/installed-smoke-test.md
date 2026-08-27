@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-26T23:32:31-06:00`
+release_timestamp: `2026-08-27T00:06:34-06:00`
 
-source_commit: `0ff86c273443d251d6f6fb97e3362388cfa96fcd`
+source_commit: `3a7deb90ed929df00748c7f213eb572f6065955a`
 
-source_tree: `6ba95eeb7e9a19d259c0dc4ba37274c44f574f9a`
+source_tree: `2c51ad1dbeb4d84a5f6695e61ad4992503c1738d`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827053006`
+installed_cache_version: `0.2.0+codex.20260827060454`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `135`
 
 installed_file_count: `135`
 
-normalized_source_cache_sha256: `5360e4782342d610ad42ed5177f7286d9c22ee13786543720a46c5c67c236e2f`
+normalized_source_cache_sha256: `335e24d00a3f3e1b93aed6d40f0f573dc228bf9e140a50c989a640567dcdb029`
 
 active_config: `canonical_and_public_enabled`
 release_smoke_plugin: `professional-growth-coach@professional-growth-coach-local`
@@ -66,6 +66,8 @@ installed_handoff_prose_smoke: `2/2 ES/EN installed valid renderer; validator-ho
 installed_handoff_wrapper_renderer_smoke: `2/2 ES/EN installed builder, wrapper validator, and wrapper-to-HTML receipts with 0600 outputs`
 
 installed_triage_first_answer_outline_smoke: `2/2 ES/EN installed builder, validator, and renderer checks with localized triage-first answer outline`
+
+installed_private_cli_receipt_smoke: `2/2 ES/EN installed builder, validator, and renderer receipts; renderer outputs 0600; malformed direct CLI arguments return fixed opaque errors`
 
 fresh_agent_smoke: `not_run`
 
