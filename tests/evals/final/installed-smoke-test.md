@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T14:08:30-06:00`
+release_timestamp: `2026-08-27T08:32:28-06:00`
 
-source_commit: `34429ee70c5f1b445461fd87b891f253d3151d8b`
+source_commit: `f2c025318a99fd8390b765788ba8139f1e32b97e`
 
-source_tree: `d7cdbc0421a019f7a349c4752c4a79c095b0bb5a`
+source_tree: `750a9578a9352cf072267e63a13a3ec484b16698`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827140830`
+installed_cache_version: `0.2.0+codex.20260827150000`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `199`
 
 installed_file_count: `199`
 
-normalized_source_cache_sha256: `8c9f267755d76f661f3303f4be6e907943b3e2a110aa635498f5085496ae7f8f`
+normalized_source_cache_sha256: `d1db9d3ed0e713663c23e7f702778bd02c9248c095bba39d959f181f100f7c63`
 
 active_config: `canonical_and_public_enabled`
 release_smoke_plugin: `professional-growth-coach@professional-growth-coach-local`
@@ -45,9 +45,13 @@ installed_dossier_v2_smoke: `4/4 EN/ES validator and renderer`
 
 installed_reading_path_smoke: `2/2 EN/ES landmarks with four unique anchors; unknown-argument diagnostic remains opaque`
 
+installed_market_next_research_smoke: `2/2 EN/ES unavailable-market cards expose bounded scope, sample, sources, date, and read-only boundary`
+
 installed_dossier_validator_argument_privacy_smoke: `2/2 dossier validators return fixed opaque errors for unknown arguments`
 
 installed_linkedin_validator_argument_privacy_smoke: `1/1 LinkedIn report validator returns a fixed opaque error for unknown arguments`
+
+installed_market_cli_argument_privacy_smoke: `5/5 market validators and builder return fixed opaque errors for unknown arguments`
 
 installed_market_research_smoke: `2/2 complete/limited validator`
 
@@ -70,6 +74,8 @@ installed_descriptor_boundary_smoke: `6/6`
 installed_linkedin_diagnostic_redaction_smoke: `4/4`
 
 installed_bounded_diagnostics_smoke: `1/1`
+
+installed_linkedin_bounded_diagnostics_smoke: `1/1 16 KiB cap with stable truncation marker`
 installed_practice_readiness_smoke: `2/2 ES/EN renderer locale checks with readiness card`
 installed_triage_practice_smoke: `2/2 ES/EN installed builder, validator, and renderer checks with triage route`
 

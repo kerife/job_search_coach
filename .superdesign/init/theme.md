@@ -713,8 +713,6 @@ details summary {
 .recurrence-list { display: grid; gap: .6rem; margin: .5rem 0 0; padding: 0; list-style: none; }
 .recurrence-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(6rem, 2fr) auto; gap: .75rem; align-items: center; padding: .5rem; border: 1px solid var(--muted); break-inside: avoid; page-break-inside: avoid; }
 .market-boundary, .market-limitation { margin: .75rem 0 0; padding-left: .75rem; border-left: 4px solid var(--gold); }
-.market-next-investigation { margin-top: 1.25rem; padding: 1rem; border-left: 4px solid var(--gold); background: var(--gold-soft); }
-.market-next-investigation-facts { display: grid; grid-template-columns: minmax(10rem, .35fr) minmax(0, 1fr); gap: .5rem 1rem; margin: .75rem 0 0; }
 .gap-closure-route { padding: 1rem; border-left: 4px solid var(--forest); background: var(--paper); }
 .market-learning-roi { margin-top: 1.25rem; padding: 1rem; border: 1px solid var(--line); border-left: 4px solid var(--gold); background: var(--surface); break-inside: avoid; page-break-inside: avoid; }
 .market-learning-roi h3, .market-learning-roi h4 { color: var(--forest); }
@@ -1635,10 +1633,17 @@ dd { margin: .15rem 0 0; font-weight: 600; }
 .coach-template-list { margin: .5rem 0 0; padding-left: 1.25rem; }
 .coach-template-field { display: block; font-weight: 700; }
 .coach-template-blank { display: block; min-height: 1.5rem; border-bottom: 1px solid var(--line); }
+.market-next-investigation { margin-top: 1.25rem; padding: 1rem; border-left: 4px solid var(--gold); background: var(--gold-soft); }
+.market-next-investigation h3 { margin: 0; }
+.market-next-investigation-facts { display: grid; grid-template-columns: minmax(10rem, .35fr) minmax(0, 1fr); gap: .5rem 1rem; margin: .75rem 0 0; }
+.market-next-investigation-facts dt { min-width: 0; font-weight: 700; }
+.market-next-investigation-facts dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+.market-next-investigation-boundary { margin: .9rem 0 0; }
 
 @media screen and (prefers-color-scheme: dark) {
   .section-coverage-row article { border-color: var(--forest); background: var(--surface); color: var(--ink); }
   .coach-template { background: var(--paper); color: var(--ink); }
+  .market-next-investigation { background: var(--gold-soft); color: var(--ink); }
 }
 
 @media (max-width: 480px) {
@@ -1651,6 +1656,7 @@ dd { margin: .15rem 0 0; font-weight: 600; }
   .reading-path ol { display: grid; grid-template-columns: 1fr; justify-content: stretch; }
   .reading-path a { justify-content: center; }
   .section-coverage-facts { grid-template-columns: 1fr; }
+  .market-next-investigation-facts { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1658,20 +1664,20 @@ dd { margin: .15rem 0 0; font-weight: 600; }
 }
 
 @media print {
-  .reading-path, .section-coverage-row, .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card { break-inside: avoid; page-break-inside: avoid; }
+  .reading-path, .section-coverage-row, .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card, .market-next-investigation { break-inside: avoid; page-break-inside: avoid; }
 }
 
 @media (forced-colors: active) {
-  .reading-path, .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card { background: Canvas; color: CanvasText; border-color: CanvasText; }
+  .reading-path, .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card, .market-next-investigation { background: Canvas; color: CanvasText; border-color: CanvasText; }
   .reading-path a { color: LinkText; border-color: CanvasText; }
-  .section-coverage-request, .coach-template { border-left-color: Highlight; }
+  .section-coverage-request, .coach-template, .market-next-investigation { border-left-color: Highlight; }
   .coach-priority-card { border-top-color: Highlight; }
   main:focus-visible { outline-color: Highlight; }
 }
 
 @media (prefers-contrast: more) {
-  .reading-path, .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card { border-width: 2px; }
-  .section-coverage-request, .coach-template { border-left-width: 5px; }
+  .reading-path, .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card, .market-next-investigation { border-width: 2px; }
+  .section-coverage-request, .coach-template, .market-next-investigation { border-left-width: 5px; }
   .coach-priority-card { border-top-width: 5px; }
 }
 ```
