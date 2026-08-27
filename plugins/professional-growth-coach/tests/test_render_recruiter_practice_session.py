@@ -705,6 +705,65 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
                     self.assertIn('class="practice-footer practice-shell"', rendered)
                     self.assertNotIn("no-print", rendered.split("practice-footer", 1)[1])
 
+    def test_renderer_cli_emits_only_an_opaque_receipt_on_success(self):
+        with tempfile.TemporaryDirectory() as raw:
+            directory = Path(raw)
+            source = directory / "PRIVATE_SESSION_PATH_SENTINEL.json"
+            output = directory / "PRIVATE_OUTPUT_PATH_SENTINEL.html"
+            session = self._triage_practice_session("en")
+            source.write_text(json.dumps(session), encoding="utf-8")
+
+            result = subprocess.run(
+                [sys.executable, "-B", str(SCRIPT), str(source), "--output", str(output)],
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual(
+            {"artifact_kind": "private_recruiter_practice_session_html"},
+            json.loads(result.stdout),
+        )
+        self.assertEqual("", result.stderr)
+        for private_value in (
+            "PRIVATE_SESSION_PATH_SENTINEL",
+            "PRIVATE_OUTPUT_PATH_SENTINEL",
+            "private.example.invalid",
+            "person@example.invalid",
+            "Q-999",
+            "snap-triage-sha256-",
+        ):
+            with self.subTest(private_value=private_value):
+                self.assertNotIn(private_value, result.stdout)
+                self.assertNotIn(private_value, result.stderr)
+
+    def test_renderer_cli_redacts_argument_and_path_failures(self):
+        sentinel = "PRIVATE_CLI_SENTINEL person@example.invalid https://private.example.invalid"
+        with tempfile.TemporaryDirectory() as raw:
+            directory = Path(raw)
+            source = directory / "valid-session.json"
+            source.write_text(json.dumps(self._triage_practice_session("en")), encoding="utf-8")
+            cases = (
+                ("unknown", ["--unknown", sentinel], 3, {"error": {"code": "invalid_arguments"}}),
+                ("missing-input", [sentinel, "--output", "/tmp/private-output.html"], 3, {"error": {"code": "invalid_input"}}),
+                ("unsafe-output", [str(source), "--output", f"/dev/null/{sentinel}"], 3, {"error": {"code": "unsafe_output"}}),
+            )
+            for label, arguments, code, expected in cases:
+                with self.subTest(label=label):
+                    result = subprocess.run(
+                        [sys.executable, "-B", str(SCRIPT), *arguments],
+                        text=True,
+                        capture_output=True,
+                        check=False,
+                    )
+                    self.assertEqual(code, result.returncode)
+                    self.assertEqual(expected, json.loads(result.stderr))
+                    self.assertEqual("", result.stdout)
+                    self.assertNotIn("PRIVATE_CLI_SENTINEL", result.stdout + result.stderr)
+                    self.assertNotIn("person@example.invalid", result.stdout + result.stderr)
+                    self.assertNotIn("private.example.invalid", result.stdout + result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

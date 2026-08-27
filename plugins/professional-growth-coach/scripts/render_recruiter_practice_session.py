@@ -84,6 +84,18 @@ class SessionValidationError(ValueError):
         super().__init__("recruiter practice session validation failed")
 
 
+class _ArgumentError(ValueError):
+    """Raised when the private CLI receives unusable arguments."""
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    """Suppress argparse's value-echoing diagnostics at the CLI boundary."""
+
+    def error(self, message: str) -> None:
+        del message
+        raise _ArgumentError
+
+
 @dataclass(frozen=True, slots=True)
 class RenderReceipt:
     artifact_path: Path
@@ -918,32 +930,37 @@ def write_session_html(session_path: Path, output_path: Path, *, force: bool = F
     )
 
 
+def _cli_error(code: str) -> None:
+    print(json.dumps({"error": {"code": code}}, separators=(",", ":")), file=sys.stderr)
+
+
 def _cli(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Render a private recruiter practice session.")
+    parser = _PrivateArgumentParser(description="Render a private recruiter practice session.")
     parser.add_argument("session", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--force", action="store_true")
     try:
         arguments = parser.parse_args(argv)
+    except _ArgumentError:
+        _cli_error("invalid_arguments")
+        return 3
     except SystemExit as error:
         return 0 if error.code == 0 else 3
     try:
-        receipt = write_session_html(arguments.session, arguments.output, force=arguments.force)
-    except OSError:
-        print("cannot write recruiter practice artifact", file=sys.stderr)
+        write_session_html(arguments.session, arguments.output, force=arguments.force)
+    except VALIDATOR.SessionLoadError:
+        _cli_error("invalid_input")
         return 3
-    except (VALIDATOR.SessionLoadError, SessionValidationError) as error:
-        if isinstance(error, SessionValidationError):
-            print("\n".join(error.errors), file=sys.stderr)
-        else:
-            print(str(error), file=sys.stderr)
+    except SessionValidationError:
+        _cli_error("validation_failed")
         return 2
-    print(json.dumps({
-        "artifact_path": str(receipt.artifact_path),
-        "artifact_type": receipt.artifact_type,
-        "locale": receipt.locale,
-        "chat_summary": receipt.chat_summary,
-    }, ensure_ascii=False, separators=(",", ":")))
+    except FileExistsError:
+        _cli_error("output_exists")
+        return 3
+    except OSError:
+        _cli_error("unsafe_output")
+        return 3
+    print(json.dumps({"artifact_kind": "private_recruiter_practice_session_html"}, separators=(",", ":")))
     return 0
 
 
