@@ -33,7 +33,7 @@ def _keyword_shapes_valid(schema: Mapping[str, object]) -> bool:
             or (isinstance(value, float) and not math.isfinite(value))
         ):
             return False
-    for keyword in ("minLength", "maxLength", "minItems", "maxItems"):
+    for keyword in ("minLength", "maxLength", "minItems", "maxItems", "minProperties", "maxProperties"):
         value = schema.get(keyword)
         if value is not None and (
             not isinstance(value, int) or isinstance(value, bool) or value < 0
@@ -198,6 +198,10 @@ def _validate(
             except ValueError:
                 errors.append(f"{path}: invalid date format")
     if isinstance(value, Mapping):
+        if "minProperties" in schema and len(value) < schema["minProperties"]:
+            errors.append(f"{path}: too few properties")
+        if "maxProperties" in schema and len(value) > schema["maxProperties"]:
+            errors.append(f"{path}: too many properties")
         properties = schema.get("properties", {})
         if schema.get("additionalProperties") is False:
             errors.extend(

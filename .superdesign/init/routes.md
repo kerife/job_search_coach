@@ -14,6 +14,7 @@ This plugin exposes no HTTP routes, SPA routes, framework page files, or router 
 | `/recruiter-target-shortlist` | `plugins/professional-growth-coach/scripts/render_recruiter_target_shortlist.py` | `plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.html` | `RecruiterTargetShortlistDocument` |
 | `/recruiter-target-decision-gate` | `plugins/professional-growth-coach/scripts/render_recruiter_target_decision_gate.py` | `plugins/professional-growth-coach/assets/recruiter-target-decision-gate-v1.html` | `RecruiterTargetDecisionGateDocument` |
 | `/recruiter-target-screen-intake` | `plugins/professional-growth-coach/scripts/render_recruiter_target_screen_intake.py` | `plugins/professional-growth-coach/assets/recruiter-target-screen-intake-v1.html` | `RecruiterTargetScreenIntakeDocument` |
+| `/private-recruiter-screen-debrief` | `plugins/professional-growth-coach/scripts/render_private_recruiter_screen_debrief.py` | `plugins/professional-growth-coach/assets/private-recruiter-screen-debrief-v1.html` | `PrivateRecruiterScreenDebriefDocument` |
 
 ## Key artifact summaries
 
@@ -24,6 +25,7 @@ This plugin exposes no HTTP routes, SPA routes, framework page files, or router 
 - **Conversion outcome:** a compact candidate-supplied observed-event receipt with evidence count and safe-next-step boundary.
 - **Recruiter target decision gate:** a private decision brief bound to a validated shortlist snapshot; it reconciles four decision states, shows the next safe input, and exposes only a manual `prepare-role-interviews` review handoff.
 - **Recruiter target screen intake:** a target-specific, four-check bridge that requires vacancy requirements, candidate fact IDs, company evidence, and a stated stage before any manual interview-preparation review.
+- **Private recruiter screen debrief:** a post-`screen_attended` structured coverage brief that records unknowns and a manual next-stage decision without retaining raw conversation text.
 
 Both compact receipt routes use the same static continuity semantics (`recorded`
 then `pending` then `blocked`) and expose exactly one current step to assistive

@@ -26,6 +26,7 @@ def _sibling(name: str) -> Any:
 BUILDER = _sibling("build_recruiter_target_shortlist.py")
 GATE_BUILDER = _sibling("build_recruiter_target_decision_gate.py")
 SCREEN_INTAKE_BUILDER = _sibling("build_recruiter_target_screen_intake.py")
+SCREEN_DEBRIEF_BUILDER = _sibling("build_private_recruiter_screen_debrief.py")
 INTENT = re.compile(r"(?:recruiter|recruiting|reclutador|reclutadora|network|red de|first interview|first screen|primer filtro|primera entrevista)", re.I)
 INTAKE = {
     "es": "Comparte de tres a seis objetivos manuales con contexto visible o proporcionado por ti y el tema de prueba que quieres revisar primero.",
@@ -150,6 +151,35 @@ def route_recruiter_screen_intake(
         "route_kind": "recruiter_target_screen_intake",
         "case_state": "ready" if ready else "needs_intake",
         "selected_module": "prepare-role-interviews",
+        "next_action": artifact["handoff"]["next_safe_action"],
+        "authorization_required": False,
+        "artifact": artifact,
+    }
+
+
+def route_recruiter_screen_debrief(
+    checkpoint: Mapping[str, object],
+    receipt: Mapping[str, object],
+    intake: Mapping[str, object],
+    debrief: Mapping[str, object],
+) -> dict[str, object]:
+    """Route one attended screen through a private structured debrief."""
+    try:
+        artifact = SCREEN_DEBRIEF_BUILDER.build_screen_debrief(checkpoint, receipt, intake, debrief)
+    except (TypeError, ValueError):
+        return {
+            "route_kind": "private_recruiter_screen_debrief",
+            "case_state": "needs_intake",
+            "selected_module": "track-career-outcomes",
+            "next_action": "collect_debrief_context",
+            "authorization_required": False,
+            "artifact": None,
+        }
+    ready = artifact["decision"] == "continue_review"
+    return {
+        "route_kind": "private_recruiter_screen_debrief",
+        "case_state": "ready" if ready else "needs_intake",
+        "selected_module": "track-career-outcomes",
         "next_action": artifact["handoff"]["next_safe_action"],
         "authorization_required": False,
         "artifact": artifact,

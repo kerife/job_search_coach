@@ -228,6 +228,13 @@ def validate_screen_intake(value: object, *, source_gate: Mapping[str, object] |
                 errors.append("target_id does not exist in source gate")
             elif target_decision != matching.get("decision"):
                 errors.append("target_decision does not match source gate")
+            else:
+                source_shortlist = source_gate.get("source_shortlist")
+                source_targets = source_shortlist.get("targets") if isinstance(source_shortlist, Mapping) else None
+                source_target = next((row for row in source_targets if isinstance(row, Mapping) and row.get("target_id") == target_id), None) if isinstance(source_targets, list) else None
+                supported = source_target.get("supported_fact_ids") if isinstance(source_target, Mapping) else None
+                if not isinstance(supported, list) or any(fact not in supported for fact in facts):
+                    errors.append("intake.candidate_fact_ids are not supported by target")
     elif isinstance(embedded_gate, Mapping) and not GATE.validate_decision_gate(embedded_gate, as_of=as_of):
         if snapshot != embedded_gate.get("source_snapshot"):
             errors.append("source_gate_snapshot does not match source gate")
@@ -238,6 +245,13 @@ def validate_screen_intake(value: object, *, source_gate: Mapping[str, object] |
                 errors.append("target_id does not exist in source gate")
             elif target_decision != matching.get("decision"):
                 errors.append("target_decision does not match source gate")
+            else:
+                source_shortlist = embedded_gate.get("source_shortlist")
+                source_targets = source_shortlist.get("targets") if isinstance(source_shortlist, Mapping) else None
+                source_target = next((row for row in source_targets if isinstance(row, Mapping) and row.get("target_id") == target_id), None) if isinstance(source_targets, list) else None
+                supported = source_target.get("supported_fact_ids") if isinstance(source_target, Mapping) else None
+                if not isinstance(supported, list) or any(fact not in supported for fact in facts):
+                    errors.append("intake.candidate_fact_ids are not supported by target")
     return sorted(set(errors))
 
 

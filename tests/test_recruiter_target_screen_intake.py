@@ -31,7 +31,7 @@ def valid_screen_intake() -> dict[str, object]:
             "V-001: Platform reliability ownership and incident response scope.",
             "V-002: Evidence-backed delivery expectation for the role.",
         ],
-        "candidate_fact_ids": ["F-001", "F-002"],
+        "candidate_fact_ids": ["F-001"],
         "company_evidence_state": "verified",
         "source_date": "2026-08-27",
         "checks": [
@@ -57,7 +57,9 @@ class RecruiterTargetScreenIntakeTests(unittest.TestCase):
         self.assertFalse(intake["delivery"]["external_actions_authorized"])
 
     def test_non_advance_target_can_never_prepare(self) -> None:
-        intake = build_screen_intake(self.gate(), "T-002", valid_screen_intake())
+        context = valid_screen_intake()
+        context["candidate_fact_ids"] = ["F-002"]
+        intake = build_screen_intake(self.gate(), "T-002", context)
         self.assertEqual("clarify_first", intake["readiness_decision"])
         self.assertEqual("collect_screen_intake", intake["handoff"]["next_safe_action"])
         self.assertEqual([], validate_screen_intake(intake, source_gate=self.gate(), as_of=date(2026, 8, 27)))

@@ -35,6 +35,56 @@ the print rendering stays tabular.
 </html>
 ```
 
+## PrivateRecruiterScreenDebriefDocument
+
+- Source: `plugins/professional-growth-coach/assets/private-recruiter-screen-debrief-v1.html`
+- Renders: structured post-screen coverage, unknown count, and manual next-stage boundary.
+
+```html
+<!doctype html>
+<html lang="{{LANG}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'none'; font-src 'none'; connect-src 'none'; form-action 'none'; frame-ancestors 'none'">
+  <title>{{TITLE}}</title>
+  <style>{{INLINE_CSS}}</style>
+</head>
+<body class="debrief-document">
+  <a class="skip-link" href="#main-content">{{SKIP}}</a>
+  <main id="main-content" tabindex="-1" class="debrief-shell">
+    <header class="debrief-header">
+      <p class="debrief-kicker">{{KICKER}}</p>
+      <h1>{{HEADING}}</h1>
+      <p class="debrief-date"><span>{{DATE_LABEL}}</span> <time datetime="{{DATE}}">{{DATE}}</time></p>
+    </header>
+    <section class="debrief-card debrief-summary" aria-labelledby="summary-title">
+      <p class="debrief-summary__label">{{DECISION}}</p>
+      <h2 id="summary-title">{{NEXT_LABEL}}</h2>
+      <p class="debrief-summary__action">{{NEXT_ACTION}}</p>
+    </section>
+    <section class="debrief-card" aria-labelledby="context-title">
+      <h2 id="context-title">{{STAGE_LABEL}}</h2>
+      <dl class="debrief-context-grid">
+        <div><dt>{{STAGE_LABEL}}</dt><dd>{{STAGE}}</dd></div>
+        <div><dt>{{FACTS_LABEL}}</dt><dd>{{FACT_COUNT}}</dd></div>
+        <div><dt>{{UNKNOWN_LABEL}}</dt><dd>{{UNKNOWN_COUNT}}</dd></div>
+      </dl>
+    </section>
+    <section class="debrief-card" aria-labelledby="coverage-title">
+      <h2 id="coverage-title">{{COVERAGE_LABEL}}</h2>
+      <ol class="debrief-coverage-list">{{COVERAGE}}</ol>
+      <p class="debrief-counts">{{DISCUSSED_COUNT}} · {{UNCLEAR_COUNT}}</p>
+    </section>
+    <footer class="debrief-footer">
+      <p>{{BOUNDARY}}</p>
+      <p>{{FOOTER}}</p>
+    </footer>
+  </main>
+</body>
+</html>
+```
+
 ## RecruiterTargetScreenIntakeDocument
 
 - Source: `plugins/professional-growth-coach/assets/recruiter-target-screen-intake-v1.html`

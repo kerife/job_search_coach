@@ -28,6 +28,8 @@ Explicit requests to expand a network or prepare for a first recruiter screen ro
 
 For a selected `advance` target, `route_recruiter_screen_intake` adds the target-specific `recruiter-target-screen-intake-v1` bridge. It requires a stated screen stage, `V-###` vacancy requirements, `F-###` candidate facts, company evidence, and four passing checks before returning only `manual_prepare_role_interviews_review`; `clarify` and `stop` targets remain blocked or in intake, with no message, calendar, or automatic preparation action.
 
+After a validated `screen_attended` checkpoint, `route_recruiter_screen_debrief` can build `private-recruiter-screen-debrief-v1`. The private bilingual debrief records only structured coverage, unknown topics, supported facts used, and a manual `continue_review|pause|stop` decision. Complete coverage may hand off to `manual_prepare_next_stage_review`; incomplete coverage collects context and a stop decision is terminal. No raw conversation text, contacts, messages, calendar actions, automatic preparation, or outcome prediction is retained.
+
 ## Installation
 
 This source tree is repo-local at `plugins/professional-growth-coach`. Source edits do not update the installed plugin cache. A separate explicitly authorized installation is required to publish a source increment into the local marketplace cache; existing chats may continue using their loaded version, so verify the new installation from a fresh chat. Use the repo-local marketplace workflow only after the exact target and command are approved.

@@ -23,6 +23,7 @@ ASSET_NAMES = (
     "recruiter-target-shortlist-v1.css",
     "recruiter-target-decision-gate-v1.css",
     "recruiter-target-screen-intake-v1.css",
+    "private-recruiter-screen-debrief-v1.css",
 )
 EXPECTED_THEME_ASSET_NAMES = {
     "executive-career-dossier-v1.css",
@@ -35,6 +36,7 @@ EXPECTED_THEME_ASSET_NAMES = {
     "recruiter-target-shortlist-v1.css",
     "recruiter-target-decision-gate-v1.css",
     "recruiter-target-screen-intake-v1.css",
+    "private-recruiter-screen-debrief-v1.css",
 }
 HTML_ASSET_NAMES = (
     "executive-career-dossier-v1.html",
@@ -45,6 +47,7 @@ HTML_ASSET_NAMES = (
     "recruiter-target-shortlist-v1.html",
     "recruiter-target-decision-gate-v1.html",
     "recruiter-target-screen-intake-v1.html",
+    "private-recruiter-screen-debrief-v1.html",
 )
 EXPECTED_LAYOUT_SOURCES = {
     f"plugins/professional-growth-coach/assets/{name}"

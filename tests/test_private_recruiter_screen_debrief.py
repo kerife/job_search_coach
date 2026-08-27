@@ -1,0 +1,185 @@
+"""Contracts for the private post-screen debrief bridge."""
+
+from __future__ import annotations
+
+import copy
+import json
+import sys
+import unittest
+from datetime import date
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+SCRIPTS = ROOT / "plugins" / "professional-growth-coach" / "scripts"
+sys.path.insert(0, str(SCRIPTS))
+
+from build_recruiter_target_decision_gate import build_decision_gate  # noqa: E402
+from build_recruiter_target_shortlist import build_shortlist  # noqa: E402
+from build_recruiter_target_screen_intake import build_screen_intake  # noqa: E402
+from build_private_recruiter_screen_debrief import build_screen_debrief  # noqa: E402
+from render_private_recruiter_screen_debrief import render_screen_debrief_html  # noqa: E402
+from route_recruiter_target_shortlist import route_recruiter_screen_debrief  # noqa: E402
+from validate_private_recruiter_screen_debrief import validate_screen_debrief  # noqa: E402
+from validate_recruiter_target_screen_intake import validate_screen_intake  # noqa: E402
+from tests.test_recruiter_target_decision_gate import RecruiterTargetDecisionGateTests  # noqa: E402
+from tests.test_recruiter_target_shortlist import valid_plan, valid_targets  # noqa: E402
+from tests.test_recruiter_target_screen_intake import valid_screen_intake  # noqa: E402
+
+
+RECEIPT = json.loads(
+    (ROOT / "plugins/professional-growth-coach/tests/fixtures/private-recruiter-conversion-outcome/screen-requested-en.json").read_text(encoding="utf-8")
+)
+
+
+def valid_checkpoint() -> dict[str, object]:
+    return {
+        "schema_version": "private-recruiter-followthrough-checkpoint-v1",
+        "artifact_kind": "private_recruiter_followthrough_checkpoint",
+        "locale": "en",
+        "source_receipt": {"id": "D-104", "source_version": "draft-v1", "event_type": "screen_requested"},
+        "action_state": "completed",
+        "observed_date": "2026-08-27",
+        "next_measurement_event": "screen_attended",
+        "next_safe_action": "debrief_after_screen",
+        "delivery": {
+            "draft_only": True,
+            "external_actions_authorized": False,
+            "no_message_action": True,
+            "no_calendar_action": True,
+            "raw_event_retained": False,
+            "local_save_mode": "disabled",
+        },
+    }
+
+
+def valid_debrief() -> dict[str, object]:
+    return {
+        "observed_date": "2026-08-27",
+        "coverage": [
+            {"topic": "requirement", "status": "discussed", "note": "Role scope was discussed."},
+            {"topic": "scope", "status": "discussed", "note": "Success expectations were discussed."},
+            {"topic": "team_context", "status": "discussed", "note": "Team context was discussed."},
+        ],
+        "unknown_topics": [],
+        "facts_used": ["F-001"],
+        "decision": "continue_review",
+    }
+
+
+class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
+    def setUp(self) -> None:
+        shortlist = RecruiterTargetDecisionGateTests().shortlist()
+        self.gate = build_decision_gate(shortlist)
+        self.intake = build_screen_intake(self.gate, "T-001", valid_screen_intake())
+
+    def test_complete_debrief_allows_manual_next_stage_review(self) -> None:
+        artifact = build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, valid_debrief())
+        self.assertEqual([], validate_screen_debrief(artifact, RECEIPT, self.intake, as_of=date(2026, 8, 27)))
+        self.assertEqual("manual_prepare_next_stage_review", artifact["handoff"]["next_safe_action"])
+        self.assertEqual("continue_review", artifact["decision"])
+
+    def test_incomplete_debrief_never_prepares(self) -> None:
+        debrief = valid_debrief()
+        debrief["coverage"][1]["status"] = "unclear"
+        debrief["unknown_topics"] = ["Decision criteria remain unknown."]
+        debrief["decision"] = "pause"
+        artifact = build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, debrief)
+        self.assertEqual("collect_debrief_context", artifact["handoff"]["next_safe_action"])
+        self.assertEqual([], validate_screen_debrief(artifact, RECEIPT, self.intake, as_of=date(2026, 8, 27)))
+
+    def test_stop_is_terminal_and_blocks_next_stage(self) -> None:
+        debrief = valid_debrief()
+        debrief["decision"] = "stop"
+        artifact = build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, debrief)
+        self.assertEqual("record_stop_decision", artifact["handoff"]["next_safe_action"])
+        self.assertEqual("stop_decision", artifact["measurement_event"])
+
+    def test_invalid_decision_fails_closed(self) -> None:
+        debrief = valid_debrief()
+        debrief["decision"] = "advance"
+        with self.assertRaises(ValueError):
+            build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, debrief)
+
+    def test_source_checkpoint_and_intake_drift_fail_closed(self) -> None:
+        artifact = build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, valid_debrief())
+        tampered_checkpoint = copy.deepcopy(artifact["source_checkpoint"])
+        tampered_checkpoint["next_safe_action"] = "route_to_prepare-role-interviews"
+        tampered = copy.deepcopy(artifact)
+        tampered["source_checkpoint"] = tampered_checkpoint
+        self.assertTrue(validate_screen_debrief(tampered, RECEIPT, self.intake, as_of=date(2026, 8, 27)))
+        tampered = copy.deepcopy(artifact)
+        tampered["source_intake"]["source_gate_snapshot"] = "snap-shortlist-sha256-" + "0" * 64
+        self.assertTrue(validate_screen_debrief(tampered, RECEIPT, self.intake, as_of=date(2026, 8, 27)))
+
+    def test_target_fact_ownership_is_required(self) -> None:
+        tampered = copy.deepcopy(self.intake)
+        tampered["intake"]["candidate_fact_ids"] = ["F-999"]
+        intake_errors = validate_screen_intake(tampered, source_gate=self.gate, as_of=date(2026, 8, 27))
+        self.assertIn("intake.candidate_fact_ids are not supported by target", intake_errors)
+        self.assertTrue(validate_screen_debrief(
+            build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, valid_debrief()),
+            RECEIPT,
+            tampered,
+            as_of=date(2026, 8, 27),
+        ))
+
+    def test_receipt_must_represent_a_requested_screen(self) -> None:
+        receipt = copy.deepcopy(RECEIPT)
+        receipt["event_type"] = "contact_received"
+        receipt["next_safe_action"] = "clarify_context_before_reply"
+        checkpoint = valid_checkpoint()
+        checkpoint["source_receipt"]["event_type"] = "contact_received"
+        with self.assertRaises(ValueError):
+            build_screen_debrief(checkpoint, receipt, self.intake, valid_debrief())
+
+    def test_future_observed_date_is_rejected(self) -> None:
+        debrief = valid_debrief()
+        debrief["observed_date"] = "2099-01-01"
+        with self.assertRaises(ValueError):
+            build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, debrief)
+
+    def test_renderer_does_not_fallback_from_an_explicit_empty_checkpoint(self) -> None:
+        artifact = build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, valid_debrief())
+        with self.assertRaises(ValueError):
+            render_screen_debrief_html(artifact, RECEIPT, self.intake, checkpoint={})
+
+    def test_replay_fingerprint_is_stable_and_changes_on_semantic_mutation(self) -> None:
+        first = build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, valid_debrief())
+        second = build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, valid_debrief())
+        self.assertEqual(first["replay_fingerprint"], second["replay_fingerprint"])
+        changed = valid_debrief()
+        changed["coverage"][0]["note"] = "Role scope and requirements were discussed."
+        third = build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, changed)
+        self.assertNotEqual(first["replay_fingerprint"], third["replay_fingerprint"])
+
+    def test_renderer_localizes_and_hides_all_internal_ids_and_notes(self) -> None:
+        artifact = build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, valid_debrief())
+        rendered = render_screen_debrief_html(artifact, RECEIPT, self.intake)
+        self.assertIn("Debrief privado del filtro", rendered)
+        for token in ("T-001", "F-001", "V-001", "D-104", "Role scope was discussed"):
+            self.assertNotIn(token, rendered)
+        english_gate = build_decision_gate(build_shortlist("en", "2026-08-27", valid_plan(), valid_targets()))
+        english_intake = build_screen_intake(english_gate, "T-001", valid_screen_intake())
+        english = build_screen_debrief(valid_checkpoint(), RECEIPT, english_intake, valid_debrief())
+        self.assertIn("Private screen debrief", render_screen_debrief_html(english, RECEIPT, english_intake))
+
+    def test_cli_unknown_arguments_are_opaque(self) -> None:
+        from validate_private_recruiter_screen_debrief import _cli
+
+        self.assertEqual(3, _cli(["--private-token-value"]))
+
+    def test_route_exposes_only_manual_or_context_collection_states(self) -> None:
+        routed = route_recruiter_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, valid_debrief())
+        self.assertEqual("ready", routed["case_state"])
+        self.assertEqual("manual_prepare_next_stage_review", routed["next_action"])
+        paused = valid_debrief()
+        paused["decision"] = "pause"
+        paused["unknown_topics"] = ["Decision criteria remain unknown."]
+        paused["coverage"][0]["status"] = "unclear"
+        routed = route_recruiter_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, paused)
+        self.assertEqual("needs_intake", routed["case_state"])
+        self.assertEqual("collect_debrief_context", routed["next_action"])
+
+
+if __name__ == "__main__":
+    unittest.main()

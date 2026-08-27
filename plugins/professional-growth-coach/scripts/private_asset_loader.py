@@ -32,6 +32,8 @@ CANONICAL_RENDERER_ASSETS = (
     "assets/recruiter-target-decision-gate-v1.css",
     "assets/recruiter-target-screen-intake-v1.html",
     "assets/recruiter-target-screen-intake-v1.css",
+    "assets/private-recruiter-screen-debrief-v1.html",
+    "assets/private-recruiter-screen-debrief-v1.css",
 )
 
 
