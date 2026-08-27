@@ -632,7 +632,7 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
         document = self.renderer.render_triage_html(self.fixtures["ready-en.json"])
         sequence = document.split('class="triage-handoff-sequence"', 1)[1].split("</ol>", 1)[0]
         self.assertIn("<ol", document)
-        self.assertEqual(sequence.count('<li><span class="triage-handoff-step-label">'), 3)
+        self.assertEqual(sequence.count('<li data-state='), 3)
         labels = ("01 Conditions", "02 Focus", "03 Manual re-entry")
         positions = [sequence.index(label) for label in labels]
         self.assertEqual(positions, sorted(positions))
