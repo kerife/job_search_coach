@@ -152,6 +152,15 @@ the validated context in a later private practice request. Snapshot drift,
 candidate-reported facts, non-ready triage states, or mismatched handoff
 references are rejected rather than converted into practice material.
 
+For an explicit private file workflow, run
+`build_private_recruiter_triage_practice_handoff.py --input TRIAGE.json --output HANDOFF.json`.
+This CLI accepts only the v2 triage contract, reads one bounded non-symlink JSON
+object, verifies the generated handoff before an atomic private write, and will
+not overwrite an existing regular file without `--force`. Its output is canonical
+JSON; failures use a compact JSON error envelope and never echo supplied prose.
+Legacy v1 triage remains readable only through its existing legacy routes and is
+not eligible for this handoff or its manual re-entry path.
+
 The default composition begins with `learning_state=not_evaluated`. If bounded
 market research cannot finish, the plugin preserves the valid profile dossier
 and renders the limited or unavailable market state with one bounded reason;

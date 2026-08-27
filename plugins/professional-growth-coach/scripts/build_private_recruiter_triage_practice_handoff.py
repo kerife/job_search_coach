@@ -3,8 +3,12 @@
 
 from __future__ import annotations
 
+import argparse
 import importlib.util
 import json
+import os
+import secrets
+import stat
 import sys
 from collections.abc import Mapping
 from functools import lru_cache
@@ -52,6 +56,10 @@ class CompositionError(ValueError):
     """Raised when triage cannot safely compose into a practice session."""
 
 
+class TriageInputError(CompositionError):
+    """Raised when the supplied private triage file cannot be safely decoded."""
+
+
 @lru_cache(maxsize=None)
 def _load_sibling(name: str):
     path = Path(__file__).with_name(f"{name}.py")
@@ -83,6 +91,10 @@ def snapshot_for_triage(triage: Mapping[str, object]) -> str:
 
 def validate_session(value: object) -> list[str]:
     return _load_sibling("validate_recruiter_practice_session").validate_session(value)
+
+
+def validate_handoff(value: object) -> list[str]:
+    return _load_sibling("validate_private_recruiter_triage_practice_handoff").validate_handoff(value)
 
 
 def validate_schema_instance(value: object, schema: Mapping[str, object]) -> list[str]:
@@ -199,3 +211,164 @@ def build_handoff(triage: Mapping[str, object]) -> dict[str, object]:
     if validate_session(practice_session):
         raise CompositionError("practice projection failed validation")
     return handoff
+
+
+def _unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    result: dict[str, object] = {}
+    for key, value in pairs:
+        if key in result:
+            raise CompositionError("input JSON contains duplicate keys")
+        result[key] = value
+    return result
+
+
+def load_triage(path: Path) -> dict[str, object]:
+    """Load exactly one bounded v2 triage object without following symlinks."""
+    loader = _load_sibling("private_input_loader")
+    try:
+        raw_bytes = loader.read_bounded_bytes(path, 64_000)
+        decoded = raw_bytes.decode("utf-8")
+        value = json.loads(decoded, object_pairs_hook=_unique_object)
+    except (UnicodeError, json.JSONDecodeError, RecursionError, CompositionError, loader.PrivateInputError) as error:
+        raise TriageInputError("triage input is unavailable") from error
+    if not isinstance(value, dict):
+        raise TriageInputError("triage input must be an object")
+    return value
+
+
+def _open_private_parent(parent: Path) -> int:
+    if not parent.is_absolute() or parent.anchor != os.sep:
+        raise OSError("output parent is unsafe")
+    nofollow = getattr(os, "O_NOFOLLOW", 0)
+    directory_flag = getattr(os, "O_DIRECTORY", 0)
+    if not nofollow or not directory_flag:
+        raise OSError("safe output is unsupported")
+    descriptor = os.open(os.sep, os.O_RDONLY | directory_flag | getattr(os, "O_CLOEXEC", 0))
+    try:
+        for index, component in enumerate(parent.parts[1:]):
+            if component in {"", ".", ".."}:
+                raise OSError("output parent is unsafe")
+            try:
+                os.mkdir(component, 0o700, dir_fd=descriptor)
+            except FileExistsError:
+                pass
+            absolute = os.path.join(os.sep, component)
+            trusted_alias = (
+                index == 0
+                and component in {"tmp", "var"}
+                and os.path.islink(absolute)
+                and os.path.realpath(absolute) == os.path.join(os.sep, "private", component)
+            )
+            child = os.open(
+                component,
+                os.O_RDONLY | directory_flag | getattr(os, "O_CLOEXEC", 0) | (0 if trusted_alias else nofollow),
+                dir_fd=descriptor,
+            )
+            if not stat.S_ISDIR(os.fstat(child).st_mode):
+                os.close(child)
+                raise OSError("output parent is unsafe")
+            os.close(descriptor)
+            descriptor = child
+        return descriptor
+    except BaseException:
+        os.close(descriptor)
+        raise
+
+
+def _atomic_private_write(output: Path, content: bytes, *, force: bool) -> None:
+    if not output.name or output.name in {".", ".."}:
+        raise OSError("output target is unsafe")
+    parent = _open_private_parent(output.parent)
+    temporary: str | None = None
+    descriptor: int | None = None
+    try:
+        try:
+            current = os.stat(output.name, dir_fd=parent, follow_symlinks=False)
+        except FileNotFoundError:
+            current = None
+        if current is not None:
+            if stat.S_ISLNK(current.st_mode) or not stat.S_ISREG(current.st_mode):
+                raise OSError("output target is unsafe")
+            if not force:
+                raise FileExistsError("output already exists")
+        for _ in range(100):
+            candidate = f".{output.name}.tmp-{secrets.token_hex(8)}"
+            try:
+                descriptor = os.open(candidate, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0), 0o600, dir_fd=parent)
+                temporary = candidate
+                break
+            except FileExistsError:
+                continue
+        if temporary is None or descriptor is None:
+            raise OSError("cannot create private output")
+        with os.fdopen(descriptor, "wb") as stream:
+            descriptor = None
+            os.fchmod(stream.fileno(), 0o600)
+            stream.write(content)
+            stream.flush()
+            os.fsync(stream.fileno())
+        if force:
+            os.replace(temporary, output.name, src_dir_fd=parent, dst_dir_fd=parent)
+        else:
+            try:
+                os.link(temporary, output.name, src_dir_fd=parent, dst_dir_fd=parent, follow_symlinks=False)
+            except FileExistsError as error:
+                raise FileExistsError("output already exists") from error
+            os.unlink(temporary, dir_fd=parent)
+        temporary = None
+        os.fsync(parent)
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
+        if temporary is not None:
+            try:
+                os.unlink(temporary, dir_fd=parent)
+            except FileNotFoundError:
+                pass
+        os.close(parent)
+
+
+def write_handoff(triage_path: Path, output_path: Path, *, force: bool = False) -> None:
+    """Build, validate, canonically encode, and privately write one handoff."""
+    triage = load_triage(triage_path)
+    handoff = build_handoff(triage)
+    if validate_handoff(handoff):
+        raise CompositionError("handoff validation failed")
+    output = Path(os.path.abspath(os.fspath(output_path.expanduser())))
+    encoded = json.dumps(handoff, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8") + b"\n"
+    _atomic_private_write(output, encoded, force=force)
+
+
+def _error(code: str) -> None:
+    print(json.dumps({"error": {"code": code}}, separators=(",", ":")), file=sys.stderr)
+
+
+def _cli(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Compose a private triage practice handoff.")
+    parser.add_argument("--input", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--force", action="store_true")
+    try:
+        arguments = parser.parse_args(argv)
+    except SystemExit as error:
+        return 0 if error.code == 0 else 3
+    try:
+        write_handoff(arguments.input, arguments.output, force=arguments.force)
+    except FileExistsError:
+        _error("output_exists")
+        return 3
+    except OSError:
+        _error("unsafe_output")
+        return 3
+    except TriageInputError:
+        _error("invalid_input")
+        return 3
+    except CompositionError:
+        _error("validation_failed")
+        return 2
+    print(json.dumps({"artifact_kind": "private_recruiter_triage_practice_handoff", "schema_version": SCHEMA_VERSION}, separators=(",", ":")))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(_cli())

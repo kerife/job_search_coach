@@ -50,6 +50,15 @@ When both inputs are supplied, create only the closed `private-recruiter-reply-t
 
 For `ready_for_private_prep`, the closed handoff is only a manual re-entry cue for `prepare-role-interviews`, scoped to one recruiter-screen question and an identity-free summary plus verified fact. It is **manual input only**: it does not auto-start, transfer execution context, create a `module_execution_packet`, or emit router rows. Its exact boundary is `candidate_answer_state=unanswered` and `score_state=unknown` until the candidate supplies an answer in a later explicit preparation request. Clarify-first and stop cards omit the handoff. Private triage precedence applies before all ordinary recruiter and LinkedIn routes; normal recruiter-reply behavior remains unchanged, including legacy debug/eval/detail behavior.
 
+When the candidate explicitly supplies a v2 triage JSON file for private re-entry,
+the only file route is `build_private_recruiter_triage_practice_handoff.py` with
+`--input` and `--output`. It accepts only a validated
+`private-recruiter-reply-triage-v2` ready handoff and produces the closed practice
+handoff after a manual file choice; it never reads v1 as a compatible substitute,
+auto-starts rehearsal, persists an answer, or creates an external action. A v1
+triage remains in its legacy route and must be manually re-created as v2 before
+this private handoff can be considered.
+
 ## Multi-module routing
 
 Outside the normal local LinkedIn artifact branch, use a multi-module ordered plan when one self-service or coach mode request contains several safe workstreams, such as LinkedIn audit plus CV rewrite plus imminent interview preparation. The router contract still gets exactly one `selected_module`: choose the first module that should run safely after evidence and authorization gates. Then add an `ordered plan` with one line per later module. In the artifact branch, keep later-module planning internal and end the client chat after the verified link.
