@@ -148,6 +148,15 @@ class PrivateRecruiterTriagePracticeHandoffCliTests(unittest.TestCase):
             self.assertEqual(0, allowed.returncode, allowed.stderr)
             self.assertEqual("private-recruiter-triage-practice-handoff-v1", json.loads(output.read_text(encoding="utf-8"))["schema_version"])
 
+    def test_rejects_unknown_arguments_without_reflecting_supplied_prose(self) -> None:
+        result = self._run("--unknown", "RAW_REPLY_SENTINEL")
+
+        error = self._error(result)
+        self.assertEqual(3, result.returncode)
+        self.assertEqual("invalid_arguments", error["error"]["code"])
+        self.assertNotIn("RAW_REPLY_SENTINEL", result.stdout)
+        self.assertNotIn("RAW_REPLY_SENTINEL", result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -60,6 +60,18 @@ class TriageInputError(CompositionError):
     """Raised when the supplied private triage file cannot be safely decoded."""
 
 
+class _ArgumentError(ValueError):
+    """Internal parse failure that deliberately carries no supplied argument text."""
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    """Prevent argparse from reflecting private CLI values in usage diagnostics."""
+
+    def error(self, message: str) -> None:
+        del message
+        raise _ArgumentError
+
+
 @lru_cache(maxsize=None)
 def _load_sibling(name: str):
     path = Path(__file__).with_name(f"{name}.py")
@@ -344,12 +356,15 @@ def _error(code: str) -> None:
 
 
 def _cli(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Compose a private triage practice handoff.")
+    parser = _PrivateArgumentParser(description="Compose a private triage practice handoff.")
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--force", action="store_true")
     try:
         arguments = parser.parse_args(argv)
+    except _ArgumentError:
+        _error("invalid_arguments")
+        return 3
     except SystemExit as error:
         return 0 if error.code == 0 else 3
     try:
