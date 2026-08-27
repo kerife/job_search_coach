@@ -701,6 +701,13 @@ details summary {
 .learning-decision-row--not-needed { border-left: 4px solid var(--muted); }
 .learning-decision-row--recommended { border-left: 4px solid var(--forest); }
 .learning-decision-row--pause, .learning-decision-row--apply-with-boundary { border-left: 4px solid var(--coral); }
+.learning-decision-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; margin-bottom: .75rem; }
+.learning-decision-heading h4 { margin: .15rem 0 0; }
+.learning-decision-kicker { display: block; color: var(--muted); font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.learning-option-type { flex: 0 1 auto; padding: .3rem .5rem; border: 1px solid var(--forest); color: var(--forest); font-size: .75rem; font-weight: 700; line-height: 1.2; text-align: right; }
+.learning-decision-row--consider .learning-option-type, .learning-decision-row--recommended .learning-option-type { border-color: var(--gold); color: #654c10; }
+.learning-decision-row--pause .learning-option-type, .learning-decision-row--apply-with-boundary .learning-option-type { border-color: var(--coral); color: #7c2f1e; }
+.market-provider-evidence-boundary { margin-top: .75rem; }
 .learning-decision-facts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .35rem .75rem; }
 .learning-decision-facts dt { color: var(--muted); font-weight: 700; }
 .learning-decision-facts dd { margin: 0; overflow-wrap: anywhere; }
@@ -717,6 +724,8 @@ details summary {
   .recurrence-row { grid-template-columns: 1fr; gap: .35rem; }
   .learning-decision-list { grid-template-columns: 1fr; }
   .learning-decision-facts { grid-template-columns: 1fr; gap: .2rem; }
+  .learning-decision-heading { display: block; }
+  .learning-option-type { display: inline-block; margin-top: .5rem; text-align: left; }
 }
 
 @media (prefers-reduced-motion: reduce) { .vacancy-alignment-card, .recurrence-row { animation: none !important; transition: none !important; transform: none !important; } }
@@ -726,6 +735,7 @@ details summary {
 @media (forced-colors: active) {
   .market-summary, .vacancy-alignment-card, .recurrence-row, .gap-closure-route, .market-learning-roi, .learning-coach-decision, .learning-proof-sprint, .learning-reuse, .learning-decision-row, .market-matrix th, .market-matrix td, .market-alignment-score, .market-recurrence-count { background: Canvas; color: CanvasText; border-color: CanvasText; }
   .market-boundary, .market-limitation, .gap-closure-route { border-left-color: Highlight; }
+  .learning-option-type { color: CanvasText; border-color: CanvasText; }
 }
 
 @media (prefers-contrast: more) { .market-summary, .vacancy-alignment-card, .recurrence-row, .market-learning-roi, .learning-coach-decision, .learning-proof-sprint, .learning-reuse, .learning-decision-row, .market-matrix th, .market-matrix td { border-width: 2px; } }
