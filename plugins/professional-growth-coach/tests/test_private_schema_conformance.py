@@ -236,7 +236,13 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
                     self.assertTrue(validate_schema_instance(invalid, schema))
 
     def test_recruiter_schema_contracts_reject_impossible_state_combinations(self):
-        _, _, _, _, _, debrief, review = _build_recruiter_handoff_chain()
+        _, _, intake, _, _, debrief, review = _build_recruiter_handoff_chain()
+        intake_schema = self._schema("recruiter-target-screen-intake-v1.schema.json")
+        invalid_intake = copy.deepcopy(intake)
+        invalid_intake["target_decision"] = "stop"
+        invalid_intake["readiness_decision"] = "ready"
+        invalid_intake["measurement_event"] = "screen_context_submitted"
+        self.assertTrue(validate_schema_instance(invalid_intake, intake_schema))
         debrief_schema = self._schema("private-recruiter-screen-debrief-v1.schema.json")
         invalid_debrief = copy.deepcopy(debrief)
         invalid_debrief["decision"] = "stop"
@@ -248,6 +254,14 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         invalid_review["review_state"] = "ready"
         invalid_review["handoff"]["next_safe_action"] = "collect_debrief_context"
         self.assertTrue(validate_schema_instance(invalid_review, review_schema))
+
+        invalid_stopped_review = copy.deepcopy(review)
+        invalid_stopped_review["review_state"] = "blocked"
+        invalid_stopped_review["source_debrief"]["decision"] = "stop"
+        invalid_stopped_review["source_debrief"]["measurement_event"] = "stop_decision"
+        invalid_stopped_review["source_debrief"]["handoff"]["next_safe_action"] = "record_stop_decision"
+        invalid_stopped_review["handoff"]["next_safe_action"] = "collect_debrief_context"
+        self.assertTrue(validate_schema_instance(invalid_stopped_review, review_schema))
 
         invalid_transition = copy.deepcopy(review)
         invalid_transition["next_stage"] = "offer_stage"

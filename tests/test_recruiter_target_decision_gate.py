@@ -181,6 +181,65 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
                 self.assertIsInstance(result["intake_question"], str)
                 self.assertNotIn("T-001", result["intake_question"])
 
+    def test_artifact_free_handoffs_use_route_specific_recovery_copy(self) -> None:
+        cases = (
+            (
+                route_recruiter_decision_gate({}),
+                ("shortlist", "3–6"),
+            ),
+            (
+                route_recruiter_decision_gate({}, screen_context={"vacancy_summary": "bounded", "confirmed_fact_summary": "bounded"}),
+                ("etapa", "V-"),
+            ),
+            (route_recruiter_screen_intake({}, "T-001", {}), ("etapa", "V-")),
+            (route_recruiter_screen_debrief({}, {}, {}, {}), ("checkpoint", "receipt")),
+            (route_recruiter_next_stage_review({}, {}, {}, {}, "first_interview"), ("debrief", "etapa posterior")),
+        )
+        for result, markers in cases:
+            with self.subTest(route=result["route_kind"]):
+                self.assertTrue(all(marker.lower() in result["intake_question"].lower() for marker in markers))
+                self.assertNotIn("red de recruiters", result["intake_question"].lower())
+
+    def test_transition_recovery_names_allowed_forward_stages_without_artifact(self) -> None:
+        from tests.test_private_recruiter_next_stage_review import valid_checkpoint, valid_debrief
+        from tests.test_recruiter_target_screen_intake import valid_screen_intake
+
+        shortlist = self.shortlist()
+        gate = build_decision_gate(shortlist)
+        intake = __import__("build_recruiter_target_screen_intake", fromlist=["build_screen_intake"]).build_screen_intake(
+            gate, "T-001", valid_screen_intake()
+        )
+        debrief = __import__("build_private_recruiter_screen_debrief", fromlist=["build_screen_debrief"]).build_screen_debrief(
+            valid_checkpoint(),
+            __import__("tests.test_private_recruiter_screen_debrief", fromlist=["RECEIPT"]).RECEIPT,
+            intake,
+            valid_debrief(),
+        )
+        routed = route_recruiter_next_stage_review(
+            debrief,
+            __import__("tests.test_private_recruiter_screen_debrief", fromlist=["RECEIPT"]).RECEIPT,
+            intake,
+            valid_checkpoint(),
+            "recruiter_screen",
+        )
+        self.assertEqual("needs_intake", routed["case_state"])
+        self.assertEqual("select_forward_stage", routed["next_action"])
+        self.assertEqual(["first_interview", "technical_screen"], routed["allowed_next_stages"])
+        self.assertIn("forward_stage_transition", routed["evidence_gaps"])
+        self.assertIsNone(routed["artifact"])
+
+    def test_route_specific_recovery_copy_is_localized_in_english(self) -> None:
+        cases = (
+            route_recruiter_decision_gate({"locale": "en"}),
+            route_recruiter_screen_intake({"locale": "en"}, "T-001", {}),
+            route_recruiter_screen_debrief({"locale": "en"}, {}, {"locale": "en"}, {}),
+            route_recruiter_next_stage_review({"locale": "en"}, {}, {}, {}, "first_interview"),
+        )
+        for result in cases:
+            with self.subTest(route=result["route_kind"]):
+                self.assertNotIn("Comparte", result["intake_question"])
+                self.assertIn("Share", result["intake_question"])
+
 
 if __name__ == "__main__":
     unittest.main()

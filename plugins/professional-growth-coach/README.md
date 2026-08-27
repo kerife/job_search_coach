@@ -31,8 +31,14 @@ For a selected `advance` target, `route_recruiter_screen_intake` adds the target
 The decision gate, screen-intake bridge, post-screen debrief, and next-stage review now return the same private in-memory `rendered_html` contract whenever a validated artifact exists. Intake failures remain artifact-free; stopped or blocked artifacts still render their localized review surface without IDs, snapshots, contacts, or action tokens.
 
 Every artifact-free downstream handoff also returns a fixed `evidence_gaps`
-list and one localized `intake_question`. The question explains the missing
-safe context without reflecting malformed input, private identifiers, or raw
+list and one localized `intake_question`. The question is specific to the
+missing handoff: the gate asks for the validated shortlist, screen intake asks
+for stage/`V-###` requirements/`F-###` facts/company evidence/four checks,
+debrief asks for checkpoint/receipt/intake/structured coverage, and next-stage
+review asks for a valid debrief plus a forward stage. If the debrief is already
+valid but the selected stage is not allowed, the route returns
+`next_action=select_forward_stage` and taxonomy-derived `allowed_next_stages`.
+Recovery text never reflects malformed input, private identifiers, or raw
 conversation text, so a client can recover without guessing what to submit.
 
 The recruiter snapshot chain is closed at both contract layers: embedded

@@ -33,6 +33,7 @@ GATE_RENDERER = _sibling("render_recruiter_target_decision_gate.py")
 SCREEN_INTAKE_RENDERER = _sibling("render_recruiter_target_screen_intake.py")
 SCREEN_DEBRIEF_RENDERER = _sibling("render_private_recruiter_screen_debrief.py")
 NEXT_STAGE_REVIEW_RENDERER = _sibling("render_private_recruiter_next_stage_review.py")
+STAGE_TAXONOMY = _sibling("recruiter_stage_taxonomy.py")
 INTENT = re.compile(
     r"(?:\b(?:expand(?:ir|iendo)?|ampliar|crecer)\s+(?:mi\s+)?(?:red|network)\s+(?:de\s+)?(?:recruiters?|reclutadores?)\b|"
     r"\b(?:find|buscar|encontrar|identificar)\s+(?:a\s+)?(?:recruiters?|reclutadores?)\b|"
@@ -50,6 +51,22 @@ EXPLICIT_RECRUITER_INTENT = re.compile(r"\b(?:recruiter|recruiting|reclutador(?:
 INTAKE = {
     "es": "Comparte: 3–6 objetivos manuales con contexto visible o proporcionado por ti; la meta de red y sus segmentos; 3–5 consultas manuales; tu tiempo semanal; una condición de pausa o detención; y el tema de prueba que quieres revisar primero.",
     "en": "Share: 3–6 manually supplied targets with visible or candidate-provided context; the networking goal and segments; 3–5 manual queries; your weekly time budget; a pause or stop condition; and the proof theme you want reviewed first.",
+}
+HANDOFF_QUESTIONS = {
+    "es": {
+        "recruiter_target_decision_gate": "Comparte la shortlist validada de 3–6 objetivos y su contexto visible o proporcionado por ti para revisar la siguiente decisión manual.",
+        "recruiter_target_screen_intake": "Comparte el contexto específico del objetivo: etapa, requisitos V-###, hechos F-###, estado de evidencia de empresa y los cuatro checks de preparación.",
+        "private_recruiter_screen_debrief": "Comparte el checkpoint de pantalla atendida, su receipt, el intake del objetivo y un debrief estructurado de cobertura, temas desconocidos y decisión.",
+        "private_recruiter_next_stage_review": "Comparte un debrief válido con su checkpoint y elige una etapa posterior permitida para la revisión manual.",
+        "forward_stage_transition": "El debrief es válido; elige una etapa posterior permitida para continuar la revisión manual. No se envían mensajes ni se agendan eventos.",
+    },
+    "en": {
+        "recruiter_target_decision_gate": "Share the validated 3–6 target shortlist and its visible or candidate-provided context for the next manual decision review.",
+        "recruiter_target_screen_intake": "Share target-specific context: stage, V-### requirements, F-### facts, company-evidence state, and the four readiness checks.",
+        "private_recruiter_screen_debrief": "Share the attended-screen checkpoint, its receipt, the target intake, and a structured debrief covering topics, unknowns, and decision.",
+        "private_recruiter_next_stage_review": "Share a valid debrief with its checkpoint and choose an allowed forward stage for manual review.",
+        "forward_stage_transition": "The debrief is valid; choose an allowed forward stage to continue manual review. No messages are sent and no events are scheduled.",
+    },
 }
 HANDOFF_GAPS = {
     "recruiter_target_decision_gate": ["validated_shortlist_artifact"],
@@ -71,17 +88,62 @@ def _artifact_free_intake(
     selected_module: str,
     next_action: str,
     locale: str,
+    question_key: str | None = None,
+    evidence_gaps: Sequence[str] | None = None,
+    allowed_next_stages: Sequence[str] | None = None,
 ) -> dict[str, object]:
-    return {
+    result: dict[str, object] = {
         "route_kind": route_kind,
         "case_state": "needs_intake",
         "selected_module": selected_module,
         "next_action": next_action,
         "authorization_required": False,
-        "evidence_gaps": list(HANDOFF_GAPS[route_kind]),
-        "intake_question": INTAKE[locale],
+        "evidence_gaps": list(evidence_gaps if evidence_gaps is not None else HANDOFF_GAPS[route_kind]),
+        "intake_question": HANDOFF_QUESTIONS[locale].get(question_key or route_kind, INTAKE[locale]),
         "artifact": None,
     }
+    if allowed_next_stages is not None:
+        result["allowed_next_stages"] = list(allowed_next_stages)
+    return result
+
+
+def _current_stage(intake: Mapping[str, object]) -> object:
+    nested = intake.get("intake")
+    return nested.get("stated_stage") if isinstance(nested, Mapping) else None
+
+
+def _debrief_is_complete(debrief: Mapping[str, object]) -> bool:
+    coverage = debrief.get("coverage")
+    unknown_topics = debrief.get("unknown_topics")
+    return (
+        debrief.get("decision") == "continue_review"
+        and isinstance(coverage, list)
+        and len(coverage) == 3
+        and all(isinstance(row, Mapping) and row.get("status") == "discussed" for row in coverage)
+        and isinstance(unknown_topics, list)
+        and not unknown_topics
+    )
+
+
+def _transition_recovery(
+    debrief: Mapping[str, object], intake: Mapping[str, object], next_stage: object
+) -> dict[str, object] | None:
+    current_stage = _current_stage(intake)
+    if not _debrief_is_complete(debrief) or current_stage not in STAGE_TAXONOMY.STAGES:
+        return None
+    allowed = [stage for stage in STAGE_TAXONOMY.STAGES if stage in STAGE_TAXONOMY.allowed_next_stages(current_stage)]
+    if next_stage in allowed:
+        return None
+    locale = _safe_locale(debrief)
+    return _artifact_free_intake(
+        "private_recruiter_next_stage_review",
+        selected_module="prepare-role-interviews",
+        next_action="select_forward_stage",
+        locale=locale,
+        question_key="forward_stage_transition",
+        evidence_gaps=["forward_stage_transition"],
+        allowed_next_stages=allowed,
+    )
 
 
 def route_recruiter_request(
@@ -181,6 +243,7 @@ def route_recruiter_decision_gate(
             selected_module="prepare-role-interviews",
             next_action="collect_screen_intake",
             locale=_safe_locale(shortlist),
+            question_key="recruiter_target_screen_intake",
         )
     try:
         artifact = GATE_BUILDER.build_decision_gate(shortlist)
@@ -191,6 +254,7 @@ def route_recruiter_decision_gate(
             selected_module="prepare-role-interviews",
             next_action="collect_screen_context",
             locale=_safe_locale(shortlist),
+            question_key="recruiter_target_decision_gate",
         )
     return {
         "route_kind": "recruiter_target_decision_gate",
@@ -218,6 +282,7 @@ def route_recruiter_screen_intake(
             selected_module="prepare-role-interviews",
             next_action="collect_screen_intake",
             locale=_safe_locale(gate),
+            question_key="recruiter_target_screen_intake",
         )
     ready = artifact["readiness_decision"] == "ready"
     return {
@@ -249,6 +314,7 @@ def route_recruiter_screen_debrief(
             selected_module="track-career-outcomes",
             next_action="collect_debrief_context",
             locale=_safe_locale(intake),
+            question_key="private_recruiter_screen_debrief",
         )
     ready = artifact["decision"] == "continue_review"
     stopped = artifact["decision"] == "stop"
@@ -271,6 +337,9 @@ def route_recruiter_next_stage_review(
     next_stage: str,
 ) -> dict[str, object]:
     """Route a completed screen debrief to an explicit, manual next-stage review."""
+    transition_recovery = _transition_recovery(debrief, intake, next_stage)
+    if transition_recovery is not None:
+        return transition_recovery
     try:
         artifact = NEXT_STAGE_REVIEW_BUILDER.build_next_stage_review(debrief, receipt, intake, checkpoint, next_stage)
         rendered_html = NEXT_STAGE_REVIEW_RENDERER.render_next_stage_review_html(
@@ -282,6 +351,7 @@ def route_recruiter_next_stage_review(
             selected_module="prepare-role-interviews",
             next_action="collect_debrief_context",
             locale=_safe_locale(debrief),
+            question_key="private_recruiter_next_stage_review",
         )
     ready = artifact["review_state"] == "ready"
     stopped = artifact["handoff"]["next_safe_action"] == "record_stop_decision"
