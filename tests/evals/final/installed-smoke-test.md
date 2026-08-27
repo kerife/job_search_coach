@@ -16,23 +16,23 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T13:00:00-06:00`
+release_timestamp: `2026-08-27T04:50:06-06:00`
 
-source_commit: `52b218464f8e359ce50669fb3a385bacbeb0f71a`
+source_commit: `29e676ed11b27cf3f141c46baf9adfc1de503d7b`
 
-source_tree: `60d797a1ae1abe9e8dd0dcb9276ad0723d520c8d`
+source_tree: `03762321cbddb6fcad35d7640d4ac7b29b9d6732`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827130000`
+installed_cache_version: `0.2.0+codex.20260827160000`
 
 installed_enabled: `true`
 
-source_file_count: `137`
+source_file_count: `139`
 
-installed_file_count: `137`
+installed_file_count: `139`
 
-normalized_source_cache_sha256: `45a17bae31792da9353d1377c94f4fe5c8116397e82da8dbb885ae3fcf4b9d0b`
+normalized_source_cache_sha256: `600a0aa8b947827bee024a1d489c9bae7afbb100e41e5ce0af5f7326e0a82d95`
 
 active_config: `canonical_and_public_enabled`
 release_smoke_plugin: `professional-growth-coach@professional-growth-coach-local`
@@ -72,6 +72,8 @@ installed_private_cli_receipt_smoke: `2/2 ES/EN installed builder, validator, an
 installed_private_json_loader_hardening_smoke: `7/7 installed private loaders and dossier/practice renderers reject oversized-integer JSON with fixed opaque errors; no traceback, raw-content echo, or output artifact`
 
 installed_action_aligned_rail_smoke: `11/11 installed EN/ES outcome/checkpoint rails select closed action copy, stop renders a terminal recorded rail, dark surface and forced-colors hooks are present, and non-finite schema numbers are rejected`
+
+installed_screen_debrief_smoke: `2/2 installed EN/ES completed screen_attended checkpoints render the closed debrief_after_screen action, preserve manual-only follow-up boundaries, and reject preparation routing`
 
 installed_feedback_sensitive_continuity_rail_smoke: `6/6 ES/EN feedback labels render one deterministic three-step rail with closed pending/blocked state copy`
 
