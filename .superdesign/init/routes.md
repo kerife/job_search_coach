@@ -11,6 +11,7 @@ This plugin exposes no HTTP routes, SPA routes, framework page files, or router 
 | `/private-recruiter-reply-triage` | `plugins/professional-growth-coach/scripts/render_private_recruiter_reply_triage.py` | `plugins/professional-growth-coach/assets/private-recruiter-reply-triage-v1.html` | `PrivateRecruiterReplyTriageDocument` |
 | `/private-recruiter-followthrough-checkpoint` | `plugins/professional-growth-coach/scripts/render_private_recruiter_followthrough_checkpoint.py` | `plugins/professional-growth-coach/assets/private-recruiter-followthrough-checkpoint-v1.html` | `PrivateRecruiterFollowthroughCheckpointDocument` |
 | `/private-recruiter-conversion-outcome` | `plugins/professional-growth-coach/scripts/render_private_recruiter_conversion_outcome.py` | `plugins/professional-growth-coach/assets/private-recruiter-conversion-outcome-v1.html` | `PrivateRecruiterConversionOutcomeDocument` |
+| `/recruiter-target-shortlist` | `plugins/professional-growth-coach/scripts/render_recruiter_target_shortlist.py` | `plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.html` | `RecruiterTargetShortlistDocument` |
 
 ## Key artifact summaries
 

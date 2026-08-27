@@ -151,3 +151,47 @@ the print rendering stays tabular.
 </body>
 </html>
 ```
+
+
+## RecruiterTargetShortlistDocument
+
+- Source: `plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.html`
+- Renders: compact bilingual private target-review artifact with a deterministic batch gate and explicit no-contact boundary.
+
+```html
+<!doctype html>
+<html lang="{{LANG}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'none'; font-src 'none'; connect-src 'none'; form-action 'none'; frame-ancestors 'none'">
+  <title>{{TITLE}}</title>
+  <style>{{INLINE_CSS}}</style>
+</head>
+<body class="target-shortlist-document">
+  <main class="shortlist-shell">
+    <header class="shortlist-header">
+      <p class="shortlist-kicker">{{KICKER}}</p>
+      <h1>{{HEADING}}</h1>
+      <p class="shortlist-date">{{AS_OF_DATE}}</p>
+    </header>
+    <section class="shortlist-card shortlist-overview" aria-labelledby="overview-title">
+      <h2 id="overview-title">{{GOAL_LABEL}}</h2>
+      <p class="shortlist-goal">{{GOAL}}</p>
+      <dl class="shortlist-facts">
+        <div><dt>{{SEGMENTS_LABEL}}</dt><dd>{{SEGMENTS}}</dd></div>
+        <div><dt>{{QUERIES_LABEL}}</dt><dd><ul>{{QUERIES}}</ul></dd></div>
+        <div><dt>{{BATCH_LABEL}}</dt><dd>{{BATCH}}</dd></div>
+      </dl>
+    </section>
+    <section aria-label="{{HEADING}}">
+      <div class="target-shortlist-list">{{TARGETS}}</div>
+    </section>
+    <footer class="shortlist-footer">
+      <p class="shortlist-boundary">{{BOUNDARY}}</p>
+      <p class="shortlist-no-save">{{NO_SAVE}}</p>
+    </footer>
+  </main>
+</body>
+</html>
+```

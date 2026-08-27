@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Private recruiter target shortlist v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_kind", "locale", "as_of_date", "network_plan", "targets", "batch_decision", "top_priority_target_id", "delivery"],
+  "properties": {
+    "schema_version": {"const": "recruiter-target-shortlist-v1"},
+    "artifact_kind": {"const": "private_recruiter_target_shortlist"},
+    "locale": {"enum": ["es", "en"]},
+    "as_of_date": {"type": "string", "format": "date"},
+    "network_plan": {"$ref": "#/$defs/network_plan"},
+    "targets": {"type": "array", "minItems": 3, "maxItems": 6, "items": {"$ref": "#/$defs/target"}},
+    "batch_decision": {"enum": ["advance", "clarify", "pause", "stop"]},
+    "top_priority_target_id": {"type": "string", "pattern": "^T-[0-9]{3}$"},
+    "delivery": {"$ref": "#/$defs/delivery"}
+  },
+  "$defs": {
+    "network_plan": {
+      "type": "object", "additionalProperties": false,
+      "required": ["network_goal", "target_segments", "source_queries", "warm_path_first", "context_quality_gate", "outreach_batch_limit", "candidate_time_budget", "stop_condition"],
+      "properties": {
+        "network_goal": {"type": "string", "minLength": 1, "maxLength": 500},
+        "target_segments": {"type": "array", "minItems": 1, "maxItems": 5, "items": {"type": "string", "minLength": 1, "maxLength": 80}},
+        "source_queries": {"type": "array", "minItems": 3, "maxItems": 5, "items": {"type": "string", "minLength": 1, "maxLength": 180}},
+        "warm_path_first": {"const": true},
+        "context_quality_gate": {"type": "string", "minLength": 1, "maxLength": 500},
+        "outreach_batch_limit": {"type": "integer", "minimum": 1, "maximum": 6},
+        "candidate_time_budget": {"type": "string", "minLength": 1, "maxLength": 500},
+        "stop_condition": {"type": "string", "minLength": 1, "maxLength": 500}
+      }
+    },
+    "target": {
+      "type": "object", "additionalProperties": false,
+      "required": ["target_id", "target_label", "contact_category", "company_or_specialty", "context_source", "context_state", "relationship_warmth", "target_theme", "supported_fact_ids", "missing_context", "priority_score", "decision", "decision_reason", "personalization_trigger", "recommended_draft_type", "contactability_status", "do_not_contact_reason", "next_safe_action", "draft_only", "consent", "authorization_required", "no_message_action", "no_calendar_action"],
+      "properties": {
+        "target_id": {"type": "string", "pattern": "^T-[0-9]{3}$"},
+        "target_label": {"type": "string", "minLength": 1, "maxLength": 160},
+        "contact_category": {"enum": ["warm_referral", "named_recruiter", "alumni", "community_contact", "technical_peer"]},
+        "company_or_specialty": {"type": "string", "minLength": 1, "maxLength": 160},
+        "context_source": {"type": "string", "minLength": 1, "maxLength": 300},
+        "context_state": {"enum": ["named_context", "context_needed", "do_not_contact"]},
+        "relationship_warmth": {"enum": ["warm", "cold_contextual", "unknown"]},
+        "target_theme": {"type": "string", "minLength": 1, "maxLength": 240},
+        "supported_fact_ids": {"type": "array", "maxItems": 3, "uniqueItems": true, "items": {"type": "string", "pattern": "^F-[0-9]{3}$"}},
+        "missing_context": {"type": "string", "minLength": 1, "maxLength": 300},
+        "priority_score": {"type": "integer", "minimum": 0, "maximum": 100},
+        "decision": {"enum": ["advance", "clarify", "pause", "stop"]},
+        "decision_reason": {"type": "string", "minLength": 1, "maxLength": 300},
+        "personalization_trigger": {"type": "string", "minLength": 1, "maxLength": 240},
+        "recommended_draft_type": {"enum": ["connection_note", "recruiter_interest", "referral_request", "none"]},
+        "contactability_status": {"enum": ["contactable", "context_needed", "do_not_contact"]},
+        "do_not_contact_reason": {"enum": ["none", "no_context", "missing_context", "no_consent", "confidentiality_risk", "unsupported_claim", "closed_role", "missing_authorization"]},
+        "next_safe_action": {"enum": ["collect_recipient_context", "draft_only_review", "record_observation_only"]},
+        "draft_only": {"const": true}, "consent": {"const": "not_granted"}, "authorization_required": {"const": true}, "no_message_action": {"const": true}, "no_calendar_action": {"const": true}
+      }
+    },
+    "delivery": {
+      "type": "object", "additionalProperties": false,
+      "required": ["draft_only", "consent", "authorization_required", "no_message_action", "no_calendar_action", "raw_contact_details_retained", "local_save_mode"],
+      "properties": {
+        "draft_only": {"const": true}, "consent": {"const": "not_granted"}, "authorization_required": {"const": true}, "no_message_action": {"const": true}, "no_calendar_action": {"const": true}, "raw_contact_details_retained": {"const": false}, "local_save_mode": {"const": "disabled"}
+      }
+    }
+  }
+}

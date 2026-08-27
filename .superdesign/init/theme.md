@@ -1696,3 +1696,73 @@ dd { margin: .15rem 0 0; font-weight: 600; }
   .coach-priority-card { border-top-width: 5px; }
 }
 ```
+
+
+### `plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css`
+
+```css
+:root {
+  color-scheme: light dark;
+  --canvas: #f5f7f8;
+  --surface: #ffffff;
+  --ink: #17212b;
+  --muted: #5c6975;
+  --line: #cbd5dc;
+  --accent: #0b6477;
+  --advance: #157347;
+  --clarify: #9a6700;
+  --pause: #7057a2;
+  --stop: #b42318;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--canvas); color: var(--ink); font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+.shortlist-shell { width: min(100% - 2rem, 58rem); margin: 0 auto; padding: 3rem 0; }
+.shortlist-header { display: grid; grid-template-columns: 1fr auto; gap: .3rem 1rem; align-items: end; margin-bottom: 1.5rem; }
+.shortlist-kicker { grid-column: 1 / -1; margin: 0; color: var(--accent); font-size: .75rem; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+h1, h2, p { margin-top: 0; }
+h1 { margin-bottom: 0; font-size: clamp(2rem, 5vw, 3.25rem); letter-spacing: -.04em; line-height: 1.05; }
+.shortlist-date { margin: 0; color: var(--muted); font-variant-numeric: tabular-nums; }
+.shortlist-card { background: var(--surface); border: 1px solid var(--line); border-radius: 1rem; box-shadow: 0 .5rem 1.5rem rgb(23 33 43 / 8%); padding: 1.25rem; }
+.shortlist-overview { border-top: .35rem solid var(--accent); margin-bottom: 1rem; }
+.shortlist-overview h2 { margin-bottom: .4rem; font-size: 1rem; }
+.shortlist-goal { max-width: 48rem; font-size: 1.12rem; }
+.shortlist-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 1rem 0 0; }
+.shortlist-facts div, .target-shortlist-facts div { min-width: 0; }
+dt { color: var(--muted); font-size: .75rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+dd { margin: .2rem 0 0; }
+ul { margin: .2rem 0 0; padding-left: 1.15rem; }
+.target-shortlist-list { display: grid; gap: 1rem; }
+.target-shortlist-card { position: relative; border-left: .45rem solid var(--line); }
+.target-shortlist-card--advance { border-left-color: var(--advance); }
+.target-shortlist-card--clarify { border-left-color: var(--clarify); border-style: solid dashed solid solid; }
+.target-shortlist-card--pause { border-left-color: var(--pause); border-style: double solid solid solid; }
+.target-shortlist-card--stop { border-left-color: var(--stop); border-style: dotted solid solid solid; }
+.target-shortlist-index { margin-bottom: .2rem; color: var(--muted); font-size: .75rem; font-weight: 750; }
+.target-shortlist-card h2 { margin-bottom: .35rem; font-size: 1.35rem; }
+.target-shortlist-status { margin-bottom: 1rem; color: var(--muted); }
+.target-shortlist-status strong { color: var(--ink); }
+.target-shortlist-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .85rem 1.2rem; margin: 0; }
+.shortlist-footer { margin-top: 1.5rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; padding-top: 1rem; }
+.shortlist-boundary { margin-bottom: .35rem; }
+.shortlist-no-save { margin-bottom: 0; font-weight: 700; }
+@media (max-width: 640px) {
+  .shortlist-shell { width: min(100% - 1rem, 58rem); padding: 1.5rem 0; }
+  .shortlist-header { display: block; }
+  .shortlist-date { margin-top: .5rem; }
+  .shortlist-facts, .target-shortlist-facts { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+@media (prefers-color-scheme: dark) {
+  :root { --canvas: #10171d; --surface: #17212b; --ink: #ecf2f6; --muted: #adbac4; --line: #3b4a55; --accent: #75d2e4; --advance: #69d39a; --clarify: #e7bd65; --pause: #c5a7f4; --stop: #ff938a; }
+  .shortlist-card { box-shadow: none; }
+}
+@media (forced-colors: active) {
+  .shortlist-card { forced-color-adjust: none; border: 2px solid CanvasText; box-shadow: none; }
+  .target-shortlist-card--advance, .target-shortlist-card--clarify, .target-shortlist-card--pause, .target-shortlist-card--stop { border-left: .6rem solid CanvasText; }
+}
+@media print {
+  body { background: #fff; color: #000; }
+  .shortlist-shell { width: 100%; padding: 0; }
+  .shortlist-card { box-shadow: none; break-inside: avoid; }
+}
+```
