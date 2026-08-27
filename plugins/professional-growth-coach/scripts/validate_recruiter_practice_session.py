@@ -167,7 +167,7 @@ def load_session(path: Path) -> dict[str, object]:
         raise SessionLoadError("session input is not valid JSON") from error
     try:
         value = json.loads(raw, object_pairs_hook=_unique_object)
-    except (json.JSONDecodeError, RecursionError, SessionLoadError) as error:
+    except (json.JSONDecodeError, RecursionError, SessionLoadError, ValueError) as error:
         raise SessionLoadError("session input is not valid JSON") from error
     _assert_max_depth(value)
     if not isinstance(value, dict):

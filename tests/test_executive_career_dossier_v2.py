@@ -1088,7 +1088,7 @@ class ExecutiveCareerDossierV2LoadAndCliTests(unittest.TestCase):
             recursive = root / "recursive.json"
             recursive.write_text("[" * 1200 + "0" + "]" * 1200, encoding="utf-8")
             result = subprocess.run([sys.executable, "-B", str(VALIDATOR_PATH), str(recursive)], cwd=REPO_ROOT, text=True, capture_output=True, check=False)
-            self.assertEqual(result.returncode, 2)
+            self.assertEqual(result.returncode, 3)
             self.assertNotIn("Traceback", result.stderr)
             invalid = make_v2_dossier()
             invalid["section_coverage"] = [None] * 700

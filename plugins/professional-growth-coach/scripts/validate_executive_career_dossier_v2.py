@@ -346,7 +346,7 @@ def load_dossier(path: Path) -> dict[str, object]:
         raise DossierLoadError(message) from error
     try:
         value = json.loads(raw.decode("utf-8"), object_pairs_hook=_unique_object)
-    except (UnicodeDecodeError, json.JSONDecodeError, RecursionError, DossierLoadError) as error:
+    except (UnicodeDecodeError, json.JSONDecodeError, RecursionError, DossierLoadError, ValueError) as error:
         if isinstance(error, DossierLoadError):
             raise
         raise DossierLoadError("v2 dossier must be valid UTF-8 JSON") from error
@@ -364,7 +364,7 @@ def _cli(argv: list[str] | None = None) -> int:
         dossier = load_dossier(arguments.dossier)
     except DossierLoadError as error:
         print(str(error), file=sys.stderr)
-        return 2
+        return 3
     errors = validate_dossier(dossier)
     if errors:
         sys.stderr.write(format_bounded_diagnostics(errors))

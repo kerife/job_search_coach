@@ -14,6 +14,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
 FIXTURES = ROOT.parent.parent / "tests/evals/with-skill/fixtures/private-recruiter-reply-triage"
+PLUGIN_FIXTURES = ROOT / "tests" / "fixtures"
+OVERSIZED_INTEGER_FIXTURE = PLUGIN_FIXTURES / "private-json" / "oversized-integer.json"
 sys.path.insert(0, str(SCRIPTS))
 
 
@@ -30,6 +32,10 @@ def _load(name: str):
 REPLY_TRIAGE = _load("validate_private_recruiter_reply_triage")
 HANDOFF_BUILDER = _load("build_private_recruiter_triage_practice_handoff")
 HANDOFF_VALIDATOR = _load("validate_private_recruiter_triage_practice_handoff")
+CHECKPOINT = _load("validate_private_recruiter_followthrough_checkpoint")
+PRACTICE = _load("validate_recruiter_practice_session")
+DOSSIER_V1 = _load("validate_executive_career_dossier")
+DOSSIER_V2 = _load("validate_executive_career_dossier_v2")
 
 
 def _ready_triage() -> dict[str, object]:
@@ -45,6 +51,8 @@ def _ready_triage() -> dict[str, object]:
 
 
 class PrivateJsonLoaderHardeningTests(unittest.TestCase):
+    PRIVATE_SENTINELS = ("RAW_PRIVATE_JSON_SENTINEL", "opaque-private-input")
+
     def _deep_json(self) -> str:
         nested: object = "RAW_PRIVATE_JSON_SENTINEL"
         for _ in range(13):
@@ -53,6 +61,9 @@ class PrivateJsonLoaderHardeningTests(unittest.TestCase):
 
     def _oversized_integer_json(self) -> str:
         maximum = getattr(sys, "get_int_max_str_digits", lambda: 640)()
+        fixture = OVERSIZED_INTEGER_FIXTURE.read_text(encoding="utf-8")
+        if maximum <= 0 or len(fixture.split('"integer":', 1)[1].split(",", 1)[0]) > maximum:
+            return fixture
         return '{"integer":' + ("9" * (max(maximum, 640) + 1)) + ',"raw":"RAW_PRIVATE_JSON_SENTINEL"}'
 
     def _write(self, directory: Path, name: str, raw: str) -> Path:
@@ -87,6 +98,10 @@ class PrivateJsonLoaderHardeningTests(unittest.TestCase):
             (REPLY_TRIAGE.load_triage, REPLY_TRIAGE.TriageLoadError),
             (HANDOFF_BUILDER.load_triage, HANDOFF_BUILDER.TriageInputError),
             (HANDOFF_VALIDATOR.load_handoff, HANDOFF_VALIDATOR.HandoffLoadError),
+            (CHECKPOINT.load_checkpoint, CHECKPOINT.CheckpointLoadError),
+            (PRACTICE.load_session, PRACTICE.SessionLoadError),
+            (DOSSIER_V1.load_dossier, DOSSIER_V1.DossierLoadError),
+            (DOSSIER_V2.load_dossier, DOSSIER_V2.DossierLoadError),
         )
 
     def _commands(self):
@@ -94,7 +109,23 @@ class PrivateJsonLoaderHardeningTests(unittest.TestCase):
             (SCRIPTS / "validate_private_recruiter_reply_triage.py", lambda path, directory: [str(path)]),
             (SCRIPTS / "build_private_recruiter_triage_practice_handoff.py", lambda path, directory: ["--input", str(path), "--output", str(directory / "handoff.json")]),
             (SCRIPTS / "validate_private_recruiter_triage_practice_handoff.py", lambda path, directory: [str(path)]),
+            (SCRIPTS / "validate_private_recruiter_followthrough_checkpoint.py", lambda path, directory: [str(path), "--receipt", str(path), "--as-of", "2026-08-27"]),
+            (SCRIPTS / "validate_recruiter_practice_session.py", lambda path, directory: [str(path)]),
+            (SCRIPTS / "validate_executive_career_dossier.py", lambda path, directory: [str(path)]),
+            (SCRIPTS / "validate_executive_career_dossier_v2.py", lambda path, directory: [str(path)]),
         )
+
+    def test_new_validator_fixtures_remain_loadable(self) -> None:
+        session_path = ROOT.parent.parent / "tests/evals/with-skill/fixtures/recruiter-practice-session/session-es.json"
+        dossier_v1_path = ROOT.parent.parent / "tests/evals/with-skill/fixtures/executive-career-dossier/scenario-c-en.json"
+        dossier_v2_path = ROOT.parent.parent / "tests/evals/with-skill/fixtures/executive-career-dossier-v2/scenario-c-en.json"
+        checkpoint_path = PLUGIN_FIXTURES / "private-recruiter-followthrough-checkpoint/accepted-en.json"
+        receipt_path = PLUGIN_FIXTURES / "private-recruiter-conversion-outcome/screen-requested-en.json"
+        self.assertIsInstance(PRACTICE.load_session(session_path), dict)
+        self.assertIsInstance(DOSSIER_V1.load_dossier(dossier_v1_path), dict)
+        self.assertIsInstance(DOSSIER_V2.load_dossier(dossier_v2_path), dict)
+        self.assertIsInstance(CHECKPOINT.load_checkpoint(checkpoint_path), dict)
+        self.assertIsInstance(CHECKPOINT.load_receipt(receipt_path), dict)
 
     def test_valid_fixtures_remain_loadable(self) -> None:
         triage = _ready_triage()
@@ -115,7 +146,8 @@ class PrivateJsonLoaderHardeningTests(unittest.TestCase):
                 with self.subTest(loader=loader.__module__):
                     with self.assertRaises(error_type) as raised:
                         loader(path)
-                    self.assertNotIn("RAW_PRIVATE_JSON_SENTINEL", str(raised.exception))
+                    for sentinel in self.PRIVATE_SENTINELS:
+                        self.assertNotIn(sentinel, str(raised.exception))
 
     def test_library_loaders_reject_excessive_depth_with_typed_errors(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -143,7 +175,8 @@ class PrivateJsonLoaderHardeningTests(unittest.TestCase):
                         self.assertEqual(3, result.returncode, result.stderr)
                         self.assertEqual("", result.stdout)
                         self.assertNotIn("Traceback", result.stderr)
-                        self.assertNotIn("RAW_PRIVATE_JSON_SENTINEL", result.stderr)
+                        for sentinel in self.PRIVATE_SENTINELS:
+                            self.assertNotIn(sentinel, result.stderr)
 
     def test_every_loader_rejects_common_private_boundary_cases_without_echo(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -154,7 +187,8 @@ class PrivateJsonLoaderHardeningTests(unittest.TestCase):
                         with self.assertRaises(error_type) as raised:
                             loader(path)
                         rendered = str(raised.exception)
-                        self.assertNotIn("RAW_PRIVATE_JSON_SENTINEL", rendered)
+                        for sentinel in self.PRIVATE_SENTINELS:
+                            self.assertNotIn(sentinel, rendered)
                         self.assertNotIn(str(path), rendered)
 
     def test_every_cli_rejects_common_private_boundary_cases_opaquely(self) -> None:
@@ -172,7 +206,8 @@ class PrivateJsonLoaderHardeningTests(unittest.TestCase):
                         self.assertEqual(3, result.returncode, result.stderr)
                         self.assertEqual("", result.stdout)
                         self.assertNotIn("Traceback", result.stderr)
-                        self.assertNotIn("RAW_PRIVATE_JSON_SENTINEL", result.stderr)
+                        for sentinel in self.PRIVATE_SENTINELS:
+                            self.assertNotIn(sentinel, result.stderr)
                         self.assertNotIn(str(path), result.stderr)
 
 
