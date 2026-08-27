@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T15:38:21-06:00`
+release_timestamp: `2026-08-27T15:46:46-06:00`
 
-source_commit: `5fbfd74002c736edf5a2f21d32282664b3323b6c`
+source_commit: `5a5ec1defa84fbf4085bd495669e2ed4a6fe28a1`
 
-source_tree: `e089034e11aa7f7ff006ce737d25df94a97f6415`
+source_tree: `07218caa99c742a87f95982c5cfc0b45863c0f7f`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827153821`
+installed_cache_version: `0.2.0+codex.20260827154646`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `171`
 
 installed_file_count: `171`
 
-normalized_source_cache_sha256: `32ad44e7bed51f1b4c11aa4386345e2cb0a0795dc092c99db4715e9c3de68b50`
+normalized_source_cache_sha256: `3a6c05127a624b4e20965268dd964795e77de9d88eabd1799008558720857e81`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -140,6 +140,8 @@ installed_shortlist_accessibility_print_smoke: `8/8 installed shortlist renderer
 installed_recruiter_review_design_token_smoke: `5/5 recruiter review stylesheets are covered by the installed family allowlist`
 
 installed_recruiter_handoff_render_smoke: `16/16 installed decision-gate, screen-intake, debrief, and next-stage routes return private HTML only for validated artifacts; IDs, placeholders, and internal action tokens stay absent`
+
+installed_recruiter_intake_hardening_smoke: `41/41 installed natural-language triggers, invalid target containers, and artifact-free downstream recovery responses stay bounded and actionable`
 
 fresh_agent_smoke: `not_run`
 
