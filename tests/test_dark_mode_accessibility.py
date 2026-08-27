@@ -120,6 +120,22 @@ class DarkModeAccessibilityTests(unittest.TestCase):
                 self.assertIn("color: var(--continuity-marker-ink);", css)
                 self.assertGreaterEqual(_contrast(accent, marker_ink), 4.5)
 
+    def test_recruiter_continuity_rail_has_intermediate_and_print_layouts(self) -> None:
+        surfaces = (
+            "recruiter-target-shortlist-v1.css",
+            "recruiter-target-decision-gate-v1.css",
+            "recruiter-target-screen-intake-v1.css",
+            "private-recruiter-screen-debrief-v1.css",
+            "private-recruiter-next-stage-review-v1.css",
+        )
+        for filename in surfaces:
+            with self.subTest(filename=filename):
+                css = (ASSETS / filename).read_text(encoding="utf-8")
+                self.assertIn("@media (min-width: 721px) and (max-width: 900px)", css)
+                self.assertIn(".continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); }", css)
+                self.assertIn(".continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }", css[css.index("@media print"):])
+                self.assertIn(".continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; }", css[css.index("@media print"):])
+
     def test_forced_colors_keeps_footer_boundary_readable(self) -> None:
         selectors = {
             "executive-career-dossier-v1.css": ".footer",

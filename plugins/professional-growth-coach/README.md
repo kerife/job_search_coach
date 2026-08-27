@@ -54,8 +54,12 @@ the JSON Schemas as well as in the runtime validators. The debrief schema
 reconciles its decision, measurement event, and safe action; the next-stage
 schema reconciles its ready/blocked action and enumerates the same forward
 stage transitions as the runtime taxonomy. Runtime validation remains
-authoritative for dates, hashes, and cross-artifact provenance; schema-only
-acceptance never grants preparation or external-action authorization.
+authoritative for dates, hashes, and cross-artifact provenance. A
+`screen_attended` checkpoint also carries the identity-free `target_binding`
+(`T-###` plus the shortlist snapshot) and must match the target-specific
+intake exactly; legacy checkpoints without that binding recover artifact-free
+and are never combined silently. Schema-only acceptance never grants
+preparation or external-action authorization.
 
 After a validated `screen_attended` checkpoint, `route_recruiter_screen_debrief_intake` starts an artifact-free, bilingual debrief intake that carries the validated checkpoint/receipt/intake boundary forward and asks only for requirement coverage, scope, and team context. It accepts both `screen_requested` and `interview_requested` receipts, preserving event-specific copy without inferring a stage. `route_recruiter_screen_debrief` then builds `private-recruiter-screen-debrief-v1` once that structured context is supplied. The private bilingual debrief records only structured coverage, unknown topics, supported facts used, and a manual `continue_review|pause|stop` decision. Complete coverage returns `ready` for `manual_prepare_next_stage_review`; incomplete coverage returns `needs_intake` for context collection, while a stop decision returns terminal `stopped` with `record_stop_decision`. No raw conversation text, contacts, messages, calendar actions, automatic preparation, or outcome prediction is retained.
 
@@ -250,7 +254,9 @@ that validated boundary into an artifact-free prompt for requirement coverage,
 scope, and team context; the checkpoint renderer still does not capture,
 persist, or review raw notes. The later structured debrief remains
 manual-only and does not send, schedule, auto-start preparation, or retain the
-screen conversation.
+screen conversation. The shared rail uses three columns at intermediate
+desktop widths and two columns in print so long localized labels remain
+legible.
 
 When feedback is available, the practice rail remains the same three-step
 private map but reflects the validated governing label in its final state:

@@ -37,6 +37,10 @@ def valid_checkpoint() -> dict[str, object]:
         "artifact_kind": "private_recruiter_followthrough_checkpoint",
         "locale": "en",
         "source_receipt": {"id": "D-104", "source_version": "draft-v1", "event_type": "screen_requested"},
+        "target_binding": {
+            "target_id": "T-001",
+            "source_gate_snapshot": "snap-shortlist-sha256-17d0733532d3e2a724bf38ba60a6cf9dbade133d71e8923e7dffce1e24a734f7",
+        },
         "action_state": "completed",
         "observed_date": "2026-08-27",
         "next_measurement_event": "screen_attended",
@@ -112,6 +116,39 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
             ["validated_screen_checkpoint_receipt_intake"],
             route_recruiter_screen_debrief_intake(valid_checkpoint(), RECEIPT, mixed_locale)["evidence_gaps"],
         )
+
+    def test_debrief_intake_accepts_matching_target_binding(self) -> None:
+        receipt = copy.deepcopy(RECEIPT)
+        receipt["locale"] = self.intake["locale"]
+        checkpoint = valid_checkpoint()
+        checkpoint["locale"] = self.intake["locale"]
+        checkpoint["target_binding"] = {
+            "target_id": self.intake["target_id"],
+            "source_gate_snapshot": self.intake["source_gate_snapshot"],
+        }
+        routed = route_recruiter_screen_debrief_intake(checkpoint, receipt, self.intake)
+        self.assertEqual(["structured_debrief_context"], routed["evidence_gaps"])
+        mismatched = copy.deepcopy(checkpoint)
+        mismatched["target_binding"]["target_id"] = "T-002"
+        self.assertEqual(
+            ["validated_screen_checkpoint_receipt_intake"],
+            route_recruiter_screen_debrief_intake(mismatched, receipt, self.intake)["evidence_gaps"],
+        )
+        legacy = copy.deepcopy(checkpoint)
+        del legacy["target_binding"]
+        self.assertEqual(
+            ["validated_screen_checkpoint_receipt_intake"],
+            route_recruiter_screen_debrief_intake(legacy, receipt, self.intake)["evidence_gaps"],
+        )
+
+    def test_debrief_builder_rejects_target_binding_drift(self) -> None:
+        receipt = copy.deepcopy(RECEIPT)
+        receipt["locale"] = self.intake["locale"]
+        checkpoint = valid_checkpoint()
+        checkpoint["locale"] = self.intake["locale"]
+        checkpoint["target_binding"]["target_id"] = "T-002"
+        with self.assertRaises(ValueError):
+            build_screen_debrief(checkpoint, receipt, self.intake, valid_debrief())
 
     def test_interview_requested_debrief_intake_preserves_event_context(self) -> None:
         receipt = copy.deepcopy(RECEIPT)
@@ -220,7 +257,9 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
             self.assertNotIn(token, rendered)
         english_gate = build_decision_gate(build_shortlist("en", "2026-08-27", valid_plan(), valid_targets()))
         english_intake = build_screen_intake(english_gate, "T-001", valid_screen_intake())
-        english = build_screen_debrief(valid_checkpoint(), RECEIPT, english_intake, valid_debrief())
+        english_checkpoint = valid_checkpoint()
+        english_checkpoint["target_binding"]["source_gate_snapshot"] = english_intake["source_gate_snapshot"]
+        english = build_screen_debrief(english_checkpoint, RECEIPT, english_intake, valid_debrief())
         english_rendered = render_screen_debrief_html(english, RECEIPT, english_intake)
         self.assertIn("Private screen debrief", english_rendered)
         self.assertEqual(1, rendered.count('aria-current="step"'))
@@ -250,7 +289,9 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
             self.assertIn(spanish_label, render_screen_debrief_html(spanish_artifact, RECEIPT, spanish_intake))
 
             english_intake = build_screen_intake(english_gate, "T-001", context)
-            english_artifact = build_screen_debrief(valid_checkpoint(), RECEIPT, english_intake, valid_debrief())
+            english_checkpoint = valid_checkpoint()
+            english_checkpoint["target_binding"]["source_gate_snapshot"] = english_intake["source_gate_snapshot"]
+            english_artifact = build_screen_debrief(english_checkpoint, RECEIPT, english_intake, valid_debrief())
             rendered = render_screen_debrief_html(english_artifact, RECEIPT, english_intake)
             self.assertIn(english_label, rendered)
             self.assertNotIn(f">{stage}<", rendered)

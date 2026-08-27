@@ -734,8 +734,9 @@ h2 { margin-top: 0; font-size: 1.2rem; }
 .continuity-rail__copy strong { overflow-wrap: anywhere; }
 .continuity-rail__status { color: var(--next-accent); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
 @media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
-@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
 ```
 
 ### `plugins/professional-growth-coach/assets/private-recruiter-screen-debrief-v1.css`
@@ -778,8 +779,9 @@ dt { color:var(--debrief-muted); font-size:.78rem; font-weight:800; letter-spaci
 .continuity-rail__copy strong { overflow-wrap: anywhere; }
 .continuity-rail__status { color: var(--debrief-blue); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
 @media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
-@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
 ```
 
 ### `plugins/professional-growth-coach/assets/recruiter-target-screen-intake-v1.css`
@@ -846,8 +848,9 @@ dd { margin: .25rem 0 0; font-weight: 700; }
 .continuity-rail__copy strong { overflow-wrap: anywhere; }
 .continuity-rail__status { color: var(--screen-blue); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
 @media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
-@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
 ```
 
 ### `plugins/professional-growth-coach/assets/career-market-learning-dossier-v1.css`
@@ -1970,8 +1973,9 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
 .continuity-rail__copy strong { overflow-wrap: anywhere; }
 .continuity-rail__status { color: var(--accent); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
 @media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
-@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
 ```
 
 ### `plugins/professional-growth-coach/assets/recruiter-target-decision-gate-v1.css`
@@ -2072,6 +2076,7 @@ dd { margin: .2rem 0 0; }
 .continuity-rail__copy strong { overflow-wrap: anywhere; }
 .continuity-rail__status { color: var(--accent); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
 @media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
-@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
 ```

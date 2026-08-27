@@ -36,9 +36,10 @@ except ModuleNotFoundError:
 SCHEMA_VERSION = "private-recruiter-followthrough-checkpoint-v1"
 TOP_LEVEL_FIELDS = frozenset({
     "schema_version", "artifact_kind", "locale", "source_receipt", "action_state",
-    "observed_date", "next_measurement_event", "next_safe_action", "delivery",
+    "observed_date", "next_measurement_event", "next_safe_action", "delivery", "target_binding",
 })
 SOURCE_FIELDS = frozenset({"id", "source_version", "event_type"})
+TARGET_BINDING_FIELDS = frozenset({"target_id", "source_gate_snapshot"})
 STATES = frozenset({"accepted", "deferred", "declined", "completed"})
 EVENTS = frozenset({"screen_prepared", "screen_attended", "interview_requested", "stop_decision", "unknown"})
 DELIVERY = {
@@ -139,11 +140,11 @@ def _outcome_validator():
     return module
 
 
-def _closed(value: object, path: str, fields: frozenset[str], errors: list[str]) -> Mapping[str, object] | None:
+def _closed(value: object, path: str, fields: frozenset[str], errors: list[str], *, optional: frozenset[str] = frozenset()) -> Mapping[str, object] | None:
     if not isinstance(value, Mapping):
         errors.append(f"{path} must be an object")
         return None
-    for key in sorted(fields - set(value)):
+    for key in sorted((fields - optional) - set(value)):
         errors.append(f"missing required field: {path}.{key}")
     for key in sorted(set(value) - fields):
         errors.append(f"{path} has unsupported fields: {safe_diagnostic_field_name(key)}")
@@ -206,7 +207,7 @@ def replay_fingerprint(checkpoint: Mapping[str, object], receipt: Mapping[str, o
         },
         "checkpoint": {
             key: checkpoint.get(key)
-            for key in ("locale", "source_receipt", "action_state", "observed_date", "next_measurement_event", "next_safe_action", "delivery")
+            for key in ("locale", "source_receipt", "target_binding", "action_state", "observed_date", "next_measurement_event", "next_safe_action", "delivery")
         },
     }
     encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -227,7 +228,7 @@ def validate_checkpoint(value: object, receipt: object, *, as_of: dt.date | None
     if receipt_errors:
         errors.extend(f"receipt: {error}" for error in receipt_errors)
         return sorted(set(errors))
-    item = _closed(value, "checkpoint", TOP_LEVEL_FIELDS, errors)
+    item = _closed(value, "checkpoint", TOP_LEVEL_FIELDS, errors, optional=frozenset({"target_binding"}))
     if item is None:
         return sorted(set(errors))
     if item.get("schema_version") != SCHEMA_VERSION:
@@ -253,6 +254,16 @@ def validate_checkpoint(value: object, receipt: object, *, as_of: dt.date | None
         errors.append("action_state has invalid value")
     if not _enum(event, EVENTS):
         errors.append("next_measurement_event has invalid value")
+    binding = item.get("target_binding")
+    if event == "screen_attended" and binding is None:
+        errors.append("target_binding is required for screen_attended")
+    if binding is not None:
+        binding_item = _closed(binding, "target_binding", TARGET_BINDING_FIELDS, errors)
+        if binding_item is not None:
+            if not isinstance(binding_item.get("target_id"), str) or not re.fullmatch(r"T-\d{3}", binding_item.get("target_id", "")):
+                errors.append("target_binding.target_id must use the T-000 identifier format")
+            if not isinstance(binding_item.get("source_gate_snapshot"), str) or not re.fullmatch(r"snap-shortlist-sha256-[0-9a-f]{64}", binding_item.get("source_gate_snapshot", "")):
+                errors.append("target_binding.source_gate_snapshot has invalid value")
     if _enum(state, {"accepted", "deferred", "declined"}) and event != "unknown":
         errors.append("non-completed action_state requires next_measurement_event=unknown")
     receipt_date = None
@@ -278,6 +289,8 @@ def validate_checkpoint(value: object, receipt: object, *, as_of: dt.date | None
             if type(delivery.get(key)) is not type(expected) or delivery.get(key) != expected:
                 errors.append(f"delivery.{key} has immutable value")
     structural = {SCHEMA_VERSION, "private_recruiter_followthrough_checkpoint", "en", "es", *STATES, *EVENTS, *DELIVERY.values(), *validator.EVENTS, *validator.ACTION_BY_EVENT.values(), "debrief_after_screen", "observed_candidate_reported", "draft-v1"}
+    if isinstance(binding, Mapping):
+        structural.update(value for value in binding.values() if isinstance(value, str))
     prose = "\n".join(text for text in _walk_strings(item) if text not in structural and not re.fullmatch(r"(?:D|F)-\d{3}|\d{4}-\d{2}-\d{2}", text))
     if FORBIDDEN.search(prose):
         errors.append("checkpoint contains forbidden raw, identity, action, outcome, answer, or score prose")

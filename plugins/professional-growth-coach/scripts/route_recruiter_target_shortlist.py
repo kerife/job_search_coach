@@ -356,6 +356,11 @@ def route_recruiter_screen_debrief_intake(
             raise ValueError("screen intake is not ready")
         if not (checkpoint.get("locale") == receipt.get("locale") == intake.get("locale")):
             raise ValueError("debrief locale is not reconciled")
+        binding = checkpoint.get("target_binding")
+        if not isinstance(binding, Mapping):
+            raise ValueError("debrief target binding is unavailable")
+        if binding.get("target_id") != intake.get("target_id") or binding.get("source_gate_snapshot") != intake.get("source_gate_snapshot"):
+            raise ValueError("debrief target binding is not reconciled")
     except (TypeError, ValueError):
         return _artifact_free_intake(
             "private_recruiter_screen_debrief",

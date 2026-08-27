@@ -139,6 +139,7 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
             "artifact_kind": "private_recruiter_followthrough_checkpoint",
             "locale": "en",
             "source_receipt": {"id": "D-104", "source_version": "draft-v1", "event_type": "screen_requested"},
+            "target_binding": {"target_id": "T-001", "source_gate_snapshot": "snap-shortlist-sha256-17d0733532d3e2a724bf38ba60a6cf9dbade133d71e8923e7dffce1e24a734f7"},
             "action_state": "completed",
             "observed_date": "2026-08-27",
             "next_measurement_event": "screen_attended",
@@ -178,7 +179,7 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
             ],
         })
         receipt = json.loads((ROOT / "tests/fixtures/private-recruiter-conversion-outcome/screen-requested-en.json").read_text(encoding="utf-8"))
-        checkpoint = {"schema_version": "private-recruiter-followthrough-checkpoint-v1", "artifact_kind": "private_recruiter_followthrough_checkpoint", "locale": "en", "source_receipt": {"id": "D-104", "source_version": "draft-v1", "event_type": "screen_requested"}, "action_state": "completed", "observed_date": "2026-08-27", "next_measurement_event": "screen_attended", "next_safe_action": "debrief_after_screen", "delivery": {"draft_only": True, "external_actions_authorized": False, "no_message_action": True, "no_calendar_action": True, "raw_event_retained": False, "local_save_mode": "disabled"}}
+        checkpoint = {"schema_version": "private-recruiter-followthrough-checkpoint-v1", "artifact_kind": "private_recruiter_followthrough_checkpoint", "locale": "en", "source_receipt": {"id": "D-104", "source_version": "draft-v1", "event_type": "screen_requested"}, "target_binding": {"target_id": "T-001", "source_gate_snapshot": "snap-shortlist-sha256-17d0733532d3e2a724bf38ba60a6cf9dbade133d71e8923e7dffce1e24a734f7"}, "action_state": "completed", "observed_date": "2026-08-27", "next_measurement_event": "screen_attended", "next_safe_action": "debrief_after_screen", "delivery": {"draft_only": True, "external_actions_authorized": False, "no_message_action": True, "no_calendar_action": True, "raw_event_retained": False, "local_save_mode": "disabled"}}
         debrief = build_screen_debrief(checkpoint, receipt, intake, {"observed_date": "2026-08-27", "coverage": [{"topic": "requirement", "status": "discussed", "note": "Requirements discussed."}, {"topic": "scope", "status": "discussed", "note": "Scope discussed."}, {"topic": "team_context", "status": "discussed", "note": "Team context discussed."}], "unknown_topics": [], "facts_used": ["F-001"], "decision": "continue_review"})
         review = build_next_stage_review(debrief, receipt, intake, checkpoint, "first_interview")
         schema = self._schema("private-recruiter-next-stage-review-v1.schema.json")

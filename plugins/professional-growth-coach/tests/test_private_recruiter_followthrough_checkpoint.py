@@ -87,6 +87,8 @@ class FollowthroughCheckpointContractTests(unittest.TestCase):
             item = copy.deepcopy(self.valid)
             item.update(action_state=state, next_measurement_event=event, next_safe_action=action)
             item["locale"] = "es" if state in {"deferred", "completed"} else "en"
+            if event == "screen_attended":
+                item["target_binding"] = {"target_id": "T-001", "source_gate_snapshot": "snap-shortlist-sha256-" + "0" * 64}
             self.assertEqual([], checkpoint.validate_checkpoint(item, self.receipt, as_of=dt.date(2026, 8, 8)), (state, event))
 
     def test_completed_screen_prepared_branch(self):

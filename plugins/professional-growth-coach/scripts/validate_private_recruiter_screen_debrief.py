@@ -120,6 +120,7 @@ def replay_fingerprint(value: Mapping[str, object]) -> str:
     payload = {
         "source_receipt": value.get("source_receipt"),
         "source_snapshot": value.get("source_snapshot"),
+        "target_binding": value.get("source_checkpoint", {}).get("target_binding") if isinstance(value.get("source_checkpoint"), Mapping) else None,
         "observed_date": value.get("observed_date"),
         "coverage": value.get("coverage"),
         "unknown_topics": value.get("unknown_topics"),
@@ -182,6 +183,14 @@ def validate_screen_debrief(
             errors.append("source_checkpoint does not match checkpoint")
         if checkpoint.get("action_state") != "completed" or checkpoint.get("next_measurement_event") != "screen_attended" or checkpoint.get("next_safe_action") != "debrief_after_screen":
             errors.append("source checkpoint is not a completed screen_attended checkpoint")
+        binding = checkpoint.get("target_binding")
+        if not isinstance(binding, Mapping):
+            errors.append("source checkpoint target_binding is required")
+        elif isinstance(intake, Mapping) and (
+            binding.get("target_id") != intake.get("target_id")
+            or binding.get("source_gate_snapshot") != intake.get("source_gate_snapshot")
+        ):
+            errors.append("source checkpoint target_binding does not match source intake")
     if intake is None and isinstance(embedded_intake, Mapping):
         intake = embedded_intake
     if intake is None or not isinstance(intake, Mapping):

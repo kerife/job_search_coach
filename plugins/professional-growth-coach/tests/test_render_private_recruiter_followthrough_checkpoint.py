@@ -134,6 +134,7 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
             "artifact_kind": "private_recruiter_followthrough_checkpoint",
             "locale": "en",
             "source_receipt": {"id": "D-104", "source_version": "draft-v1", "event_type": "screen_requested"},
+            "target_binding": {"target_id": "T-001", "source_gate_snapshot": "snap-shortlist-sha256-17d0733532d3e2a724bf38ba60a6cf9dbade133d71e8923e7dffce1e24a734f7"},
             "action_state": "completed", "observed_date": "2026-08-08",
             "next_measurement_event": "screen_prepared",
             "next_safe_action": "route_to_prepare-role-interviews",
