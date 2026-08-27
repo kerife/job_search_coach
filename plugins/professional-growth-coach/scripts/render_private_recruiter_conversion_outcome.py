@@ -273,7 +273,7 @@ def write_outcome_html(item: Mapping[str, object], output: Path, *, today: dt.da
 
 
 def _cli(argv=None) -> int:
-    parser = argparse.ArgumentParser(); parser.add_argument("input", type=Path); parser.add_argument("--output", type=Path, required=True); parser.add_argument("--force", action="store_true"); parser.add_argument("--as-of", dest="as_of", type=lambda value: dt.date.fromisoformat(value), required=True, help="Reference date for deterministic validation (YYYY-MM-DD).")
+    parser = argparse.ArgumentParser(); parser.add_argument("input", type=Path); parser.add_argument("--output", type=Path, required=True); parser.add_argument("--force", action="store_true"); parser.add_argument("--include-artifact-path", action="store_true", help="include the local output path in the CLI receipt"); parser.add_argument("--as-of", dest="as_of", type=lambda value: dt.date.fromisoformat(value), required=True, help="Reference date for deterministic validation (YYYY-MM-DD).")
     try:
         args = parser.parse_args(argv)
     except SystemExit as error:
@@ -283,7 +283,10 @@ def _cli(argv=None) -> int:
     except OutcomeRenderValidationError as error: print("\n".join(error.errors), file=sys.stderr); return 2
     except ValueError:
         print("--as-of must use YYYY-MM-DD", file=sys.stderr); return 3
-    print(json.dumps({"artifact_path": str(receipt.artifact_path), "artifact_type": receipt.artifact_type, "locale": receipt.locale}, separators=(",", ":"))); return 0
+    payload = {"artifact_type": receipt.artifact_type, "locale": receipt.locale}
+    if args.include_artifact_path:
+        payload["artifact_path"] = str(receipt.artifact_path)
+    print(json.dumps(payload, separators=(",", ":"))); return 0
 
 
 if __name__ == "__main__": raise SystemExit(_cli())

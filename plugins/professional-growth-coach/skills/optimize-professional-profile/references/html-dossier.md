@@ -29,7 +29,10 @@ After the validated profile dossier is available, perform the bounded
 five-vacancy research path before the final render: validate the
 identity-free `target-vacancy-research-v1`, build and validate
 `career-market-learning-dossier-v1`, then pass it to the renderer with
-`--market-dossier`. Search current SRE, Platform Engineering, and DevOps
+`--market-dossier --include-artifact-path` when the trusted caller needs the
+absolute local link for the final client response. Direct CLI receipts omit
+that path by default; consumers that parse `artifact_path` must opt in
+explicitly. Search current SRE, Platform Engineering, and DevOps
 postings in Mexico or stated remote scope, searching five distinct employers
 first and preferring official employer and employer-operated ATS sources.
 LinkedIn Jobs is an inspectable active backup only.

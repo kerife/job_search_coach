@@ -742,6 +742,7 @@ def _cli(argv: list[str] | None = None) -> int:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--market-dossier", type=Path)
     parser.add_argument("--force", action="store_true")
+    parser.add_argument("--include-artifact-path", action="store_true", help="include the local output path in the CLI receipt")
     arguments = parser.parse_args(argv)
     try:
         receipt = write_dossier_html(arguments.dossier, arguments.output, market_dossier_path=arguments.market_dossier, force=arguments.force)
@@ -755,12 +756,14 @@ def _cli(argv: list[str] | None = None) -> int:
         else:
             print(str(error), file=sys.stderr)
             return 3
-    print(json.dumps({
-        "artifact_path": str(receipt.artifact_path),
+    payload = {
         "artifact_type": receipt.artifact_type,
         "locale": receipt.locale,
         "chat_summary": receipt.chat_summary,
-    }, ensure_ascii=False, separators=(",", ":")))
+    }
+    if arguments.include_artifact_path:
+        payload["artifact_path"] = str(receipt.artifact_path)
+    print(json.dumps(payload, ensure_ascii=False, separators=(",", ":")))
     return 0
 
 

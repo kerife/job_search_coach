@@ -2669,7 +2669,7 @@ class ExecutiveCareerDossierCliTests(unittest.TestCase):
             output = Path(directory) / "executive-career-dossier.html"
 
             result = self.run_cli(
-                FIXTURE_ROOT / "scenario-c-en.json", "--output", output
+                FIXTURE_ROOT / "scenario-c-en.json", "--output", output, "--include-artifact-path"
             )
 
             self.assertEqual(result.returncode, 0, result.stderr)

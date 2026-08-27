@@ -249,12 +249,15 @@ def _date_arg(value: str) -> dt.date:
 
 def _cli(argv=None) -> int:
     parser = argparse.ArgumentParser(description="Render a private recruiter follow-through checkpoint.")
-    parser.add_argument("input", type=Path); parser.add_argument("--receipt", type=Path, required=True); parser.add_argument("--output", type=Path, required=True); parser.add_argument("--force", action="store_true"); parser.add_argument("--as-of", type=_date_arg, required=True)
+    parser.add_argument("input", type=Path); parser.add_argument("--receipt", type=Path, required=True); parser.add_argument("--output", type=Path, required=True); parser.add_argument("--force", action="store_true"); parser.add_argument("--include-artifact-path", action="store_true", help="include the local output path in the CLI receipt"); parser.add_argument("--as-of", type=_date_arg, required=True)
     try:
         args = parser.parse_args(argv); item = VALIDATOR.load_checkpoint(args.input); receipt = VALIDATOR.load_receipt(args.receipt); result = write_checkpoint_html(item, receipt, args.output, as_of=args.as_of, force=args.force)
     except SystemExit as error: return 0 if error.code == 0 else 3
     except (OSError, VALIDATOR.CheckpointLoadError): print("cannot render private recruiter checkpoint", file=sys.stderr); return 3
     except CheckpointRenderValidationError as error: print("\n".join(error.errors), file=sys.stderr); return 2
-    print(json.dumps({"artifact_path": str(result.artifact_path), "artifact_type": result.artifact_type, "locale": result.locale}, separators=(",", ":"))); return 0
+    payload = {"artifact_type": result.artifact_type, "locale": result.locale}
+    if args.include_artifact_path:
+        payload["artifact_path"] = str(result.artifact_path)
+    print(json.dumps(payload, separators=(",", ":"))); return 0
 
 if __name__ == "__main__": raise SystemExit(_cli())

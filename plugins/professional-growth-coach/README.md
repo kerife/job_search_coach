@@ -32,6 +32,12 @@ rejected; bytes are flushed before an atomic no-overwrite publication; and the
 result remains mode `0600`. A failed write removes its temporary file and does
 not alter an existing artifact.
 
+Rendering CLIs write the requested private artifact but omit its absolute local
+path from the success receipt by default. A trusted caller that already knows
+the output target may opt in with `--include-artifact-path`; in-process render
+APIs continue to return their richer receipt object without changing the
+artifact itself.
+
 Bounded JSON validators and market-dossier builders also reject duplicate
 keys, oversized integers, and excessive nesting before validation or output;
 their command-line failures stay opaque and never echo supplied content.
