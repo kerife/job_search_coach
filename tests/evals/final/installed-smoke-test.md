@@ -18,9 +18,9 @@ release_version_prefix: `0.2.0+codex`
 
 release_timestamp: `2026-08-27T11:07:18-06:00`
 
-source_commit: `2dcd29029f155455ac10e53587fcc97692b6e18c`
+source_commit: `e7e13b7c004e418eed9cc1fec9449cb31e4f2ded`
 
-source_tree: `c97b66569ee12ee1097cb874bb93a5220b638344`
+source_tree: `c91f5d30ad21e030df5cb920df815cb469bae209`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
