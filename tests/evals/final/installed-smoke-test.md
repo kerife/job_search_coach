@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T14:28:25-06:00`
+release_timestamp: `2026-08-27T14:42:52-06:00`
 
-source_commit: `61643ca98a37b831a8970554113b2d18ea6d2b59`
+source_commit: `8c822c28b1c5dfd9908dde2832706b7dddb5e899`
 
-source_tree: `631f4eb086b1b867336bed8ff930fa0516316424`
+source_tree: `e2ed7a48dcbeef4db98d842656f0b0c50bd45c40`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827142825`
+installed_cache_version: `0.2.0+codex.20260827144252`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `170`
 
 installed_file_count: `170`
 
-normalized_source_cache_sha256: `da224ce184591bce40a1756e669beb010081cb349004cc18b8780347c7062f63`
+normalized_source_cache_sha256: `3faf50bae2d1d2dd185c805fcb2401fe367dcf45d050d6bf097f43c3aa2776f1`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -125,9 +125,11 @@ installed_screen_debrief_smoke: `4/4 installed EN/ES builder, validator, and ren
 
 installed_feedback_sensitive_continuity_rail_smoke: `6/6 ES/EN feedback labels render one deterministic three-step rail with closed pending/blocked state copy`
 
-installed_next_stage_review_smoke: `3/3 installed EN/ES-compatible next-stage review build, validator, and renderer; explicit stage transition, blocked guidance, private redaction, and manual-only boundary`
+installed_next_stage_review_smoke: `5/5 installed EN/ES-compatible next-stage review build, validator, and renderer; forward stage transitions, current-to-target copy, blocked guidance, private redaction, and manual-only boundary`
 
 installed_screen_context_safety_smoke: `1/1 installed builder and validator reject contact-shaped text, URI schemes, domains, and relative or absolute paths consistently`
+
+installed_stage_transition_smoke: `2/2 installed technical-screen to hiring-manager handoff and backward-transition rejection with localized current → target copy`
 
 fresh_agent_smoke: `not_run`
 
