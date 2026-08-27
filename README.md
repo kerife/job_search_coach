@@ -67,6 +67,16 @@ Keep one `candidate_id` per case. Coach mode must split combined requests into s
 
 The plugin can prepare drafts, plans, rubrics, and analyses. It must ask again before editing LinkedIn, publishing content, sending messages, applying to jobs, uploading files, or sharing candidate work with a third party.
 
+### Private JSON boundary
+
+The private recruiter-triage, triage-to-practice builder, and handoff validator
+all treat JSON input as an untrusted local boundary. Each loader fails closed:
+it rejects duplicate keys, symlinks, files over its bounded size, invalid UTF-8,
+invalid JSON, and unsafe nesting before any validation or rendering. Their CLI
+errors are deliberately short and opaque: they do not echo supplied content,
+input paths, or tracebacks. Repair the private input locally and rerun; do not
+paste rejected JSON into chat, logs, or a client-facing artifact.
+
 ## Installation
 
 This source tree is repo-local at `plugins/professional-growth-coach`. Source edits do not update the installed plugin cache. A separate explicitly authorized installation is required to publish a source increment into the local marketplace cache; existing chats may continue using their loaded version, so verify the new installation from a fresh chat. Use the repo-local marketplace workflow only after the exact target and command are approved.
