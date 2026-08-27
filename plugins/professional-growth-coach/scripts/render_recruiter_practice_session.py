@@ -412,6 +412,26 @@ def _render_triage_practice_route(locale: str) -> str:
     </section>'''
 
 
+def _render_triage_first_answer_outline(locale: str, question_kind: str) -> str:
+    _require_locale(locale)
+    _require_question_kind(question_kind)
+    coaching = REHEARSAL_COPY[locale][question_kind]
+    if locale == "es":
+        kicker, title = "Tu primera respuesta", "Guion para responder"
+    else:
+        kicker, title = "Your first answer", "Answer outline"
+    hint = html.escape(_text(coaching["hint"]))
+    steps = "".join(
+        f"<li>{html.escape(_text(step))}</li>" for step in coaching["steps"]
+    )
+    return f'''<section class="practice-rehearsal practice-rehearsal--triage-first-answer" aria-label="{html.escape(title)}">
+      <p class="practice-rehearsal-kicker">{html.escape(kicker)}</p>
+      <h2>{html.escape(title)}</h2>
+      <p class="practice-rehearsal-hint">{hint}</p>
+      <ol>{steps}</ol>
+    </section>'''
+
+
 def _continuity_rail(locale: str) -> str:
     labels = CONTINUITY_COPY[locale]
     steps = "".join(
@@ -686,6 +706,7 @@ def _render_main(
     sourced = session.get("handoff_context") is not None
     handoff = ""
     claim_guardrail = ""
+    first_answer_outline = ""
     triage_route = ""
     if sourced:
         source = _text(_mapping(session["handoff_context"])["source"])
@@ -695,6 +716,7 @@ def _render_main(
         if source == "private_recruiter_reply_triage":
             _require_safe_triage_prose(context, question, fact)
             claim_guardrail = _render_claim_guardrail(locale, fact)
+            first_answer_outline = _render_triage_first_answer_outline(locale, question_kind)
             triage_route = _render_triage_practice_route(locale)
     if state == "feedback_available":
         feedback_data = _mapping(session["feedback"])
@@ -703,10 +725,10 @@ def _render_main(
         governing_label = _governing_feedback_label(feedback_labels)
         feedback = _render_feedback(locale, question_kind, feedback_labels, labels)
         decision = _render_decision(locale, question_kind, governing_label, labels)
-        practice_sequence = f"{claim_guardrail}{triage_route}{handoff}{rehearsal}{feedback}{decision}"
+        practice_sequence = f"{claim_guardrail}{first_answer_outline}{triage_route}{handoff}{rehearsal}{feedback}{decision}"
     elif sourced:
         next_action = _render_next_action(state, labels, sourced=sourced)
-        practice_sequence = f"{claim_guardrail}{triage_route}{handoff}{next_action}{rehearsal}"
+        practice_sequence = f"{claim_guardrail}{first_answer_outline}{triage_route}{handoff}{next_action}{rehearsal}"
     else:
         next_action = _render_next_action(state, labels, sourced=sourced)
         practice_sequence = f"{rehearsal}{next_action}"

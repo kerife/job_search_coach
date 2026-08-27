@@ -115,6 +115,43 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
                 self.assertNotIn("https://", guardrail)
                 self.assertNotRegex(guardrail, r"<(?:form|button|script)\b")
 
+    def test_triage_practice_shows_one_localized_first_answer_outline_before_route(self):
+        expected = {
+            "es": ("Tu primera respuesta", "Guion para responder"),
+            "en": ("Your first answer", "Answer outline"),
+        }
+        for locale, (kicker, title) in expected.items():
+            for kind, coaching in renderer.REHEARSAL_COPY[locale].items():
+                with self.subTest(locale=locale, kind=kind):
+                    session = self._triage_practice_session(locale)
+                    session["question"]["kind"] = kind
+                    rendered = renderer.render_session_html(session)
+                    outline = rendered.split(
+                        '<section class="practice-rehearsal practice-rehearsal--triage-first-answer"',
+                        1,
+                    )[1].split("</section>", 1)[0]
+                    self.assertEqual(
+                        rendered.count('class="practice-rehearsal practice-rehearsal--triage-first-answer"'),
+                        1,
+                    )
+                    self.assertIn(kicker, outline)
+                    self.assertIn(title, outline)
+                    self.assertIn(coaching["hint"], outline)
+                    for step in coaching["steps"]:
+                        self.assertIn(step, outline)
+                    self.assertLess(
+                        rendered.index('<section class="practice-claim-guardrail"'),
+                        rendered.index('<section class="practice-rehearsal practice-rehearsal--triage-first-answer"'),
+                    )
+                    self.assertLess(
+                        rendered.index('<section class="practice-rehearsal practice-rehearsal--triage-first-answer"'),
+                        rendered.index('<section class="triage-practice-route"'),
+                    )
+                    self.assertNotRegex(outline, r"\b(?:Q|R|F|C|E|OBS|RB)-\d{3}\b")
+                    self.assertNotIn("snap-triage-sha256-", outline)
+                    self.assertNotIn("https://", outline)
+                    self.assertNotRegex(outline, r"<(?:form|button|script)\b")
+
     def test_triage_answer_boundary_has_accessible_visual_contract(self):
         css = renderer.CSS_PATH.read_text(encoding="utf-8")
         selector = r"\.recruiter-practice-document \.practice-claim-guardrail"
@@ -167,6 +204,7 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
         session = self._feedback_session([self._observation("solid")])
         unsourced_html = renderer.render_session_html(session)
         self.assertNotIn('class="practice-claim-guardrail"', unsourced_html)
+        self.assertNotIn('class="practice-rehearsal practice-rehearsal--triage-first-answer"', unsourced_html)
 
         sourced = copy.deepcopy(session)
         sourced["handoff_context"] = {
@@ -183,6 +221,31 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
         }
         dossier_html = renderer.render_session_html(sourced)
         self.assertNotIn('class="practice-claim-guardrail"', dossier_html)
+        self.assertNotIn('class="practice-rehearsal practice-rehearsal--triage-first-answer"', dossier_html)
+
+    def test_triage_first_answer_outline_escapes_closed_rehearsal_copy(self):
+        session = self._triage_practice_session("en")
+        session["question"]["kind"] = "proof_example"
+        coaching = renderer.REHEARSAL_COPY["en"]["proof_example"]
+        original_hint = coaching["hint"]
+        original_steps = coaching["steps"]
+        coaching["hint"] = 'Hint <safe> & "escaped"'
+        coaching["steps"] = ("First <step>", "Second & step", 'Third "step"')
+        try:
+            rendered = renderer.render_session_html(session)
+        finally:
+            coaching["hint"] = original_hint
+            coaching["steps"] = original_steps
+
+        outline = rendered.split(
+            '<section class="practice-rehearsal practice-rehearsal--triage-first-answer"',
+            1,
+        )[1].split("</section>", 1)[0]
+        self.assertIn("Hint &lt;safe&gt; &amp; &quot;escaped&quot;", outline)
+        self.assertIn("First &lt;step&gt;", outline)
+        self.assertIn("Second &amp; step", outline)
+        self.assertIn("Third &quot;step&quot;", outline)
+        self.assertNotIn("Hint <safe>", outline)
 
     def test_triage_answer_boundary_rejects_url_in_dynamic_fact_summary(self):
         session = self._triage_practice_session("en")
