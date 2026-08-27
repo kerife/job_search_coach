@@ -42,6 +42,12 @@ and never auto-starts practice. It is a manual re-entry cue for a later explicit
 private rehearsal request; it is not an execution control, authorization, or
 prediction about interview readiness or outcome.
 
+For this validated triage route, render one static localized first-answer
+outline directly after the claim boundary and before route or handoff panels.
+It may reuse only the fixed three-step coaching for the validated question kind;
+it does not collect or save an answer, update evidence, or initiate an external
+action.
+
 ### Triage wrapper to private HTML
 
 File delivery is an explicit, two-stage manual action. First compose a validated

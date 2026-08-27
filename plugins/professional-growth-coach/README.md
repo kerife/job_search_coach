@@ -135,6 +135,12 @@ needs confirmation, the private-only boundary, and the manual next step. It is
 derived from validated state only; it never displays internal IDs or raw answers
 and never sends, schedules, or saves anything.
 
+When a validated recruiter-reply triage opens a private practice session, the
+client sees one static, localized first-answer outline before the route and
+handoff panels. Its three short steps reuse the validated question-kind coaching
+only; it neither captures nor saves an answer, changes evidence, nor triggers
+an external action.
+
 `private-recruiter-triage-practice-handoff-v1` is the closed composition
 boundary from a private recruiter-reply triage into one private rehearsal. It
 accepts only a validated `ready_for_private_prep` triage with

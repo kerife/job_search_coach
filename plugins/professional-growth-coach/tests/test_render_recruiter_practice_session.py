@@ -200,6 +200,58 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
             + r"\s*\{[^}]*transition: none !important;",
         )
 
+    def test_triage_first_answer_outline_has_responsive_accessible_visual_contract(self):
+        """Catch a triage-first outline that loses its readable, bounded layout."""
+        css = renderer.CSS_PATH.read_text(encoding="utf-8")
+        selector = r"\.recruiter-practice-document \.practice-rehearsal--triage-first-answer"
+        steps = r"\.recruiter-practice-document \.practice-rehearsal--triage-first-answer ol"
+
+        self.assertRegex(
+            css,
+            selector
+            + r"\s*\{[^}]*max-width: var\(--measure\);[^}]*border-left: 4px solid var\(--forest\);[^}]*background: var\(--forest-soft\);",
+        )
+        self.assertRegex(
+            css,
+            steps + r"\s*\{[^}]*grid-template-columns: repeat\(3, minmax\(0, 1fr\)\);",
+        )
+        self.assertRegex(
+            css,
+            r"(?s)@media screen and \(prefers-color-scheme: dark\).*?"
+            + selector
+            + r"\s*\{[^}]*background: var\(--forest-soft\);[^}]*color: var\(--ink\);",
+        )
+        self.assertRegex(
+            css,
+            r"(?s)@media \(max-width: 640px\).*?"
+            + steps
+            + r"\s*\{[^}]*grid-template-columns: 1fr;",
+        )
+        self.assertRegex(
+            css,
+            r"(?s)@media \(forced-colors: active\).*?"
+            + selector
+            + r"\s*\{[^}]*border-color: CanvasText;[^}]*background: Canvas;[^}]*color: CanvasText;",
+        )
+        self.assertRegex(
+            css,
+            r"(?s)@media \(prefers-contrast: more\).*?"
+            + selector
+            + r"\s*\{[^}]*border-width: 2px;[^}]*border-left-width: .5rem;",
+        )
+        self.assertRegex(
+            css,
+            r"(?s)@media print.*?"
+            + selector
+            + r"\s*\{[^}]*break-inside: avoid;[^}]*page-break-inside: avoid;",
+        )
+        self.assertRegex(
+            css,
+            r"(?s)@media \(prefers-reduced-motion: reduce\).*?"
+            + selector
+            + r"\s*\{[^}]*transition: none !important;",
+        )
+
     def test_answer_boundary_is_absent_for_dossier_and_unsourced_practice(self):
         session = self._feedback_session([self._observation("solid")])
         unsourced_html = renderer.render_session_html(session)
