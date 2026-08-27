@@ -64,7 +64,7 @@ CONTACTABILITY = frozenset({"contactable", "context_needed", "do_not_contact"})
 NEXT_ACTIONS = frozenset({"collect_recipient_context", "draft_only_review", "record_observation_only"})
 DRAFT_TYPES = frozenset({"connection_note", "recruiter_interest", "referral_request", "none"})
 DO_NOT_CONTACT = frozenset({"none", "no_context", "missing_context", "no_consent", "confidentiality_risk", "unsupported_claim", "closed_role", "missing_authorization"})
-RESTRICTED = re.compile(r"(?:https?://|www\.|linkedin\.com/|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|(?:^|\s)(?:/Users/|/private/|[A-Za-z]:[\\/]))", re.I)
+RESTRICTED = re.compile(r"(?:[a-z][a-z0-9+.-]{1,31}://|(?:file|ssh|ftp|mailto|javascript|data):|www\.|linkedin\.com/|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|(?:^|\s)(?:/Users/|/private/|[A-Za-z]:[\\/]))", re.I)
 TARGET_ID = re.compile(r"^T-[0-9]{3}$")
 FACT_ID = re.compile(r"^F-[0-9]{3}$")
 

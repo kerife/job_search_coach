@@ -30,11 +30,15 @@ Explicit requests to expand a network or prepare for a first recruiter screen ro
 
 This source tree is repo-local at `plugins/professional-growth-coach`. Source edits do not update the installed plugin cache. A separate explicitly authorized installation is required to publish a source increment into the local marketplace cache; existing chats may continue using their loaded version, so verify the new installation from a fresh chat. Use the repo-local marketplace workflow only after the exact target and command are approved.
 
-Private JSON market artifacts are written through a descriptor-anchored,
+Private JSON artifacts are written through a descriptor-anchored,
 collision-safe path: parent symlinks, leaf symlinks, and hardlinked targets are
 rejected; bytes are flushed before an atomic no-overwrite publication; and the
 result remains mode `0600`. A failed write removes its temporary file and does
 not alter an existing artifact.
+
+The recruiter shortlist renderer reads its HTML and CSS only through the same
+package-local regular-file boundary, and rejects future-dated artifacts even
+when called directly instead of through the builder.
 
 Rendering CLIs write the requested private artifact but omit its absolute local
 path from the success receipt by default. A trusted caller that already knows

@@ -11,6 +11,7 @@ import os
 import secrets
 import stat
 import sys
+import datetime as dt
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
@@ -46,6 +47,19 @@ def _load_validator() -> Any:
 
 
 VALIDATOR = _load_validator()
+
+
+def _load_asset_loader() -> Any:
+    path = Path(__file__).with_name("private_asset_loader.py")
+    spec = importlib.util.spec_from_file_location("recruiter_target_shortlist_asset_loader", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("shortlist asset loader is unavailable")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+ASSET_LOADER = _load_asset_loader()
 
 COPY = {
     "es": {
@@ -127,7 +141,7 @@ def _target_card(target: Mapping[str, object], locale: str, index: int) -> str:
 
 
 def render_shortlist_html(value: Mapping[str, object]) -> str:
-    errors = VALIDATOR.validate_shortlist(value)
+    errors = VALIDATOR.validate_shortlist(value, as_of=dt.date.today())
     if errors:
         raise ValueError("recruiter target shortlist validation failed")
     locale = str(value["locale"])
@@ -142,8 +156,8 @@ def render_shortlist_html(value: Mapping[str, object]) -> str:
     priority = f'<p class="shortlist-priority-label">{html.escape(labels["priority"])}</p><p class="shortlist-priority-value">{html.escape(str(top_target["target_label"]), quote=True)}</p>'
     queries = "".join(f"<li>{html.escape(str(query), quote=True)}</li>" for query in plan["source_queries"])
     segments = ", ".join(html.escape(str(segment), quote=True) for segment in plan["target_segments"])
-    template = TEMPLATE_PATH.read_text(encoding="utf-8")
-    css = CSS_PATH.read_text(encoding="utf-8")
+    template = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, TEMPLATE_PATH)
+    css = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, CSS_PATH)
     replacements = {
         "{{LANG}}": locale,
         "{{TITLE}}": html.escape(labels["title"], quote=True),

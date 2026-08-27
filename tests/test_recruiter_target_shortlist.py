@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "plugins" / "professional-growth-coach" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
-from build_recruiter_target_shortlist import build_shortlist  # noqa: E402
+from build_recruiter_target_shortlist import _write_private_json, build_shortlist  # noqa: E402
 from render_recruiter_target_shortlist import _cli as render_cli, render_shortlist_html, write_shortlist_html  # noqa: E402
 from validate_recruiter_target_shortlist import validate_shortlist  # noqa: E402
 
@@ -192,3 +192,45 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
             duplicate = Path(directory) / "duplicate.json"
             duplicate.write_text('{"locale":"en","locale":"es"}', encoding="utf-8")
             self.assertEqual(3, render_cli([str(duplicate), str(Path(directory) / "duplicate.html")]))
+
+    def test_validator_rejects_non_http_uri_schemes_in_private_prose(self) -> None:
+        value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
+        for uri in ("file:///private/notes", "ssh://internal/role", "javascript:alert(1)"):
+            value["targets"][0]["context_source"] = uri
+            errors = validate_shortlist(value, as_of=date(2026, 8, 27))
+            with self.subTest(uri=uri):
+                self.assertIn("targets[0].context_source contains restricted material", errors)
+
+    def test_renderer_rejects_future_date_even_when_called_directly(self) -> None:
+        value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
+        value["as_of_date"] = "2999-01-01"
+        with self.assertRaises(ValueError):
+            render_shortlist_html(value)
+
+    def test_builder_writer_rejects_symlinked_output_parent(self) -> None:
+        value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            victim = root / "victim"
+            victim.mkdir()
+            alias = root / "alias"
+            alias.symlink_to(victim, target_is_directory=True)
+            with self.assertRaises(OSError):
+                _write_private_json(alias / "artifact.json", value)
+            self.assertFalse((victim / "artifact.json").exists())
+
+    def test_renderer_rejects_symlinked_template_asset(self) -> None:
+        import render_recruiter_target_shortlist as renderer
+
+        value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
+        with tempfile.TemporaryDirectory() as directory:
+            external = Path(directory) / "external.html"
+            external.write_text("<script>external</script>", encoding="utf-8")
+            original = renderer.TEMPLATE_PATH
+            renderer.TEMPLATE_PATH = Path(directory) / "template.html"
+            renderer.TEMPLATE_PATH.symlink_to(external)
+            try:
+                with self.assertRaises((OSError, ValueError)):
+                    render_shortlist_html(value)
+            finally:
+                renderer.TEMPLATE_PATH = original

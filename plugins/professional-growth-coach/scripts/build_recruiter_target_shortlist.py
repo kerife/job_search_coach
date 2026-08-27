@@ -9,6 +9,7 @@ import datetime as dt
 import importlib.util
 import json
 import os
+import secrets
 import stat
 import sys
 from collections.abc import Mapping, Sequence
@@ -87,20 +88,88 @@ def _unique(pairs: list[tuple[str, object]]) -> dict[str, object]:
     return result
 
 
-def _write_private_json(path: Path, value: Mapping[str, object]) -> None:
-    path = path.resolve()
-    path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
-    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
-    descriptor = os.open(path, flags, 0o600)
+def _open_private_parent(parent: Path) -> int:
+    parent = Path(parent)
+    if not parent.is_absolute() or parent.anchor != os.sep:
+        raise OSError("output parent must be absolute")
+    no_follow = getattr(os, "O_NOFOLLOW", 0)
+    directory_flag = getattr(os, "O_DIRECTORY", 0)
+    descriptor = os.open(os.sep, os.O_RDONLY | directory_flag)
     try:
-        with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
-            descriptor = -1
-            json.dump(value, stream, ensure_ascii=False, indent=2)
-            stream.write("\n")
-    finally:
-        if descriptor != -1:
+        for index, component in enumerate(parent.parts[1:]):
+            if component in {"", ".", ".."}:
+                raise OSError("output parent is unsafe")
+            created = False
+            try:
+                os.mkdir(component, 0o700, dir_fd=descriptor)
+                created = True
+            except FileExistsError:
+                pass
+            alias = index == 0 and component in {"tmp", "var"} and os.path.islink(os.path.join(os.sep, component)) and os.path.realpath(os.path.join(os.sep, component)) == os.path.join(os.sep, "private", component)
+            next_descriptor = os.open(component, os.O_RDONLY | directory_flag | (0 if alias else no_follow), dir_fd=descriptor)
+            if not stat.S_ISDIR(os.fstat(next_descriptor).st_mode):
+                os.close(next_descriptor)
+                raise OSError("output parent is not a directory")
+            if created:
+                os.fchmod(next_descriptor, 0o700)
             os.close(descriptor)
-    os.chmod(path, stat.S_IRUSR | stat.S_IWUSR)
+            descriptor = next_descriptor
+        return descriptor
+    except BaseException:
+        os.close(descriptor)
+        raise
+
+
+def _atomic_private_write(output: Path, content: bytes) -> None:
+    output = Path(os.path.abspath(os.fspath(output)))
+    parent = _open_private_parent(output.parent)
+    temporary: str | None = None
+    descriptor: int | None = None
+    try:
+        try:
+            existing = os.stat(output.name, dir_fd=parent, follow_symlinks=False)
+        except FileNotFoundError:
+            existing = None
+        if existing is not None:
+            if stat.S_ISLNK(existing.st_mode):
+                raise OSError("output target is a symbolic link")
+            if not stat.S_ISREG(existing.st_mode):
+                raise OSError("output target is not a regular file")
+            raise FileExistsError("output already exists")
+        for _ in range(100):
+            candidate = f".{output.name}.tmp-{secrets.token_hex(8)}"
+            try:
+                descriptor = os.open(candidate, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0), 0o600, dir_fd=parent)
+                temporary = candidate
+                break
+            except FileExistsError:
+                continue
+        if descriptor is None or temporary is None:
+            raise OSError("cannot create private temporary artifact")
+        with os.fdopen(descriptor, "wb") as stream:
+            descriptor = None
+            os.fchmod(stream.fileno(), 0o600)
+            stream.write(content)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.link(temporary, output.name, src_dir_fd=parent, dst_dir_fd=parent, follow_symlinks=False)
+        os.unlink(temporary, dir_fd=parent)
+        temporary = None
+        os.fsync(parent)
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
+        if temporary:
+            try:
+                os.unlink(temporary, dir_fd=parent)
+            except FileNotFoundError:
+                pass
+        os.close(parent)
+
+
+def _write_private_json(path: Path, value: Mapping[str, object]) -> None:
+    content = (json.dumps(value, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+    _atomic_private_write(path, content)
 
 
 def _cli(argv: list[str] | None = None) -> int:
