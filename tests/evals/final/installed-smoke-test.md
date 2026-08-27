@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T14:21:40-06:00`
+release_timestamp: `2026-08-27T14:28:25-06:00`
 
-source_commit: `4be57b5490fbad1873c8ca397d3769e8a989506e`
+source_commit: `61643ca98a37b831a8970554113b2d18ea6d2b59`
 
-source_tree: `d4192ca526c300b225ce704534bfc5346bebbf8c`
+source_tree: `631f4eb086b1b867336bed8ff930fa0516316424`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827142051`
+installed_cache_version: `0.2.0+codex.20260827142825`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `170`
 
 installed_file_count: `170`
 
-normalized_source_cache_sha256: `54b8b55a6d59022c10c5d080192dcf92bade9ce93bdb396e13135401d3e3a3fc`
+normalized_source_cache_sha256: `da224ce184591bce40a1756e669beb010081cb349004cc18b8780347c7062f63`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -125,7 +125,9 @@ installed_screen_debrief_smoke: `4/4 installed EN/ES builder, validator, and ren
 
 installed_feedback_sensitive_continuity_rail_smoke: `6/6 ES/EN feedback labels render one deterministic three-step rail with closed pending/blocked state copy`
 
-installed_next_stage_review_smoke: `1/1 installed EN/ES-compatible next-stage review build, validator, and renderer; explicit stage transition, debrief binding, private redaction, and manual-only boundary`
+installed_next_stage_review_smoke: `3/3 installed EN/ES-compatible next-stage review build, validator, and renderer; explicit stage transition, blocked guidance, private redaction, and manual-only boundary`
+
+installed_screen_context_safety_smoke: `1/1 installed builder and validator reject contact-shaped text, URI schemes, domains, and relative or absolute paths consistently`
 
 fresh_agent_smoke: `not_run`
 
