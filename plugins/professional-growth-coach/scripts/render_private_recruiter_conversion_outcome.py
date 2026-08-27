@@ -70,10 +70,49 @@ EVIDENCE_COUNT_COPY = {
     "es": ("{count} hecho reportado por la persona", "{count} hechos reportados por la persona"),
 }
 
+CONTINUITY_COPY = {
+    "en": {
+        "title": "Manual continuity route",
+        "kicker": "Route at a glance",
+        "states": {"current": "Current", "pending": "Pending", "blocked": "Blocked"},
+        "steps": (
+            ("observation", "current", "Observation", "The supplied event is recorded."),
+            ("safe-route", "current", "Safe route", "The next step stays inside the private boundary."),
+            ("manual-action", "blocked", "Manual action", "Continue only after an explicit private review."),
+        ),
+    },
+    "es": {
+        "title": "Ruta de continuidad manual",
+        "kicker": "Ruta de un vistazo",
+        "states": {"current": "Actual", "pending": "Pendiente", "blocked": "Bloqueada"},
+        "steps": (
+            ("observation", "current", "Observación", "El evento reportado queda registrado."),
+            ("safe-route", "current", "Ruta segura", "El siguiente paso permanece dentro del límite privado."),
+            ("manual-action", "blocked", "Acción manual", "Continúa solo después de una revisión privada explícita."),
+        ),
+    },
+}
+
 
 def _evidence_count_copy(locale: str, count: int) -> str:
     singular, plural = EVIDENCE_COUNT_COPY[locale]
     return (singular if count == 1 else plural).format(count=count)
+
+
+def _continuity_rail(locale: str) -> str:
+    labels = CONTINUITY_COPY[locale]
+    steps = "".join(
+        f'<li class="continuity-step continuity-step--{state}" data-stage="{stage}" data-state="{state}">'
+        f'<span class="continuity-step-state">{labels["states"][state]}</span>'
+        f'<strong>{title}</strong><p>{description}</p></li>'
+        for stage, state, title, description in labels["steps"]
+    )
+    return (
+        '<section class="continuity-rail" aria-labelledby="continuity-rail-title">'
+        f'<p class="continuity-rail-kicker">{labels["kicker"]}</p>'
+        f'<h2 id="continuity-rail-title">{labels["title"]}</h2>'
+        f'<ol class="continuity-rail-list">{steps}</ol></section>'
+    )
 
 
 def _load_validator() -> Any:
@@ -102,9 +141,9 @@ def render_outcome_html(item: Mapping[str, object], *, today: dt.date | None = N
     locale = value["locale"]
     labels, event, action = COPY[locale], value["event_type"], value["next_safe_action"]
     stop_copy = STOP_COPY[locale] if event == "stop_decision" else None
-    manual_next_step = ""
+    manual_next_step = _continuity_rail(locale)
     if action == "route_to_prepare-role-interviews":
-        manual_next_step = (
+        manual_next_step += (
             '<section class="outcome-manual-next-step" '
             'aria-labelledby="outcome-manual-next-step-heading">'
             f'<h2 id="outcome-manual-next-step-heading">{html.escape(labels["manual_next_step_heading"])}</h2>'

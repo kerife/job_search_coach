@@ -117,6 +117,18 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
         self.assertEqual(rendered.count("href="), 1)
         self.assertNotRegex(rendered, r"\b(?:Q|R|F|C|E|OBS|RB)-\d{3}\b")
 
+    def test_continuity_rail_shows_practice_route_and_keeps_next_step_manual(self):
+        rendered = renderer.render_session_html(
+            self._feedback_session([self._observation("solid")])
+        )
+        self.assertEqual(rendered.count('class="continuity-rail"'), 1)
+        self.assertEqual(rendered.count('class="continuity-step continuity-step--'), 3)
+        self.assertIn('data-stage="evidence" data-state="current"', rendered)
+        self.assertIn('data-stage="rehearsal" data-state="current"', rendered)
+        self.assertIn('data-stage="next-version" data-state="pending"', rendered)
+        self.assertNotIn("D-104", rendered)
+        self.assertNotIn("F-105", rendered)
+
     def test_decision_field_labels_are_exact_in_both_locales(self):
         expected_labels = {
             "es": (

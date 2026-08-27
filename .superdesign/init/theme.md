@@ -23,6 +23,7 @@ This plugin has **no shared Tailwind config, CSS module system, theme provider, 
 - **Radius:** dossier/practice/triage remain square; compact receipt cards use `1rem`.
 - **Shadows:** dossier none; practice/triage `0 1px 0 rgb(23 62 48 / 10%)`; compact cards `0 .5rem 2rem rgb(23 32 51 / .08)`.
 - Learning cards lead with readable decision and option-type labels; decision basis and opportunity cost remain visible without new shadows or decorative effects.
+- Private recruiter receipts and practice sessions use a static three-stage continuity rail with textual current/pending/blocked states; it reuses each family’s existing accent tokens and never becomes an action control.
 - **Breakpoints:** dossier: 900px, 680px, 480px; practice/triage: 640px; compact receipts: `min-width: 641px` (one column through 640px). All families include print, reduced-motion, forced-color, and high-contrast handling.
 
 ## Raw source dumps
@@ -890,6 +891,18 @@ html { color-scheme: light; background: var(--paper); }
 .recruiter-practice-document .practice-handoff p { max-width: var(--measure); margin: 0.45rem 0 0; }
 .recruiter-practice-document .practice-handoff--dossier { border-left: 4px solid var(--forest); }
 .recruiter-practice-document .practice-handoff--reply { border-left: 4px solid var(--coral); }
+.recruiter-practice-document .continuity-rail { margin-top: 1rem; padding: 1rem; border: 1px solid var(--line); border-left: 4px solid var(--forest); background: var(--surface); }
+.recruiter-practice-document .continuity-rail-kicker { margin: 0; color: var(--forest); font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.recruiter-practice-document .continuity-rail h2 { margin: .25rem 0 0; font-size: 1.2rem; }
+.recruiter-practice-document .continuity-rail-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; margin: .75rem 0 0; padding: 0; list-style: none; counter-reset: continuity-step; }
+.recruiter-practice-document .continuity-step { counter-increment: continuity-step; position: relative; min-width: 0; padding: .75rem .75rem .75rem 2.75rem; border: 1px solid var(--line); background: var(--paper); }
+.recruiter-practice-document .continuity-step::before { content: counter(continuity-step); display: inline-grid; position: absolute; top: .75rem; left: .75rem; width: 1.5rem; height: 1.5rem; place-items: center; border: 1px solid var(--forest); border-radius: 50%; color: var(--forest); font-weight: 800; line-height: 1; }
+.recruiter-practice-document .continuity-step--current { border-left: 4px solid var(--forest); }
+.recruiter-practice-document .continuity-step--pending { border-left: 4px solid var(--decision-term); }
+.recruiter-practice-document .continuity-step--blocked { border-left: 4px solid var(--coral); }
+.recruiter-practice-document .continuity-step-state { display: block; color: var(--muted, #46534d); font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.recruiter-practice-document .continuity-step strong { display: block; margin-top: .2rem; }
+.recruiter-practice-document .continuity-step p { margin: .35rem 0 0; color: var(--muted, #46534d); font-size: .9rem; }
 .recruiter-practice-document .practice-rehearsal-hint { max-width: var(--measure); margin: 0.45rem 0 0; color: #46534d; }
 .recruiter-practice-document .practice-rehearsal ol { display: grid; gap: 0.5rem; margin: 0.65rem 0 0; padding-left: 1.5rem; }
 .recruiter-practice-document .practice-rehearsal li::marker { color: var(--forest); font-weight: 700; }
@@ -1002,6 +1015,7 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-header { align-items: start; flex-direction: column; }
   .recruiter-practice-document .state-chip { text-align: left; }
   .recruiter-practice-document .practice-decision dl { grid-template-columns: 1fr; }
+  .recruiter-practice-document .continuity-rail-list { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1028,6 +1042,11 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-decision h2,
   .recruiter-practice-document .practice-decision dt,
   .recruiter-practice-document .practice-decision dd { color: CanvasText; }
+  .recruiter-practice-document .continuity-rail,
+  .recruiter-practice-document .continuity-step { background: Canvas; color: CanvasText; border-color: CanvasText; }
+  .recruiter-practice-document .continuity-rail-kicker,
+  .recruiter-practice-document .continuity-step-state { color: CanvasText; }
+  .recruiter-practice-document .continuity-step::before { border-color: CanvasText; color: CanvasText; }
   .recruiter-practice-document .feedback-label--solid,
   .recruiter-practice-document .feedback-label--confirm,
   .recruiter-practice-document .feedback-label--do_not_assert { color: CanvasText; }
@@ -1061,7 +1080,9 @@ html { color-scheme: light; background: var(--paper); }
     break-inside: avoid;
     page-break-inside: avoid;
   }
-  .recruiter-practice-document .practice-handoff {
+  .recruiter-practice-document .practice-handoff,
+  .recruiter-practice-document .continuity-rail,
+  .recruiter-practice-document .continuity-step {
     break-inside: avoid;
     page-break-inside: avoid;
   }
@@ -1309,19 +1330,32 @@ dd { margin: .15rem 0 0; font-weight: 600; }
 .checkpoint-manual-next-step { min-width: 0; overflow-wrap: anywhere; border-left: .25rem solid var(--accent); margin: 1rem 0 0; padding: .75rem 1rem; color: var(--muted); }
 .checkpoint-manual-next-step h2 { margin: 0; font-size: 1rem; }
 .checkpoint-manual-next-step p { margin: .35rem 0 0; }
+.continuity-rail { margin-top: 1rem; padding: 1rem; border: 1px solid var(--line); border-left: .25rem solid var(--accent); background: var(--surface); }
+.continuity-rail-kicker { margin: 0; color: var(--accent); font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.continuity-rail h2 { margin: .25rem 0 0; font-size: 1.2rem; }
+.continuity-rail-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; margin: .75rem 0 0; padding: 0; list-style: none; counter-reset: continuity-step; }
+.continuity-step { counter-increment: continuity-step; position: relative; min-width: 0; padding: .75rem .75rem .75rem 2.75rem; border: 1px solid var(--line); background: #f4f6fa; }
+.continuity-step::before { content: counter(continuity-step); display: inline-grid; position: absolute; top: .75rem; left: .75rem; width: 1.5rem; height: 1.5rem; place-items: center; border: 1px solid var(--accent); border-radius: 50%; color: var(--accent); font-weight: 800; line-height: 1; }
+.continuity-step--current { border-left: .25rem solid var(--accent); }
+.continuity-step--pending { border-left: .25rem solid var(--accent); }
+.continuity-step--blocked { border-left: .25rem solid var(--accent); }
+.continuity-step-state { display: block; color: var(--muted); font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.continuity-step strong { display: block; margin-top: .2rem; }
+.continuity-step p { margin: .35rem 0 0; color: var(--muted); font-size: .9rem; }
 .checkpoint-footer { max-width: 48rem; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 3rem) 2rem; color: var(--muted); font-size: .85rem; }
 .checkpoint-employment-boundary { margin: .5rem 0 0; color: var(--ink); font-weight: 600; }
 @media (min-width: 641px) { .checkpoint-facts { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px) { .continuity-rail-list { grid-template-columns: 1fr; } }
 @media screen and (prefers-color-scheme: dark) {
   :root { color-scheme: dark; --ink: #f3f6ff; --muted: #b8c4d8; --surface: #182235; --accent: #8eb2ff; --line: #5f718e; }
   html { background: #101521; }
   .checkpoint-card { box-shadow: 0 .5rem 2rem rgb(0 0 0 / .35); }
 }
 @page { size: auto; margin: 14mm; }
-@media print { html { background: #fff; } .checkpoint-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .checkpoint-manual-next-step { break-inside: avoid; page-break-inside: avoid; } .checkpoint-footer { break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
+@media print { html { background: #fff; } .checkpoint-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .checkpoint-manual-next-step { break-inside: avoid; page-break-inside: avoid; } .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .checkpoint-footer { break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
 @media (prefers-contrast: more) { .checkpoint-card { border: 2px solid var(--ink); box-shadow: none; } .checkpoint-facts div { border-top: 2px solid var(--ink); } .checkpoint-boundary { border-left-width: .5rem; color: var(--ink); } .checkpoint-manual-next-step { border-left-width: .5rem; color: var(--ink); } }
-@media (forced-colors: active) { .checkpoint-card { background: Canvas; color: CanvasText; border: 1px solid CanvasText; } .checkpoint-boundary { color: CanvasText; border: 1px solid CanvasText; border-left-width: .25rem; } .checkpoint-manual-next-step { border: 1px solid CanvasText; border-left-width: .25rem; color: CanvasText; } .checkpoint-kicker { color: LinkText; } main:focus-visible { outline-color: Highlight; } .skip-link { background: Canvas; border-color: CanvasText; color: CanvasText; } .skip-link:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; } }
+@media (forced-colors: active) { .checkpoint-card { background: Canvas; color: CanvasText; border: 1px solid CanvasText; } .checkpoint-boundary { color: CanvasText; border: 1px solid CanvasText; border-left-width: .25rem; } .checkpoint-manual-next-step { border: 1px solid CanvasText; border-left-width: .25rem; color: CanvasText; } .continuity-rail, .continuity-step { border: 1px solid CanvasText; color: CanvasText; background: Canvas; } .continuity-step::before { border-color: CanvasText; color: CanvasText; } .checkpoint-kicker, .continuity-rail-kicker { color: LinkText; } main:focus-visible { outline-color: Highlight; } .skip-link { background: Canvas; border-color: CanvasText; color: CanvasText; } .skip-link:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; } }
 ```
 
 ### `plugins/professional-growth-coach/assets/private-recruiter-conversion-outcome-v1.css`
@@ -1346,19 +1380,32 @@ dd { margin: .15rem 0 0; font-weight: 600; }
 .outcome-manual-next-step { min-width: 0; overflow-wrap: anywhere; border-left: .25rem solid var(--accent); margin: 1rem 0 0; padding: .75rem 1rem; color: var(--muted); }
 .outcome-manual-next-step h2 { margin: 0; font-size: 1rem; }
 .outcome-manual-next-step p { margin: .35rem 0 0; }
+.continuity-rail { margin-top: 1rem; padding: 1rem; border: 1px solid var(--line); border-left: .25rem solid var(--accent); background: var(--surface); }
+.continuity-rail-kicker { margin: 0; color: var(--accent); font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.continuity-rail h2 { margin: .25rem 0 0; font-size: 1.2rem; }
+.continuity-rail-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; margin: .75rem 0 0; padding: 0; list-style: none; counter-reset: continuity-step; }
+.continuity-step { counter-increment: continuity-step; position: relative; min-width: 0; padding: .75rem .75rem .75rem 2.75rem; border: 1px solid var(--line); background: #f4f6fa; }
+.continuity-step::before { content: counter(continuity-step); display: inline-grid; position: absolute; top: .75rem; left: .75rem; width: 1.5rem; height: 1.5rem; place-items: center; border: 1px solid var(--accent); border-radius: 50%; color: var(--accent); font-weight: 800; line-height: 1; }
+.continuity-step--current { border-left: .25rem solid var(--accent); }
+.continuity-step--pending { border-left: .25rem solid var(--accent); }
+.continuity-step--blocked { border-left: .25rem solid var(--accent); }
+.continuity-step-state { display: block; color: var(--muted); font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.continuity-step strong { display: block; margin-top: .2rem; }
+.continuity-step p { margin: .35rem 0 0; color: var(--muted); font-size: .9rem; }
 .outcome-footer { max-width: 48rem; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 3rem) 2rem; color: var(--muted); font-size: .85rem; }
 .outcome-employment-boundary { margin: .5rem 0 0; color: var(--ink); font-weight: 600; }
 @media (min-width: 641px) { .outcome-facts { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px) { .continuity-rail-list { grid-template-columns: 1fr; } }
 @media screen and (prefers-color-scheme: dark) {
   :root { color-scheme: dark; --ink: #f3f6ff; --muted: #b8c4d8; --surface: #182235; --accent: #8eb2ff; --line: #5f718e; }
   html { background: #101521; }
   .outcome-card { box-shadow: 0 .5rem 2rem rgb(0 0 0 / .35); }
 }
 @page { size: auto; margin: 14mm; }
-@media print { html { background: #fff; } .outcome-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .outcome-manual-next-step { break-inside: avoid; page-break-inside: avoid; } .outcome-footer { break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
+@media print { html { background: #fff; } .outcome-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .outcome-manual-next-step { break-inside: avoid; page-break-inside: avoid; } .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .outcome-footer { break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
 @media (prefers-contrast: more) { .outcome-card { border: 2px solid var(--ink); box-shadow: none; } .outcome-facts div { border-top: 2px solid var(--ink); } .outcome-boundary { border-left-width: .5rem; color: var(--ink); } .outcome-manual-next-step { border-left-width: .5rem; color: var(--ink); } }
-@media (forced-colors: active) { .outcome-card { background: Canvas; color: CanvasText; border: 1px solid CanvasText; } .outcome-boundary { color: CanvasText; border: 1px solid CanvasText; border-left-width: .25rem; } .outcome-manual-next-step { border: 1px solid CanvasText; border-left-width: .25rem; color: CanvasText; } .outcome-kicker { color: LinkText; } main:focus-visible { outline-color: Highlight; } .skip-link { background: Canvas; border-color: CanvasText; color: CanvasText; } .skip-link:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; } }
+@media (forced-colors: active) { .outcome-card { background: Canvas; color: CanvasText; border: 1px solid CanvasText; } .outcome-boundary { color: CanvasText; border: 1px solid CanvasText; border-left-width: .25rem; } .outcome-manual-next-step { border: 1px solid CanvasText; border-left-width: .25rem; color: CanvasText; } .continuity-rail, .continuity-step { border: 1px solid CanvasText; color: CanvasText; background: Canvas; } .continuity-step::before { border-color: CanvasText; color: CanvasText; } .outcome-kicker, .continuity-rail-kicker { color: LinkText; } main:focus-visible { outline-color: Highlight; } .skip-link { background: Canvas; border-color: CanvasText; color: CanvasText; } .skip-link:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; } }
 ```
 
 

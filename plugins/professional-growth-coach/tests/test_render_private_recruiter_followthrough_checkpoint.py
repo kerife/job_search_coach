@@ -159,6 +159,16 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
         for hook in ("@media print", "prefers-reduced-motion", "forced-colors", "@media (min-width"):
             self.assertIn(hook, first)
 
+    def test_continuity_rail_connects_receipt_checkpoint_and_manual_route(self):
+        rendered = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
+        self.assertEqual(rendered.count('class="continuity-rail"'), 1)
+        self.assertEqual(rendered.count('class="continuity-step continuity-step--'), 3)
+        self.assertIn('data-stage="receipt" data-state="current"', rendered)
+        self.assertIn('data-stage="checkpoint" data-state="current"', rendered)
+        self.assertIn('data-stage="manual-action" data-state="blocked"', rendered)
+        self.assertNotIn("D-104", rendered)
+        self.assertNotIn("screen_requested", rendered)
+
     def test_prefers_contrast_more_reinforces_card_facts_and_boundary(self):
         rendered = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
         self.assertRegex(

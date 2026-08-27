@@ -122,6 +122,13 @@ Each learning card also leads with the decision and option type, then exposes
 its decision basis and opportunity cost. Synthetic provider research receives
 an explicit non-current-provider boundary in the rendered dossier.
 
+Private recruiter outcome receipts, follow-through checkpoints, and practice
+sessions also include a static, localized continuity rail. It separates the
+recorded evidence, the safe route, and the manual next action with textual
+`current`, `pending`, or `blocked` states. The rail is explanatory only: it
+does not store answers, expose private identifiers, auto-start preparation, or
+create a message, calendar, or other external action.
+
 The default composition begins with `learning_state=not_evaluated`. If bounded
 market research cannot finish, the plugin preserves the valid profile dossier
 and renders the limited or unavailable market state with one bounded reason;

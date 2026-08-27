@@ -122,6 +122,18 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
         )
         self.assertIn("main:focus-visible", rendered)
 
+    def test_continuity_rail_makes_manual_route_explicit_without_private_values(self):
+        rendered = render_outcome_html(
+            load_outcome(FIXTURES / "contact-received-en.json"), today=dt.date(2026, 8, 9)
+        )
+        self.assertEqual(rendered.count('class="continuity-rail"'), 1)
+        self.assertEqual(rendered.count('class="continuity-step continuity-step--'), 3)
+        self.assertIn('data-stage="observation" data-state="current"', rendered)
+        self.assertIn('data-stage="safe-route" data-state="current"', rendered)
+        self.assertIn('data-stage="manual-action" data-state="blocked"', rendered)
+        self.assertNotIn("D-104", rendered)
+        self.assertNotIn("contact_received", rendered)
+
     def test_prefers_contrast_more_reinforces_card_facts_and_boundary(self):
         rendered = render_outcome_html(
             load_outcome(FIXTURES / "contact-received-en.json"), today=dt.date(2026, 8, 9)

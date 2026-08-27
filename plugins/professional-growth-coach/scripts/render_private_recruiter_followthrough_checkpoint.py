@@ -67,6 +67,29 @@ STOP_COPY = {
     },
 }
 
+CONTINUITY_COPY = {
+    "en": {
+        "title": "Manual continuity route",
+        "kicker": "Route at a glance",
+        "states": {"current": "Current", "pending": "Pending", "blocked": "Blocked"},
+        "steps": (
+            ("receipt", "current", "Receipt", "The candidate-supplied event is recorded."),
+            ("checkpoint", "current", "Checkpoint", "The next measurement remains explicitly bounded."),
+            ("manual-action", "blocked", "Manual action", "Continue only after an explicit private review."),
+        ),
+    },
+    "es": {
+        "title": "Ruta de continuidad manual",
+        "kicker": "Ruta de un vistazo",
+        "states": {"current": "Actual", "pending": "Pendiente", "blocked": "Bloqueada"},
+        "steps": (
+            ("receipt", "current", "Recibo", "El evento reportado por la persona queda registrado."),
+            ("checkpoint", "current", "Punto de control", "La siguiente medición permanece acotada explícitamente."),
+            ("manual-action", "blocked", "Acción manual", "Continúa solo después de una revisión privada explícita."),
+        ),
+    },
+}
+
 class CheckpointRenderValidationError(ValueError):
     def __init__(self, errors: Sequence[str]):
         self.errors = tuple(errors)
@@ -80,6 +103,22 @@ def _load_validator() -> Any:
 
 VALIDATOR = _load_validator()
 
+
+def _continuity_rail(locale: str) -> str:
+    labels = CONTINUITY_COPY[locale]
+    steps = "".join(
+        f'<li class="continuity-step continuity-step--{state}" data-stage="{stage}" data-state="{state}">'
+        f'<span class="continuity-step-state">{labels["states"][state]}</span>'
+        f'<strong>{title}</strong><p>{description}</p></li>'
+        for stage, state, title, description in labels["steps"]
+    )
+    return (
+        '<section class="continuity-rail" aria-labelledby="continuity-rail-title">'
+        f'<p class="continuity-rail-kicker">{labels["kicker"]}</p>'
+        f'<h2 id="continuity-rail-title">{labels["title"]}</h2>'
+        f'<ol class="continuity-rail-list">{steps}</ol></section>'
+    )
+
 def _validated(item: Mapping[str, object], receipt: Mapping[str, object], *, as_of: dt.date | None) -> Mapping[str, object]:
     errors = VALIDATOR.validate_checkpoint(item, receipt, as_of=as_of)
     if errors: raise CheckpointRenderValidationError(errors)
@@ -91,9 +130,9 @@ def render_checkpoint_html(item: Mapping[str, object], receipt: Mapping[str, obj
     labels = LABELS[locale]
     is_stop = value["next_measurement_event"] == "stop_decision" or value["source_receipt"]["event_type"] == "stop_decision"
     stop_copy = STOP_COPY[locale] if is_stop else None
-    manual_next_step = ""
+    manual_next_step = _continuity_rail(locale)
     if value["next_safe_action"] == "route_to_prepare-role-interviews":
-        manual_next_step = (
+        manual_next_step += (
             '<section class="checkpoint-manual-next-step" '
             'aria-labelledby="checkpoint-manual-next-step-heading">'
             f'<h2 id="checkpoint-manual-next-step-heading">{html.escape(labels["manual_next_step_heading"])}</h2>'

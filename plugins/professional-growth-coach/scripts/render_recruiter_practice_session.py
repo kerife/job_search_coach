@@ -262,6 +262,45 @@ DECISION_ACTION_COPY = {
     },
 }
 
+CONTINUITY_COPY = {
+    "en": {
+        "title": "Manual continuity route",
+        "kicker": "Route at a glance",
+        "states": {"current": "Current", "pending": "Pending", "blocked": "Blocked"},
+        "steps": (
+            ("evidence", "current", "Supplied evidence", "Use only the evidence already in the private session."),
+            ("rehearsal", "current", "Rehearsal", "Practice the bounded answer structure without saving it."),
+            ("next-version", "pending", "Next version", "Review the next answer privately before any external action."),
+        ),
+    },
+    "es": {
+        "title": "Ruta de continuidad manual",
+        "kicker": "Ruta de un vistazo",
+        "states": {"current": "Actual", "pending": "Pendiente", "blocked": "Bloqueada"},
+        "steps": (
+            ("evidence", "current", "Evidencia suministrada", "Usa solo la evidencia ya presente en la sesión privada."),
+            ("rehearsal", "current", "Ensayo", "Practica la estructura acotada sin guardarla."),
+            ("next-version", "pending", "Siguiente versión", "Revisa en privado la próxima respuesta antes de cualquier acción externa."),
+        ),
+    },
+}
+
+
+def _continuity_rail(locale: str) -> str:
+    labels = CONTINUITY_COPY[locale]
+    steps = "".join(
+        f'<li class="continuity-step continuity-step--{state}" data-stage="{stage}" data-state="{state}">'
+        f'<span class="continuity-step-state">{labels["states"][state]}</span>'
+        f'<strong>{title}</strong><p>{description}</p></li>'
+        for stage, state, title, description in labels["steps"]
+    )
+    return (
+        '<section class="continuity-rail" aria-labelledby="continuity-rail-title">'
+        f'<p class="continuity-rail-kicker">{labels["kicker"]}</p>'
+        f'<h2 id="continuity-rail-title">{labels["title"]}</h2>'
+        f'<ol class="continuity-rail-list">{steps}</ol></section>'
+    )
+
 
 REHEARSAL_COPY = {
     "es": {
@@ -510,6 +549,7 @@ def _render_main(
     else:
         next_action = _render_next_action(state, labels, sourced=sourced)
         practice_sequence = f"{rehearsal}{next_action}"
+    continuity = _continuity_rail(locale)
     return f'''<main id="main-content" class="practice-shell" tabindex="-1">
     <section class="practice-session" aria-labelledby="practice-session-title" aria-describedby="practice-session-state">
       <p id="practice-session-state" class="state-chip state-chip--{html.escape(state)}">{labels[state]}</p>
@@ -526,6 +566,7 @@ def _render_main(
         <p id="practice-question-text"{dynamic_lang}>{html.escape(_text(question["text"]))}</p>
       </section>
       {practice_sequence}
+      {continuity}
       <section class="practice-evidence" aria-labelledby="evidence-title">
         <h2 id="evidence-title">{labels["evidence"]}</h2>
         <ul><li><strong>{labels[_text(fact["state"])]}:</strong> <span{dynamic_lang}>{html.escape(_text(fact["summary"]))}</span></li></ul>

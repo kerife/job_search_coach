@@ -15,6 +15,12 @@ The conversion receipt is a candidate-supplied observation only: one dated event
 
 When a separately supplied `private-recruiter-conversion-outcome-v1` receipt is followed by a `private-recruiter-followthrough-checkpoint-v1`, validate the receipt first and require exact source fields and event/action identity. The checkpoint is replay-safe: reprocessing the same receipt and checkpoint is idempotent and must not append a second event, change the CSV, aggregate candidates, or advance a route. A completed `screen_requested` or `interview_requested` observation may offer only a manual, explicit handoff to `prepare-role-interviews`; it does not start preparation or transfer an execution packet. `accepted` and `deferred` remain manual checkpoints, while `declined` and any `stop_decision` source block interview preparation and route only to recording the stop. Unknown or non-completed measurement events stay unknown. The ordinary CSV measurement path and ordinary recruiter-reply routes remain unchanged when this explicit pair of private artifacts is absent. No auto-start, send, schedule, calendar action, score, causality, outcome guarantee, or candidate aggregation is allowed.
 
+The rendered receipt and checkpoint make that continuity legible with a static
+three-stage rail: recorded source, bounded route, and manual action. States are
+textual as well as visual and remain safe in narrow, print, forced-color, and
+high-contrast modes. This is a reading aid only; it does not change the
+checkpoint contract or authorize the next module.
+
 ## Required boundaries
 
 Every interpretation uses `verified:`, `candidate-reported:`, `inferred:`, or `unknown:` labels. Every nonempty CSV row requires stable, unique `application_id` and stable `candidate_id` values. Reject a duplicate `application_id`; do not silently double-count or merge it. Keep candidates isolated by `candidate_id`. Coach-mode aggregation or anonymized benchmarking is allowed only when every in-window row has explicit consent recorded as `benchmark_consent=true`. Without unanimous consent, return the zero-count safety summary, then run the CLI once per candidate with `--candidate-id CANDIDATE_ID` and report those summaries separately; never combine their rates.

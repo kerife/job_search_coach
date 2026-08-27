@@ -13,6 +13,9 @@ only candidate evidence and selected-question context, while a separate
 identity-free vacancy summary supplies the requirement. Do not infer or invent
 a vacancy requirement from dossier text or provenance. The handoff remains
 draft-only, needs manual re-entry, and never auto-starts a practice session.
+The rendered practice session includes a static continuity rail showing the
+supplied evidence, rehearsal, and pending next version; it is a reading aid,
+not an execution control or authorization.
 
 The sequence is one-question/one-answer. Before the candidate answers, feedback and any score remain `unknown` (`score_state=unknown`); after the observed answer, feedback may reference only the observed answer and the rubric. In `feedback_available`, keep `score=unknown` and use `score_state=categorical` with only the rubric labels `solid`, `confirm`, or `do_not_assert`; numeric scores are invalid. Keep the answer ephemeral and no-save-by-default. The client-facing result contains only the private-session summary and verified local artifact link, never internal identifiers or raw vacancy or candidate-fact text. No external action is performed.
 
