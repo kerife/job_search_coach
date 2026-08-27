@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import importlib.util
 import json
 import subprocess
 import sys
@@ -52,6 +53,20 @@ V2_TRIAGE_PHONE_LIKE_SNAPSHOT = (
     "snap-triage-sha256-"
     "9cfca8aaaeb249e38dbeee70bbbcd3189173398fea1c3f9baee95fa0e56b3af0"
 )
+
+
+def load_practice_validator() -> object:
+    specification = importlib.util.spec_from_file_location(
+        "practice_validator_direct", VALIDATOR_PATH
+    )
+    assert specification is not None and specification.loader is not None
+    validator = importlib.util.module_from_spec(specification)
+    sys.modules[specification.name] = validator
+    specification.loader.exec_module(validator)
+    return validator
+
+
+PRACTICE_VALIDATOR = load_practice_validator()
 
 
 def load_fixture() -> dict[str, object]:
@@ -775,7 +790,11 @@ class RecruiterPracticeSessionContractTests(unittest.TestCase):
             link.symlink_to(target)
             result = subprocess.run([sys.executable, "-B", str(VALIDATOR_PATH), str(link)], capture_output=True, text=True, check=False)
             self.assertEqual(result.returncode, 3)
-            self.assertIn("symlink", result.stderr)
+            self.assertEqual(result.stdout, "")
+            self.assertEqual(result.stderr, '{"error":{"code":"invalid_input"}}\n')
+            with self.assertRaises(PRACTICE_VALIDATOR.SessionLoadError) as raised:
+                PRACTICE_VALIDATOR.load_session(link)
+            self.assertIn("symlink", str(raised.exception))
 
     def test_cli_rejects_malformed_reference_types_without_crashing(self) -> None:
         for field in ("requirement", "question"):

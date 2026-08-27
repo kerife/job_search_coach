@@ -1141,8 +1141,13 @@ class RecruiterPracticeSessionRendererCliTests(unittest.TestCase):
 
             self.assertEqual(result.returncode, 0, result.stderr)
             receipt = json.loads(result.stdout)
-            self.assertEqual(receipt["artifact_path"], os.path.abspath(output))
-            self.assertEqual(receipt["artifact_type"], "text/html")
-            self.assertEqual(receipt["locale"], "es")
+            self.assertEqual(
+                receipt,
+                {
+                    "artifact_kind": "private_recruiter_practice_session_html",
+                    "locale": "es",
+                },
+            )
+            self.assertEqual(result.stderr, "")
             self.assertEqual(stat.S_IMODE(output.stat().st_mode), 0o600)
             self.assertFalse(re.search(r"\b(?:F|R|Q|RB|OBS)-\d{3}\b", output.read_text(encoding="utf-8")))
