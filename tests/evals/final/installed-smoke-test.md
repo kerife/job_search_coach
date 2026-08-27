@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T17:35:55-06:00`
+release_timestamp: `2026-08-27T17:56:22-06:00`
 
-source_commit: `94cdb97a07d67fd9ac3d76f8754c0e0104676e29`
+source_commit: `0fb8174d84cd5cef4c724bba5b34dea841adcf01`
 
-source_tree: `991a50f353b850c8e1cac8182ae22d05e1f989a5`
+source_tree: `8c83b8dfe0907f99ec6be38dc183d5fb359d3f26`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827173305`
+installed_cache_version: `0.2.0+codex.20260827175534`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `172`
 
 installed_file_count: `172`
 
-normalized_source_cache_sha256: `bbc3419fbfa6f6eb6f6eba88fa6df82e368df62b1edcc4e25fba272180b64b6e`
+normalized_source_cache_sha256: `2dcc92ca7cf23af22e496886008ace899fd0c2da2180926fa372ea983588b924`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -119,9 +119,13 @@ installed_decision_gate_smoke: `3/3 installed EN/ES decision-gate builder, valid
 
 installed_screen_intake_smoke: `3/3 installed EN/ES target-specific intake builder, validator, and renderer; advance-only manual handoff, snapshot/locale binding, private IDs hidden, and 0600 output`
 
-installed_screen_debrief_intake_smoke: `4/4 installed artifact-free EN/ES attended-screen bridge; screen_requested and interview_requested receipts carry forward, structured coverage is the only next input, malformed recovery stays bounded`
+installed_screen_debrief_intake_smoke: `4/4 installed artifact-free EN/ES attended-screen bridge; screen_requested and interview_requested receipts carry forward, target binding is enforced, structured coverage is the only next input, malformed recovery stays bounded`
 
 installed_debrief_locale_binding_smoke: `3/3 installed valid ES, mixed-locale recovery, interview_requested carry-forward`
+
+installed_debrief_lineage_smoke: `4/4 installed valid binding, interview carry-forward, target mismatch, legacy recovery`
+
+installed_recruiter_rail_breakpoint_smoke: `5/5 installed recruiter rails expose three-column intermediate desktop and two-column print layouts with localized label wrapping`
 
 installed_next_stage_schema_typed_closure_smoke: `2/2 installed next-stage schema rejects object-shaped network_goal and coverage note values while accepting the canonical handoff`
 
