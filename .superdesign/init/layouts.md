@@ -35,6 +35,57 @@ the print rendering stays tabular.
 </html>
 ```
 
+## RecruiterTargetScreenIntakeDocument
+
+- Source: `plugins/professional-growth-coach/assets/recruiter-target-screen-intake-v1.html`
+- Renders: target-specific four-check evidence brief before manual interview preparation.
+
+```html
+<!doctype html>
+<html lang="{{LANG}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'none'; font-src 'none'; connect-src 'none'; form-action 'none'; frame-ancestors 'none'">
+  <title>{{TITLE}}</title>
+  <style>{{INLINE_CSS}}</style>
+</head>
+<body class="screen-intake-document">
+  <a class="skip-link" href="#main-content">{{SKIP_LINK}}</a>
+  <main id="main-content" tabindex="-1" class="screen-shell">
+    <header class="screen-header">
+      <p class="screen-kicker">{{KICKER}}</p>
+      <h1>{{HEADING}}</h1>
+      <p class="screen-date"><span>{{DATE_LABEL}}</span> <time datetime="{{AS_OF_DATE}}">{{AS_OF_DATE}}</time></p>
+    </header>
+    <section class="screen-card screen-decision" aria-labelledby="decision-title">
+      <p class="screen-state">{{STATUS}}</p>
+      <h2 id="decision-title">{{NEXT_HEADING}}</h2>
+      <p>{{NEXT_COPY}}</p>
+    </section>
+    <section class="screen-card" aria-labelledby="context-title">
+      <h2 id="context-title">{{CONTEXT_LABEL}}</h2>
+      <dl class="screen-context-grid">
+        <div><dt>{{STAGE_LABEL}}</dt><dd>{{STAGE}}</dd></div>
+        <div><dt>{{COMPANY_LABEL}}</dt><dd>{{COMPANY_STATE}}</dd></div>
+        <div><dt>{{FACTS_LABEL}}</dt><dd>{{FACT_COUNT}}</dd></div>
+      </dl>
+      <h3>{{REQUIREMENTS_LABEL}}</h3>
+      <ul class="screen-requirements">{{REQUIREMENTS}}</ul>
+    </section>
+    <section class="screen-card" aria-labelledby="checks-title">
+      <h2 id="checks-title">{{CHECKS_LABEL}}</h2>
+      <ol class="screen-checks">{{CHECKS}}</ol>
+    </section>
+    <footer class="screen-footer">
+      <p>{{BOUNDARY}}</p>
+      <p>{{FOOTER}}</p>
+    </footer>
+  </main>
+</body>
+</html>
+```
+
 ## RecruiterTargetDecisionGateDocument
 
 - Source: `plugins/professional-growth-coach/assets/recruiter-target-decision-gate-v1.html`

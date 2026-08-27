@@ -19,6 +19,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from build_dossier_recruiter_practice_handoff import build_handoff
 from build_recruiter_target_decision_gate import build_decision_gate
 from build_recruiter_target_shortlist import build_shortlist
+from build_recruiter_target_screen_intake import build_screen_intake
 from validate_dossier_recruiter_practice_handoff import validate_handoff
 from private_prose_safety import is_safe_prose_text
 from validate_private_recruiter_reply_triage import validate_triage
@@ -57,6 +58,28 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         self.assertEqual([], validate_schema_instance(gate, schema))
         invalid = copy.deepcopy(gate)
         invalid["source_shortlist"] = {}
+        self.assertTrue(validate_schema_instance(invalid, schema))
+
+    def test_recruiter_target_screen_intake_schema_matches_runtime(self):
+        shortlist = build_shortlist("es", "2026-08-27", valid_plan(), valid_targets())
+        gate = build_decision_gate(shortlist)
+        intake = build_screen_intake(gate, "T-001", {
+            "stated_stage": "recruiter_screen",
+            "vacancy_requirements": ["V-001: Platform reliability scope."],
+            "candidate_fact_ids": ["F-001"],
+            "company_evidence_state": "verified",
+            "source_date": "2026-08-27",
+            "checks": [
+                {"check": "target_context", "status": "pass", "evidence_note": "Named context supplied."},
+                {"check": "proof_packet", "status": "pass", "evidence_note": "Supported fact mapped."},
+                {"check": "low_friction_ask", "status": "pass", "evidence_note": "Process question only."},
+                {"check": "screen_readiness", "status": "pass", "evidence_note": "Stage is explicit."},
+            ],
+        })
+        schema = self._schema("recruiter-target-screen-intake-v1.schema.json")
+        self.assertEqual([], validate_schema_instance(intake, schema))
+        invalid = copy.deepcopy(intake)
+        del invalid["source_gate"]
         self.assertTrue(validate_schema_instance(invalid, schema))
 
     def test_dossier_methodology_categories_keep_schema_runtime_and_registry_in_lockstep(self):

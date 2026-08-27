@@ -26,6 +26,8 @@ The recruiter-networking flow includes a private `recruiter-target-shortlist-v1`
 
 Explicit requests to expand a network or prepare for a first recruiter screen route through `scripts/route_recruiter_target_shortlist.py`. The route either builds the validated private artifact or asks one bounded intake question; it does not infer recipients. The rendered card localizes the next safe action and summarizes the four decision counts before the manual `recruiter_target_decision_gate` handoff.
 
+For a selected `advance` target, `route_recruiter_screen_intake` adds the target-specific `recruiter-target-screen-intake-v1` bridge. It requires a stated screen stage, `V-###` vacancy requirements, `F-###` candidate facts, company evidence, and four passing checks before returning only `manual_prepare_role_interviews_review`; `clarify` and `stop` targets remain blocked or in intake, with no message, calendar, or automatic preparation action.
+
 ## Installation
 
 This source tree is repo-local at `plugins/professional-growth-coach`. Source edits do not update the installed plugin cache. A separate explicitly authorized installation is required to publish a source increment into the local marketplace cache; existing chats may continue using their loaded version, so verify the new installation from a fresh chat. Use the repo-local marketplace workflow only after the exact target and command are approved.

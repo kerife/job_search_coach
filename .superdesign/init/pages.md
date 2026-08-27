@@ -111,6 +111,19 @@ Dependencies:
 
 The gate is a static decision brief: it binds and revalidates the full shortlist snapshot, presents reconciled decision counts and one row per target, then stops at a manual screen-context or interview-preparation review boundary. It contains no controls, network calls, contact details, URLs, message actions, or calendar actions.
 
+## /recruiter-target-screen-intake (offline artifact)
+
+Entry: `plugins/professional-growth-coach/scripts/render_recruiter_target_screen_intake.py`
+
+Dependencies:
+
+- `plugins/professional-growth-coach/scripts/build_recruiter_target_screen_intake.py`
+- `plugins/professional-growth-coach/scripts/validate_recruiter_target_screen_intake.py`
+- `plugins/professional-growth-coach/assets/recruiter-target-screen-intake-v1.html`
+- `plugins/professional-growth-coach/assets/recruiter-target-screen-intake-v1.css`
+
+The screen-intake brief is target-specific and snapshot-bound. It reconciles exactly four checks (`target_context`, `proof_packet`, `low_friction_ask`, and `screen_readiness`) and permits `manual_prepare_role_interviews_review` only for an `advance` target with all checks passing. Other decisions remain in intake or stop-and-record states; the artifact never sends, schedules, or auto-starts preparation.
+
 The renderer validates a candidate-supplied outcome, computes the localized evidence-count label, and writes a compact offline receipt. The default CLI receipt is path-free; `--include-artifact-path` is an explicit trusted-caller opt-in.
 
 Outcome and follow-through receipts share a non-interactive continuity rail:

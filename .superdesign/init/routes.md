@@ -13,6 +13,7 @@ This plugin exposes no HTTP routes, SPA routes, framework page files, or router 
 | `/private-recruiter-conversion-outcome` | `plugins/professional-growth-coach/scripts/render_private_recruiter_conversion_outcome.py` | `plugins/professional-growth-coach/assets/private-recruiter-conversion-outcome-v1.html` | `PrivateRecruiterConversionOutcomeDocument` |
 | `/recruiter-target-shortlist` | `plugins/professional-growth-coach/scripts/render_recruiter_target_shortlist.py` | `plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.html` | `RecruiterTargetShortlistDocument` |
 | `/recruiter-target-decision-gate` | `plugins/professional-growth-coach/scripts/render_recruiter_target_decision_gate.py` | `plugins/professional-growth-coach/assets/recruiter-target-decision-gate-v1.html` | `RecruiterTargetDecisionGateDocument` |
+| `/recruiter-target-screen-intake` | `plugins/professional-growth-coach/scripts/render_recruiter_target_screen_intake.py` | `plugins/professional-growth-coach/assets/recruiter-target-screen-intake-v1.html` | `RecruiterTargetScreenIntakeDocument` |
 
 ## Key artifact summaries
 
@@ -22,6 +23,7 @@ This plugin exposes no HTTP routes, SPA routes, framework page files, or router 
 - **Follow-through checkpoint:** a compact candidate-supplied state, next measurement event, date, and safe-next-step receipt.
 - **Conversion outcome:** a compact candidate-supplied observed-event receipt with evidence count and safe-next-step boundary.
 - **Recruiter target decision gate:** a private decision brief bound to a validated shortlist snapshot; it reconciles four decision states, shows the next safe input, and exposes only a manual `prepare-role-interviews` review handoff.
+- **Recruiter target screen intake:** a target-specific, four-check bridge that requires vacancy requirements, candidate fact IDs, company evidence, and a stated stage before any manual interview-preparation review.
 
 Both compact receipt routes use the same static continuity semantics (`recorded`
 then `pending` then `blocked`) and expose exactly one current step to assistive

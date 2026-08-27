@@ -17,6 +17,10 @@ class RecruiterShortlistRoutingDocsTests(unittest.TestCase):
             "ask_one_intake_question",
             "render_recruiter_target_shortlist",
             "recruiter_target_decision_gate",
+            "recruiter-target-screen-intake-v1",
+            "route_recruiter_screen_intake",
+            "manual_prepare_role_interviews_review",
+            "screen_readiness",
             "no_message_action=true",
             "no_calendar_action=true",
         ):

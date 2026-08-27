@@ -20,6 +20,12 @@ TEMPLATE_PATH = ASSET_ROOT / "recruiter-target-decision-gate-v1.html"
 CSS_PATH = ASSET_ROOT / "recruiter-target-decision-gate-v1.css"
 
 
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        del message
+        raise ValueError("invalid arguments")
+
+
 def _sibling(name: str) -> Any:
     path = Path(__file__).with_name(name)
     spec = importlib.util.spec_from_file_location(f"_pgc_gate_renderer_{path.stem}", path)
@@ -178,7 +184,7 @@ def write_decision_gate_html(value: Mapping[str, object], output: Path) -> None:
 
 
 def _cli(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Render a private recruiter target decision gate.")
+    parser = _PrivateArgumentParser(description="Render a private recruiter target decision gate.")
     parser.add_argument("input", type=Path)
     parser.add_argument("output", type=Path)
     try:

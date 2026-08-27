@@ -685,6 +685,60 @@ details summary {
 }
 ```
 
+### `plugins/professional-growth-coach/assets/recruiter-target-screen-intake-v1.css`
+
+```css
+:root {
+  color-scheme: light;
+  --screen-ink: #172033;
+  --screen-muted: #536176;
+  --screen-surface: #ffffff;
+  --screen-soft: #f3f6fb;
+  --screen-border: #c7d2e5;
+  --screen-blue: #315bd6;
+  --screen-green: #176b4d;
+  --screen-amber: #8a5a00;
+  --screen-red: #a43d3d;
+}
+
+* { box-sizing: border-box; }
+html { background: var(--screen-soft); }
+body { margin: 0; color: var(--screen-ink); background: var(--screen-soft); font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, sans-serif; }
+.skip-link { position: absolute; left: 1rem; top: -4rem; padding: .6rem .8rem; color: #fff; background: var(--screen-ink); border-radius: .4rem; z-index: 2; }
+.skip-link:focus { top: 1rem; }
+.screen-shell { width: min(960px, calc(100% - 2rem)); margin: 0 auto; padding: 3rem 0; }
+.screen-header { margin-bottom: 1.25rem; }
+.screen-kicker { margin: 0 0 .35rem; color: var(--screen-blue); font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+h1, h2, h3 { line-height: 1.2; }
+h1 { max-width: 36rem; margin: 0; font-size: clamp(1.75rem, 4vw, 2.8rem); }
+h2 { margin-top: 0; }
+.screen-date { color: var(--screen-muted); margin: .7rem 0 0; }
+.screen-date span { font-weight: 700; }
+.screen-card { margin: 1rem 0; padding: clamp(1rem, 3vw, 1.5rem); background: var(--screen-surface); border: 1px solid var(--screen-border); border-radius: .8rem; box-shadow: 0 8px 20px rgb(23 32 51 / 6%); }
+.screen-decision { border-left: .35rem solid var(--screen-blue); }
+.screen-state { margin: 0 0 .35rem; color: var(--screen-blue); font-weight: 800; }
+.screen-context-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .8rem; margin: 0 0 1.1rem; }
+.screen-context-grid div { padding: .75rem; background: var(--screen-soft); border-radius: .5rem; }
+dt { color: var(--screen-muted); font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+dd { margin: .25rem 0 0; font-weight: 700; }
+.screen-requirements { margin-bottom: 0; }
+.screen-checks { display: grid; gap: .75rem; padding-left: 1.4rem; }
+.screen-check { padding: .8rem 1rem; border: 1px solid var(--screen-border); border-left-width: .3rem; border-radius: .5rem; }
+.screen-check--pass { border-left-color: var(--screen-green); }
+.screen-check--clarify { border-left-color: var(--screen-amber); }
+.screen-check--stop { border-left-color: var(--screen-red); }
+.screen-check strong { margin-right: .6rem; }
+.screen-check span { color: var(--screen-muted); font-weight: 800; }
+.screen-check p { margin: .25rem 0 0; }
+.screen-footer { margin-top: 1.5rem; color: var(--screen-muted); font-size: .92rem; }
+@media (max-width: 640px) { .screen-shell { width: min(100% - 1rem, 960px); padding-top: 2rem; } .screen-context-grid { grid-template-columns: 1fr; } }
+@media (prefers-contrast: more) { :root { --screen-border: #536176; } .screen-card, .screen-check { box-shadow: none; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+@media (forced-colors: active) { .screen-card, .screen-check { border: 2px solid CanvasText; box-shadow: none; } .screen-decision, .screen-check { border-left-color: CanvasText; } }
+@media (prefers-color-scheme: dark) { :root { color-scheme: dark; --screen-ink: #edf2fa; --screen-muted: #b9c5d8; --screen-surface: #1c2738; --screen-soft: #111927; --screen-border: #536176; } }
+@media print { html, body { background: #fff; } .screen-shell { width: 100%; padding: 0; } .screen-card { box-shadow: none; break-inside: avoid; } .skip-link { display: none; } }
+```
+
 ### `plugins/professional-growth-coach/assets/career-market-learning-dossier-v1.css`
 
 ```css

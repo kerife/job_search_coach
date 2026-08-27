@@ -17,6 +17,12 @@ from typing import Any
 SCHEMA_VERSION = "recruiter-target-decision-gate-v1"
 ARTIFACT_KIND = "private_recruiter_target_decision_gate"
 SNAPSHOT_PREFIX = "snap-shortlist-sha256-"
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        del message
+        raise ValueError("invalid arguments")
 TOP_FIELDS = frozenset({
     "schema_version", "artifact_kind", "locale", "as_of_date", "source_shortlist",
     "source_snapshot", "decision_counts", "decision_rows", "screen_context", "handoff", "delivery",
@@ -203,7 +209,7 @@ def validate_decision_gate(value: object, *, as_of: dt.date | None = None) -> li
 
 
 def _cli(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Validate a private recruiter target decision gate.")
+    parser = _PrivateArgumentParser(description="Validate a private recruiter target decision gate.")
     parser.add_argument("input", type=Path)
     parser.add_argument("--as-of", required=True, type=dt.date.fromisoformat)
     try:
