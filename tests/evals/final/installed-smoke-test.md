@@ -16,23 +16,23 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T12:12:48-06:00`
+release_timestamp: `2026-08-27T12:45:15-06:00`
 
-source_commit: `850dc62a86e595fd4daf1f1a229e3c27c59371d8`
+source_commit: `d4bcf6ae3ef990bac360bb60b816e06c69334453`
 
-source_tree: `a655b20b53c1abc7663afc57ef80177d4548396c`
+source_tree: `ebeec59f7299cc95fbf546307376dfa1946ab465`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827121248`
+installed_cache_version: `0.2.0+codex.20260827124515`
 
 installed_enabled: `true`
 
-source_file_count: `152`
+source_file_count: `158`
 
-installed_file_count: `152`
+installed_file_count: `158`
 
-normalized_source_cache_sha256: `5734a60425d143c6327afc5407d738679cd754553f6118a19c9f12a56fac5e4d`
+normalized_source_cache_sha256: `bdcd38842af987810360ca0f9d8090749a171a9020eafc04a9b329cd0f084faf`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -116,6 +116,8 @@ installed_shortlist_artifact_smoke: `1/1 installed EN/ES shortlist builder, vali
 installed_shortlist_boundary_smoke: `4/4 installed shortlist rejects asset symlinks, output-parent symlinks, non-HTTP URI prose, and future-dated direct renders`
 
 installed_decision_gate_smoke: `3/3 installed EN/ES decision-gate builder, validator, and renderer; counts/snapshot reconcile, screen context remains manual-only, and HTML omits target/fact identifiers`
+
+installed_screen_intake_smoke: `3/3 installed EN/ES target-specific intake builder, validator, and renderer; advance-only manual handoff, snapshot/locale binding, private IDs hidden, and 0600 output`
 
 installed_duplicate_employer_source_url_smoke: `1/1 installed market validator rejects duplicate normalized employer official_source_url values without echoing the URL`
 
