@@ -23,9 +23,14 @@ class _ArgumentError(ValueError):
     """Raised without reflecting private command-line values."""
 
 
+class _AdvisoryOverrideError(_ArgumentError):
+    """Raised for the intentionally unsupported advisory override option."""
+
+
 class _PrivateArgumentParser(argparse.ArgumentParser):
     def error(self, message: str) -> None:
-        del message
+        if "--advisory-override" in message:
+            raise _AdvisoryOverrideError
         raise _ArgumentError
 
 
@@ -3678,6 +3683,9 @@ def _cli(argv: list[str] | None = None) -> int:
     )
     try:
         arguments = parser.parse_args(argv)
+    except _AdvisoryOverrideError:
+        print("advisory override is unsupported", file=sys.stderr)
+        return 2
     except _ArgumentError:
         print(json.dumps({"error": {"code": "invalid_arguments"}}, separators=(",", ":")), file=sys.stderr)
         return 3
