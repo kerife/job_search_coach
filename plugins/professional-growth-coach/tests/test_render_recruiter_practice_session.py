@@ -600,7 +600,10 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
                     "</section>", 1
                 )[0]
                 self.assertEqual(rendered.count('class="continuity-rail"'), 1)
-                self.assertNotIn("continuity-rail--feedback-available", rendered)
+                self.assertNotIn(
+                    'class="continuity-rail continuity-rail--feedback-available"',
+                    rendered,
+                )
                 self.assertIn('data-stage="evidence" data-state="current"', rail)
                 self.assertIn('data-stage="rehearsal" data-state="current"', rail)
                 self.assertIn('data-stage="next-version" data-state="pending"', rail)

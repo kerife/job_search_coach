@@ -34,14 +34,17 @@ evidence to the practice projection; it must never invent, infer, or copy a
 vacancy requirement from the dossier. The handoff is draft-only and requires
 manual re-entry: it never starts a practice session automatically.
 
-The session is one-question/one-answer: ask one grounded recruiter-screen question, wait for the observed answer, and keep any score unknown before an observed answer. In `feedback_available`, keep `score=unknown` and use only the categorical observation labels (`solid`, `confirm`, or `do_not_assert`) via `score_state=categorical`; never emit a numeric score. Feedback may use only that observed answer and the rubric. Treat the observed answer as ephemeral and no-save-by-default; do not reuse it after the session unless the candidate explicitly supplies it again. Return only the private-session summary and verified local artifact link. Do not expose internal identifiers or raw vacancy or candidate-fact text. No external action is performed.
+The session is one-question/one-answer: ask one grounded recruiter-screen question, wait for the observed answer, and keep score unknown before an observed answer. In `feedback_available`, keep `score=unknown` and use only the categorical observation labels (`solid`, `confirm`, or `do_not_assert`) via `score_state=categorical`; never emit a numeric score. Feedback uses only the answer and rubric. Treat the answer as ephemeral and no-save-by-default; do not reuse it unless the candidate explicitly supplies it again. Return only the private summary and local artifact link; omit IDs and raw vacancy/fact text. No external action.
 
 In feedback_available, visible feedback uses fixed bilingual guidance selected
 only by the validated question kind and supplied categorical label. The most
 cautious present label governs one separate next-private-rehearsal decision:
 do_not_assert > confirm > solid. This is evidence-bounded coaching, not semantic
 verification, readiness scoring, or an interview-outcome claim; the raw answer
-and feedback statement remain omitted from the artifact.
+and feedback statement remain omitted from the artifact. The static private
+rail marks its final state `pending` for `solid` or `blocked` for
+`confirm`/`do_not_assert`; it never auto-starts preparation or performs
+external action.
 
 An explicit private recruiter-reply triage request is not a practice request: it first produces the separate closed private decision card from an identity-free recruiter-reply summary and one supplied candidate fact. If either input is missing, ask exactly one concise intake question; do not infer it from raw content, a profile, or a recruiter message. Its local handoff can identify whether private preparation is available, but it does not start a practice session automatically. Do not expose raw reply content, internal identifiers, a draft/send action, proposed time, or calendar detail. When ready, the handoff is only a manual re-entry cue for one recruiter-screen question using the identity-free summary plus verified fact; clarify-first and stop states omit it.
 

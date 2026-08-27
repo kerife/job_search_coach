@@ -183,6 +183,9 @@ html { color-scheme: light; background: var(--paper); }
 .recruiter-practice-document .continuity-step--current { border-left: 4px solid var(--forest); }
 .recruiter-practice-document .continuity-step--pending { border-left: 4px solid var(--decision-term); }
 .recruiter-practice-document .continuity-step--blocked { border-left: 4px solid var(--coral); }
+.recruiter-practice-document .continuity-rail--feedback-available { border-left-color: var(--coral); }
+.recruiter-practice-document .continuity-rail--feedback-available .continuity-step--pending { background: var(--forest-soft); }
+.recruiter-practice-document .continuity-rail--feedback-available .continuity-step--blocked { background: var(--coral-soft); }
 .recruiter-practice-document .continuity-step-state { display: block; color: var(--muted, #46534d); font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
 .recruiter-practice-document .continuity-step strong { display: block; margin-top: .2rem; }
 .recruiter-practice-document .continuity-step p { margin: .35rem 0 0; color: var(--muted, #46534d); font-size: .9rem; }
@@ -304,6 +307,9 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-boundary { background: var(--coral-soft); }
   .recruiter-practice-document .practice-claim-guardrail { background: var(--coral-soft); color: var(--ink); }
   .recruiter-practice-document .practice-footer { color: var(--muted); border-color: var(--forest); }
+  .recruiter-practice-document .continuity-rail--feedback-available { border-left-color: var(--coral); }
+  .recruiter-practice-document .continuity-rail--feedback-available .continuity-step--pending { background: var(--forest-soft); }
+  .recruiter-practice-document .continuity-rail--feedback-available .continuity-step--blocked { background: var(--coral-soft); }
 }
 
 @keyframes practice-enter {
@@ -363,6 +369,9 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .screen-readiness-state { color: CanvasText; }
   .recruiter-practice-document .continuity-rail,
   .recruiter-practice-document .continuity-step { background: Canvas; color: CanvasText; border-color: CanvasText; }
+  .recruiter-practice-document .continuity-rail--feedback-available { border-left-color: CanvasText; }
+  .recruiter-practice-document .continuity-rail--feedback-available .continuity-step--pending,
+  .recruiter-practice-document .continuity-rail--feedback-available .continuity-step--blocked { background: Canvas; border-left-color: CanvasText; }
   .recruiter-practice-document .continuity-rail-kicker,
   .recruiter-practice-document .continuity-step-state { color: CanvasText; }
   .recruiter-practice-document .continuity-step::before { border-color: CanvasText; color: CanvasText; }
@@ -404,6 +413,10 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-rehearsal--triage-first-answer li { border-width: 2px; }
   .recruiter-practice-document .practice-next-version { border-width: 2px; border-left-width: .5rem; }
   .recruiter-practice-document .practice-next-version li { border-width: 2px; }
+  .recruiter-practice-document .continuity-rail,
+  .recruiter-practice-document .continuity-step { border-width: 2px; }
+  .recruiter-practice-document .continuity-rail--feedback-available .continuity-step--pending,
+  .recruiter-practice-document .continuity-rail--feedback-available .continuity-step--blocked { border-left-width: .5rem; }
   .recruiter-practice-document .feedback-label { text-decoration: underline; text-decoration-thickness: 0.12em; }
 }
 
@@ -434,6 +447,11 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .continuity-step {
     break-inside: avoid;
     page-break-inside: avoid;
+  }
+  .recruiter-practice-document .continuity-rail--feedback-available .continuity-step--pending,
+  .recruiter-practice-document .continuity-rail--feedback-available .continuity-step--blocked {
+    background: transparent;
+    border-left-color: var(--ink);
   }
   .recruiter-practice-document .practice-feedback {
     break-after: avoid-page;

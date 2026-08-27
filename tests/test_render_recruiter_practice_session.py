@@ -337,7 +337,7 @@ class RecruiterPracticeSessionRendererTests(unittest.TestCase):
                         )
                         self.assertLess(
                             rendered.index('<section class="practice-next-version"'),
-                            rendered.index('<section class="continuity-rail"'),
+                            rendered.index('<section class="continuity-rail'),
                         )
                         self.assertNotIn("PRIVATE-ANSWER-SENTINEL", bridge)
                         self.assertNotIn("PRIVATE-FEEDBACK-SENTINEL", bridge)

@@ -129,6 +129,14 @@ recorded evidence, the safe route, and the manual next action with textual
 does not store answers, expose private identifiers, auto-start preparation, or
 create a message, calendar, or other external action.
 
+When feedback is available, the practice rail remains the same three-step
+private map but reflects the validated governing label in its final state:
+`pending` for `solid`, or `blocked` for `confirm` and `do_not_assert`. Its
+styling is a closed visual cue only; it does not verify meaning, score
+readiness, transport feedback text, start another rehearsal, or trigger an
+external action. The static rail remains readable in narrow, print, dark,
+forced-colors, and higher-contrast modes.
+
 Practice sessions also begin with a first-conversation readiness card. It shows
 the recruiter-screen stage, whether supplied evidence is confirmed or still
 needs confirmation, the private-only boundary, and the manual next step. It is
