@@ -439,6 +439,28 @@ CONTINUITY_COPY = {
             ("rehearsal", "current", "Rehearsal", "Practice the bounded answer structure without saving it."),
             ("next-version", "pending", "Next version", "Review the next answer privately before any external action."),
         ),
+        "feedback": {
+            "title": "Manual continuity route",
+            "kicker": "Session state",
+            "states": {"current": "Current", "pending": "Pending", "blocked": "Blocked"},
+            "steps": {
+                "solid": (
+                    ("evidence", "current", "Supplied evidence", "Use only the evidence already in the private session."),
+                    ("decision", "current", "Reviewed decision", "The governing feedback signal has been reviewed."),
+                    ("next-rehearsal", "pending", "Next private rehearsal", "Review the next answer privately before any external action."),
+                ),
+                "confirm": (
+                    ("evidence", "current", "Supplied evidence", "Use only the evidence already in the private session."),
+                    ("decision", "current", "Reviewed decision", "The governing feedback signal has been reviewed."),
+                    ("next-rehearsal", "blocked", "Next private rehearsal", "Confirm or narrow the uncertain point before the next private rehearsal."),
+                ),
+                "do_not_assert": (
+                    ("evidence", "current", "Supplied evidence", "Use only the evidence already in the private session."),
+                    ("decision", "current", "Reviewed decision", "The governing feedback signal has been reviewed."),
+                    ("next-rehearsal", "blocked", "Next private rehearsal", "Remove the unsupported claim before the next private rehearsal."),
+                ),
+            },
+        },
     },
     "es": {
         "title": "Ruta de continuidad manual",
@@ -449,6 +471,28 @@ CONTINUITY_COPY = {
             ("rehearsal", "current", "Ensayo", "Practica la estructura acotada sin guardarla."),
             ("next-version", "pending", "Siguiente versión", "Revisa en privado la próxima respuesta antes de cualquier acción externa."),
         ),
+        "feedback": {
+            "title": "Ruta de continuidad manual",
+            "kicker": "Estado de la sesión",
+            "states": {"current": "Actual", "pending": "Pendiente", "blocked": "Bloqueada"},
+            "steps": {
+                "solid": (
+                    ("evidence", "current", "Evidencia suministrada", "Usa solo la evidencia ya presente en la sesión privada."),
+                    ("decision", "current", "Decisión revisada", "La señal prioritaria de comentarios fue revisada."),
+                    ("next-rehearsal", "pending", "Próximo ensayo privado", "Revisa en privado la próxima respuesta antes de cualquier acción externa."),
+                ),
+                "confirm": (
+                    ("evidence", "current", "Evidencia suministrada", "Usa solo la evidencia ya presente en la sesión privada."),
+                    ("decision", "current", "Decisión revisada", "La señal prioritaria de comentarios fue revisada."),
+                    ("next-rehearsal", "blocked", "Próximo ensayo privado", "Confirma o acota el punto incierto antes del próximo ensayo privado."),
+                ),
+                "do_not_assert": (
+                    ("evidence", "current", "Evidencia suministrada", "Usa solo la evidencia ya presente en la sesión privada."),
+                    ("decision", "current", "Decisión revisada", "La señal prioritaria de comentarios fue revisada."),
+                    ("next-rehearsal", "blocked", "Próximo ensayo privado", "Quita la afirmación sin respaldo antes del próximo ensayo privado."),
+                ),
+            },
+        },
     },
 }
 
@@ -576,19 +620,38 @@ def _render_triage_first_answer_outline(locale: str, question_kind: str) -> str:
     </section>'''
 
 
-def _continuity_rail(locale: str) -> str:
-    labels = CONTINUITY_COPY[locale]
-    steps = "".join(
+def _continuity_rail(
+    locale: str, state: str, governing_label: str | None = None
+) -> str:
+    _require_locale(locale)
+    if state not in ("ready_to_practice", "awaiting_answer", "feedback_available"):
+        raise ValueError("unsupported practice state")
+    if state == "feedback_available":
+        if governing_label is None:
+            raise ValueError("governing feedback label is required")
+        _require_feedback_label(governing_label)
+        labels = CONTINUITY_COPY[locale]["feedback"]
+        steps = labels["steps"][governing_label]
+        rail_class = "continuity-rail continuity-rail--feedback-available"
+    else:
+        if governing_label is not None:
+            raise ValueError(
+                "governing feedback label is only valid with feedback_available"
+            )
+        labels = CONTINUITY_COPY[locale]
+        steps = labels["steps"]
+        rail_class = "continuity-rail"
+    steps_html = "".join(
         f'<li class="continuity-step continuity-step--{state}" data-stage="{stage}" data-state="{state}">'
         f'<span class="continuity-step-state">{labels["states"][state]}</span>'
         f'<strong>{title}</strong><p>{description}</p></li>'
-        for stage, state, title, description in labels["steps"]
+        for stage, state, title, description in steps
     )
     return (
-        '<section class="continuity-rail" aria-labelledby="continuity-rail-title">'
+        f'<section class="{rail_class}" aria-labelledby="continuity-rail-title">'
         f'<p class="continuity-rail-kicker">{labels["kicker"]}</p>'
         f'<h2 id="continuity-rail-title">{labels["title"]}</h2>'
-        f'<ol class="continuity-rail-list">{steps}</ol></section>'
+        f'<ol class="continuity-rail-list">{steps_html}</ol></section>'
     )
 
 
@@ -878,6 +941,7 @@ def _render_main(
     claim_guardrail = ""
     first_answer_outline = ""
     triage_route = ""
+    governing_label = None
     if sourced:
         source = _text(_mapping(session["handoff_context"])["source"])
         text_key = "handoff_text_reply" if source == "private_recruiter_reply_triage" else "handoff_text_dossier"
@@ -903,7 +967,7 @@ def _render_main(
     else:
         next_action = _render_next_action(state, labels, sourced=sourced)
         practice_sequence = f"{rehearsal}{next_action}"
-    continuity = _continuity_rail(locale)
+    continuity = _continuity_rail(locale, state, governing_label)
     return f'''<main id="main-content" class="practice-shell" tabindex="-1">
     <section class="practice-session" aria-labelledby="practice-session-title" aria-describedby="practice-session-state">
       <p id="practice-session-state" class="state-chip state-chip--{html.escape(state)}">{labels[state]}</p>

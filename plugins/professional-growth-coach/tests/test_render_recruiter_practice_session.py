@@ -490,7 +490,7 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
                         )
                         self.assertLess(
                             rendered.index('<section class="practice-next-version"'),
-                            rendered.index('<section class="continuity-rail"'),
+                            rendered.index('<section class="continuity-rail'),
                         )
                         self.assertIn('aria-labelledby="next-version-title"', bridge)
                         self.assertNotIn("PRIVATE-ANSWER-SENTINEL", bridge)
@@ -529,13 +529,104 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
         rendered = renderer.render_session_html(
             self._feedback_session([self._observation("solid")])
         )
-        self.assertEqual(rendered.count('class="continuity-rail"'), 1)
+        self.assertEqual(
+            rendered.count('class="continuity-rail continuity-rail--feedback-available"'), 1
+        )
         self.assertEqual(rendered.count('class="continuity-step continuity-step--'), 3)
         self.assertIn('data-stage="evidence" data-state="current"', rendered)
-        self.assertIn('data-stage="rehearsal" data-state="current"', rendered)
-        self.assertIn('data-stage="next-version" data-state="pending"', rendered)
+        self.assertIn('data-stage="decision" data-state="current"', rendered)
+        self.assertIn('data-stage="next-rehearsal" data-state="pending"', rendered)
         self.assertNotIn("D-104", rendered)
         self.assertNotIn("F-105", rendered)
+
+    def test_feedback_continuity_rail_matches_governing_label_in_both_locales(self):
+        expected_stage_states = (("evidence", "current"), ("decision", "current"))
+        for locale in ("es", "en"):
+            for kind in renderer.QUESTION_KINDS:
+                for label in renderer.FEEDBACK_LABELS:
+                    session = self._feedback_session([self._observation(label)])
+                    session["locale"] = locale
+                    session["question"]["kind"] = kind
+                    session["facts"][0]["state"] = (
+                        "verified" if kind == "proof_example" else "candidate_reported"
+                    )
+                    with self.subTest(locale=locale, kind=kind, label=label):
+                        rendered = renderer.render_session_html(session)
+                        rail = rendered.split(
+                            '<section class="continuity-rail continuity-rail--feedback-available"',
+                            1,
+                        )[1].split("</section>", 1)[0]
+                        self.assertEqual(
+                            rendered.count('class="continuity-rail continuity-rail--feedback-available"'),
+                            1,
+                        )
+                        self.assertIn(
+                            renderer.CONTINUITY_COPY[locale]["feedback"]["kicker"], rail
+                        )
+                        self.assertIn(
+                            renderer.CONTINUITY_COPY[locale]["feedback"]["title"], rail
+                        )
+                        for stage, state in expected_stage_states:
+                            self.assertIn(
+                                f'data-stage="{stage}" data-state="{state}"', rail
+                            )
+                        _, final_state, final_title, final_description = renderer.CONTINUITY_COPY[
+                            locale
+                        ]["feedback"]["steps"][label][2]
+                        self.assertIn(
+                            f'data-stage="next-rehearsal" data-state="{final_state}"',
+                            rail,
+                        )
+                        self.assertIn(final_title, rail)
+                        self.assertIn(final_description, rail)
+                        self.assertNotIn("PRIVATE-ANSWER-SENTINEL", rail)
+                        self.assertNotIn("PRIVATE-FEEDBACK-SENTINEL", rail)
+                        self.assertNotRegex(
+                            rail,
+                            r"(?:Q|R|F|C|E|OBS|RB)-999|https?://|www\\.|/private/|<(?:form|input|textarea|button|script)\\b|\\bon[a-z]+=",
+                        )
+
+    def test_pre_feedback_continuity_rail_preserves_existing_copy_and_shape(self):
+        for state in ("ready_to_practice", "awaiting_answer"):
+            session = self._feedback_session([])
+            session["state"] = state
+            session["observed_answer"] = None
+            session["feedback"] = {
+                "score": "unknown", "score_state": "unknown", "observations": []
+            }
+            with self.subTest(state=state):
+                rendered = renderer.render_session_html(session)
+                rail = rendered.split('<section class="continuity-rail"', 1)[1].split(
+                    "</section>", 1
+                )[0]
+                self.assertEqual(rendered.count('class="continuity-rail"'), 1)
+                self.assertNotIn("continuity-rail--feedback-available", rendered)
+                self.assertIn('data-stage="evidence" data-state="current"', rail)
+                self.assertIn('data-stage="rehearsal" data-state="current"', rail)
+                self.assertIn('data-stage="next-version" data-state="pending"', rail)
+                for stage, _, title, description in renderer.CONTINUITY_COPY["es"]["steps"]:
+                    self.assertIn(f'data-stage="{stage}"', rail)
+                    self.assertIn(title, rail)
+                    self.assertIn(description, rail)
+
+    def test_continuity_rail_is_deterministic_and_rejects_unvalidated_inputs(self):
+        expected = renderer._continuity_rail("es", "feedback_available", "confirm")
+        self.assertEqual(
+            expected,
+            renderer._continuity_rail("es", "feedback_available", "confirm"),
+        )
+        for call, message in (
+            (lambda: renderer._continuity_rail("xx-private", "ready_to_practice"), "unsupported locale"),
+            (lambda: renderer._continuity_rail("es", "private-state"), "unsupported practice state"),
+            (lambda: renderer._continuity_rail("es", "feedback_available"), "governing feedback label is required"),
+            (lambda: renderer._continuity_rail("es", "feedback_available", "private-label"), "unsupported feedback label"),
+            (lambda: renderer._continuity_rail("es", "ready_to_practice", "solid"), "governing feedback label is only valid with feedback_available"),
+        ):
+            with self.subTest(message=message):
+                with self.assertRaises(ValueError) as captured:
+                    call()
+                self.assertEqual(str(captured.exception), message)
+                self.assertNotIn("private", str(captured.exception))
 
     def test_first_screen_readiness_card_exposes_manual_conditions_in_both_locales(self):
         for locale in ("es", "en"):
