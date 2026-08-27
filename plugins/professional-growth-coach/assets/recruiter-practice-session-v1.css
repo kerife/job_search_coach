@@ -126,7 +126,8 @@ html { color-scheme: light; background: var(--paper); }
 .recruiter-practice-document .practice-evidence,
 .recruiter-practice-document .practice-boundary,
 .recruiter-practice-document .practice-feedback,
-.recruiter-practice-document .practice-decision {
+.recruiter-practice-document .practice-decision,
+.recruiter-practice-document .practice-next-version {
   padding: 1rem;
   border: 1px solid var(--line);
 }
@@ -138,6 +139,14 @@ html { color-scheme: light; background: var(--paper); }
 .recruiter-practice-document .practice-rehearsal--triage-first-answer ol { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .65rem; padding: 0; list-style: none; counter-reset: triage-first-answer-step; }
 .recruiter-practice-document .practice-rehearsal--triage-first-answer li { counter-increment: triage-first-answer-step; position: relative; min-width: 0; padding: .7rem .7rem .7rem 2.5rem; border: 1px solid var(--line); background: var(--surface); }
 .recruiter-practice-document .practice-rehearsal--triage-first-answer li::before { content: counter(triage-first-answer-step); display: inline-grid; position: absolute; top: .65rem; left: .65rem; width: 1.35rem; height: 1.35rem; place-items: center; border: 1px solid var(--forest); border-radius: 50%; color: var(--forest); font-size: .8rem; font-weight: 800; line-height: 1; }
+.recruiter-practice-document .practice-next-version { max-width: var(--measure); border-left: 4px solid var(--forest); background: var(--forest-soft); }
+.recruiter-practice-document .practice-next-version-kicker { margin: 0; color: var(--forest); font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.recruiter-practice-document .practice-next-version h2 { margin: .25rem 0 0; font-size: 1.25rem; }
+.recruiter-practice-document .practice-next-version-intro { max-width: var(--measure); margin: .45rem 0 0; color: #46534d; }
+.recruiter-practice-document .practice-next-version ol { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .65rem; margin: .75rem 0 0; padding: 0; list-style: none; counter-reset: next-version-step; }
+.recruiter-practice-document .practice-next-version li { counter-increment: next-version-step; position: relative; min-width: 0; padding: .7rem .7rem .7rem 2.5rem; border: 1px solid var(--line); background: var(--surface); }
+.recruiter-practice-document .practice-next-version li::before { content: counter(next-version-step); display: inline-grid; position: absolute; top: .65rem; left: .65rem; width: 1.35rem; height: 1.35rem; place-items: center; border: 1px solid var(--forest); border-radius: 50%; color: var(--forest); font-size: .8rem; font-weight: 800; line-height: 1; }
+.recruiter-practice-document .practice-next-version li p { margin: .35rem 0 0; color: #46534d; }
 .recruiter-practice-document .screen-readiness { padding: 1rem; border: 1px solid var(--line); border-left: 4px solid var(--decision-term); background: var(--paper); }
 .recruiter-practice-document .screen-readiness-kicker { margin: 0; color: var(--forest); font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .recruiter-practice-document .screen-readiness h2 { margin: .25rem 0 0; font-size: 1.3rem; }
@@ -275,6 +284,10 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .triage-practice-route { background: var(--surface); }
   .recruiter-practice-document .practice-rehearsal--triage-first-answer { background: var(--forest-soft); color: var(--ink); }
   .recruiter-practice-document .practice-rehearsal--triage-first-answer li { background: var(--surface); color: var(--ink); }
+  .recruiter-practice-document .practice-next-version { background: var(--forest-soft); color: var(--ink); }
+  .recruiter-practice-document .practice-next-version li { background: var(--surface); color: var(--ink); }
+  .recruiter-practice-document .practice-next-version-intro,
+  .recruiter-practice-document .practice-next-version li p { color: var(--muted); }
   .recruiter-practice-document .screen-readiness { background: var(--surface); }
   .recruiter-practice-document .practice-rehearsal-hint { color: var(--muted); }
   .recruiter-practice-document .practice-next-action,
@@ -308,6 +321,7 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .continuity-rail-list { grid-template-columns: 1fr; }
   .recruiter-practice-document .practice-claim-guardrail { padding: .875rem; }
   .recruiter-practice-document .practice-rehearsal--triage-first-answer ol { grid-template-columns: 1fr; }
+  .recruiter-practice-document .practice-next-version ol { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -320,6 +334,7 @@ html { color-scheme: light; background: var(--paper); }
   }
   .recruiter-practice-document .practice-claim-guardrail { transition: none !important; }
   .recruiter-practice-document .practice-rehearsal--triage-first-answer { transition: none !important; }
+  .recruiter-practice-document .practice-next-version { transition: none !important; }
 }
 
 @media (forced-colors: active) {
@@ -361,6 +376,13 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-rehearsal--triage-first-answer .practice-rehearsal-kicker { color: CanvasText; }
   .recruiter-practice-document .practice-rehearsal--triage-first-answer li { border-color: CanvasText; background: Canvas; color: CanvasText; }
   .recruiter-practice-document .practice-rehearsal--triage-first-answer li::before { border-color: CanvasText; color: CanvasText; }
+  .recruiter-practice-document .practice-next-version { border-color: CanvasText; background: Canvas; color: CanvasText; }
+  .recruiter-practice-document .practice-next-version h2,
+  .recruiter-practice-document .practice-next-version-kicker,
+  .recruiter-practice-document .practice-next-version-intro { color: CanvasText; }
+  .recruiter-practice-document .practice-next-version li { border-color: CanvasText; background: Canvas; color: CanvasText; }
+  .recruiter-practice-document .practice-next-version li::before { border-color: CanvasText; color: CanvasText; }
+  .recruiter-practice-document .practice-next-version li p { color: CanvasText; }
   .recruiter-practice-document .practice-footer { color: CanvasText; border-color: CanvasText; }
 }
 
@@ -380,6 +402,8 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-claim-guardrail { border-width: 2px; border-left-width: .5rem; }
   .recruiter-practice-document .practice-rehearsal--triage-first-answer { border-width: 2px; border-left-width: .5rem; }
   .recruiter-practice-document .practice-rehearsal--triage-first-answer li { border-width: 2px; }
+  .recruiter-practice-document .practice-next-version { border-width: 2px; border-left-width: .5rem; }
+  .recruiter-practice-document .practice-next-version li { border-width: 2px; }
   .recruiter-practice-document .feedback-label { text-decoration: underline; text-decoration-thickness: 0.12em; }
 }
 
@@ -449,6 +473,10 @@ html { color-scheme: light; background: var(--paper); }
     page-break-inside: avoid;
   }
   .recruiter-practice-document .practice-rehearsal--triage-first-answer {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .recruiter-practice-document .practice-next-version {
     break-inside: avoid;
     page-break-inside: avoid;
   }

@@ -141,6 +141,15 @@ handoff panels. Its three short steps reuse the validated question-kind coaching
 only; it neither captures nor saves an answer, changes evidence, nor triggers
 an external action.
 
+After feedback is available, the session also places one static, localized
+next-version bridge after the governing decision and before the continuity rail.
+It names the three manual moves—keep, adjust, and check—from closed coaching
+copy selected by the validated question kind and governing feedback label. The
+bridge is explanatory only: it never exposes an answer or feedback statement,
+saves a revision, starts another rehearsal, or performs an external action. The
+continuity rail remains the separate, non-interactive map of evidence,
+rehearsal, and the pending next version.
+
 `private-recruiter-triage-practice-handoff-v1` is the closed composition
 boundary from a private recruiter-reply triage into one private rehearsal. It
 accepts only a validated `ready_for_private_prep` triage with

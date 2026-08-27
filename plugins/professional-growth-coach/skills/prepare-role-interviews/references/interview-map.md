@@ -16,6 +16,12 @@ draft-only, needs manual re-entry, and never auto-starts a practice session.
 The rendered practice session includes a static continuity rail showing the
 supplied evidence, rehearsal, and pending next version; it is a reading aid,
 not an execution control or authorization.
+When feedback is available, one localized next-version bridge appears after
+the governing decision and before that rail. It provides fixed manual
+keep/adjust/check coaching from the validated question kind and governing
+feedback label. It does not expose the answer or feedback statement, save a
+revision, start another rehearsal, or authorize an external action; the rail
+remains the separate continuity map.
 It also begins with a first-conversation readiness card showing the
 recruiter-screen stage, evidence confirmation state, private-only boundary, and
 manual next step. The card is derived from validated session state and must not
