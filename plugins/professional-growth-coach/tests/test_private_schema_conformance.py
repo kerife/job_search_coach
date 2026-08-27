@@ -260,6 +260,16 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
                 current["unexpected_extension"] = "must be rejected"
                 self.assertTrue(validate_schema_instance(invalid, schema))
 
+    def test_next_stage_schema_preserves_nested_scalar_and_item_types(self):
+        _, _, _, _, _, _, review = _build_recruiter_handoff_chain()
+        schema = self._schema("private-recruiter-next-stage-review-v1.schema.json")
+        invalid_network_plan = copy.deepcopy(review)
+        invalid_network_plan["source_intake"]["source_gate"]["source_shortlist"]["network_plan"]["network_goal"] = {"raw": "must stay scalar"}
+        self.assertTrue(validate_schema_instance(invalid_network_plan, schema))
+        invalid_coverage = copy.deepcopy(review)
+        invalid_coverage["source_debrief"]["coverage"][0]["note"] = {"raw": "must stay scalar"}
+        self.assertTrue(validate_schema_instance(invalid_coverage, schema))
+
     def test_recruiter_schema_contracts_reject_impossible_state_combinations(self):
         _, _, intake, _, _, debrief, review = _build_recruiter_handoff_chain()
         intake_schema = self._schema("recruiter-target-screen-intake-v1.schema.json")

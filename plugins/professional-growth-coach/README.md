@@ -36,7 +36,9 @@ Every artifact-free downstream handoff also returns a fixed `evidence_gaps`
 list and one localized `intake_question`. The question is specific to the
 missing handoff: the gate asks for the validated shortlist, screen intake asks
 for stage/`V-###` requirements/`F-###` facts/company evidence/four checks,
-debrief asks for checkpoint/receipt/intake/structured coverage, and next-stage
+debrief intake first accepts a validated checkpoint, receipt, and target intake
+and asks only for structured coverage; full debrief recovery asks for
+checkpoint/receipt/intake/structured coverage, and next-stage
 review asks for a valid debrief plus a forward stage. If the debrief is already
 valid but the selected non-terminal stage is not allowed, the route returns
 `next_action=select_forward_stage` and taxonomy-derived `allowed_next_stages`;
@@ -55,7 +57,7 @@ stage transitions as the runtime taxonomy. Runtime validation remains
 authoritative for dates, hashes, and cross-artifact provenance; schema-only
 acceptance never grants preparation or external-action authorization.
 
-After a validated `screen_attended` checkpoint, `route_recruiter_screen_debrief` can build `private-recruiter-screen-debrief-v1`. The private bilingual debrief records only structured coverage, unknown topics, supported facts used, and a manual `continue_review|pause|stop` decision. Complete coverage returns `ready` for `manual_prepare_next_stage_review`; incomplete coverage returns `needs_intake` for context collection, while a stop decision returns terminal `stopped` with `record_stop_decision`. No raw conversation text, contacts, messages, calendar actions, automatic preparation, or outcome prediction is retained.
+After a validated `screen_attended` checkpoint, `route_recruiter_screen_debrief_intake` starts an artifact-free, bilingual debrief intake that carries the validated checkpoint/receipt/intake boundary forward and asks only for requirement coverage, scope, and team context. `route_recruiter_screen_debrief` then builds `private-recruiter-screen-debrief-v1` once that structured context is supplied. The private bilingual debrief records only structured coverage, unknown topics, supported facts used, and a manual `continue_review|pause|stop` decision. Complete coverage returns `ready` for `manual_prepare_next_stage_review`; incomplete coverage returns `needs_intake` for context collection, while a stop decision returns terminal `stopped` with `record_stop_decision`. No raw conversation text, contacts, messages, calendar actions, automatic preparation, or outcome prediction is retained.
 
 When a next stage is explicitly selected, `route_recruiter_next_stage_review` builds `private-recruiter-next-stage-review-v1` from that debrief. It exposes a bilingual, checklist-based `ready|blocked` review for a closed forward transition such as `technical_screen → hiring_manager`, `technical_deep_dive`, `take_home`, `system_design`, `behavioral_loop`, `panel`, or `offer_stage`. The rendered header repeats both current and target stages so the candidate can verify the handoff. A blocked review returns `needs_intake`, while a stop decision returns terminal `stopped` with `record_stop_decision`; neither asks for more context. A blocked review also lists only the structured topics that must be clarified, never the raw unknown-topic notes. The current stage and backward transitions are rejected; `offer_stage` has no forward transition and is represented as terminal recovery with `record_terminal_stage`; only a manual `prepare-role-interviews` cue can proceed.
 
@@ -242,11 +244,11 @@ auto-start preparation, or create a message, calendar, or other external
 action. Its surface token remains readable in dark mode and its borders/text
 remain explicit in print, forced-colors, and higher-contrast modes.
 
-After a completed `screen_attended` checkpoint, the rail now uses the closed
-`debrief_after_screen` action: it is a cue to re-enter a private conversation
-and manually note what was discussed and what remains unknown. The checkpoint
-renderer does not capture, persist, or review those notes; any structured
-debrief artifact requires a separately specified contract. This is still
+After a completed `screen_attended` checkpoint, the rail uses the closed
+`debrief_after_screen` action. `route_recruiter_screen_debrief_intake` carries
+that validated boundary into an artifact-free prompt for requirement coverage,
+scope, and team context; the checkpoint renderer still does not capture,
+persist, or review raw notes. The later structured debrief remains
 manual-only and does not send, schedule, auto-start preparation, or retain the
 screen conversation.
 

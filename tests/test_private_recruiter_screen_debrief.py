@@ -18,7 +18,7 @@ from build_recruiter_target_shortlist import build_shortlist  # noqa: E402
 from build_recruiter_target_screen_intake import build_screen_intake  # noqa: E402
 from build_private_recruiter_screen_debrief import build_screen_debrief  # noqa: E402
 from render_private_recruiter_screen_debrief import render_screen_debrief_html  # noqa: E402
-from route_recruiter_target_shortlist import route_recruiter_screen_debrief  # noqa: E402
+from route_recruiter_target_shortlist import route_recruiter_screen_debrief, route_recruiter_screen_debrief_intake  # noqa: E402
 from validate_private_recruiter_screen_debrief import validate_screen_debrief  # noqa: E402
 from validate_recruiter_target_screen_intake import validate_screen_intake  # noqa: E402
 from tests.test_recruiter_target_decision_gate import RecruiterTargetDecisionGateTests  # noqa: E402
@@ -71,6 +71,37 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
         shortlist = RecruiterTargetDecisionGateTests().shortlist()
         self.gate = build_decision_gate(shortlist)
         self.intake = build_screen_intake(self.gate, "T-001", valid_screen_intake())
+
+    def test_attended_screen_starts_artifact_free_debrief_intake(self) -> None:
+        routed = route_recruiter_screen_debrief_intake(valid_checkpoint(), RECEIPT, self.intake)
+        self.assertEqual("private_recruiter_screen_debrief", routed["route_kind"])
+        self.assertEqual("needs_intake", routed["case_state"])
+        self.assertEqual("collect_debrief_context", routed["next_action"])
+        self.assertFalse(routed["authorization_required"])
+        self.assertIsNone(routed["artifact"])
+        self.assertEqual(["structured_debrief_context"], routed["evidence_gaps"])
+        self.assertIn("Filtro atendido", routed["intake_question"])
+        self.assertNotRegex(routed["intake_question"], r"(?:T-\\d{3}|D-\\d{3}|F-\\d{3}|https?://)")
+
+    def test_debrief_intake_recovery_is_specific_and_artifact_free(self) -> None:
+        for checkpoint, receipt, intake in (
+            ({}, RECEIPT, self.intake),
+            (valid_checkpoint(), {}, self.intake),
+            (valid_checkpoint(), RECEIPT, {}),
+        ):
+            with self.subTest(input=(checkpoint, receipt, intake)):
+                routed = route_recruiter_screen_debrief_intake(checkpoint, receipt, intake)
+                self.assertEqual("collect_debrief_context", routed["next_action"])
+                self.assertIsNone(routed["artifact"])
+                self.assertNotIn("recruiter_target_shortlist", routed["intake_question"])
+
+    def test_debrief_intake_rejects_locale_or_stage_drift(self) -> None:
+        mismatched_checkpoint = valid_checkpoint()
+        mismatched_checkpoint["locale"] = "es"
+        self.assertIsNone(route_recruiter_screen_debrief_intake(mismatched_checkpoint, RECEIPT, self.intake)["artifact"])
+        mismatched_intake = copy.deepcopy(self.intake)
+        mismatched_intake["intake"]["stated_stage"] = "technical_screen"
+        self.assertIsNone(route_recruiter_screen_debrief_intake(valid_checkpoint(), RECEIPT, mismatched_intake)["artifact"])
 
     def test_complete_debrief_allows_manual_next_stage_review(self) -> None:
         artifact = build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, valid_debrief())

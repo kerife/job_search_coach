@@ -55,7 +55,9 @@ this contract; invalid intake remains artifact-free but includes fixed
 `evidence_gaps` and one localized `intake_question` so the next safe input is
 clear. Recovery copy is route-specific: screen intake asks for stage,
 `V-###` requirements, `F-###` facts, company evidence, and four checks; debrief
-asks for checkpoint, receipt, intake, and structured coverage; next-stage asks
+intake first carries a validated checkpoint, receipt, and target intake forward
+and asks only for structured coverage; full debrief recovery asks for
+checkpoint, receipt, intake, and structured coverage; next-stage asks
 for a valid debrief and forward stage. A complete debrief with an invalid
 non-terminal stage returns `select_forward_stage` with taxonomy-derived
 `allowed_next_stages` instead of repeating the debrief request; `offer_stage`
