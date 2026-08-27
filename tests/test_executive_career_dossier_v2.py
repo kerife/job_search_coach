@@ -613,6 +613,19 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
                 self.assertIn("min-height: 44px", css)
                 self.assertIn("@media screen and (max-width: 640px)", css)
 
+    def test_reading_path_has_progressive_active_state_and_scroll_safe_targets(self) -> None:
+        rendered = self.renderer.render_dossier_html(make_v2_dossier("en"))
+        self.assertEqual(1, len(re.findall(r'<a[^>]+aria-current="location"', rendered)))
+        self.assertIn('href="#section-coverage" aria-current="location"', rendered)
+        self.assertIn("IntersectionObserver", rendered)
+        self.assertIn("reading-path-active", rendered)
+        css = (ASSETS_ROOT / "executive-career-dossier-v2.css").read_text(encoding="utf-8")
+        self.assertIn("position: sticky", css)
+        self.assertIn("scroll-margin-top", css)
+        self.assertIn("position: static", css[css.index("@media print"):])
+        self.assertIn(".reading-path a[aria-current=\"location\"]", css)
+        self.assertIn("@media (prefers-reduced-motion: reduce)", css)
+
     def test_reading_path_follows_verdict_and_recruiter_scan(self) -> None:
         for locale in ("es", "en"):
             with self.subTest(locale=locale):

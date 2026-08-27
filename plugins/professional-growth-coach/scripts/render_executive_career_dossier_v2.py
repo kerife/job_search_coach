@@ -43,6 +43,35 @@ DossierValidationError = BASE.DossierValidationError
 RenderReceipt = BASE.RenderReceipt
 
 
+READING_PATH_SCRIPT = """
+(() => {
+  const navigation = document.querySelector('.reading-path');
+  if (!navigation) return;
+  const links = [...navigation.querySelectorAll('a[href^="#"]')];
+  const targets = links.map((link) => document.getElementById(link.hash.slice(1))).filter(Boolean);
+  if (!links.length || !targets.length) return;
+  const setActive = (id) => links.forEach((link) => {
+    const active = link.hash.slice(1) === id;
+    if (active) link.setAttribute('aria-current', 'location');
+    else link.removeAttribute('aria-current');
+    link.classList.toggle('reading-path-active', active);
+  });
+  setActive(targets[0].id);
+  if (!('IntersectionObserver' in window)) return;
+  const visible = new Set();
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) visible.add(entry.target.id);
+      else visible.delete(entry.target.id);
+    });
+    const active = targets.find((target) => visible.has(target.id)) || targets[0];
+    setActive(active.id);
+  }, { rootMargin: '-20% 0px -65% 0px', threshold: [0, 1] });
+  targets.forEach((target) => observer.observe(target));
+})();
+""".strip()
+
+
 class _ArgumentError(ValueError):
     pass
 
@@ -681,8 +710,8 @@ def _render_main(dossier: Mapping[str, object], locale: str, market_dossier: Map
     projected = COMPAT.project_v2_to_v1(BASE._mapping(_plain(dossier)))
     labels = COPY[locale]
     reading_links = "".join(
-        f'<li><a href="#{html.escape(target, quote=True)}">{html.escape(label, quote=True)}</a></li>'
-        for target, label in labels["reading_path_items"]
+        f'<li><a href="#{html.escape(target, quote=True)}"{(" aria-current=\"location\"" if index == 0 else "")}>{html.escape(label, quote=True)}</a></li>'
+        for index, (target, label) in enumerate(labels["reading_path_items"])
     )
     reading_path = (
         f'<nav class="reading-path span-12" aria-label="{html.escape(labels["reading_path_aria"], quote=True)}">'
@@ -759,7 +788,7 @@ def render_dossier_html(dossier: Mapping[str, object], market_dossier: Mapping[s
         "{{INLINE_CSS}}": base_css + extension_css + market_css,
         "{{HEADER}}": BASE._render_header(locale),
         "{{MAIN}}": _render_main(frozen, locale, frozen_market),
-        "{{INLINE_SCRIPT}}": BASE.INLINE_SCRIPT,
+        "{{INLINE_SCRIPT}}": BASE.INLINE_SCRIPT + "\n\n" + READING_PATH_SCRIPT,
     }
     return BASE.STATIC_TEMPLATE_TOKEN.sub(lambda match: substitutions[match.group(0)], template)
 

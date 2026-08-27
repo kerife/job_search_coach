@@ -33,10 +33,12 @@ required.
 The section-coverage ledger likewise keeps a single facts column at 640px and
 below, preserving the same semantic reading order without horizontal scrolling.
 The v2 opening keeps the verdict and recruiter scan together in the first
-decision row, followed by a localized `reading-path` landmark. Its four static
+decision row, followed by a localized `reading-path` landmark. Its four
 fragment links target section coverage, coaching priorities, market evidence,
-and first-conversation preparation; links keep visible focus, print cleanly,
-and stack into 44px touch targets at 640px and below.
+and first-conversation preparation; on screen the landmark is sticky and marks
+the visible target with `aria-current="location"`, while no-script, keyboard,
+print, and reduced-motion fallbacks remain safe. Links stack into 44px touch
+targets at 640px and below.
 
 ## /recruiter-practice-session (offline artifact)
 

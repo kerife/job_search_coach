@@ -70,11 +70,16 @@ class InputError(ValueError):
     """A deterministic, user-correctable CLI input error."""
 
 
+class ArgumentError(InputError):
+    """An argument-shape error whose details must not be echoed."""
+
+
 class JsonArgumentParser(argparse.ArgumentParser):
     """Turn argparse failures into the CLI's JSON error contract."""
 
     def error(self, message: str) -> None:
-        raise InputError(message)
+        del message
+        raise ArgumentError
 
 
 def parse_iso_date(value: str, *, label: str) -> date | None:
@@ -430,6 +435,9 @@ def main(argv: list[str] | None = None) -> int:
             as_of,
             candidate_id=candidate_id,
         )
+    except ArgumentError:
+        emit_json({"error": {"code": "invalid_arguments"}}, stream=sys.stderr)
+        return 2
     except InputError as error:
         emit_json({"error": str(error)}, stream=sys.stderr)
         return 2

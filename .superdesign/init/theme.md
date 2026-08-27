@@ -5,10 +5,11 @@
 Receipt surfaces are intentionally path-minimal: successful CLI output carries only opaque artifact metadata unless the trusted caller explicitly opts into `--include-artifact-path`. This is a delivery/privacy contract, not a visual control; offline HTML layout and the in-process rich receipt remain unchanged.
 
 The v2 `reading-path` uses the existing forest, line, surface, and focus tokens;
-it stays editorial rather than floating, preserves print visibility, and stacks
-as full-width 44px links at 640px and below. The fourth destination, first-
-conversation preparation, closes the dossier-to-coaching handoff without
-adding an action control.
+it stays editorial rather than floating, is sticky only on screen, and marks
+the visible destination with `aria-current="location"`. It keeps a static
+no-script/print fallback and stacks as full-width 44px links at 640px and
+below. The fourth destination, first-conversation preparation, closes the
+dossier-to-coaching handoff without adding an action control.
 
 This plugin has **no shared Tailwind config, CSS module system, theme provider, or global stylesheet**. Each rendered offline artifact inlines its co-located CSS; the v2 dossier composes the base dossier stylesheet with its v2 and optional market extensions. There is no `.dark` selector; every surface now declares a screen-scoped `prefers-color-scheme: dark` contract while print remains light.
 
@@ -1617,6 +1618,14 @@ dd { margin: .15rem 0 0; font-weight: 600; }
   text-decoration: none;
 }
 .reading-path a:hover { background: var(--forest-soft); }
+.reading-path a[aria-current="location"] { border-color: var(--coral); background: var(--coral-soft); }
+.reading-path-active { outline: 2px solid transparent; }
+
+@media screen {
+  .reading-path { position: sticky; top: .75rem; z-index: 2; }
+}
+
+#section-coverage, #coach-priorities, #market-evidence, #screen-preparation { scroll-margin-top: 5rem; }
 
 .section-coverage-list { display: grid; gap: .75rem; margin: 0; padding: 0; list-style: none; }
 .section-coverage-ledger, .coach-priorities, .reading-path { min-width: 0; }
@@ -1660,16 +1669,18 @@ dd { margin: .15rem 0 0; font-weight: 600; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .section-coverage-row article, .coach-priority-card, .coach-template, .reading-path { animation: none !important; transition: none !important; transform: none !important; }
+  .section-coverage-row article, .coach-priority-card, .coach-template, .reading-path { animation: none !important; transition: none !important; transform: none !important; scroll-behavior: auto; }
 }
 
 @media print {
+  .reading-path { position: static; }
   .reading-path, .section-coverage-row, .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card, .market-next-investigation { break-inside: avoid; page-break-inside: avoid; }
 }
 
 @media (forced-colors: active) {
   .reading-path, .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card, .market-next-investigation { background: Canvas; color: CanvasText; border-color: CanvasText; }
   .reading-path a { color: LinkText; border-color: CanvasText; }
+  .reading-path a[aria-current="location"] { background: Canvas; outline: 2px solid Highlight; }
   .section-coverage-request, .coach-template, .market-next-investigation { border-left-color: Highlight; }
   .coach-priority-card { border-top-color: Highlight; }
   main:focus-visible { outline-color: Highlight; }

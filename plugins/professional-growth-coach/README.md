@@ -88,11 +88,13 @@ use HTTPS. Unknown categories and non-HTTPS URLs are rejected by both schema
 and runtime validation before rendering.
 
 The v2 dossier keeps the verdict and recruiter scan together as the first
-decision row, then adds a localized, keyboard-visible reading path linking to
-section coverage, coaching priorities, market evidence, and first-conversation
-preparation. The anchors are static fragment links, remain available in print,
-and stack into 44px touch targets at 640px and below; they do not hide or
-reorder any evidence.
+decision row, then adds a localized reading path linking to section coverage,
+coaching priorities, market evidence, and first-conversation preparation. On
+screen it stays visible while scrolling and marks the visible region with
+`aria-current="location"`; without script it remains a static, keyboard-visible
+fallback. The anchors use scroll-safe targets, remain available in print, and
+stack into 44px touch targets at 640px and below; they do not hide or reorder
+any evidence.
 
 When market evidence is unavailable, the `Mercado`/`Market` region now keeps a
 static next-research card visible instead of ending at a generic notice. It

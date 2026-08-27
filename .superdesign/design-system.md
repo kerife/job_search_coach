@@ -34,10 +34,12 @@ changing the visual family:
 6. finish with evidence, limitations, privacy, and no-external-action copy.
 
 The v2 opening keeps the verdict and recruiter scan together as the first
-decision row. Its reading path then provides four static landmarks—coverage,
-priorities, market, and first-conversation preparation—so the long dossier can
-be scanned in the same order as the coaching journey without hiding or
-reordering evidence.
+decision row. Its reading path provides four landmarks—coverage, priorities,
+market, and first-conversation preparation—so the long dossier can be scanned
+in the same order as the coaching journey without hiding or reordering
+evidence. On screen the landmark is sticky and progressively marks the visible
+region with `aria-current="location"`; the no-script fallback remains static,
+keyboard-visible, and print-safe.
 
 The current design task must improve the clarity of steps 3 and 4 without
 adding a form, fake button, link, persistence, automatic transfer, recruiter

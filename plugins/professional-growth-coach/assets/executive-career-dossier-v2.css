@@ -34,6 +34,14 @@
   text-decoration: none;
 }
 .reading-path a:hover { background: var(--forest-soft); }
+.reading-path a[aria-current="location"] { border-color: var(--coral); background: var(--coral-soft); }
+.reading-path-active { outline: 2px solid transparent; }
+
+@media screen {
+  .reading-path { position: sticky; top: .75rem; z-index: 2; }
+}
+
+#section-coverage, #coach-priorities, #market-evidence, #screen-preparation { scroll-margin-top: 5rem; }
 
 .section-coverage-list { display: grid; gap: .75rem; margin: 0; padding: 0; list-style: none; }
 .section-coverage-ledger, .coach-priorities, .reading-path { min-width: 0; }
@@ -77,16 +85,18 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .section-coverage-row article, .coach-priority-card, .coach-template, .reading-path { animation: none !important; transition: none !important; transform: none !important; }
+  .section-coverage-row article, .coach-priority-card, .coach-template, .reading-path { animation: none !important; transition: none !important; transform: none !important; scroll-behavior: auto; }
 }
 
 @media print {
+  .reading-path { position: static; }
   .reading-path, .section-coverage-row, .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card, .market-next-investigation { break-inside: avoid; page-break-inside: avoid; }
 }
 
 @media (forced-colors: active) {
   .reading-path, .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card, .market-next-investigation { background: Canvas; color: CanvasText; border-color: CanvasText; }
   .reading-path a { color: LinkText; border-color: CanvasText; }
+  .reading-path a[aria-current="location"] { background: Canvas; outline: 2px solid Highlight; }
   .section-coverage-request, .coach-template, .market-next-investigation { border-left-color: Highlight; }
   .coach-priority-card { border-top-color: Highlight; }
   main:focus-visible { outline-color: Highlight; }

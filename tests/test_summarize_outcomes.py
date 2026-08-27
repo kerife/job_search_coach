@@ -196,6 +196,28 @@ class SummarizeOutcomesTests(unittest.TestCase):
             json.dumps(summary, sort_keys=True, separators=(",", ":")) + "\n",
         )
 
+    def test_unknown_arguments_use_opaque_error_contract(self) -> None:
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPT),
+                "tests/evals/with-skill/fixtures/outcomes-sparse.csv",
+                "--window",
+                "30",
+                "--as-of",
+                "2026-08-06",
+                "--unknown",
+                "/private/hidden/outcomes.csv",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(2, result.returncode)
+        self.assertEqual("", result.stdout)
+        self.assertEqual('{"error":{"code":"invalid_arguments"}}\n', result.stderr)
+        self.assertNotIn("/private/hidden/outcomes.csv", result.stderr)
+
     def test_windows_include_both_boundaries_and_support_14_30_60_90_days(self) -> None:
         rows = [
             outcome_row(
