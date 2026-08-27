@@ -36,8 +36,12 @@ ROW_FIELDS = frozenset({
 COUNT_FIELDS = frozenset({"advance", "clarify", "pause", "stop"})
 SCREEN_FIELDS = frozenset({"vacancy_summary", "confirmed_fact_summary"})
 _SCREEN_CONTEXT_SUSPICIOUS = re.compile(
-    r"@|https?://|(?:^|\s)\+?\d[\d .()_-]{6,}\d|"
-    r"(?:^|[\\/])(?:users|private|tmp|home|var|opt|applications|volumes|root|srv|usr)[\\/]",
+    r"@|(?:[A-Za-z][A-Za-z0-9+.-]*):\/\/|"
+    r"(?:^|\s)(?:javascript|data|file|mailto):|"
+    r"(?:^|\s)(?:www\.|linkedin\.com/)|"
+    r"(?:^|\s)(?:~|\.{1,2})[\\/]|"
+    r"(?:^|[\\/])(?:users|private|tmp|home|var|opt|applications|volumes|root|srv|usr)[\\/]|"
+    r"(?:^|\s)\+?\d[\d .()_-]{6,}\d",
     re.IGNORECASE,
 )
 HANDOFF_FIELDS = frozenset({
