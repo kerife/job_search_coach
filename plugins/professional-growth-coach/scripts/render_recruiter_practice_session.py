@@ -373,6 +373,32 @@ CLAIM_GUARDRAIL_COPY = {
 }
 
 
+HANDOFF_DELIVERY_STATUS_COPY = {
+    "es": "Borrador privado · Reingreso manual requerido",
+    "en": "Private draft · Manual re-entry required",
+}
+
+
+def _render_handoff_delivery_status(locale: str, delivery: Mapping[str, object] | None) -> str:
+    """Render wrapper-only status after the closed wrapper has been validated."""
+    if delivery is None:
+        return ""
+    expected = {
+        "draft_only": True,
+        "external_actions_authorized": False,
+        "manual_reentry_required": True,
+        "auto_start": False,
+        "local_save_mode": "disabled",
+        "raw_reply_retained": False,
+    }
+    if dict(delivery) != expected:
+        raise ValueError("handoff delivery context is invalid")
+    return (
+        '<aside class="triage-handoff-delivery-status" role="status">'
+        f'{HANDOFF_DELIVERY_STATUS_COPY[locale]}</aside>'
+    )
+
+
 def _render_claim_guardrail(locale: str, fact: Mapping[str, object]) -> str:
     labels = CLAIM_GUARDRAIL_COPY[locale]
     fact_summary = _text(fact["summary"])
@@ -669,7 +695,8 @@ def _render_next_action(
 
 
 def _render_main(
-    session: Mapping[str, object], ui_locale: str, content_locale: str | None = None
+    session: Mapping[str, object], ui_locale: str, content_locale: str | None = None,
+    handoff_delivery: Mapping[str, object] | None = None,
 ) -> str:
     locale = ui_locale
     dynamic_lang = "" if content_locale is None else f' lang="{content_locale}"'
@@ -687,6 +714,7 @@ def _render_main(
     handoff = ""
     claim_guardrail = ""
     triage_route = ""
+    handoff_delivery_status = ""
     if sourced:
         source = _text(_mapping(session["handoff_context"])["source"])
         text_key = "handoff_text_reply" if source == "private_recruiter_reply_triage" else "handoff_text_dossier"
@@ -696,6 +724,9 @@ def _render_main(
             _require_safe_triage_prose(context, question, fact)
             claim_guardrail = _render_claim_guardrail(locale, fact)
             triage_route = _render_triage_practice_route(locale)
+            handoff_delivery_status = _render_handoff_delivery_status(locale, handoff_delivery)
+    elif handoff_delivery is not None:
+        raise ValueError("handoff delivery context requires triage handoff source")
     if state == "feedback_available":
         feedback_data = _mapping(session["feedback"])
         observations = _rows(feedback_data["observations"])
@@ -703,10 +734,10 @@ def _render_main(
         governing_label = _governing_feedback_label(feedback_labels)
         feedback = _render_feedback(locale, question_kind, feedback_labels, labels)
         decision = _render_decision(locale, question_kind, governing_label, labels)
-        practice_sequence = f"{claim_guardrail}{triage_route}{handoff}{rehearsal}{feedback}{decision}"
+        practice_sequence = f"{claim_guardrail}{triage_route}{handoff_delivery_status}{handoff}{rehearsal}{feedback}{decision}"
     elif sourced:
         next_action = _render_next_action(state, labels, sourced=sourced)
-        practice_sequence = f"{claim_guardrail}{triage_route}{handoff}{next_action}{rehearsal}"
+        practice_sequence = f"{claim_guardrail}{triage_route}{handoff_delivery_status}{handoff}{next_action}{rehearsal}"
     else:
         next_action = _render_next_action(state, labels, sourced=sourced)
         practice_sequence = f"{rehearsal}{next_action}"
@@ -742,7 +773,9 @@ def _render_main(
   <footer class="practice-footer practice-shell"><strong>{labels["footer"]}</strong><p class="practice-employment-boundary">{labels["employment_boundary"]}</p></footer>'''
 
 
-def render_session_html(session: Mapping[str, object]) -> str:
+def render_session_html(
+    session: Mapping[str, object], handoff_delivery: Mapping[str, object] | None = None
+) -> str:
     validated = _validate(session)
     is_v2 = _text(validated["schema_version"]) == VALIDATOR.V2_SCHEMA_VERSION
     locale = _text(validated["ui_locale"] if is_v2 else validated["locale"])
@@ -756,7 +789,7 @@ def render_session_html(session: Mapping[str, object]) -> str:
         "{{TITLE}}": COPY[locale]["title"],
         "{{INLINE_CSS}}": ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, CSS_PATH),
         "{{HEADER}}": _render_header(locale),
-        "{{MAIN}}": _render_main(validated, locale, content_locale),
+        "{{MAIN}}": _render_main(validated, locale, content_locale, handoff_delivery),
     }
     return STATIC_TEMPLATE_TOKEN.sub(lambda match: substitutions[match.group(0)], template)
 
