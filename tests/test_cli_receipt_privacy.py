@@ -64,6 +64,29 @@ class CliReceiptPrivacyTests(unittest.TestCase):
         receipt = json.loads(result.stdout)
         self.assertEqual(str(output), receipt["artifact_path"])
 
+    def test_triage_missing_input_preserves_opaque_loader_failure_contract(self) -> None:
+        directory = Path(tempfile.mkdtemp(prefix="pgc-triage-missing-"))
+        missing = directory / "missing-private-triage.json"
+        output = directory / "artifact.html"
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-B",
+                str(SCRIPTS / "render_private_recruiter_reply_triage.py"),
+                str(missing),
+                "--output",
+                str(output),
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(3, result.returncode)
+        self.assertEqual("", result.stdout)
+        self.assertEqual("cannot load private recruiter triage input\n", result.stderr)
+        self.assertFalse(output.exists())
+
 
 if __name__ == "__main__":
     unittest.main()

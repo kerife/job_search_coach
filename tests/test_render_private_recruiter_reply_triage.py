@@ -986,6 +986,5 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
             self.assertEqual(unsafe_result.returncode, 3, unsafe_result.stderr)
             self.assertEqual(target.read_text(encoding="utf-8"), "unchanged")
 
-
 if __name__ == "__main__":
     unittest.main()

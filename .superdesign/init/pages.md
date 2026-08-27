@@ -13,7 +13,7 @@ Dependencies:
 - `plugins/professional-growth-coach/assets/executive-career-dossier-v1.html`
 - `plugins/professional-growth-coach/assets/executive-career-dossier-v1.css`
 
-The renderer validates a closed dossier payload, generates header/main HTML in Python, inlines the stylesheet and an artifact-specific script, and writes offline HTML.
+The renderer validates a closed dossier payload, generates header/main HTML in Python, inlines the stylesheet and an artifact-specific script, and writes offline HTML. CLI receipts expose artifact type, locale, and summary by default; trusted callers add `--include-artifact-path` when they need the absolute local output link. In-process render receipts remain rich and retain the path.
 
 The v2 entry point `plugins/professional-growth-coach/scripts/render_executive_career_dossier_v2.py`
 composes the same document shell after validating the complete section ledger
@@ -54,7 +54,7 @@ Dependencies:
 - `plugins/professional-growth-coach/assets/private-recruiter-reply-triage-v1.html`
 - `plugins/professional-growth-coach/assets/private-recruiter-reply-triage-v1.css`
 
-The renderer validates the identity-free triage record, then emits its header, decision sections, and optional manual handoff as HTML.
+The renderer validates the identity-free triage record, then emits its header, decision sections, and optional manual handoff as HTML. Its CLI receipt omits the local artifact path by default; use `--include-artifact-path` only for a trusted caller that must deliver a verified local link.
 
 ## /private-recruiter-followthrough-checkpoint (offline artifact)
 
@@ -67,7 +67,7 @@ Dependencies:
 - `plugins/professional-growth-coach/assets/private-recruiter-followthrough-checkpoint-v1.html`
 - `plugins/professional-growth-coach/assets/private-recruiter-followthrough-checkpoint-v1.css`
 
-The renderer validates a candidate-supplied checkpoint and linked receipt, replaces every template token, and writes a compact offline artifact.
+The renderer validates a candidate-supplied checkpoint and linked receipt, replaces every template token, and writes a compact offline artifact. The default CLI receipt is path-free; `--include-artifact-path` is an explicit trusted-caller opt-in.
 
 ## /private-recruiter-conversion-outcome (offline artifact)
 
@@ -79,4 +79,4 @@ Dependencies:
 - `plugins/professional-growth-coach/assets/private-recruiter-conversion-outcome-v1.html`
 - `plugins/professional-growth-coach/assets/private-recruiter-conversion-outcome-v1.css`
 
-The renderer validates a candidate-supplied outcome, computes the localized evidence-count label, and writes a compact offline receipt.
+The renderer validates a candidate-supplied outcome, computes the localized evidence-count label, and writes a compact offline receipt. The default CLI receipt is path-free; `--include-artifact-path` is an explicit trusted-caller opt-in.

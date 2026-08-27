@@ -693,11 +693,11 @@ def _cli(argv: list[str] | None = None) -> int:
     except OSError:
         print("cannot write private recruiter triage artifact", file=sys.stderr)
         return 3
-    except (VALIDATOR.TriageLoadError, TriageValidationError) as error:
-        if isinstance(error, TriageValidationError):
-            print("\n".join(error.errors), file=sys.stderr)
-        else:
-            print(str(error), file=sys.stderr)
+    except VALIDATOR.TriageLoadError:
+        print("cannot load private recruiter triage input", file=sys.stderr)
+        return 3
+    except TriageValidationError as error:
+        print("\n".join(error.errors), file=sys.stderr)
         return 2
     payload = {
         "artifact_type": receipt.artifact_type,
