@@ -3,7 +3,7 @@
   "phase": "GREEN",
   "corpus_sha256": "cc17319c2b3885a7348bd9f7be52bc23799464bfcbdbbbd1680f7ec210cb8744",
   "source_commit": "9d2cf38bfb0fe434e882cf669ff2a96c38220a30",
-  "source_tree_sha256": "0af5cb293d38d889663ed40fc649547209f4cfa5",
+  "source_tree_sha256": "b474d8c69efd09750806292537c7596e9df8e568bc13486a64b76b1263f38fb2",
   "source_bindings": [
     {
       "path": "plugins/professional-growth-coach/skills/professional-growth-coach/SKILL.md",
