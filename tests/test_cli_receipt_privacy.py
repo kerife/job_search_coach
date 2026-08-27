@@ -16,6 +16,9 @@ V1_DOSSIER = ROOT / "tests/evals/with-skill/fixtures/executive-career-dossier/sc
 V2_DOSSIER = ROOT / "tests/evals/with-skill/fixtures/executive-career-dossier-v2/scenario-c-en.json"
 V1_VALIDATOR = SCRIPTS / "validate_executive_career_dossier.py"
 V2_VALIDATOR = SCRIPTS / "validate_executive_career_dossier_v2.py"
+LINKEDIN_REPORT_VALIDATOR = SCRIPTS / "validate_linkedin_client_report.py"
+LINKEDIN_REPORT = ROOT / "tests/evals/with-skill/fixtures/linkedin-report-v2/scenario-a-es.md"
+LINKEDIN_BUNDLE = ROOT / "tests/evals/with-skill/fixtures/linkedin-report-v2/scenario-a.json"
 TRIAGE = ROOT / "tests/evals/with-skill/fixtures/private-recruiter-reply-triage/ready-en.json"
 OUTCOME = ROOT / "plugins/professional-growth-coach/tests/fixtures/private-recruiter-conversion-outcome/contact-received-en.json"
 CHECKPOINT = ROOT / "plugins/professional-growth-coach/tests/fixtures/private-recruiter-followthrough-checkpoint/completed-screen-attended-en.json"
@@ -151,6 +154,28 @@ class CliReceiptPrivacyTests(unittest.TestCase):
                 self.assertEqual("", result.stdout)
                 self.assertEqual('{"error":{"code":"invalid_arguments"}}\n', result.stderr)
                 self.assertNotIn(sentinel, result.stderr)
+
+    def test_linkedin_report_validator_returns_opaque_unknown_argument_errors(self) -> None:
+        sentinel = "/private/hidden/linkedin-bundle.json"
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-B",
+                str(LINKEDIN_REPORT_VALIDATOR),
+                str(LINKEDIN_REPORT),
+                str(LINKEDIN_BUNDLE),
+                "--unexpected",
+                sentinel,
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(3, result.returncode)
+        self.assertEqual("", result.stdout)
+        self.assertEqual('{"error":{"code":"invalid_arguments"}}\n', result.stderr)
+        self.assertNotIn(sentinel, result.stderr)
 
     def test_triage_renderer_imports_without_pythonpath_setup(self) -> None:
         code = (

@@ -18,6 +18,17 @@ from types import MappingProxyType
 from typing import Any, NamedTuple
 from urllib.parse import unquote, urlsplit
 
+
+class _ArgumentError(ValueError):
+    """Raised without reflecting private command-line values."""
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        del message
+        raise _ArgumentError
+
+
 try:
     from private_input_loader import PrivateInputError, read_bounded_bytes
 except ModuleNotFoundError:
@@ -3657,7 +3668,7 @@ def _read_private_text(path: Path, label: str) -> str:
 
 
 def _cli(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Validate a LinkedIn client report fixture pair.")
+    parser = _PrivateArgumentParser(description="Validate a LinkedIn client report fixture pair.")
     parser.add_argument("report", type=Path)
     parser.add_argument("bundle", type=Path)
     parser.add_argument(
@@ -3665,7 +3676,13 @@ def _cli(argv: list[str] | None = None) -> int:
         choices=sorted(APPENDIX_MODES),
         default="normal",
     )
-    arguments = parser.parse_args(argv)
+    try:
+        arguments = parser.parse_args(argv)
+    except _ArgumentError:
+        print(json.dumps({"error": {"code": "invalid_arguments"}}, separators=(",", ":")), file=sys.stderr)
+        return 3
+    except SystemExit as error:
+        return 0 if error.code == 0 else 3
 
     errors: list[str] = []
     try:
