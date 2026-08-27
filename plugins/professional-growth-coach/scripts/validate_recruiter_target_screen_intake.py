@@ -100,7 +100,7 @@ def validate_screen_intake(value: object, *, source_gate: Mapping[str, object] |
         errors.append("schema_version has invalid value")
     if item.get("artifact_kind") != ARTIFACT_KIND:
         errors.append("artifact_kind has invalid value")
-    if item.get("locale") not in {"es", "en"}:
+    if not isinstance(item.get("locale"), str) or item.get("locale") not in {"es", "en"}:
         errors.append("locale has invalid value")
     _date(item.get("as_of_date"), "as_of_date", errors, as_of)
     embedded_gate = item.get("source_gate")
@@ -115,7 +115,7 @@ def validate_screen_intake(value: object, *, source_gate: Mapping[str, object] |
     if not isinstance(target_id, str) or not TARGET_ID.fullmatch(target_id):
         errors.append("target_id has invalid value")
     target_decision = item.get("target_decision")
-    if target_decision not in DECISIONS:
+    if not isinstance(target_decision, str) or target_decision not in DECISIONS:
         errors.append("target_decision has invalid value")
 
     intake = _closed(item.get("intake"), "intake.context", INTAKE_FIELDS, errors)
@@ -126,7 +126,7 @@ def validate_screen_intake(value: object, *, source_gate: Mapping[str, object] |
     source_date: dt.date | None = None
     if intake is not None:
         stage = intake.get("stated_stage")
-        if stage not in STAGES:
+        if not isinstance(stage, str) or stage not in STAGES:
             errors.append("intake.stated_stage has invalid value")
         raw_requirements = intake.get("vacancy_requirements")
         if not isinstance(raw_requirements, list) or not 1 <= len(raw_requirements) <= 5:
@@ -137,14 +137,14 @@ def validate_screen_intake(value: object, *, source_gate: Mapping[str, object] |
                 if not isinstance(requirement, str) or not VACANCY_ID.fullmatch(requirement) or len(requirement) > 240 or not PROSE.is_safe_prose_text(requirement) or SHORTLIST.RESTRICTED.search(requirement):
                     errors.append(f"intake.vacancy_requirements[{index}] has invalid value")
         raw_facts = intake.get("candidate_fact_ids")
-        if not isinstance(raw_facts, list) or not 1 <= len(raw_facts) <= 8 or len(set(raw_facts)) != len(raw_facts):
+        if not isinstance(raw_facts, list) or not 1 <= len(raw_facts) <= 8 or any(not isinstance(fact, str) for fact in raw_facts) or len(set(raw_facts)) != len(raw_facts):
             errors.append("intake.candidate_fact_ids must contain one to eight unique IDs")
         else:
             facts = raw_facts
             if any(not isinstance(fact, str) or not FACT_ID.fullmatch(fact) for fact in raw_facts):
                 errors.append("intake.candidate_fact_ids has invalid value")
         company_state = intake.get("company_evidence_state")
-        if company_state not in COMPANY_STATES:
+        if not isinstance(company_state, str) or company_state not in COMPANY_STATES:
             errors.append("intake.company_evidence_state has invalid value")
         source_date = _date(intake.get("source_date"), "intake.source_date", errors, as_of)
 
@@ -159,7 +159,7 @@ def validate_screen_intake(value: object, *, source_gate: Mapping[str, object] |
             if check is None:
                 continue
             name = check.get("check")
-            if name not in CHECKS or name in seen:
+            if not isinstance(name, str) or name not in CHECKS or name in seen:
                 errors.append(f"checks[{index}].check has invalid or duplicated value")
             else:
                 seen.add(name)
@@ -171,9 +171,13 @@ def validate_screen_intake(value: object, *, source_gate: Mapping[str, object] |
             errors.append("checks must cover target_context, proof_packet, low_friction_ask, and screen_readiness")
 
     readiness = item.get("readiness_decision")
-    if readiness not in READINESS:
+    if not isinstance(readiness, str) or readiness not in READINESS:
         errors.append("readiness_decision has invalid value")
-    status_by_check = {check.get("check"): check.get("status") for check in checks}
+    status_by_check = {
+        check.get("check"): check.get("status")
+        for check in checks
+        if isinstance(check.get("check"), str)
+    }
     has_stop = any(status == "stop" for status in status_by_check.values())
     all_pass = len(status_by_check) == 4 and all(status == "pass" for status in status_by_check.values())
     expected_readiness = "stop" if target_decision == "stop" or has_stop else ("ready" if target_decision == "advance" and all_pass and stage in STAGES and requirements and facts and company_state in {"verified", "candidate_reported"} else "clarify_first")
@@ -181,7 +185,7 @@ def validate_screen_intake(value: object, *, source_gate: Mapping[str, object] |
         errors.append("readiness_decision does not reconcile with target decision and checks")
     event = item.get("measurement_event")
     expected_event = "stop_decision" if expected_readiness == "stop" else ("screen_context_submitted" if expected_readiness == "ready" else "clarify_context")
-    if event not in MEASUREMENTS or event != expected_event:
+    if not isinstance(event, str) or event not in MEASUREMENTS or event != expected_event:
         errors.append("measurement_event does not match readiness_decision")
 
     handoff = _closed(item.get("handoff"), "handoff", HANDOFF_FIELDS, errors)
@@ -200,14 +204,38 @@ def validate_screen_intake(value: object, *, source_gate: Mapping[str, object] |
             if delivery.get(field) != expected:
                 errors.append(f"delivery.{field} has immutable value")
 
+    if isinstance(embedded_gate, Mapping):
+        embedded_errors = GATE.validate_decision_gate(embedded_gate, as_of=as_of)
+        if embedded_errors:
+            errors.append("source gate is invalid")
+        else:
+            if item.get("locale") != embedded_gate.get("locale"):
+                errors.append("locale does not match source gate")
+            if item.get("as_of_date") != embedded_gate.get("as_of_date"):
+                errors.append("as_of_date does not match source gate")
     if source_gate is not None:
         gate_errors = GATE.validate_decision_gate(source_gate, as_of=as_of)
         if gate_errors:
             errors.append("source gate is invalid")
+        elif isinstance(embedded_gate, Mapping) and any(
+            embedded_gate.get(field) != source_gate.get(field)
+            for field in ("source_snapshot", "locale", "as_of_date")
+        ):
+            errors.append("embedded source gate does not match source gate")
         elif snapshot != source_gate.get("source_snapshot"):
             errors.append("source_gate_snapshot does not match source gate")
         else:
             source_rows = source_gate.get("decision_rows")
+            matching = next((row for row in source_rows if isinstance(row, Mapping) and row.get("target_id") == target_id), None) if isinstance(source_rows, list) else None
+            if matching is None:
+                errors.append("target_id does not exist in source gate")
+            elif target_decision != matching.get("decision"):
+                errors.append("target_decision does not match source gate")
+    elif isinstance(embedded_gate, Mapping) and not GATE.validate_decision_gate(embedded_gate, as_of=as_of):
+        if snapshot != embedded_gate.get("source_snapshot"):
+            errors.append("source_gate_snapshot does not match source gate")
+        else:
+            source_rows = embedded_gate.get("decision_rows")
             matching = next((row for row in source_rows if isinstance(row, Mapping) and row.get("target_id") == target_id), None) if isinstance(source_rows, list) else None
             if matching is None:
                 errors.append("target_id does not exist in source gate")

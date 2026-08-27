@@ -15,8 +15,9 @@ sys.path.insert(0, str(SCRIPTS))
 
 from build_recruiter_target_decision_gate import build_decision_gate  # noqa: E402
 from build_recruiter_target_screen_intake import build_screen_intake  # noqa: E402
+from build_recruiter_target_shortlist import build_shortlist  # noqa: E402
 from render_recruiter_target_screen_intake import render_screen_intake_html  # noqa: E402
-from route_recruiter_target_shortlist import route_recruiter_screen_intake  # noqa: E402
+from route_recruiter_target_shortlist import route_recruiter_decision_gate, route_recruiter_screen_intake  # noqa: E402
 from validate_recruiter_target_screen_intake import validate_screen_intake  # noqa: E402
 
 from tests.test_recruiter_target_shortlist import valid_plan, valid_targets  # noqa: E402
@@ -77,6 +78,22 @@ class RecruiterTargetScreenIntakeTests(unittest.TestCase):
         tampered = copy.deepcopy(intake)
         tampered["target_decision"] = "stop"
         self.assertIn("target_decision does not match source gate", validate_screen_intake(tampered, source_gate=self.gate()))
+        tampered = copy.deepcopy(intake)
+        tampered["source_gate"]["locale"] = "en"
+        self.assertIn("embedded source gate does not match source gate", validate_screen_intake(tampered, source_gate=self.gate()))
+        tampered = copy.deepcopy(intake)
+        tampered["locale"] = "en"
+        self.assertIn("locale does not match source gate", validate_screen_intake(tampered))
+
+    def test_malformed_json_types_fail_closed_with_errors(self) -> None:
+        intake = build_screen_intake(self.gate(), "T-001", valid_screen_intake())
+        malformed = copy.deepcopy(intake)
+        malformed["target_decision"] = []
+        malformed["intake"]["candidate_fact_ids"] = [{}]
+        malformed["checks"][0]["check"] = {}
+        errors = validate_screen_intake(malformed)
+        self.assertTrue(errors)
+        self.assertTrue(all(isinstance(error, str) for error in errors))
 
     def test_forged_artifact_without_embedded_gate_or_with_uri_is_rejected(self) -> None:
         intake = build_screen_intake(self.gate(), "T-001", valid_screen_intake())
@@ -99,8 +116,8 @@ class RecruiterTargetScreenIntakeTests(unittest.TestCase):
         self.assertIn("Preparar entrevista para revisión", rendered)
         self.assertNotIn("T-001", rendered)
         self.assertNotIn("F-001", rendered)
-        english = copy.deepcopy(intake)
-        english["locale"] = "en"
+        english_gate = build_decision_gate(build_shortlist("en", "2026-08-27", valid_plan(), valid_targets()))
+        english = build_screen_intake(english_gate, "T-001", valid_screen_intake())
         self.assertIn("Prepare interview for review", render_screen_intake_html(english))
 
     def test_route_returns_manual_or_blocked_state_only(self) -> None:
@@ -110,6 +127,19 @@ class RecruiterTargetScreenIntakeTests(unittest.TestCase):
         blocked = route_recruiter_screen_intake(self.gate(), "T-002", valid_screen_intake())
         self.assertEqual("needs_intake", blocked["case_state"])
         self.assertEqual("collect_screen_intake", blocked["next_action"])
+
+    def test_legacy_gate_route_cannot_bypass_target_specific_intake(self) -> None:
+        shortlist = RecruiterTargetDecisionGateTests().shortlist()
+        routed = route_recruiter_decision_gate(
+            shortlist,
+            screen_context={
+                "vacancy_summary": "Platform reliability screen",
+                "confirmed_fact_summary": "Incident response evidence",
+            },
+        )
+        self.assertEqual("needs_intake", routed["case_state"])
+        self.assertEqual("collect_screen_intake", routed["next_action"])
+        self.assertIsNone(routed["artifact"])
 
 
 if __name__ == "__main__":

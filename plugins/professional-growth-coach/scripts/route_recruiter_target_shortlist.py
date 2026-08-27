@@ -95,8 +95,20 @@ def route_recruiter_decision_gate(
     screen_context: Mapping[str, object] | None = None,
 ) -> dict[str, object]:
     """Route one validated shortlist to a manual-only decision gate."""
+    if screen_context is not None:
+        # Generic screen context is intentionally no longer a handoff signal.
+        # The target-specific bridge must bind one target, its snapshot, and
+        # four explicit readiness checks before interview preparation review.
+        return {
+            "route_kind": "recruiter_target_screen_intake",
+            "case_state": "needs_intake",
+            "selected_module": "prepare-role-interviews",
+            "next_action": "collect_screen_intake",
+            "authorization_required": False,
+            "artifact": None,
+        }
     try:
-        artifact = GATE_BUILDER.build_decision_gate(shortlist, screen_context=screen_context)
+        artifact = GATE_BUILDER.build_decision_gate(shortlist)
     except (TypeError, ValueError):
         return {
             "route_kind": "recruiter_target_decision_gate",
