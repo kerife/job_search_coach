@@ -56,17 +56,21 @@ READING_PATH_SCRIPT = """
     else link.removeAttribute('aria-current');
     link.classList.toggle('reading-path-active', active);
   });
-  setActive(targets[0].id);
+  const nearestTarget = () => {
+    const anchor = Math.max(96, Math.min(window.innerHeight * 0.3, 240));
+    return targets.reduce((nearest, target) => {
+      const distance = Math.abs(target.getBoundingClientRect().top - anchor);
+      return distance < nearest.distance ? { target, distance } : nearest;
+    }, { target: targets[0], distance: Number.POSITIVE_INFINITY }).target;
+  };
+  const updateActive = () => setActive(nearestTarget().id);
+  const initialHash = window.location.hash.slice(1);
+  setActive(targets.some((target) => target.id === initialHash) ? initialHash : targets[0].id);
+  links.forEach((link) => link.addEventListener('click', () => setActive(link.hash.slice(1))));
+  window.addEventListener('scroll', updateActive, { passive: true });
+  window.addEventListener('resize', updateActive);
   if (!('IntersectionObserver' in window)) return;
-  const visible = new Set();
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) visible.add(entry.target.id);
-      else visible.delete(entry.target.id);
-    });
-    const active = targets.find((target) => visible.has(target.id)) || targets[0];
-    setActive(active.id);
-  }, { rootMargin: '-20% 0px -65% 0px', threshold: [0, 1] });
+  const observer = new IntersectionObserver(updateActive, { rootMargin: '-10% 0px -55% 0px', threshold: [0, 1] });
   targets.forEach((target) => observer.observe(target));
 })();
 """.strip()
@@ -729,6 +733,7 @@ def _render_main(dossier: Mapping[str, object], locale: str, market_dossier: Map
     )
     market_surface = _render_market_context(market_dossier, locale) if market_dossier is not None else legacy_market_surface
     return f'''<main id="main-content" class="shell" tabindex="-1">
+      <div class="reading-path-scope">
       <div class="dossier-grid">{opening}</div>
       {_render_section_coverage(dossier, locale)}
       {_render_coach_priorities(dossier, locale)}
@@ -740,6 +745,7 @@ def _render_main(dossier: Mapping[str, object], locale: str, market_dossier: Map
       <div class="dossier-grid section-block">{bridge_holds}</div>
       {BASE._render_questions(projected, locale)}
       <div class="dossier-grid section-block">{BASE._render_plan(projected, locale)}{BASE._render_details(projected, locale)}</div>
+      </div>
     </main>
     <footer class="shell footer"><strong>{BASE.COPY[locale]['action_boundary']}</strong> <span class="employment-boundary">{BASE.COPY[locale]['employment_boundary']}</span></footer>'''
 

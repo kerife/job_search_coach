@@ -619,6 +619,23 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         self.assertIn('href="#section-coverage" aria-current="location"', rendered)
         self.assertIn("IntersectionObserver", rendered)
         self.assertIn("reading-path-active", rendered)
+
+    def test_reading_path_scope_spans_the_decision_regions_and_scrollspy_uses_nearest_target(self) -> None:
+        rendered = self.renderer.render_dossier_html(make_v2_dossier("en"))
+        scope = re.search(r'<div class="reading-path-scope">(.*?)</div>\s*</main>', rendered, re.DOTALL)
+        self.assertIsNotNone(scope)
+        assert scope is not None
+        body = scope.group(1)
+        for target in ("section-coverage", "coach-priorities", "market-evidence", "screen-preparation"):
+            self.assertIn(f'id="{target}"', body)
+        self.assertIn("getBoundingClientRect", rendered)
+        self.assertIn("addEventListener('scroll'", rendered)
+        self.assertIn("initialHash", rendered)
+        self.assertNotIn("targets[0].id);\n  }, { rootMargin", rendered)
+        css = (ASSETS_ROOT / "executive-career-dossier-v2.css").read_text(encoding="utf-8")
+        self.assertIn(".reading-path-scope", css)
+        mobile = css[css.index("@media screen and (max-width: 640px)"):css.index("@media (prefers-reduced-motion: reduce)")]
+        self.assertIn("scroll-margin-top: 16rem", mobile)
         css = (ASSETS_ROOT / "executive-career-dossier-v2.css").read_text(encoding="utf-8")
         self.assertIn("position: sticky", css)
         self.assertIn("scroll-margin-top", css)

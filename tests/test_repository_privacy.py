@@ -114,6 +114,11 @@ def invalid_dossier_with_private_analytics_container() -> dict[str, object]:
 
 
 class RepositoryPrivacyTests(unittest.TestCase):
+    def test_installed_smoke_attestation_has_unique_keys(self) -> None:
+        path = REPO_ROOT / "tests" / "evals" / "final" / "installed-smoke-test.md"
+        keys = [line.split(":", 1)[0] for line in path.read_text(encoding="utf-8").splitlines() if ":" in line and not line.startswith("#")]
+        self.assertEqual(len(keys), len(set(keys)), "installed smoke attestation keys must be unique")
+
     def test_recruiter_practice_validator_loader_restores_sys_path(self) -> None:
         scanner = load_scanner()
         previous_path = list(sys.path)
