@@ -40,6 +40,18 @@ class HandoffLoadError(ValueError):
     """Raised for concise, privacy-safe input failures."""
 
 
+class _ArgumentError(ValueError):
+    """Internal parse failure that deliberately carries no argument text."""
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    """Prevent argparse from reflecting private values in diagnostics."""
+
+    def error(self, message: str) -> None:
+        del message
+        raise _ArgumentError
+
+
 @lru_cache(maxsize=None)
 def _load_sibling(name: str):
     path = Path(__file__).with_name(f"{name}.py")
@@ -156,6 +168,28 @@ def _projected_reference_errors(handoff: Mapping[str, object]) -> list[str]:
     return errors
 
 
+def _triage_prose_errors(handoff: Mapping[str, object]) -> list[str]:
+    """Reject source-derived prose that cannot safely enter a private handoff."""
+    session = _mapping(handoff.get("practice_session"))
+    if session is None:
+        return []
+    context = _mapping(session.get("safe_context"))
+    question = _mapping(session.get("question"))
+    facts = session.get("facts")
+    if context is None or question is None or not isinstance(facts, list) or len(facts) != 1:
+        return []
+    fact = _mapping(facts[0])
+    if fact is None:
+        return []
+    guard = _load_sibling("triage_practice_prose_safety").is_safe_triage_practice_prose
+    fields = (
+        ("practice_session.safe_context.summary", context.get("summary"), 280),
+        ("practice_session.question.text", question.get("text"), 500),
+        ("practice_session.facts[0].summary", fact.get("summary"), 500),
+    )
+    return [f"{path} must be safe triage-sourced prose" for path, value, maximum in fields if not guard(value, maximum)]
+
+
 def validate_handoff(value: object) -> list[str]:
     """Return sorted errors; an empty list means a safe closed handoff."""
     errors = _schema_errors(value)
@@ -173,14 +207,22 @@ def validate_handoff(value: object) -> list[str]:
         return sorted(set(errors))
     errors.extend(_load_sibling("validate_recruiter_practice_session").validate_session(session))
     errors.extend(_projected_reference_errors(handoff))
+    errors.extend(_triage_prose_errors(handoff))
     return sorted(set(errors))
 
 
+def _error(code: str) -> None:
+    print(json.dumps({"error": {"code": code}}, separators=(",", ":")), file=sys.stderr)
+
+
 def _cli(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Validate a private triage practice handoff.")
+    parser = _PrivateArgumentParser(description="Validate a private triage practice handoff.")
     parser.add_argument("input", type=Path, help="Path to one handoff JSON file.")
     try:
         arguments = parser.parse_args(argv)
+    except _ArgumentError:
+        _error("invalid_arguments")
+        return 3
     except SystemExit as error:
         return 0 if error.code == 0 else 3
     try:

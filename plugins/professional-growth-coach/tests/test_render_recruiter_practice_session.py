@@ -200,6 +200,46 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
             renderer.render_session_html(session)
         self.assertNotIn(unsafe_summary, str(error.exception))
 
+    def test_triage_sourced_prose_rejects_url_contact_and_path_in_every_dynamic_field(self):
+        targets = {
+            "safe_context.summary": ("safe_context", "summary"),
+            "question.text": ("question", "text"),
+            "facts[0].summary": ("facts", 0, "summary"),
+        }
+        sentinels = (
+            "Read https://example.invalid/private before practice.",
+            "Reply to person@example.invalid before practice.",
+            "Read /private/tmp/private-note before practice.",
+        )
+        for target_name, target_path in targets.items():
+            for sentinel in sentinels:
+                with self.subTest(target=target_name, sentinel_kind=sentinel.split()[1]):
+                    session = self._triage_practice_session("en")
+                    target = session
+                    for segment in target_path[:-1]:
+                        target = target[segment]
+                    target[target_path[-1]] = sentinel
+                    with self.assertRaises(ValueError) as error:
+                        renderer.render_session_html(session)
+                    self.assertNotIn(sentinel, str(error.exception))
+
+    def test_handoff_prose_guard_does_not_apply_to_dossier_source(self):
+        session = self._feedback_session([self._observation("solid")])
+        session["handoff_context"] = {
+            "source": "executive_career_dossier",
+            "source_snapshot": "snap-dossier-sha256-873fb8cf4957d72c0aa06a15b253716a3d0397d45997073adb0b8e486decfa25",
+            "question_rank": 1,
+            "question_id": "Q-001",
+            "requirement_id": "R-001",
+            "fact_ids": ["F-001"],
+            "claim_ids": ["C-001"],
+            "evidence_ids": ["E-001"],
+            "draft_only": True,
+            "external_actions_authorized": False,
+        }
+        session["safe_context"]["summary"] = "Read www.example.invalid privately."
+        self.assertIn("www.example.invalid", renderer.render_session_html(session))
+
     def test_invalid_utf8_input_is_reported_without_traceback(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "invalid.json"

@@ -53,6 +53,29 @@ def _load_validator() -> Any:
 VALIDATOR = _load_validator()
 
 
+def _load_triage_practice_prose_guard() -> Any:
+    path = Path(__file__).with_name("triage_practice_prose_safety.py")
+    specification = importlib.util.spec_from_file_location(
+        "job_search_coach_triage_practice_prose_safety", path
+    )
+    if specification is None or specification.loader is None:
+        raise RuntimeError("triage practice prose guard is unavailable")
+    module = importlib.util.module_from_spec(specification)
+    scripts_dir = str(path.parent)
+    added_path = scripts_dir not in sys.path
+    if added_path:
+        sys.path.insert(0, scripts_dir)
+    try:
+        specification.loader.exec_module(module)
+    finally:
+        if added_path:
+            sys.path.remove(scripts_dir)
+    return module
+
+
+TRIAGE_PROSE_GUARD = _load_triage_practice_prose_guard()
+
+
 class SessionValidationError(ValueError):
     """Raised when renderer input does not satisfy the closed session contract."""
 
@@ -363,6 +386,19 @@ def _render_claim_guardrail(locale: str, fact: Mapping[str, object]) -> str:
     </section>'''
 
 
+def _require_safe_triage_prose(
+    context: Mapping[str, object], question: Mapping[str, object], fact: Mapping[str, object]
+) -> None:
+    """Keep triage-derived dynamic text out of HTML unless it is safe to project."""
+    fields = (
+        (context.get("summary"), 280),
+        (question.get("text"), 500),
+        (fact.get("summary"), 500),
+    )
+    if not all(TRIAGE_PROSE_GUARD.is_safe_triage_practice_prose(value, maximum) for value, maximum in fields):
+        raise ValueError("triage-sourced practice prose contains a URL, contact, path, or credential-shaped value")
+
+
 def _render_triage_practice_route(locale: str) -> str:
     labels = TRIAGE_ROUTE_COPY[locale]
     steps = "".join(
@@ -657,6 +693,7 @@ def _render_main(
         source_class = "reply" if source == "private_recruiter_reply_triage" else "dossier"
         handoff = f'''<aside class="practice-handoff practice-handoff--{source_class}" aria-labelledby="practice-handoff-title" aria-describedby="prompt-title practice-question-text"><h2 id="practice-handoff-title">{labels["handoff_title"]}</h2><p>{labels[text_key]}</p></aside>'''
         if source == "private_recruiter_reply_triage":
+            _require_safe_triage_prose(context, question, fact)
             claim_guardrail = _render_claim_guardrail(locale, fact)
             triage_route = _render_triage_practice_route(locale)
     if state == "feedback_available":

@@ -64,6 +64,31 @@ class PrivateRecruiterTriagePracticeHandoffValidatorTests(unittest.TestCase):
         drifted["practice_session"]["handoff_context"]["question_id"] = "Q-999"
         self.assertTrue(validate_handoff(drifted))
 
+    def test_rejects_private_source_url_contact_and_path_prose_without_echoing_it(self) -> None:
+        targets = {
+            "safe_context.summary": ("safe_context", "summary"),
+            "question.text": ("question", "text"),
+            "facts[0].summary": ("facts", 0, "summary"),
+        }
+        sentinels = (
+            "Read https://example.invalid/private before practice.",
+            "Reply to person@example.invalid before practice.",
+            "Read /private/tmp/private-note before practice.",
+            "Review linkedin.com/in/private-profile before practice.",
+            "Use api_key=private-value before practice.",
+        )
+        for target_name, target_path in targets.items():
+            for sentinel in sentinels:
+                with self.subTest(target=target_name, sentinel_kind=sentinel.split()[1]):
+                    value = copy.deepcopy(self._handoff())
+                    target: object = value["practice_session"]
+                    for segment in target_path[:-1]:
+                        target = target[segment]  # type: ignore[index]
+                    target[target_path[-1]] = sentinel  # type: ignore[index]
+                    errors = validate_handoff(value)
+                    self.assertTrue(errors)
+                    self.assertNotIn(sentinel, "\n".join(errors))
+
     def test_cli_returns_zero_only_for_a_valid_wrapper(self) -> None:
         script = SCRIPTS / "validate_private_recruiter_triage_practice_handoff.py"
         with tempfile.TemporaryDirectory() as directory:
@@ -77,6 +102,22 @@ class PrivateRecruiterTriagePracticeHandoffValidatorTests(unittest.TestCase):
             invalid = subprocess.run([sys.executable, str(script), str(path)], text=True, capture_output=True, check=False)
             self.assertEqual(2, invalid.returncode)
             self.assertNotIn("handoff.json", invalid.stderr)
+
+    def test_cli_rejects_unknown_or_missing_arguments_without_usage_or_argument_echo(self) -> None:
+        script = SCRIPTS / "validate_private_recruiter_triage_practice_handoff.py"
+        private_sentinel = "--private-value=person@example.invalid"
+        for label, arguments in (("unknown", [private_sentinel]), ("missing", [])):
+            with self.subTest(label=label):
+                result = subprocess.run(
+                    [sys.executable, str(script), *arguments],
+                    text=True,
+                    capture_output=True,
+                    check=False,
+                )
+                self.assertEqual(3, result.returncode)
+                self.assertEqual('{"error":{"code":"invalid_arguments"}}\n', result.stderr)
+                self.assertEqual("", result.stdout)
+                self.assertNotIn(private_sentinel, result.stderr)
 
 
 if __name__ == "__main__":
