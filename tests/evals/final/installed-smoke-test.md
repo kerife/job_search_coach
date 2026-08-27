@@ -28,11 +28,13 @@ installed_cache_version: `0.2.0+codex.20260827150000`
 
 installed_enabled: `true`
 
-source_file_count: `199`
+source_file_count: `139`
 
-installed_file_count: `199`
+installed_file_count: `139`
 
-normalized_source_cache_sha256: `d1db9d3ed0e713663c23e7f702778bd02c9248c095bba39d959f181f100f7c63`
+normalized_source_cache_sha256: `b8b128a6833abd213af323f6c847c4d285f28d1cb7d2dba574ba315432f6dea5`
+
+normalized_excludes: `__pycache__`
 
 active_config: `canonical_and_public_enabled`
 release_smoke_plugin: `professional-growth-coach@professional-growth-coach-local`
