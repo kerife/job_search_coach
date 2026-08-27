@@ -25,6 +25,8 @@ next module.
 
 When a completed `screen_attended` checkpoint is paired with a ready `recruiter-target-screen-intake-v1`, build `private-recruiter-screen-debrief-v1` before measuring a next-stage transition. Record only the three structured coverage states, bounded unknown topics, supported fact IDs, and the manual `continue_review|pause|stop` decision. A complete debrief may cue `manual_prepare_next_stage_review`; incomplete context stays at `collect_debrief_context`, and `stop` is terminal. The debrief is replay-keyed, keeps no raw conversation text, and does not alter the ordinary CSV or authorize follow-up.
 
+For that cue, require an explicitly supplied `first_interview` or `technical_screen` and build `private-recruiter-next-stage-review-v1`. Its checklist mirrors the debrief, remains `ready|blocked`, and never infers a stage, stores raw answers, sends a message, or creates a calendar action.
+
 ## Required boundaries
 
 Every interpretation uses `verified:`, `candidate-reported:`, `inferred:`, or `unknown:` labels. Every nonempty CSV row requires stable, unique `application_id` and stable `candidate_id` values. Reject a duplicate `application_id`; do not silently double-count or merge it. Keep candidates isolated by `candidate_id`. Coach-mode aggregation or anonymized benchmarking is allowed only when every in-window row has explicit consent recorded as `benchmark_consent=true`. Without unanimous consent, return the zero-count safety summary, then run the CLI once per candidate with `--candidate-id CANDIDATE_ID` and report those summaries separately; never combine their rates.

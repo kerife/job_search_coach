@@ -22,6 +22,7 @@ class RecruiterShortlistRoutingDocsTests(unittest.TestCase):
             "manual_prepare_role_interviews_review",
             "screen_readiness",
             "private-recruiter-screen-debrief-v1",
+            "private-recruiter-next-stage-review-v1",
             "route_recruiter_screen_debrief",
             "manual_prepare_next_stage_review",
             "collect_debrief_context",

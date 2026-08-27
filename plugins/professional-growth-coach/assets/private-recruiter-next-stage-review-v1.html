@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="{{LANG}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'none'; font-src 'none'; connect-src 'none'; form-action 'none'; frame-ancestors 'none'">
+  <title>{{TITLE}}</title>
+  <style>{{INLINE_CSS}}</style>
+</head>
+<body class="next-stage-document">
+  <a class="skip-link" href="#main-content">{{SKIP}}</a>
+  <main id="main-content" tabindex="-1" class="next-stage-shell">
+    <header class="next-stage-header">
+      <p class="next-stage-kicker">{{KICKER}}</p>
+      <h1>{{HEADING}}</h1>
+      <p class="next-stage-date"><span>{{DATE_LABEL}}</span> <time datetime="{{DATE}}">{{DATE}}</time></p>
+    </header>
+    <section class="next-stage-card next-stage-summary" aria-labelledby="summary-title">
+      <p class="next-stage-state">{{STATE}}</p>
+      <h2 id="summary-title">{{NEXT_LABEL}}</h2>
+      <p class="next-stage-action">{{ACTION}}</p>
+    </section>
+    <section class="next-stage-card" aria-labelledby="context-title">
+      <h2 id="context-title">{{OWNER_LABEL}}</h2>
+      <p class="next-stage-owner">{{OWNER}}</p>
+    </section>
+    <section class="next-stage-card" aria-labelledby="checklist-title">
+      <h2 id="checklist-title">{{CHECKLIST_LABEL}}</h2>
+      <ol class="next-stage-checklist">{{CHECKLIST}}</ol>
+    </section>
+    <footer class="next-stage-footer">
+      <p>{{BOUNDARY}}</p>
+      <p>{{FOOTER}}</p>
+    </footer>
+  </main>
+</body>
+</html>

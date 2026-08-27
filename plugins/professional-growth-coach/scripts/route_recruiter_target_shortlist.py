@@ -27,6 +27,7 @@ BUILDER = _sibling("build_recruiter_target_shortlist.py")
 GATE_BUILDER = _sibling("build_recruiter_target_decision_gate.py")
 SCREEN_INTAKE_BUILDER = _sibling("build_recruiter_target_screen_intake.py")
 SCREEN_DEBRIEF_BUILDER = _sibling("build_private_recruiter_screen_debrief.py")
+NEXT_STAGE_REVIEW_BUILDER = _sibling("build_private_recruiter_next_stage_review.py")
 INTENT = re.compile(r"(?:recruiter|recruiting|reclutador|reclutadora|network|red de|first interview|first screen|primer filtro|primera entrevista)", re.I)
 INTAKE = {
     "es": "Comparte de tres a seis objetivos manuales con contexto visible o proporcionado por ti y el tema de prueba que quieres revisar primero.",
@@ -180,6 +181,36 @@ def route_recruiter_screen_debrief(
         "route_kind": "private_recruiter_screen_debrief",
         "case_state": "ready" if ready else "needs_intake",
         "selected_module": "track-career-outcomes",
+        "next_action": artifact["handoff"]["next_safe_action"],
+        "authorization_required": False,
+        "artifact": artifact,
+    }
+
+
+def route_recruiter_next_stage_review(
+    debrief: Mapping[str, object],
+    receipt: Mapping[str, object],
+    intake: Mapping[str, object],
+    checkpoint: Mapping[str, object],
+    next_stage: str,
+) -> dict[str, object]:
+    """Route a completed screen debrief to an explicit, manual next-stage review."""
+    try:
+        artifact = NEXT_STAGE_REVIEW_BUILDER.build_next_stage_review(debrief, receipt, intake, checkpoint, next_stage)
+    except (TypeError, ValueError):
+        return {
+            "route_kind": "private_recruiter_next_stage_review",
+            "case_state": "needs_intake",
+            "selected_module": "prepare-role-interviews",
+            "next_action": "collect_debrief_context",
+            "authorization_required": False,
+            "artifact": None,
+        }
+    ready = artifact["review_state"] == "ready"
+    return {
+        "route_kind": "private_recruiter_next_stage_review",
+        "case_state": "ready" if ready else "needs_intake",
+        "selected_module": "prepare-role-interviews",
         "next_action": artifact["handoff"]["next_safe_action"],
         "authorization_required": False,
         "artifact": artifact,

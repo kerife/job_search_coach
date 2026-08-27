@@ -30,6 +30,8 @@ For a selected `advance` target, `route_recruiter_screen_intake` adds the target
 
 After a validated `screen_attended` checkpoint, `route_recruiter_screen_debrief` can build `private-recruiter-screen-debrief-v1`. The private bilingual debrief records only structured coverage, unknown topics, supported facts used, and a manual `continue_review|pause|stop` decision. Complete coverage may hand off to `manual_prepare_next_stage_review`; incomplete coverage collects context and a stop decision is terminal. No raw conversation text, contacts, messages, calendar actions, automatic preparation, or outcome prediction is retained.
 
+When a next stage is explicitly selected, `route_recruiter_next_stage_review` builds `private-recruiter-next-stage-review-v1` from that debrief. It exposes a bilingual, checklist-based `ready|blocked` review for `first_interview` or `technical_screen`; the current stage is never reused as the next stage, and only a manual `prepare-role-interviews` cue can proceed.
+
 ## Installation
 
 This source tree is repo-local at `plugins/professional-growth-coach`. Source edits do not update the installed plugin cache. A separate explicitly authorized installation is required to publish a source increment into the local marketplace cache; existing chats may continue using their loaded version, so verify the new installation from a fresh chat. Use the repo-local marketplace workflow only after the exact target and command are approved.

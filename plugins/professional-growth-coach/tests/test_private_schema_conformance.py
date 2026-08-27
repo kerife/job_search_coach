@@ -21,6 +21,7 @@ from build_recruiter_target_decision_gate import build_decision_gate
 from build_recruiter_target_shortlist import build_shortlist
 from build_recruiter_target_screen_intake import build_screen_intake
 from build_private_recruiter_screen_debrief import build_screen_debrief
+from build_private_recruiter_next_stage_review import build_next_stage_review
 from validate_dossier_recruiter_practice_handoff import validate_handoff
 from private_prose_safety import is_safe_prose_text
 from validate_private_recruiter_reply_triage import validate_triage
@@ -129,6 +130,29 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
             empty_source = copy.deepcopy(debrief)
             empty_source[field] = {}
             self.assertTrue(validate_schema_instance(empty_source, schema))
+
+    def test_private_recruiter_next_stage_review_schema_matches_runtime(self):
+        shortlist = build_shortlist("es", "2026-08-27", valid_plan(), valid_targets())
+        gate = build_decision_gate(shortlist)
+        intake = build_screen_intake(gate, "T-001", {
+            "stated_stage": "recruiter_screen", "vacancy_requirements": ["V-001: Platform reliability scope."],
+            "candidate_fact_ids": ["F-001"], "company_evidence_state": "verified", "source_date": "2026-08-27",
+            "checks": [
+                {"check": "target_context", "status": "pass", "evidence_note": "Named context supplied."},
+                {"check": "proof_packet", "status": "pass", "evidence_note": "Supported fact mapped."},
+                {"check": "low_friction_ask", "status": "pass", "evidence_note": "Process question only."},
+                {"check": "screen_readiness", "status": "pass", "evidence_note": "Stage is explicit."},
+            ],
+        })
+        receipt = json.loads((ROOT / "tests/fixtures/private-recruiter-conversion-outcome/screen-requested-en.json").read_text(encoding="utf-8"))
+        checkpoint = {"schema_version": "private-recruiter-followthrough-checkpoint-v1", "artifact_kind": "private_recruiter_followthrough_checkpoint", "locale": "en", "source_receipt": {"id": "D-104", "source_version": "draft-v1", "event_type": "screen_requested"}, "action_state": "completed", "observed_date": "2026-08-27", "next_measurement_event": "screen_attended", "next_safe_action": "debrief_after_screen", "delivery": {"draft_only": True, "external_actions_authorized": False, "no_message_action": True, "no_calendar_action": True, "raw_event_retained": False, "local_save_mode": "disabled"}}
+        debrief = build_screen_debrief(checkpoint, receipt, intake, {"observed_date": "2026-08-27", "coverage": [{"topic": "requirement", "status": "discussed", "note": "Requirements discussed."}, {"topic": "scope", "status": "discussed", "note": "Scope discussed."}, {"topic": "team_context", "status": "discussed", "note": "Team context discussed."}], "unknown_topics": [], "facts_used": ["F-001"], "decision": "continue_review"})
+        review = build_next_stage_review(debrief, receipt, intake, checkpoint, "first_interview")
+        schema = self._schema("private-recruiter-next-stage-review-v1.schema.json")
+        self.assertEqual([], validate_schema_instance(review, schema))
+        invalid = copy.deepcopy(review)
+        invalid["source_debrief"] = {}
+        self.assertTrue(validate_schema_instance(invalid, schema))
 
     def test_dossier_methodology_categories_keep_schema_runtime_and_registry_in_lockstep(self):
         helper = _load_v2_dossier_helper()

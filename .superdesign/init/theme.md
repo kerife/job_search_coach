@@ -685,6 +685,36 @@ details summary {
 }
 ```
 
+### `plugins/professional-growth-coach/assets/private-recruiter-next-stage-review-v1.css`
+
+```css
+:root { color-scheme: light dark; --next-bg: #f5f7fa; --next-surface: #fff; --next-text: #16202a; --next-muted: #52606d; --next-accent: #126782; --next-border: #c8d2dc; --next-blocked: #8a4b08; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--next-bg); color: var(--next-text); font: 16px/1.55 system-ui, -apple-system, sans-serif; }
+.skip-link { position: absolute; left: 1rem; top: -4rem; background: var(--next-text); color: var(--next-surface); padding: .5rem .75rem; border-radius: .25rem; }
+.skip-link:focus { top: 1rem; }
+.next-stage-shell { max-width: 52rem; margin: 0 auto; padding: 2rem 1rem 3rem; }
+.next-stage-header { margin-bottom: 1.5rem; }
+.next-stage-kicker, .next-stage-state { color: var(--next-accent); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+h1, h2 { line-height: 1.2; }
+h1 { margin: .35rem 0; font-size: clamp(1.8rem, 5vw, 3rem); }
+h2 { margin-top: 0; font-size: 1.2rem; }
+.next-stage-date { color: var(--next-muted); }
+.next-stage-card { background: var(--next-surface); border: 1px solid var(--next-border); border-radius: .8rem; padding: 1.25rem; margin: 1rem 0; }
+.next-stage-summary { border-left: .35rem solid var(--next-accent); }
+.next-stage-summary:has(.next-stage-state) { border-left-color: var(--next-accent); }
+.next-stage-action { font-weight: 650; }
+.next-stage-checklist { display: grid; gap: .7rem; margin: 0; padding-left: 1.3rem; }
+.next-stage-check { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--next-border); padding: .55rem 0; }
+.next-stage-check--needs_clarification { color: var(--next-blocked); }
+.next-stage-footer { color: var(--next-muted); font-size: .92rem; margin-top: 1.5rem; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+@media (forced-colors: active) { .next-stage-card { border: 2px solid CanvasText; } .next-stage-summary { border-left: .35rem solid Highlight; } }
+@media (max-width: 640px) { .next-stage-shell { padding: 1.25rem .75rem 2rem; } .next-stage-check { align-items: flex-start; flex-direction: column; gap: .1rem; } }
+@media print { body { background: #fff; color: #000; } .next-stage-card { break-inside: avoid; box-shadow: none; } .skip-link { display: none; } }
+@media (prefers-color-scheme: dark) { :root { --next-bg: #101820; --next-surface: #18232d; --next-text: #eef3f7; --next-muted: #b4c0ca; --next-accent: #76c7dc; --next-border: #40515e; --next-blocked: #ffc078; } }
+```
+
 ### `plugins/professional-growth-coach/assets/private-recruiter-screen-debrief-v1.css`
 
 ```css
