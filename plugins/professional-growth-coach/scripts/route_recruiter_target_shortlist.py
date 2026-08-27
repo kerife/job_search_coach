@@ -59,6 +59,7 @@ HANDOFF_QUESTIONS = {
         "private_recruiter_screen_debrief": "Comparte el checkpoint de pantalla atendida, su receipt, el intake del objetivo y un debrief estructurado de cobertura, temas desconocidos y decisión.",
         "private_recruiter_next_stage_review": "Comparte un debrief válido con su checkpoint y elige una etapa posterior permitida para la revisión manual.",
         "forward_stage_transition": "El debrief es válido; elige una etapa posterior permitida para continuar la revisión manual. No se envían mensajes ni se agendan eventos.",
+        "terminal_stage": "La etapa de oferta es terminal en este flujo; no hay una etapa posterior permitida. Registra el cierre o inicia un caso nuevo si necesitas preparar otro proceso.",
     },
     "en": {
         "recruiter_target_decision_gate": "Share the validated 3–6 target shortlist and its visible or candidate-provided context for the next manual decision review.",
@@ -66,6 +67,7 @@ HANDOFF_QUESTIONS = {
         "private_recruiter_screen_debrief": "Share the attended-screen checkpoint, its receipt, the target intake, and a structured debrief covering topics, unknowns, and decision.",
         "private_recruiter_next_stage_review": "Share a valid debrief with its checkpoint and choose an allowed forward stage for manual review.",
         "forward_stage_transition": "The debrief is valid; choose an allowed forward stage to continue manual review. No messages are sent and no events are scheduled.",
+        "terminal_stage": "Offer stage is terminal in this flow; no later stage is allowed. Record the close or start a new case if you need to prepare another process.",
     },
 }
 HANDOFF_GAPS = {
@@ -113,6 +115,8 @@ def _current_stage(intake: Mapping[str, object]) -> object:
 
 
 def _debrief_is_complete(debrief: Mapping[str, object]) -> bool:
+    if not isinstance(debrief, Mapping):
+        return False
     coverage = debrief.get("coverage")
     unknown_topics = debrief.get("unknown_topics")
     return (
@@ -128,6 +132,8 @@ def _debrief_is_complete(debrief: Mapping[str, object]) -> bool:
 def _transition_recovery(
     debrief: Mapping[str, object], intake: Mapping[str, object], next_stage: object
 ) -> dict[str, object] | None:
+    if not isinstance(debrief, Mapping) or not isinstance(intake, Mapping):
+        return None
     current_stage = _current_stage(intake)
     if not _debrief_is_complete(debrief) or current_stage not in STAGE_TAXONOMY.STAGES:
         return None
@@ -135,6 +141,19 @@ def _transition_recovery(
     if next_stage in allowed:
         return None
     locale = _safe_locale(debrief)
+    if not allowed:
+        result = _artifact_free_intake(
+            "private_recruiter_next_stage_review",
+            selected_module="prepare-role-interviews",
+            next_action="record_terminal_stage",
+            locale=locale,
+            question_key="terminal_stage",
+            evidence_gaps=["terminal_stage"],
+            allowed_next_stages=[],
+        )
+        result["case_state"] = "terminal"
+        result["terminal_reason"] = "offer_stage_has_no_forward_transition"
+        return result
     return _artifact_free_intake(
         "private_recruiter_next_stage_review",
         selected_module="prepare-role-interviews",

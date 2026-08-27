@@ -35,6 +35,7 @@ VALIDATOR = _sibling("validate_recruiter_target_screen_intake.py")
 ASSET_LOADER = _sibling("private_asset_loader.py")
 WRITER = _sibling("render_recruiter_target_shortlist.py")
 INPUT_LOADER = _sibling("private_input_loader.py")
+CONTINUITY_RAIL = _sibling("recruiter_continuity_rail.py")
 
 
 class _PrivateArgumentParser(argparse.ArgumentParser):
@@ -135,6 +136,7 @@ def render_screen_intake_html(value: Mapping[str, object]) -> str:
     readiness = str(value["readiness_decision"])
     status_label = labels[readiness]
     next_copy = labels[f"{readiness}_next"]
+    flow_label, flow_rail = CONTINUITY_RAIL.render_continuity_rail(locale, "screen_intake")
     intake = value["intake"]
     check_items = []
     for check in value["checks"]:
@@ -172,6 +174,8 @@ def render_screen_intake_html(value: Mapping[str, object]) -> str:
         "{{BOUNDARY}}": html.escape(labels["boundary"]),
         "{{FOOTER}}": html.escape(labels["footer"]),
         "{{INLINE_CSS}}": css,
+        "{{FLOW_RAIL_LABEL}}": html.escape(flow_label),
+        "{{FLOW_RAIL}}": flow_rail,
     }
     for key, replacement in replacements.items():
         template = template.replace(key, replacement)

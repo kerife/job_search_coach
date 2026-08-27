@@ -235,6 +235,31 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
                     invalid[field]["unexpected_extension"] = "must be rejected"
                     self.assertTrue(validate_schema_instance(invalid, schema))
 
+    def test_next_stage_schema_closes_nested_snapshot_objects(self):
+        _, _, _, _, _, _, review = _build_recruiter_handoff_chain()
+        schema = self._schema("private-recruiter-next-stage-review-v1.schema.json")
+        paths = (
+            ("source_debrief", "source_receipt"),
+            ("source_debrief", "source_checkpoint"),
+            ("source_debrief", "handoff"),
+            ("source_debrief", "delivery"),
+            ("source_intake", "intake"),
+            ("source_intake", "handoff"),
+            ("source_intake", "delivery"),
+            ("source_intake", "source_gate", "source_shortlist"),
+            ("source_intake", "source_gate", "decision_counts"),
+            ("source_intake", "source_gate", "handoff"),
+            ("source_intake", "source_gate", "delivery"),
+        )
+        for path in paths:
+            with self.subTest(path=".".join(path)):
+                invalid = copy.deepcopy(review)
+                current = invalid
+                for key in path:
+                    current = current[key]
+                current["unexpected_extension"] = "must be rejected"
+                self.assertTrue(validate_schema_instance(invalid, schema))
+
     def test_recruiter_schema_contracts_reject_impossible_state_combinations(self):
         _, _, intake, _, _, debrief, review = _build_recruiter_handoff_chain()
         intake_schema = self._schema("recruiter-target-screen-intake-v1.schema.json")

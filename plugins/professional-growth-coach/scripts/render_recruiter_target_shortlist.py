@@ -61,6 +61,19 @@ def _load_asset_loader() -> Any:
 
 ASSET_LOADER = _load_asset_loader()
 
+
+def _load_continuity_rail() -> Any:
+    path = Path(__file__).with_name("recruiter_continuity_rail.py")
+    spec = importlib.util.spec_from_file_location("recruiter_continuity_rail", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("recruiter continuity rail is unavailable")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+CONTINUITY_RAIL = _load_continuity_rail()
+
 COPY = {
     "es": {
         "skip": "Saltar al contenido principal",
@@ -157,6 +170,7 @@ def render_shortlist_html(value: Mapping[str, object]) -> str:
     count_labels = {"es": {"advance": "Avanzar", "clarify": "Aclarar", "pause": "Pausar", "stop": "Detener"}, "en": {"advance": "Advance", "clarify": "Clarify", "pause": "Pause", "stop": "Stop"}}[locale]
     decision_counts = "".join(f'<li class="shortlist-decision-count shortlist-decision-count--{decision}"><strong>{html.escape(count_labels[decision])}</strong><span>{counts[decision]}</span></li>' for decision in counts)
     top_target = targets[0]
+    flow_label, flow_rail = CONTINUITY_RAIL.render_continuity_rail(locale, "shortlist")
     priority = f'<p class="shortlist-priority-label">{html.escape(labels["priority"])}</p><p class="shortlist-priority-value">{html.escape(str(top_target["target_label"]), quote=True)}</p>'
     queries = "".join(f"<li>{html.escape(str(query), quote=True)}</li>" for query in plan["source_queries"])
     segments = ", ".join(html.escape(str(segment), quote=True) for segment in plan["target_segments"])
@@ -184,6 +198,8 @@ def render_shortlist_html(value: Mapping[str, object]) -> str:
         "{{TARGETS_LABEL}}": html.escape(labels["targets_label"]),
         "{{BOUNDARY}}": html.escape(labels["boundary"]),
         "{{NO_SAVE}}": html.escape(labels["no_save"]),
+        "{{FLOW_RAIL_LABEL}}": html.escape(flow_label),
+        "{{FLOW_RAIL}}": flow_rail,
     }
     for key, replacement in replacements.items():
         template = template.replace(key, replacement)

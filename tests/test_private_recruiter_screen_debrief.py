@@ -161,7 +161,12 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
         english_gate = build_decision_gate(build_shortlist("en", "2026-08-27", valid_plan(), valid_targets()))
         english_intake = build_screen_intake(english_gate, "T-001", valid_screen_intake())
         english = build_screen_debrief(valid_checkpoint(), RECEIPT, english_intake, valid_debrief())
-        self.assertIn("Private screen debrief", render_screen_debrief_html(english, RECEIPT, english_intake))
+        english_rendered = render_screen_debrief_html(english, RECEIPT, english_intake)
+        self.assertIn("Private screen debrief", english_rendered)
+        self.assertEqual(1, rendered.count('aria-current="step"'))
+        self.assertEqual(1, english_rendered.count('aria-current="step"'))
+        self.assertIn("Debrief de pantalla", rendered)
+        self.assertIn("Screen debrief", english_rendered)
 
     def test_renderer_covers_every_supported_stage_in_both_locales(self) -> None:
         stage_labels = {

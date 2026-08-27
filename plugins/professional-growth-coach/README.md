@@ -30,16 +30,20 @@ For a selected `advance` target, `route_recruiter_screen_intake` adds the target
 
 The decision gate, screen-intake bridge, post-screen debrief, and next-stage review now return the same private in-memory `rendered_html` contract whenever a validated artifact exists. Intake failures remain artifact-free; stopped or blocked artifacts still render their localized review surface without IDs, snapshots, contacts, or action tokens.
 
+The five recruiter review surfaces also render the shared identity-free continuity rail from `scripts/recruiter_continuity_rail.py`: shortlist, decision gate, screen intake, screen debrief, and next-stage review. It uses localized closed labels, marks only the current surface with `aria-current="step"`, remains non-interactive, and keeps the same offline, print, forced-colors, and responsive boundary without adding candidate data or external actions.
+
 Every artifact-free downstream handoff also returns a fixed `evidence_gaps`
 list and one localized `intake_question`. The question is specific to the
 missing handoff: the gate asks for the validated shortlist, screen intake asks
 for stage/`V-###` requirements/`F-###` facts/company evidence/four checks,
 debrief asks for checkpoint/receipt/intake/structured coverage, and next-stage
 review asks for a valid debrief plus a forward stage. If the debrief is already
-valid but the selected stage is not allowed, the route returns
-`next_action=select_forward_stage` and taxonomy-derived `allowed_next_stages`.
-Recovery text never reflects malformed input, private identifiers, or raw
-conversation text, so a client can recover without guessing what to submit.
+valid but the selected non-terminal stage is not allowed, the route returns
+`next_action=select_forward_stage` and taxonomy-derived `allowed_next_stages`;
+`offer_stage` is terminal and returns `case_state=terminal` with
+`next_action=record_terminal_stage` and no allowed stage. Recovery text never
+reflects malformed input, private identifiers, or raw conversation text, so a
+client can recover without guessing what to submit.
 
 The recruiter snapshot chain is closed at both contract layers: embedded
 `source_shortlist`, `source_gate`, `source_intake`, `source_receipt`,
@@ -53,7 +57,7 @@ acceptance never grants preparation or external-action authorization.
 
 After a validated `screen_attended` checkpoint, `route_recruiter_screen_debrief` can build `private-recruiter-screen-debrief-v1`. The private bilingual debrief records only structured coverage, unknown topics, supported facts used, and a manual `continue_review|pause|stop` decision. Complete coverage returns `ready` for `manual_prepare_next_stage_review`; incomplete coverage returns `needs_intake` for context collection, while a stop decision returns terminal `stopped` with `record_stop_decision`. No raw conversation text, contacts, messages, calendar actions, automatic preparation, or outcome prediction is retained.
 
-When a next stage is explicitly selected, `route_recruiter_next_stage_review` builds `private-recruiter-next-stage-review-v1` from that debrief. It exposes a bilingual, checklist-based `ready|blocked` review for a closed forward transition such as `technical_screen → hiring_manager`, `technical_deep_dive`, `take_home`, `system_design`, `behavioral_loop`, `panel`, or `offer_stage`. The rendered header repeats both current and target stages so the candidate can verify the handoff. A blocked review returns `needs_intake`, while a stop decision returns terminal `stopped` with `record_stop_decision`; neither asks for more context. A blocked review also lists only the structured topics that must be clarified, never the raw unknown-topic notes. The current stage and backward transitions are rejected, and only a manual `prepare-role-interviews` cue can proceed.
+When a next stage is explicitly selected, `route_recruiter_next_stage_review` builds `private-recruiter-next-stage-review-v1` from that debrief. It exposes a bilingual, checklist-based `ready|blocked` review for a closed forward transition such as `technical_screen → hiring_manager`, `technical_deep_dive`, `take_home`, `system_design`, `behavioral_loop`, `panel`, or `offer_stage`. The rendered header repeats both current and target stages so the candidate can verify the handoff. A blocked review returns `needs_intake`, while a stop decision returns terminal `stopped` with `record_stop_decision`; neither asks for more context. A blocked review also lists only the structured topics that must be clarified, never the raw unknown-topic notes. The current stage and backward transitions are rejected; `offer_stage` has no forward transition and is represented as terminal recovery with `record_terminal_stage`; only a manual `prepare-role-interviews` cue can proceed.
 
 ## Installation
 
@@ -74,8 +78,9 @@ The visual release gate treats the full recruiter review flow as one
 debrief, and next-stage review. `scripts/validate_design_tokens.py` checks all
 five co-located stylesheets against their declared palette, while
 `.superdesign/init/theme.md` records the corresponding source surfaces and
-tokens. A new recruiter surface or color must update both records and its
-parity tests before release.
+tokens, including the shared continuity rail treatment. A new recruiter
+surface, rail state, or color must update both records and its parity tests
+before release.
 
 Rendering CLIs write the requested private artifact but omit its absolute local
 path from the success receipt by default. A trusted caller that already knows

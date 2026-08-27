@@ -78,6 +78,9 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
         english_rendered = render_decision_gate_html(english)
         self.assertIn("Next decision", english_rendered)
         self.assertIn("Collect screen context", english_rendered)
+        self.assertEqual(1, rendered.count('aria-current="step"'))
+        self.assertIn("Ruta de revisión recruiter", rendered)
+        self.assertIn("Recruiter review path", english_rendered)
 
     def test_gate_rejects_external_action_authorization(self) -> None:
         gate = build_decision_gate(self.shortlist())

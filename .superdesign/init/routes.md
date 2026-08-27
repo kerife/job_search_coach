@@ -34,6 +34,14 @@ Both compact receipt routes use the same static continuity semantics (`recorded`
 then `pending` then `blocked`) and expose exactly one current step to assistive
 technology; terminal stop receipts remain recorded.
 
+The five recruiter target artifacts use a separate shared orientation rail with
+closed localized labels: shortlist, decision gate, screen intake, screen
+debrief, and next-stage review. Exactly one item, the rendered artifact's
+surface, carries `aria-current="step"`; the rail is non-interactive and makes no
+claim that other surfaces are complete. It is rendered by
+`scripts/recruiter_continuity_rail.py` and must remain identity-free and
+offline-safe in screen, print, responsive, and forced-colors modes.
+
 Practice and triage routes now share that state vocabulary for their private
 handoffs, so users can scan evidence already recorded and the one safe next
 step without losing the read-only boundary.
@@ -48,12 +56,13 @@ this contract; invalid intake remains artifact-free but includes fixed
 clear. Recovery copy is route-specific: screen intake asks for stage,
 `V-###` requirements, `F-###` facts, company evidence, and four checks; debrief
 asks for checkpoint, receipt, intake, and structured coverage; next-stage asks
-for a valid debrief and forward stage. A complete debrief with an invalid stage
-returns `select_forward_stage` with taxonomy-derived `allowed_next_stages`
-instead of repeating the debrief request. Recovery text never echoes rejected
-values. The HTML is a review surface, not a public serialization format, and
-keeps IDs, snapshots, contact details, URLs, and external actions out of the
-rendered document.
+for a valid debrief and forward stage. A complete debrief with an invalid
+non-terminal stage returns `select_forward_stage` with taxonomy-derived
+`allowed_next_stages` instead of repeating the debrief request; `offer_stage`
+is terminal and returns `record_terminal_stage` with no allowed stage. Recovery
+text never echoes rejected values. The HTML is a review surface, not a public
+serialization format, and keeps IDs, snapshots, contact details, URLs, and
+external actions out of the rendered document.
 
 The embedded recruiter snapshots are closed contracts in both JSON Schema and
 runtime validation: unknown fields in shortlist, gate, intake, receipt,

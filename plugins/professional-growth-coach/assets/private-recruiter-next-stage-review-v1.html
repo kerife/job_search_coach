@@ -16,6 +16,10 @@
       <p class="next-stage-transition"><span>{{CURRENT_STAGE_LABEL}}</span> <strong>{{CURRENT_STAGE}}</strong> <span class="next-stage-arrow" aria-hidden="true">→</span> <span>{{STAGE_LABEL}}</span> <strong>{{STAGE}}</strong></p>
       <p class="next-stage-date"><span>{{DATE_LABEL}}</span> <time datetime="{{DATE}}">{{DATE}}</time></p>
     </header>
+    <nav class="continuity-rail" aria-labelledby="continuity-rail-title">
+      <p id="continuity-rail-title" class="continuity-rail__label">{{FLOW_RAIL_LABEL}}</p>
+      <ol>{{FLOW_RAIL}}</ol>
+    </nav>
     <section class="next-stage-card {{SUMMARY_CLASS}}" aria-labelledby="summary-title">
       <p class="next-stage-state">{{STATE}}</p>
       <h2 id="summary-title">{{NEXT_LABEL}}</h2>

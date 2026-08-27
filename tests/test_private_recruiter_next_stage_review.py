@@ -54,6 +54,42 @@ class PrivateRecruiterNextStageReviewTests(unittest.TestCase):
         self.assertEqual("collect_debrief_context", artifact["handoff"]["next_safe_action"])
         self.assertEqual([], validate_next_stage_review(artifact, debrief, RECEIPT, self.intake, valid_checkpoint(), as_of=date(2026, 8, 27)))
 
+    def test_malformed_debrief_recovery_stays_artifact_free(self) -> None:
+        routed = route_recruiter_next_stage_review(3, {}, {}, {}, "first_interview")
+        self.assertEqual("needs_intake", routed["case_state"])
+        self.assertIsNone(routed["artifact"])
+        self.assertFalse(routed["authorization_required"])
+
+    def test_offer_stage_recovery_is_terminal_when_no_forward_stage_exists(self) -> None:
+        context = valid_screen_intake()
+        context["stated_stage"] = "offer_stage"
+        intake = build_screen_intake(self.gate, "T-001", context)
+        debrief = build_screen_debrief(valid_checkpoint(), RECEIPT, intake, valid_debrief())
+        routed = route_recruiter_next_stage_review(debrief, RECEIPT, intake, valid_checkpoint(), "offer_stage")
+        self.assertEqual("terminal", routed["case_state"])
+        self.assertEqual("record_terminal_stage", routed["next_action"])
+        self.assertEqual("offer_stage_has_no_forward_transition", routed["terminal_reason"])
+        self.assertEqual([], routed["allowed_next_stages"])
+        self.assertIsNone(routed["artifact"])
+
+    def test_valid_review_renders_an_accessible_five_step_continuity_rail(self) -> None:
+        artifact = build_next_stage_review(self.debrief, RECEIPT, self.intake, valid_checkpoint(), "first_interview")
+        rendered = render_next_stage_review_html(artifact, self.debrief, RECEIPT, self.intake, valid_checkpoint())
+        self.assertIn("continuity-rail", rendered)
+        self.assertIn('<li data-state="current" aria-current="step">', rendered)
+        self.assertEqual(4, rendered.count('<li data-state="context">'))
+        self.assertEqual(1, rendered.count('<li data-state="current" aria-current="step">'))
+        self.assertEqual(1, rendered.count('aria-current="step"'))
+        self.assertIn("Ruta de revisión recruiter", rendered)
+        self.assertIn("Paso actual", rendered)
+        english_gate = build_decision_gate(build_shortlist("en", "2026-08-27", valid_plan(), valid_targets()))
+        english_intake = build_screen_intake(english_gate, "T-001", valid_screen_intake())
+        english_debrief = build_screen_debrief(valid_checkpoint(), RECEIPT, english_intake, valid_debrief())
+        english = build_next_stage_review(english_debrief, RECEIPT, english_intake, valid_checkpoint(), "first_interview")
+        english_rendered = render_next_stage_review_html(english, english_debrief, RECEIPT, english_intake, valid_checkpoint())
+        self.assertIn("Recruiter review path", english_rendered)
+        self.assertIn("Current step", english_rendered)
+
     def test_blocked_renderer_explains_structured_topics_to_clarify(self) -> None:
         paused = valid_debrief()
         paused["decision"] = "pause"

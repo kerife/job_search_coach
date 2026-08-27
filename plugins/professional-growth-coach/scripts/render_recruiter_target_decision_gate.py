@@ -41,6 +41,7 @@ VALIDATOR = _sibling("validate_recruiter_target_decision_gate.py")
 ASSET_LOADER = _sibling("private_asset_loader.py")
 WRITER = _sibling("render_recruiter_target_shortlist.py")
 INPUT_LOADER = _sibling("private_input_loader.py")
+CONTINUITY_RAIL = _sibling("recruiter_continuity_rail.py")
 
 
 def _unique(pairs: list[tuple[str, object]]) -> dict[str, object]:
@@ -139,6 +140,7 @@ def render_decision_gate_html(value: Mapping[str, object]) -> str:
     source_targets = source["targets"]
     top = source_targets[0]
     handoff = value["handoff"]
+    flow_label, flow_rail = CONTINUITY_RAIL.render_continuity_rail(locale, "decision_gate")
     screen_present = value["screen_context"] is not None
     counts = value["decision_counts"]
     count_items = "".join(
@@ -173,6 +175,8 @@ def render_decision_gate_html(value: Mapping[str, object]) -> str:
         "{{BOUNDARY}}": html.escape(labels["boundary"]),
         "{{FOOTER}}": html.escape(labels["footer"]),
         "{{INLINE_CSS}}": css,
+        "{{FLOW_RAIL_LABEL}}": html.escape(flow_label),
+        "{{FLOW_RAIL}}": flow_rail,
     }
     for key, replacement in replacements.items():
         template = template.replace(key, replacement)

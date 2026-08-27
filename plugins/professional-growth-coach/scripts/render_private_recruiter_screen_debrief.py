@@ -35,6 +35,7 @@ VALIDATOR = _sibling("validate_private_recruiter_screen_debrief.py")
 LOADER = _sibling("private_asset_loader.py")
 INPUT_LOADER = _sibling("private_input_loader.py")
 WRITER = _sibling("render_private_recruiter_followthrough_checkpoint.py")
+CONTINUITY_RAIL = _sibling("recruiter_continuity_rail.py")
 
 
 class _PrivateArgumentParser(argparse.ArgumentParser):
@@ -102,6 +103,7 @@ def render_screen_debrief_html(
     stage = labels["stages"][str(source_context["stated_stage"])]
     decision = str(value["decision"])
     action = str(value["handoff"]["next_safe_action"])
+    flow_label, flow_rail = CONTINUITY_RAIL.render_continuity_rail(str(value["locale"]), "screen_debrief")
     counts = {status: sum(1 for row in value["coverage"] if row["status"] == status) for status in ("discussed", "not_discussed", "unclear")}
     coverage_rows = "".join(
         f'<li class="debrief-coverage debrief-coverage--{html.escape(str(row["status"]))}"><strong>{html.escape(labels["topics"][str(row["topic"])])}</strong><span>{html.escape(labels[str(row["status"])])}</span></li>'
@@ -118,6 +120,7 @@ def render_screen_debrief_html(
         "{{DISCUSSED_COUNT}}": str(counts["discussed"]), "{{UNCLEAR_COUNT}}": str(counts["unclear"]), "{{DECISION}}": html.escape(labels["decision"][decision]),
         "{{NEXT_LABEL}}": html.escape(labels["next"]), "{{NEXT_ACTION}}": html.escape(labels["next_action"][action]), "{{BOUNDARY}}": html.escape(labels["boundary"]),
         "{{FOOTER}}": html.escape(labels["footer"]), "{{INLINE_CSS}}": css,
+        "{{FLOW_RAIL_LABEL}}": html.escape(flow_label), "{{FLOW_RAIL}}": flow_rail,
     }
     for key, replacement in replacements.items():
         template = template.replace(key, replacement)

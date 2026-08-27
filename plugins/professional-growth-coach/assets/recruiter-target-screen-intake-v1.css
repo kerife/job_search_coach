@@ -47,3 +47,17 @@ dd { margin: .25rem 0 0; font-weight: 700; }
 @media (forced-colors: active) { .screen-card, .screen-check { border: 2px solid CanvasText; box-shadow: none; } .screen-decision, .screen-check { border-left-color: CanvasText; } }
 @media (prefers-color-scheme: dark) { :root { color-scheme: dark; --screen-ink: #edf2fa; --screen-muted: #b9c5d8; --screen-surface: #1c2738; --screen-soft: #111927; --screen-border: #536176; } }
 @media print { html, body { background: #fff; } .screen-shell { width: 100%; padding: 0; } .screen-card { box-shadow: none; break-inside: avoid; } .skip-link { display: none; } }
+
+.continuity-rail { margin: 1rem 0 1.5rem; padding: .85rem 1rem 1rem; border: 1px solid currentColor; border-radius: .8rem; color: var(--screen-ink); }
+.continuity-rail__label { margin: 0 0 .65rem; color: var(--screen-muted); font-size: .76rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.continuity-rail ol { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .4rem; margin: 0; padding: 0; list-style: none; }
+.continuity-rail li { display: flex; min-width: 0; gap: .45rem; align-items: flex-start; padding: .55rem .45rem; border-top: .2rem solid transparent; color: var(--screen-muted); }
+.continuity-rail li[data-state="current"] { border-top-color: var(--screen-blue); background: var(--screen-soft); color: var(--screen-ink); }
+.continuity-rail__marker { display: grid; flex: 0 0 1.45rem; width: 1.45rem; height: 1.45rem; place-items: center; border: 1px solid currentColor; border-radius: 50%; font-size: .75rem; font-weight: 800; }
+.continuity-rail li[data-state="current"] .continuity-rail__marker { background: var(--screen-blue); border-color: var(--screen-blue); color: #fff; }
+.continuity-rail__copy { display: grid; gap: .15rem; min-width: 0; font-size: .8rem; line-height: 1.25; }
+.continuity-rail__copy strong { overflow-wrap: anywhere; }
+.continuity-rail__status { color: var(--screen-blue); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
+@media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
+@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(5, minmax(0, 1fr)); } }

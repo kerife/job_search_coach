@@ -33,6 +33,7 @@ VALIDATOR = _sibling("validate_private_recruiter_next_stage_review.py")
 LOADER = _sibling("private_asset_loader.py")
 INPUT_LOADER = _sibling("private_input_loader.py")
 WRITER = _sibling("render_private_recruiter_followthrough_checkpoint.py")
+CONTINUITY_RAIL = _sibling("recruiter_continuity_rail.py")
 
 
 class _PrivateArgumentParser(argparse.ArgumentParser):
@@ -63,6 +64,7 @@ def render_next_stage_review_html(value: Mapping[str, object], debrief: Mapping[
     labels = COPY[str(value["locale"])]
     source_context = intake.get("intake") if isinstance(intake.get("intake"), Mapping) else {}
     current_stage = str(source_context.get("stated_stage"))
+    flow_label, flow_rail = CONTINUITY_RAIL.render_continuity_rail(str(value["locale"]), "next_stage")
     rows = "".join(f'<li class="next-stage-check next-stage-check--{html.escape(str(row["status"]))}"><strong>{html.escape(labels["topics"].get(str(row["topic"]), ""))}</strong><span>{html.escape(labels[str(row["status"])])}</span></li>' for row in value["checklist"])
     unclear = [labels["topics"][str(row["topic"])] for row in value["checklist"] if row["status"] == "needs_clarification"]
     guidance = ""
@@ -72,7 +74,7 @@ def render_next_stage_review_html(value: Mapping[str, object], debrief: Mapping[
     summary_class = "next-stage-summary next-stage-summary--blocked" if value["review_state"] == "blocked" else "next-stage-summary"
     template = LOADER.read_private_asset(ROOT, TEMPLATE)
     css = LOADER.read_private_asset(ROOT, CSS)
-    replacements = {"{{LANG}}": html.escape(str(value["locale"])), "{{TITLE}}": html.escape(labels["title"], quote=True), "{{SKIP}}": html.escape(labels["skip"]), "{{KICKER}}": html.escape(labels["kicker"]), "{{HEADING}}": html.escape(labels["heading"]), "{{CURRENT_STAGE_LABEL}}": html.escape(labels["current_stage_label"]), "{{CURRENT_STAGE}}": html.escape(labels["stage"][current_stage]), "{{STAGE_LABEL}}": html.escape(labels["stage_label"]), "{{STAGE}}": html.escape(labels["stage"][str(value["next_stage"])]), "{{DATE_LABEL}}": html.escape(labels["date"]), "{{DATE}}": html.escape(str(value["observed_date"]), quote=True), "{{STATE}}": html.escape(labels["state"][str(value["review_state"])]), "{{SUMMARY_CLASS}}": summary_class, "{{BLOCKED_GUIDANCE}}": guidance, "{{OWNER_LABEL}}": html.escape(labels["owner"]), "{{OWNER}}": html.escape(labels["owner_value"]), "{{CHECKLIST_LABEL}}": html.escape(labels["checklist"]), "{{CHECKLIST}}": rows, "{{NEXT_LABEL}}": html.escape(labels["next"]), "{{ACTION}}": html.escape(labels["action"][str(value["handoff"]["next_safe_action"])]), "{{BOUNDARY}}": html.escape(labels["boundary"]), "{{FOOTER}}": html.escape(labels["footer"]), "{{INLINE_CSS}}": css}
+    replacements = {"{{LANG}}": html.escape(str(value["locale"])), "{{TITLE}}": html.escape(labels["title"], quote=True), "{{SKIP}}": html.escape(labels["skip"]), "{{KICKER}}": html.escape(labels["kicker"]), "{{HEADING}}": html.escape(labels["heading"]), "{{CURRENT_STAGE_LABEL}}": html.escape(labels["current_stage_label"]), "{{CURRENT_STAGE}}": html.escape(labels["stage"][current_stage]), "{{STAGE_LABEL}}": html.escape(labels["stage_label"]), "{{STAGE}}": html.escape(labels["stage"][str(value["next_stage"])]), "{{DATE_LABEL}}": html.escape(labels["date"]), "{{DATE}}": html.escape(str(value["observed_date"]), quote=True), "{{STATE}}": html.escape(labels["state"][str(value["review_state"])]), "{{SUMMARY_CLASS}}": summary_class, "{{BLOCKED_GUIDANCE}}": guidance, "{{OWNER_LABEL}}": html.escape(labels["owner"]), "{{OWNER}}": html.escape(labels["owner_value"]), "{{CHECKLIST_LABEL}}": html.escape(labels["checklist"]), "{{CHECKLIST}}": rows, "{{NEXT_LABEL}}": html.escape(labels["next"]), "{{ACTION}}": html.escape(labels["action"][str(value["handoff"]["next_safe_action"])]), "{{BOUNDARY}}": html.escape(labels["boundary"]), "{{FOOTER}}": html.escape(labels["footer"]), "{{INLINE_CSS}}": css, "{{FLOW_RAIL_LABEL}}": html.escape(flow_label), "{{FLOW_RAIL}}": flow_rail}
     for key, replacement in replacements.items():
         template = template.replace(key, replacement)
     return template

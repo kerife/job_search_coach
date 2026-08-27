@@ -20,7 +20,7 @@ This plugin has **no shared Tailwind config, CSS module system, theme provider, 
 | Dossier | light `--paper #f6f4ee`, `--forest #173e30`, `--ink #1a1a1a`, `--muted #e2ddd6`, `--muted-text #5d5a55`, `--line #c8c0b5`, `--coral #d96c52`, `--gold #be9338`, `--surface #ffffff`; dark `--paper #101521`, `--surface #182235`, `--ink #f3f6ff`, `--muted #b8c4d8`, `--muted-text #b8c4d8`, `--forest #8fc9b0`, `--coral #ff9f8d`, `--gold #f2c970`, `--line #5f718e` |
 | Practice / triage | light `--paper #f6f4ee`, `--surface #ffffff`, `--ink #1b1c1a`, `--forest #173e30`, `--forest-soft #dce5e0`, `--coral #b9513a`, `--line #b8c7c0`, `--decision-term #dfbf70`; dark `--paper #101521`, `--surface #182235`, `--ink #f3f6ff`, `--forest #8fc9b0`, `--coral #ff9f8d`, `--line #5f718e`, `--decision-term #f5d68a` |
 | Checkpoint / outcome | `--ink #172033`, `--muted #536174`, `--surface #fff`, `--accent #315bd6`, `--line #d9dfeb`; document background `#f4f6fa` |
-| Recruiter review | Five registered surfaces: shortlist, decision gate, screen intake, screen debrief, and next-stage review. The existing light/dark/status tokens remain source-of-truth and are checked as one family by `validate_design_tokens.py`; no new color is valid without an allowlist update and parity review. |
+| Recruiter review | Five registered surfaces: shortlist, decision gate, screen intake, screen debrief, and next-stage review. Their shared identity-free continuity rail uses each surface's existing text, muted, border, and accent tokens; it is checked as one family by `validate_design_tokens.py`, and no new color is valid without an allowlist update and parity review. |
 
 ### Typography and dimensions
 
@@ -33,7 +33,7 @@ This plugin has **no shared Tailwind config, CSS module system, theme provider, 
 - **Radius:** dossier/practice/triage remain square; compact receipt cards use `1rem`.
 - **Shadows:** dossier none; practice/triage `0 1px 0 rgb(23 62 48 / 10%)`; compact cards `0 .5rem 2rem rgb(23 32 51 / .08)`.
 - Learning cards lead with readable decision and option-type labels; decision basis and opportunity cost remain visible without new shadows or decorative effects.
-- Private recruiter receipts and practice sessions use a static continuity rail with textual states; compact outcome/checkpoint rails select closed copy from `next_safe_action`, use the semantic sequence Recorded/Registrado -> Pending/Pendiente -> Blocked/Bloqueada, and mark only the pending safe step with `aria-current="step"`. `record_stop_decision` renders a terminal Recorded/Registrado state with no continuation language. Rails reuse each family’s accent tokens, remain non-interactive, use surface tokens in dark mode, and preserve print, forced-colors, and higher-contrast readability.
+- Private recruiter receipts and practice sessions use static continuity rails with textual states; compact outcome/checkpoint rails select closed copy from `next_safe_action`, use the semantic sequence Recorded/Registrado -> Pending/Pendiente -> Blocked/Bloqueada, and mark only the pending safe step with `aria-current="step"`. The five recruiter target artifacts additionally share a localized five-surface orientation rail rendered by `recruiter_continuity_rail.py`; it marks only the current artifact with `aria-current="step"`, never infers completed stages, and remains non-interactive, identity-free, responsive, print-safe, forced-colors-safe, and offline. `record_stop_decision` renders a terminal Recorded/Registrado state with no continuation language. Rails reuse each family’s accent tokens, use surface tokens in dark mode, and preserve higher-contrast readability.
 - Practice and triage handoff sequences reuse the same visual state language: recorded evidence/focus, one pending or blocked private next step, and a single `aria-current="step"` marker. State remains textual and non-interactive so color is never the only signal.
 - Practice sessions also use a four-cell first-conversation readiness card with textual current/pending states; it is derived from validated state, remains private, and never becomes an action control.
 - **Breakpoints:** dossier: 900px, 680px, 480px; practice/triage: 640px; compact receipts: `min-width: 641px` (one column through 640px). All families include print, reduced-motion, forced-color, and high-contrast handling.
@@ -722,6 +722,20 @@ h2 { margin-top: 0; font-size: 1.2rem; }
 @media (max-width: 640px) { .next-stage-shell { padding: 1.25rem .75rem 2rem; } .next-stage-check { align-items: flex-start; flex-direction: column; gap: .1rem; } }
 @media print { body { background: #fff; color: #000; } .next-stage-card { break-inside: avoid; box-shadow: none; } .skip-link { display: none; } }
 @media (prefers-color-scheme: dark) { :root { --next-bg: #101820; --next-surface: #18232d; --next-text: #eef3f7; --next-muted: #b4c0ca; --next-accent: #76c7dc; --next-border: #40515e; --next-blocked: #ffc078; } }
+
+.continuity-rail { margin: 1rem 0 1.5rem; padding: .85rem 1rem 1rem; border: 1px solid currentColor; border-radius: .8rem; color: var(--next-text); }
+.continuity-rail__label { margin: 0 0 .65rem; color: var(--next-muted); font-size: .76rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.continuity-rail ol { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .4rem; margin: 0; padding: 0; list-style: none; }
+.continuity-rail li { display: flex; min-width: 0; gap: .45rem; align-items: flex-start; padding: .55rem .45rem; border-top: .2rem solid transparent; color: var(--next-muted); }
+.continuity-rail li[data-state="current"] { border-top-color: var(--next-accent); background: var(--next-bg); color: var(--next-text); }
+.continuity-rail__marker { display: grid; flex: 0 0 1.45rem; width: 1.45rem; height: 1.45rem; place-items: center; border: 1px solid currentColor; border-radius: 50%; font-size: .75rem; font-weight: 800; }
+.continuity-rail li[data-state="current"] .continuity-rail__marker { background: var(--next-accent); border-color: var(--next-accent); color: var(--next-bg); }
+.continuity-rail__copy { display: grid; gap: .15rem; min-width: 0; font-size: .8rem; line-height: 1.25; }
+.continuity-rail__copy strong { overflow-wrap: anywhere; }
+.continuity-rail__status { color: var(--next-accent); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
+@media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
+@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 ```
 
 ### `plugins/professional-growth-coach/assets/private-recruiter-screen-debrief-v1.css`
@@ -752,6 +766,20 @@ dt { color:var(--debrief-muted); font-size:.78rem; font-weight:800; letter-spaci
 @media (forced-colors:active) { .debrief-card,.debrief-coverage { border:2px solid CanvasText; box-shadow:none; } .debrief-summary,.debrief-coverage { border-left-color:CanvasText; } }
 @media (prefers-color-scheme:dark) { :root { color-scheme:dark; --debrief-ink:#edf2fa; --debrief-muted:#b9c5d8; --debrief-surface:#1c2738; --debrief-soft:#111927; --debrief-border:#536176; } }
 @media print { html,body { background:#fff; } .debrief-shell { width:100%; padding:0; } .debrief-card { box-shadow:none; break-inside:avoid; } .skip-link { display:none; } }
+
+.continuity-rail { margin: 1rem 0 1.5rem; padding: .85rem 1rem 1rem; border: 1px solid currentColor; border-radius: .8rem; color: var(--debrief-ink); }
+.continuity-rail__label { margin: 0 0 .65rem; color: var(--debrief-muted); font-size: .76rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.continuity-rail ol { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .4rem; margin: 0; padding: 0; list-style: none; }
+.continuity-rail li { display: flex; min-width: 0; gap: .45rem; align-items: flex-start; padding: .55rem .45rem; border-top: .2rem solid transparent; color: var(--debrief-muted); }
+.continuity-rail li[data-state="current"] { border-top-color: var(--debrief-blue); background: var(--debrief-soft); color: var(--debrief-ink); }
+.continuity-rail__marker { display: grid; flex: 0 0 1.45rem; width: 1.45rem; height: 1.45rem; place-items: center; border: 1px solid currentColor; border-radius: 50%; font-size: .75rem; font-weight: 800; }
+.continuity-rail li[data-state="current"] .continuity-rail__marker { background: var(--debrief-blue); border-color: var(--debrief-blue); color: #fff; }
+.continuity-rail__copy { display: grid; gap: .15rem; min-width: 0; font-size: .8rem; line-height: 1.25; }
+.continuity-rail__copy strong { overflow-wrap: anywhere; }
+.continuity-rail__status { color: var(--debrief-blue); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
+@media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
+@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 ```
 
 ### `plugins/professional-growth-coach/assets/recruiter-target-screen-intake-v1.css`
@@ -806,6 +834,20 @@ dd { margin: .25rem 0 0; font-weight: 700; }
 @media (forced-colors: active) { .screen-card, .screen-check { border: 2px solid CanvasText; box-shadow: none; } .screen-decision, .screen-check { border-left-color: CanvasText; } }
 @media (prefers-color-scheme: dark) { :root { color-scheme: dark; --screen-ink: #edf2fa; --screen-muted: #b9c5d8; --screen-surface: #1c2738; --screen-soft: #111927; --screen-border: #536176; } }
 @media print { html, body { background: #fff; } .screen-shell { width: 100%; padding: 0; } .screen-card { box-shadow: none; break-inside: avoid; } .skip-link { display: none; } }
+
+.continuity-rail { margin: 1rem 0 1.5rem; padding: .85rem 1rem 1rem; border: 1px solid currentColor; border-radius: .8rem; color: var(--screen-ink); }
+.continuity-rail__label { margin: 0 0 .65rem; color: var(--screen-muted); font-size: .76rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.continuity-rail ol { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .4rem; margin: 0; padding: 0; list-style: none; }
+.continuity-rail li { display: flex; min-width: 0; gap: .45rem; align-items: flex-start; padding: .55rem .45rem; border-top: .2rem solid transparent; color: var(--screen-muted); }
+.continuity-rail li[data-state="current"] { border-top-color: var(--screen-blue); background: var(--screen-soft); color: var(--screen-ink); }
+.continuity-rail__marker { display: grid; flex: 0 0 1.45rem; width: 1.45rem; height: 1.45rem; place-items: center; border: 1px solid currentColor; border-radius: 50%; font-size: .75rem; font-weight: 800; }
+.continuity-rail li[data-state="current"] .continuity-rail__marker { background: var(--screen-blue); border-color: var(--screen-blue); color: #fff; }
+.continuity-rail__copy { display: grid; gap: .15rem; min-width: 0; font-size: .8rem; line-height: 1.25; }
+.continuity-rail__copy strong { overflow-wrap: anywhere; }
+.continuity-rail__status { color: var(--screen-blue); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
+@media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
+@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 ```
 
 ### `plugins/professional-growth-coach/assets/career-market-learning-dossier-v1.css`
@@ -1915,6 +1957,20 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
   .shortlist-footer { break-inside: avoid; page-break-inside: avoid; }
   .skip-link { display: none; }
 }
+
+.continuity-rail { margin: 1rem 0 1.5rem; padding: .85rem 1rem 1rem; border: 1px solid currentColor; border-radius: .8rem; color: var(--ink); }
+.continuity-rail__label { margin: 0 0 .65rem; color: var(--muted); font-size: .76rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.continuity-rail ol { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .4rem; margin: 0; padding: 0; list-style: none; }
+.continuity-rail li { display: flex; min-width: 0; gap: .45rem; align-items: flex-start; padding: .55rem .45rem; border-top: .2rem solid transparent; color: var(--muted); }
+.continuity-rail li[data-state="current"] { border-top-color: var(--accent); background: var(--canvas); color: var(--ink); }
+.continuity-rail__marker { display: grid; flex: 0 0 1.45rem; width: 1.45rem; height: 1.45rem; place-items: center; border: 1px solid currentColor; border-radius: 50%; font-size: .75rem; font-weight: 800; }
+.continuity-rail li[data-state="current"] .continuity-rail__marker { background: var(--accent); border-color: var(--accent); color: #fff; }
+.continuity-rail__copy { display: grid; gap: .15rem; min-width: 0; font-size: .8rem; line-height: 1.25; }
+.continuity-rail__copy strong { overflow-wrap: anywhere; }
+.continuity-rail__status { color: var(--accent); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
+@media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
+@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 ```
 
 ### `plugins/professional-growth-coach/assets/recruiter-target-decision-gate-v1.css`
@@ -2002,4 +2058,18 @@ dd { margin: .2rem 0 0; }
   .gate-card, .gate-row { box-shadow: none; break-inside: avoid; }
   .skip-link { display: none; }
 }
+
+.continuity-rail { margin: 1rem 0 1.5rem; padding: .85rem 1rem 1rem; border: 1px solid currentColor; border-radius: .8rem; color: var(--ink); }
+.continuity-rail__label { margin: 0 0 .65rem; color: var(--muted); font-size: .76rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.continuity-rail ol { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .4rem; margin: 0; padding: 0; list-style: none; }
+.continuity-rail li { display: flex; min-width: 0; gap: .45rem; align-items: flex-start; padding: .55rem .45rem; border-top: .2rem solid transparent; color: var(--muted); }
+.continuity-rail li[data-state="current"] { border-top-color: var(--accent); background: var(--canvas); color: var(--ink); }
+.continuity-rail__marker { display: grid; flex: 0 0 1.45rem; width: 1.45rem; height: 1.45rem; place-items: center; border: 1px solid currentColor; border-radius: 50%; font-size: .75rem; font-weight: 800; }
+.continuity-rail li[data-state="current"] .continuity-rail__marker { background: var(--accent); border-color: var(--accent); color: #fff; }
+.continuity-rail__copy { display: grid; gap: .15rem; min-width: 0; font-size: .8rem; line-height: 1.25; }
+.continuity-rail__copy strong { overflow-wrap: anywhere; }
+.continuity-rail__status { color: var(--accent); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
+@media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
+@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 ```
