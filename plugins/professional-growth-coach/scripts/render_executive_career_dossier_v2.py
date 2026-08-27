@@ -152,6 +152,9 @@ COPY = {
         "market_body": "Este dossier no incluye evidencia de mercado. Continúa con la evidencia del perfil ya revisada.",
         "market_summary": "Muestra de vacantes revisada",
         "market_alignment": "Alineación documentada",
+        "market_evidence_coverage": "Cobertura de evidencia",
+        "market_qualitative_band": "Banda cualitativa",
+        "market_directional_legend": "La evidencia es direccional y no representa ajuste de contratación.",
         "market_evidence": "Evidencia del perfil",
         "market_recurrence": "Recurrencia en esta muestra",
         "market_matrix": "Matriz de requisitos y evidencia",
@@ -167,6 +170,15 @@ COPY = {
         "learning_decision_label": "Decisión",
         "learning_frequency": "Frecuencia de la muestra",
         "learning_option_type": "Tipo de opción",
+        "learning_provenance": "Contexto de procedencia",
+        "learning_provider": "Proveedor",
+        "learning_option": "Opción",
+        "learning_source_title": "Título de la fuente",
+        "learning_source_date": "Fecha de la fuente",
+        "learning_geography": "Geografía",
+        "learning_role": "Rol",
+        "learning_seniority": "Senioridad",
+        "learning_unknowns": "Desconocidos",
         "learning_decision_basis": "Base de decisión",
         "learning_opportunity_cost": "Costo de oportunidad",
         "learning_provider_synthetic": "Proveedor sintético: no es evidencia actual de disponibilidad, precio ni certificación.",
@@ -189,6 +201,9 @@ COPY = {
         "market_body": "This dossier includes no market evidence. Continue with the profile evidence already reviewed.",
         "market_summary": "Reviewed vacancy sample",
         "market_alignment": "Documented alignment",
+        "market_evidence_coverage": "Evidence coverage",
+        "market_qualitative_band": "Qualitative band",
+        "market_directional_legend": "Evidence is directional and does not represent hiring fit.",
         "market_evidence": "Profile evidence",
         "market_recurrence": "Recurrence in this sample",
         "market_matrix": "Requirements and evidence matrix",
@@ -204,6 +219,15 @@ COPY = {
         "learning_decision_label": "Decision",
         "learning_frequency": "Sample frequency",
         "learning_option_type": "Option type",
+        "learning_provenance": "Provenance context",
+        "learning_provider": "Provider",
+        "learning_option": "Option",
+        "learning_source_title": "Source title",
+        "learning_source_date": "Source date",
+        "learning_geography": "Geography",
+        "learning_role": "Role",
+        "learning_seniority": "Seniority",
+        "learning_unknowns": "Unknowns",
         "learning_decision_basis": "Decision basis",
         "learning_opportunity_cost": "Opportunity cost",
         "learning_provider_synthetic": "Synthetic provider: not current evidence of availability, price, or certification.",
@@ -226,6 +250,13 @@ MATRIX_STATE_COPY = {
     "explicit_gap": ("!", "Brecha confirmada", "Confirmed gap"),
     "unknown": ("?", "No verificado", "Not verified"),
     "not_required": ("—", "No solicitado", "Not requested"),
+}
+
+QUALITATIVE_BAND_COPY = {
+    "higher_documented_alignment": ("Mayor alineación documentada", "Higher documented alignment"),
+    "moderate_documented_alignment": ("Alineación documentada moderada", "Moderate documented alignment"),
+    "lower_documented_alignment": ("Menor alineación documentada", "Lower documented alignment"),
+    "insufficient_evidence": ("Evidencia insuficiente", "Insufficient evidence"),
 }
 
 
@@ -389,7 +420,7 @@ def _render_learning_roi(market_dossier: Mapping[str, object], locale: str) -> s
         for row in BASE._rows(market_dossier["learning_options"])
     }
     decision_rows: list[str] = []
-    for row_value in BASE._rows(market_dossier["learning_decisions"]):
+    for index, row_value in enumerate(BASE._rows(market_dossier["learning_decisions"]), start=1):
         row = BASE._mapping(row_value)
         option = options[str(row["option_id"])]
         decision_class = {
@@ -400,8 +431,30 @@ def _render_learning_roi(market_dossier: Mapping[str, object], locale: str) -> s
             "pause": "pause",
             "apply_with_boundary": "apply-with-boundary",
         }[str(row["decision"])]
+        provenance_values = (
+            ("learning_provider", option.get("provider")),
+            ("learning_option", option.get("option")),
+            ("learning_source_title", option.get("source_title")),
+            ("learning_source_date", option.get("source_date")),
+            ("learning_geography", option.get("geography")),
+            ("learning_role", option.get("role")),
+            ("learning_seniority", option.get("seniority")),
+        )
+        provenance_rows = "".join(
+            f"<dt>{labels[label]}</dt><dd>{_learning_text(value)}</dd>"
+            for label, value in provenance_values
+            if value is not None and str(value).strip()
+        )
+        unknowns = option.get("unknowns")
+        if isinstance(unknowns, (list, tuple)) and unknowns:
+            provenance_rows += f"<dt>{labels['learning_unknowns']}</dt><dd>{_learning_text('; '.join(str(value) for value in unknowns))}</dd>"
+        provenance = f'''<section class="learning-provenance" aria-labelledby="learning-provenance-title-{index}">
+            <h5 id="learning-provenance-title-{index}">{labels['learning_provenance']}</h5>
+            <dl class="learning-provenance-facts">{provenance_rows}</dl>
+          </section>'''
         decision_rows.append(f'''<article class="learning-decision-row learning-decision-row--{decision_class}" data-decision="{_learning_text(row['decision'])}" data-option-type="{_learning_text(row['option_type'])}">
           <header class="learning-decision-heading"><div><span class="learning-decision-kicker">{labels['learning_decision_label']}</span><h4>{copy_labels[str(row['decision'])]}</h4></div><span class="learning-option-type">{copy_labels[str(row['option_type'])]}</span></header>
+          {provenance}
           <dl class="learning-decision-facts">
             <dt>{labels['learning_frequency']}</dt><dd>{_learning_text(row['frequency_display'])}</dd>
             <dt>{labels['learning_option_type']}</dt><dd>{copy_labels[str(row['option_type'])]}</dd>
@@ -460,11 +513,22 @@ def _render_market_context(market_dossier: Mapping[str, object], locale: str) ->
         employer = html.escape(str(card["employer_name"]), quote=True)
         title = html.escape(str(card["title"]), quote=True)
         score = int(card["alignment_percent"])
+        coverage = card.get("evidence_coverage_percent")
+        band = card.get("qualitative_band")
         score_id = f"market-alignment-score-{index}"
+        alignment_facts = [
+            f'<dt>{labels["market_alignment"]}</dt><dd>{score} {"de" if locale == "es" else "out of"} 100</dd>',
+        ]
+        if coverage is not None:
+            alignment_facts.append(f'<dt>{labels["market_evidence_coverage"]}</dt><dd>{int(coverage)}%</dd>')
+        if band is not None:
+            spanish_band, english_band = QUALITATIVE_BAND_COPY.get(str(band), QUALITATIVE_BAND_COPY["insufficient_evidence"])
+            alignment_facts.append(f'<dt>{labels["market_qualitative_band"]}</dt><dd>{spanish_band if locale == "es" else english_band}</dd>')
         card_html.append(f'''<article class="vacancy-alignment-card" aria-labelledby="{heading_id}">
           <p class="market-vacancy-key">{short_key}</p><h3 id="{heading_id}">{employer} — {title}</h3>
           <p class="market-alignment-line"><span>{labels['market_alignment']}</span><strong class="market-alignment-score" id="{score_id}">{score} {'de' if locale == 'es' else 'out of'} 100</strong></p>
           <progress max="100" value="{score}" aria-labelledby="{heading_id} {score_id}">{score}</progress>
+          <dl class="market-alignment-facts">{''.join(alignment_facts)}</dl>
         </article>''')
         key_rows.append(f"<li><strong>{short_key}</strong> — {employer} — {title}</li>")
 
@@ -507,7 +571,7 @@ def _render_market_context(market_dossier: Mapping[str, object], locale: str) ->
     learning_surface = _render_learning_roi(market_dossier, locale)
     return f'''<section class="market-summary section-block" aria-labelledby="market-summary-title">
       <h2 id="market-summary-title">{labels['market_summary']}</h2>
-      <p>{len(cards)} {'vacantes' if locale == 'es' else 'vacancies'}</p>{synthetic_boundary}{limitation}
+      <p>{len(cards)} {'vacantes' if locale == 'es' else 'vacancies'}</p><p class="market-directional-legend market-boundary">{labels['market_directional_legend']}</p>{synthetic_boundary}{limitation}
       <div class="vacancy-alignment-list">{''.join(card_html)}</div>
       <section class="market-key" aria-labelledby="market-key-title"><h3 id="market-key-title">{labels['market_key']}</h3><ol>{''.join(key_rows)}</ol></section>
       <section class="market-matrix-wrap" aria-labelledby="market-matrix-title"><h3 id="market-matrix-title">{labels['market_matrix']}</h3>

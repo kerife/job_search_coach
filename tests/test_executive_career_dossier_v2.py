@@ -745,6 +745,10 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         self.assertIn('class="market-matrix"', rendered)
         self.assertIn('class="recurrence-row"', rendered)
         self.assertIn('class="gap-closure-route"', rendered)
+        self.assertEqual(rendered.count('class="market-alignment-facts"'), 5)
+        self.assertEqual(rendered.count("Cobertura de evidencia"), 5)
+        self.assertEqual(rendered.count("Banda cualitativa"), 5)
+        self.assertIn("La evidencia es direccional y no representa ajuste de contratación.", visible_text(rendered))
         for short_key in ("V1", "V2", "V3", "V4", "V5"):
             self.assertIn(f">{short_key}<", rendered)
         self.assertIn("Evidencia directa", rendered)
@@ -801,6 +805,22 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         self.assertIn("decision-basis", rendered)
         self.assertIn("opportunity-cost", rendered)
         self.assertIn("market-provider-evidence-boundary", rendered)
+
+    def test_learning_cards_expose_provenance_context_and_omit_empty_unknowns(self) -> None:
+        dossier = make_v2_dossier("es")
+        market = make_composable_learning_market_dossier("project-first-five-es.json", dossier, self.renderer)
+        rendered = self.renderer.render_dossier_html(dossier, market)
+        self.assertEqual(rendered.count('class="learning-provenance"'), len(market["learning_decisions"]))
+        rendered_option_ids = {row["option_id"] for row in market["learning_decisions"]}
+        for option in market["learning_options"]:
+            if option["option_id"] not in rendered_option_ids:
+                continue
+            for value in (option["provider"], option["option"], option["source_title"], option["source_date"], option["geography"]):
+                self.assertIn(str(value), rendered)
+        self.assertIn("Contexto de procedencia", visible_text(rendered))
+        self.assertIn("Desconocidos", visible_text(rendered))
+        self.assertNotIn("<dd></dd>", rendered)
+        self.assertNotIn("Desconocidos</dt><dd></dd>", rendered)
 
     def test_market_v1_keeps_its_existing_gap_route_without_learning_decisions(self) -> None:
         dossier = make_v2_dossier("en")

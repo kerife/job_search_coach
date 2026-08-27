@@ -121,6 +121,10 @@ forced-colors, and narrow layouts.
 Each learning card also leads with the decision and option type, then exposes
 its decision basis and opportunity cost. Synthetic provider research receives
 an explicit non-current-provider boundary in the rendered dossier.
+Each evaluated card now includes provider, option, source title/date, geography,
+role, seniority, and any recorded unknowns when present. Vacancy cards expose
+documented alignment alongside evidence coverage and qualitative band; the
+visible legend keeps this directional evidence separate from hiring fit.
 
 Private recruiter outcome receipts, follow-through checkpoints, and practice
 sessions also include a static, localized continuity rail. Compact outcome and
