@@ -1579,8 +1579,45 @@ dd { margin: .15rem 0 0; font-weight: 600; }
 ### `plugins/professional-growth-coach/assets/executive-career-dossier-v2.css`
 
 ```css
+.reading-path {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding: .75rem 1rem;
+  border: 1px solid var(--forest-soft);
+  background: var(--surface);
+}
+.reading-path-title {
+  color: var(--forest);
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.reading-path ol {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+  gap: .5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.reading-path a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  padding: .55rem .8rem;
+  border: 1px solid var(--line);
+  color: var(--forest);
+  font-weight: 700;
+  text-decoration: none;
+}
+.reading-path a:hover { background: var(--forest-soft); }
+
 .section-coverage-list { display: grid; gap: .75rem; margin: 0; padding: 0; list-style: none; }
-.section-coverage-ledger, .coach-priorities { min-width: 0; }
+.section-coverage-ledger, .coach-priorities, .reading-path { min-width: 0; }
 .section-coverage-row { min-width: 0; overflow-wrap: anywhere; }
 .section-coverage-row article { padding: 1rem; border: 1px solid var(--forest-soft); background: var(--surface); }
 .section-coverage-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem 1rem; }
@@ -1602,30 +1639,34 @@ dd { margin: .15rem 0 0; font-weight: 600; }
 
 @media (max-width: 480px) {
   .section-coverage-facts { grid-template-columns: 1fr; }
-  .section-coverage-ledger, .section-coverage-list, .section-coverage-row, .section-coverage-row article, .coach-priorities, .coach-priority-card, .coach-template { min-width: 0; }
+  .section-coverage-ledger, .section-coverage-list, .section-coverage-row, .section-coverage-row article, .coach-priorities, .coach-priority-card, .coach-template, .reading-path { min-width: 0; }
 }
 
 @media screen and (max-width: 640px) {
+  .reading-path { align-items: stretch; flex-direction: column; }
+  .reading-path ol { display: grid; grid-template-columns: 1fr; justify-content: stretch; }
+  .reading-path a { justify-content: center; }
   .section-coverage-facts { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .section-coverage-row article, .coach-priority-card, .coach-template { animation: none !important; transition: none !important; transform: none !important; }
+  .section-coverage-row article, .coach-priority-card, .coach-template, .reading-path { animation: none !important; transition: none !important; transform: none !important; }
 }
 
 @media print {
-  .section-coverage-row, .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card { break-inside: avoid; page-break-inside: avoid; }
+  .reading-path, .section-coverage-row, .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card { break-inside: avoid; page-break-inside: avoid; }
 }
 
 @media (forced-colors: active) {
-  .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card { background: Canvas; color: CanvasText; border-color: CanvasText; }
+  .reading-path, .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card { background: Canvas; color: CanvasText; border-color: CanvasText; }
+  .reading-path a { color: LinkText; border-color: CanvasText; }
   .section-coverage-request, .coach-template { border-left-color: Highlight; }
   .coach-priority-card { border-top-color: Highlight; }
   main:focus-visible { outline-color: Highlight; }
 }
 
 @media (prefers-contrast: more) {
-  .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card { border-width: 2px; }
+  .reading-path, .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card { border-width: 2px; }
   .section-coverage-request, .coach-template { border-left-width: 5px; }
   .coach-priority-card { border-top-width: 5px; }
 }
