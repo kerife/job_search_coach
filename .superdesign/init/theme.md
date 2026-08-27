@@ -20,7 +20,7 @@ This plugin has **no shared Tailwind config, CSS module system, theme provider, 
 | Dossier | light `--paper #f6f4ee`, `--forest #173e30`, `--ink #1a1a1a`, `--muted #e2ddd6`, `--muted-text #5d5a55`, `--line #c8c0b5`, `--coral #d96c52`, `--gold #be9338`, `--surface #ffffff`; dark `--paper #101521`, `--surface #182235`, `--ink #f3f6ff`, `--muted #b8c4d8`, `--muted-text #b8c4d8`, `--forest #8fc9b0`, `--coral #ff9f8d`, `--gold #f2c970`, `--line #5f718e` |
 | Practice / triage | light `--paper #f6f4ee`, `--surface #ffffff`, `--ink #1b1c1a`, `--forest #173e30`, `--forest-soft #dce5e0`, `--coral #b9513a`, `--line #b8c7c0`, `--decision-term #dfbf70`; dark `--paper #101521`, `--surface #182235`, `--ink #f3f6ff`, `--forest #8fc9b0`, `--coral #ff9f8d`, `--line #5f718e`, `--decision-term #f5d68a` |
 | Checkpoint / outcome | `--ink #172033`, `--muted #536174`, `--surface #fff`, `--accent #315bd6`, `--line #d9dfeb`; document background `#f4f6fa` |
-| Recruiter review | Five registered surfaces: shortlist, decision gate, screen intake, screen debrief, and next-stage review. Their shared identity-free continuity rail uses each surface's existing text, muted, border, and accent tokens; it is checked as one family by `validate_design_tokens.py`, and no new color is valid without an allowlist update and parity review. |
+| Recruiter review | Five registered surfaces: shortlist, decision gate, screen intake, screen debrief, and next-stage review. Their shared identity-free continuity rail uses each surface's existing text, muted, border, and accent tokens; shortlist and decision-gate dark markers use `--continuity-marker-ink` for WCAG-safe text on bright accents. It is checked as one family by `validate_design_tokens.py`, and no new color is valid without an allowlist update and parity review. |
 
 ### Typography and dimensions
 
@@ -1874,6 +1874,7 @@ dd { margin: .15rem 0 0; font-weight: 600; }
   --muted: #5c6975;
   --line: #cbd5dc;
   --accent: #0b6477;
+  --continuity-marker-ink: #fff;
   --advance: #157347;
   --clarify: #9a6700;
   --pause: #7057a2;
@@ -1939,7 +1940,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
   .shortlist-card, .shortlist-decision-count, .target-shortlist-card { box-shadow: none; border-width: 2px; }
 }
 @media (prefers-color-scheme: dark) {
-  :root { --canvas: #10171d; --surface: #17212b; --ink: #ecf2f6; --muted: #adbac4; --line: #3b4a55; --accent: #75d2e4; --advance: #69d39a; --clarify: #e7bd65; --pause: #c5a7f4; --stop: #ff938a; }
+  :root { --canvas: #10171d; --surface: #17212b; --ink: #ecf2f6; --muted: #adbac4; --line: #3b4a55; --accent: #75d2e4; --continuity-marker-ink: #10232a; --advance: #69d39a; --clarify: #e7bd65; --pause: #c5a7f4; --stop: #ff938a; }
   .shortlist-card { box-shadow: none; }
   .shortlist-priority-card { background: #20313b; }
 }
@@ -1964,7 +1965,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
 .continuity-rail li { display: flex; min-width: 0; gap: .45rem; align-items: flex-start; padding: .55rem .45rem; border-top: .2rem solid transparent; color: var(--muted); }
 .continuity-rail li[data-state="current"] { border-top-color: var(--accent); background: var(--canvas); color: var(--ink); }
 .continuity-rail__marker { display: grid; flex: 0 0 1.45rem; width: 1.45rem; height: 1.45rem; place-items: center; border: 1px solid currentColor; border-radius: 50%; font-size: .75rem; font-weight: 800; }
-.continuity-rail li[data-state="current"] .continuity-rail__marker { background: var(--accent); border-color: var(--accent); color: #fff; }
+.continuity-rail li[data-state="current"] .continuity-rail__marker { background: var(--accent); border-color: var(--accent); color: var(--continuity-marker-ink); }
 .continuity-rail__copy { display: grid; gap: .15rem; min-width: 0; font-size: .8rem; line-height: 1.25; }
 .continuity-rail__copy strong { overflow-wrap: anywhere; }
 .continuity-rail__status { color: var(--accent); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
@@ -1984,6 +1985,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
   --muted: #536174;
   --line: #d9dfeb;
   --accent: #315bd6;
+  --continuity-marker-ink: #fff;
   --accent-soft: #b8c4d8;
   --dark-canvas: #101521;
   --dark-surface: #182235;
@@ -2039,7 +2041,7 @@ dd { margin: .2rem 0 0; }
   .gate-overview-grid, .gate-counts, .gate-row-facts { grid-template-columns: 1fr; }
 }
 @media (prefers-color-scheme: dark) {
-  :root { --canvas: var(--dark-canvas); --surface: var(--dark-surface); --ink: var(--dark-ink); --muted: var(--dark-muted); --line: #5f718e; --accent: #8eb2ff; --accent-soft: #b8c4d8; }
+  :root { --canvas: var(--dark-canvas); --surface: var(--dark-surface); --ink: var(--dark-ink); --muted: var(--dark-muted); --line: #5f718e; --accent: #8eb2ff; --continuity-marker-ink: #101a35; --accent-soft: #b8c4d8; }
   .gate-card, .gate-row { box-shadow: none; }
 }
 @media (prefers-contrast: more) {
@@ -2065,7 +2067,7 @@ dd { margin: .2rem 0 0; }
 .continuity-rail li { display: flex; min-width: 0; gap: .45rem; align-items: flex-start; padding: .55rem .45rem; border-top: .2rem solid transparent; color: var(--muted); }
 .continuity-rail li[data-state="current"] { border-top-color: var(--accent); background: var(--canvas); color: var(--ink); }
 .continuity-rail__marker { display: grid; flex: 0 0 1.45rem; width: 1.45rem; height: 1.45rem; place-items: center; border: 1px solid currentColor; border-radius: 50%; font-size: .75rem; font-weight: 800; }
-.continuity-rail li[data-state="current"] .continuity-rail__marker { background: var(--accent); border-color: var(--accent); color: #fff; }
+.continuity-rail li[data-state="current"] .continuity-rail__marker { background: var(--accent); border-color: var(--accent); color: var(--continuity-marker-ink); }
 .continuity-rail__copy { display: grid; gap: .15rem; min-width: 0; font-size: .8rem; line-height: 1.25; }
 .continuity-rail__copy strong { overflow-wrap: anywhere; }
 .continuity-rail__status { color: var(--accent); font-size: .7rem; font-weight: 800; text-transform: uppercase; }

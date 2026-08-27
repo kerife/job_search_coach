@@ -107,6 +107,19 @@ class DarkModeAccessibilityTests(unittest.TestCase):
                 self.assertGreaterEqual(_contrast(foreground, TOKENS["--surface"]), 4.5)
         self.assertGreaterEqual(_contrast(TOKENS["--line"], TOKENS["--surface"]), 3.0)
 
+    def test_recruiter_continuity_markers_meet_dark_mode_contrast_floor(self) -> None:
+        cases = (
+            ("recruiter-target-shortlist-v1.css", "#75d2e4", "#10232a"),
+            ("recruiter-target-decision-gate-v1.css", "#8eb2ff", "#101a35"),
+        )
+        for filename, accent, marker_ink in cases:
+            with self.subTest(filename=filename):
+                css = (ASSETS / filename).read_text(encoding="utf-8")
+                dark = css[css.index("@media (prefers-color-scheme: dark)"):css.index("@media print")]
+                self.assertIn(f"--continuity-marker-ink: {marker_ink};", dark)
+                self.assertIn("color: var(--continuity-marker-ink);", css)
+                self.assertGreaterEqual(_contrast(accent, marker_ink), 4.5)
+
     def test_forced_colors_keeps_footer_boundary_readable(self) -> None:
         selectors = {
             "executive-career-dossier-v1.css": ".footer",

@@ -6,6 +6,7 @@
   --muted: #5c6975;
   --line: #cbd5dc;
   --accent: #0b6477;
+  --continuity-marker-ink: #fff;
   --advance: #157347;
   --clarify: #9a6700;
   --pause: #7057a2;
@@ -71,7 +72,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
   .shortlist-card, .shortlist-decision-count, .target-shortlist-card { box-shadow: none; border-width: 2px; }
 }
 @media (prefers-color-scheme: dark) {
-  :root { --canvas: #10171d; --surface: #17212b; --ink: #ecf2f6; --muted: #adbac4; --line: #3b4a55; --accent: #75d2e4; --advance: #69d39a; --clarify: #e7bd65; --pause: #c5a7f4; --stop: #ff938a; }
+  :root { --canvas: #10171d; --surface: #17212b; --ink: #ecf2f6; --muted: #adbac4; --line: #3b4a55; --accent: #75d2e4; --continuity-marker-ink: #10232a; --advance: #69d39a; --clarify: #e7bd65; --pause: #c5a7f4; --stop: #ff938a; }
   .shortlist-card { box-shadow: none; }
   .shortlist-priority-card { background: #20313b; }
 }
@@ -96,7 +97,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
 .continuity-rail li { display: flex; min-width: 0; gap: .45rem; align-items: flex-start; padding: .55rem .45rem; border-top: .2rem solid transparent; color: var(--muted); }
 .continuity-rail li[data-state="current"] { border-top-color: var(--accent); background: var(--canvas); color: var(--ink); }
 .continuity-rail__marker { display: grid; flex: 0 0 1.45rem; width: 1.45rem; height: 1.45rem; place-items: center; border: 1px solid currentColor; border-radius: 50%; font-size: .75rem; font-weight: 800; }
-.continuity-rail li[data-state="current"] .continuity-rail__marker { background: var(--accent); border-color: var(--accent); color: #fff; }
+.continuity-rail li[data-state="current"] .continuity-rail__marker { background: var(--accent); border-color: var(--accent); color: var(--continuity-marker-ink); }
 .continuity-rail__copy { display: grid; gap: .15rem; min-width: 0; font-size: .8rem; line-height: 1.25; }
 .continuity-rail__copy strong { overflow-wrap: anywhere; }
 .continuity-rail__status { color: var(--accent); font-size: .7rem; font-weight: 800; text-transform: uppercase; }

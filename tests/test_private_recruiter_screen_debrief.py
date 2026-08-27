@@ -103,6 +103,32 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
         mismatched_intake["intake"]["stated_stage"] = "technical_screen"
         self.assertIsNone(route_recruiter_screen_debrief_intake(valid_checkpoint(), RECEIPT, mismatched_intake)["artifact"])
 
+    def test_interview_requested_debrief_intake_preserves_event_context(self) -> None:
+        receipt = copy.deepcopy(RECEIPT)
+        receipt["event_type"] = "interview_requested"
+        receipt["next_safe_action"] = "route_to_prepare-role-interviews"
+        checkpoint = valid_checkpoint()
+        checkpoint["source_receipt"]["event_type"] = "interview_requested"
+        routed = route_recruiter_screen_debrief_intake(checkpoint, receipt, self.intake)
+        self.assertEqual("collect_debrief_context", routed["next_action"])
+        self.assertIsNone(routed["artifact"])
+        self.assertIn("Entrevista registrada", routed["intake_question"])
+        english_gate = build_decision_gate(build_shortlist("en", "2026-08-27", valid_plan(), valid_targets()))
+        english_intake = build_screen_intake(english_gate, "T-001", valid_screen_intake())
+        english = route_recruiter_screen_debrief_intake(checkpoint, receipt, english_intake)
+        self.assertIn("Interview request recorded", english["intake_question"])
+
+    def test_interview_requested_debrief_intake_preserves_event_context(self) -> None:
+        receipt = copy.deepcopy(RECEIPT)
+        receipt["event_type"] = "interview_requested"
+        receipt["next_safe_action"] = "route_to_prepare-role-interviews"
+        checkpoint = valid_checkpoint()
+        checkpoint["source_receipt"]["event_type"] = "interview_requested"
+        routed = route_recruiter_screen_debrief_intake(checkpoint, receipt, self.intake)
+        self.assertEqual("collect_debrief_context", routed["next_action"])
+        self.assertIsNone(routed["artifact"])
+        self.assertIn("Entrevista registrada", routed["intake_question"])
+
     def test_complete_debrief_allows_manual_next_stage_review(self) -> None:
         artifact = build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, valid_debrief())
         self.assertEqual([], validate_screen_debrief(artifact, RECEIPT, self.intake, as_of=date(2026, 8, 27)))

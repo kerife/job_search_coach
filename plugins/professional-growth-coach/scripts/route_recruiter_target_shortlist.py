@@ -59,6 +59,7 @@ HANDOFF_QUESTIONS = {
         "recruiter_target_screen_intake": "Comparte el contexto específico del objetivo: etapa, requisitos V-###, hechos F-###, estado de evidencia de empresa y los cuatro checks de preparación.",
         "private_recruiter_screen_debrief": "Comparte el checkpoint de pantalla atendida, su receipt, el intake del objetivo y un debrief estructurado de cobertura, temas desconocidos y decisión.",
         "private_recruiter_screen_debrief_intake": "Filtro atendido. Registra ahora cobertura de requisito, alcance y contexto del equipo.",
+        "private_recruiter_interview_debrief_intake": "Entrevista registrada. Confirma la etapa y registra cobertura de requisito, alcance y contexto del equipo.",
         "private_recruiter_next_stage_review": "Comparte un debrief válido con su checkpoint y elige una etapa posterior permitida para la revisión manual.",
         "forward_stage_transition": "El debrief es válido; elige una etapa posterior permitida para continuar la revisión manual. No se envían mensajes ni se agendan eventos.",
         "terminal_stage": "La etapa de oferta es terminal en este flujo; no hay una etapa posterior permitida. Registra el cierre o inicia un caso nuevo si necesitas preparar otro proceso.",
@@ -68,6 +69,7 @@ HANDOFF_QUESTIONS = {
         "recruiter_target_screen_intake": "Share target-specific context: stage, V-### requirements, F-### facts, company-evidence state, and the four readiness checks.",
         "private_recruiter_screen_debrief": "Share the attended-screen checkpoint, its receipt, the target intake, and a structured debrief covering topics, unknowns, and decision.",
         "private_recruiter_screen_debrief_intake": "Screen attended. Capture requirement coverage, scope, and team context.",
+        "private_recruiter_interview_debrief_intake": "Interview request recorded. Confirm the stage and capture requirement coverage, scope, and team context.",
         "private_recruiter_next_stage_review": "Share a valid debrief with its checkpoint and choose an allowed forward stage for manual review.",
         "forward_stage_transition": "The debrief is valid; choose an allowed forward stage to continue manual review. No messages are sent and no events are scheduled.",
         "terminal_stage": "Offer stage is terminal in this flow; no later stage is allowed. Record the close or start a new case if you need to prepare another process.",
@@ -325,6 +327,11 @@ def route_recruiter_screen_debrief_intake(
 ) -> dict[str, object]:
     """Start a bounded, artifact-free debrief after a validated attended screen."""
     locale = _safe_locale(intake)
+    question_key = (
+        "private_recruiter_interview_debrief_intake"
+        if isinstance(receipt, Mapping) and receipt.get("event_type") == "interview_requested"
+        else "private_recruiter_screen_debrief_intake"
+    )
     try:
         if not all(isinstance(value, Mapping) for value in (checkpoint, receipt, intake)):
             raise ValueError("debrief intake inputs are unavailable")
@@ -343,8 +350,8 @@ def route_recruiter_screen_debrief_intake(
             raise ValueError("screen attendance is not observed")
         if checkpoint.get("next_safe_action") != "debrief_after_screen":
             raise ValueError("checkpoint is not ready for debrief")
-        if receipt.get("event_type") != "screen_requested":
-            raise ValueError("receipt is not a screen request")
+        if receipt.get("event_type") not in {"screen_requested", "interview_requested"}:
+            raise ValueError("receipt is not an interview request")
         if intake.get("readiness_decision") != "ready":
             raise ValueError("screen intake is not ready")
         if checkpoint.get("locale") != receipt.get("locale"):
@@ -355,7 +362,7 @@ def route_recruiter_screen_debrief_intake(
             selected_module="track-career-outcomes",
             next_action="collect_debrief_context",
             locale=locale,
-            question_key="private_recruiter_screen_debrief_intake",
+            question_key=question_key,
             evidence_gaps=["validated_screen_checkpoint_receipt_intake"],
         )
     return _artifact_free_intake(
@@ -363,7 +370,7 @@ def route_recruiter_screen_debrief_intake(
         selected_module="track-career-outcomes",
         next_action="collect_debrief_context",
         locale=locale,
-        question_key="private_recruiter_screen_debrief_intake",
+        question_key=question_key,
         evidence_gaps=["structured_debrief_context"],
     )
 
