@@ -60,16 +60,43 @@ class PrivateRecruiterTriagePracticeHandoffTests(unittest.TestCase):
                     "private-recruiter-triage-practice-handoff-v1",
                     result["schema_version"],
                 )
+                self.assertEqual(
+                    "private_recruiter_reply_triage",
+                    result["source_artifact_kind"],
+                )
+                self.assertEqual(
+                    triage["handoff"]["packet"]["prep_scope"], result["prep_scope"]
+                )
                 session = result["practice_session"]
                 self.assertEqual("recruiter-practice-session-v2", session["schema_version"])
                 self.assertEqual("ready_to_practice", session["state"])
                 self.assertEqual(
                     snapshot_for_triage(triage),
-                    result["handoff_context"]["source_snapshot"],
+                    result["source_snapshot"],
                 )
                 self.assertEqual(
                     snapshot_for_triage(triage),
                     session["handoff_context"]["source_snapshot"],
+                )
+                self.assertEqual(
+                    {
+                        "draft_only": True,
+                        "external_actions_authorized": False,
+                        "manual_reentry_required": True,
+                        "auto_start": False,
+                        "local_save_mode": "disabled",
+                        "raw_reply_retained": False,
+                    },
+                    result["delivery"],
+                )
+                self.assertEqual(
+                    {
+                        "draft_only": True,
+                        "external_actions_authorized": False,
+                        "local_save_mode": "disabled",
+                        "raw_answer_retained": False,
+                    },
+                    session["delivery"],
                 )
                 self.assertEqual([], validate_session(session))
 
@@ -78,10 +105,6 @@ class PrivateRecruiterTriagePracticeHandoffTests(unittest.TestCase):
         stop = json.loads((FIXTURE_DIRECTORY / "stop-en.json").read_text(encoding="utf-8"))
         candidate_reported = self._ready_triage("en")
         candidate_reported["facts"][0]["state"] = "candidate_reported"
-        candidate_reported["handoff_allowed"] = False
-        candidate_reported["state"] = "clarify_first"
-        candidate_reported["next_safe_action"] = "clarify_context_before_private_prep"
-        candidate_reported.pop("handoff")
 
         for label, triage in (
             ("clarify_first", clarify),
