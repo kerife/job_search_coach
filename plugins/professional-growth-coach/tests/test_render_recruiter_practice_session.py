@@ -136,6 +136,13 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
         dossier_html = renderer.render_session_html(sourced)
         self.assertNotIn('class="practice-claim-guardrail"', dossier_html)
 
+    def test_triage_answer_boundary_rejects_url_in_dynamic_fact_summary(self):
+        session = self._triage_practice_session("en")
+        session["facts"][0]["summary"] = "Verified result https://example.invalid"
+
+        with self.assertRaisesRegex(ValueError, "URL"):
+            renderer.render_session_html(session)
+
     def test_invalid_utf8_input_is_reported_without_traceback(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "invalid.json"

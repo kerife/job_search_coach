@@ -352,7 +352,10 @@ CLAIM_GUARDRAIL_COPY = {
 
 def _render_claim_guardrail(locale: str, fact: Mapping[str, object]) -> str:
     labels = CLAIM_GUARDRAIL_COPY[locale]
-    summary = html.escape(_text(fact["summary"]))
+    fact_summary = _text(fact["summary"])
+    if re.search(r"(?:https?://|www\.)", fact_summary, flags=re.IGNORECASE):
+        raise ValueError("practice answer boundary fact summary must not contain a URL")
+    summary = html.escape(fact_summary)
     return f'''<section class="practice-claim-guardrail" aria-labelledby="practice-claim-guardrail-title">
       <h2 id="practice-claim-guardrail-title">{labels["title"]}</h2>
       <p><strong>{labels["label"]}:</strong> <span>{summary}</span></p>
