@@ -256,9 +256,10 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
         rendered = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
         self.assertEqual(rendered.count('class="continuity-rail"'), 1)
         self.assertEqual(rendered.count('class="continuity-step continuity-step--'), 3)
-        self.assertIn('data-stage="receipt" data-state="current"', rendered)
-        self.assertIn('data-stage="safe-step" data-state="current"', rendered)
+        self.assertIn('data-stage="receipt" data-state="recorded"', rendered)
+        self.assertIn('data-stage="safe-step" data-state="pending"', rendered)
         self.assertIn('data-stage="review" data-state="blocked"', rendered)
+        self.assertEqual(1, rendered.count('aria-current="step"'))
         self.assertNotIn("D-104", rendered)
         self.assertNotIn("screen_requested", rendered)
 

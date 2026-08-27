@@ -83,6 +83,15 @@ The dependency-free schema subset also rejects non-finite numeric values
 (`NaN`, positive infinity, and negative infinity), including non-finite schema
 numeric bounds.
 
+Current vacancy research also rejects duplicate normalized `source_url` values
+before market alignment, so one public posting cannot inflate the evidence
+sample under different vacancy IDs or fingerprints.
+
+Private recruiter outcome and follow-through receipts expose a static continuity
+rail with the explicit sequence `recorded -> pending -> blocked`. The pending
+safe step is the single `aria-current="step"` landmark; terminal stop records
+remain recorded and do not reopen a continuation route.
+
 ## Installation
 
 This source tree is repo-local at `plugins/professional-growth-coach`. Source edits do not update the installed plugin cache. A separate explicitly authorized installation is required to publish a source increment into the local marketplace cache; existing chats may continue using their loaded version, so verify the new installation from a fresh chat. Use the repo-local marketplace workflow only after the exact target and command are approved.

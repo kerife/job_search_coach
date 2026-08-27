@@ -162,6 +162,14 @@ class TargetVacancyResearchTests(unittest.TestCase):
             with self.subTest(value=value):
                 self.assertTrue(validate_research(value))
 
+    def test_duplicate_source_urls_fail_even_when_ids_and_fingerprints_differ(self) -> None:
+        value = load_fixture("complete-five-es.json")
+        value["vacancies"][1]["source_url"] = value["vacancies"][0]["source_url"]
+
+        errors = validate_research(value)
+
+        self.assertIn("duplicate vacancy source URL", " ".join(errors))
+
     def test_repeated_employer_requires_exhaustion_and_distinct_postings(self) -> None:
         value = load_fixture("complete-five-es.json")
         value["vacancies"][1]["employer_id"] = value["vacancies"][0]["employer_id"]

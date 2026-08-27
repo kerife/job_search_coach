@@ -20,4 +20,8 @@ This plugin exposes no HTTP routes, SPA routes, framework page files, or router 
 - **Follow-through checkpoint:** a compact candidate-supplied state, next measurement event, date, and safe-next-step receipt.
 - **Conversion outcome:** a compact candidate-supplied observed-event receipt with evidence count and safe-next-step boundary.
 
+Both compact receipt routes use the same static continuity semantics (`recorded`
+then `pending` then `blocked`) and expose exactly one current step to assistive
+technology; terminal stop receipts remain recorded.
+
 No router config file exists, so there is no router source to include. All renderer CLIs keep local artifact paths out of successful receipts by default; a trusted caller that needs a verified local link must pass `--include-artifact-path`. Unknown arguments use the same fixed opaque diagnostic boundary and never echo rejected values.

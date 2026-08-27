@@ -92,3 +92,8 @@ Dependencies:
 - `plugins/professional-growth-coach/assets/private-recruiter-conversion-outcome-v1.css`
 
 The renderer validates a candidate-supplied outcome, computes the localized evidence-count label, and writes a compact offline receipt. The default CLI receipt is path-free; `--include-artifact-path` is an explicit trusted-caller opt-in.
+
+Outcome and follow-through receipts share a non-interactive continuity rail:
+the supplied observation/receipt is `recorded`, one manual safe step is
+`pending` and marked with `aria-current="step"`, and manual review is
+`blocked`. A stop decision is a terminal recorded rail with no continuation.

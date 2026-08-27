@@ -71,8 +71,8 @@ ACTION_RAIL_COPY = {
             "title": "Clarify context before replying",
             "kicker": "Safe clarification route",
             "steps": (
-                ("observation", "current", "Observation", "The supplied observation is recorded."),
-                ("safe-step", "current", "Clarify context", "Clarify only the missing context before replying."),
+                ("observation", "recorded", "Observation", "The supplied observation is recorded."),
+                ("safe-step", "pending", "Clarify context", "Clarify only the missing context before replying."),
                 ("review", "blocked", "Manual review", "Re-enter the private conversation manually before replying."),
             ),
         },
@@ -80,8 +80,8 @@ ACTION_RAIL_COPY = {
             "title": "Prepare a fact-checked summary",
             "kicker": "Safe preparation route",
             "steps": (
-                ("observation", "current", "Observation", "The supplied observation is recorded."),
-                ("safe-step", "current", "Fact check", "Prepare a fact-checked summary from supplied facts only."),
+                ("observation", "recorded", "Observation", "The supplied observation is recorded."),
+                ("safe-step", "pending", "Fact check", "Prepare a fact-checked summary from supplied facts only."),
                 ("review", "blocked", "Manual review", "Review the summary privately before any next step."),
             ),
         },
@@ -89,8 +89,8 @@ ACTION_RAIL_COPY = {
             "title": "Route to private preparation",
             "kicker": "Safe preparation route",
             "steps": (
-                ("observation", "current", "Observation", "The supplied observation is recorded."),
-                ("safe-step", "current", "Preparation", "Re-enter private preparation manually to review the reported next step."),
+                ("observation", "recorded", "Observation", "The supplied observation is recorded."),
+                ("safe-step", "pending", "Preparation", "Re-enter private preparation manually to review the reported next step."),
                 ("review", "blocked", "Manual review", "Review the preparation privately before any next step."),
             ),
         },
@@ -105,8 +105,8 @@ ACTION_RAIL_COPY = {
             "title": "Aclara el contexto antes de responder",
             "kicker": "Ruta segura de aclaración",
             "steps": (
-                ("observation", "current", "Observación", "La observación reportada queda registrada."),
-                ("safe-step", "current", "Aclaración", "Aclara solo el contexto faltante antes de responder."),
+                ("observation", "recorded", "Observación", "La observación reportada queda registrada."),
+                ("safe-step", "pending", "Aclaración", "Aclara solo el contexto faltante antes de responder."),
                 ("review", "blocked", "Revisión manual", "Vuelve a entrar manualmente a la conversación privada antes de responder."),
             ),
         },
@@ -114,8 +114,8 @@ ACTION_RAIL_COPY = {
             "title": "Prepara un resumen verificado",
             "kicker": "Ruta segura de preparación",
             "steps": (
-                ("observation", "current", "Observación", "La observación reportada queda registrada."),
-                ("safe-step", "current", "Verificación", "Prepara un resumen verificado solo con hechos reportados."),
+                ("observation", "recorded", "Observación", "La observación reportada queda registrada."),
+                ("safe-step", "pending", "Verificación", "Prepara un resumen verificado solo con hechos reportados."),
                 ("review", "blocked", "Revisión manual", "Revisa el resumen en privado antes de cualquier siguiente paso."),
             ),
         },
@@ -123,8 +123,8 @@ ACTION_RAIL_COPY = {
             "title": "Dirige a preparación privada",
             "kicker": "Ruta segura de preparación",
             "steps": (
-                ("observation", "current", "Observación", "La observación reportada queda registrada."),
-                ("safe-step", "current", "Preparación", "Vuelve a entrar manualmente a la preparación para revisar el siguiente paso reportado."),
+                ("observation", "recorded", "Observación", "La observación reportada queda registrada."),
+                ("safe-step", "pending", "Preparación", "Vuelve a entrar manualmente a la preparación para revisar el siguiente paso reportado."),
                 ("review", "blocked", "Revisión manual", "Revisa la preparación en privado antes de cualquier siguiente paso."),
             ),
         },
@@ -137,8 +137,8 @@ ACTION_RAIL_COPY = {
 }
 
 RAIL_STATES = {
-    "en": {"current": "Current", "blocked": "Blocked", "recorded": "Recorded"},
-    "es": {"current": "Actual", "blocked": "Bloqueada", "recorded": "Registrado"},
+    "en": {"current": "Current", "pending": "Pending", "blocked": "Blocked", "recorded": "Recorded"},
+    "es": {"current": "Actual", "pending": "Pendiente", "blocked": "Bloqueada", "recorded": "Registrado"},
 }
 
 EVIDENCE_COUNT_COPY = {
@@ -154,7 +154,7 @@ def _evidence_count_copy(locale: str, count: int) -> str:
 def _action_rail(locale: str, action: str, *, terminal: bool = False) -> str:
     labels = ACTION_RAIL_COPY[locale][action]
     steps = "".join(
-        f'<li class="continuity-step continuity-step--{state}" data-stage="{stage}" data-state="{state}">'
+        f'<li class="continuity-step continuity-step--{state}" data-stage="{stage}" data-state="{state}"{(" aria-current=\"step\"" if state == "pending" else "")}>'
         f'<span class="continuity-step-state">{RAIL_STATES[locale][state]}</span>'
         f'<strong>{html.escape(title)}</strong><p>{html.escape(description)}</p></li>'
         for stage, state, title, description in labels["steps"]

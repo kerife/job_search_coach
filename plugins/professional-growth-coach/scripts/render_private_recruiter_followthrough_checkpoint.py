@@ -72,22 +72,22 @@ ACTION_RAIL_COPY = {
         "manual_reenter_private_prep": {
             "title": "Re-enter private preparation",
             "kicker": "Manual preparation route",
-            "steps": (("receipt", "current", "Receipt", "The supplied checkpoint is recorded."), ("safe-step", "current", "Private preparation", "Re-enter private preparation manually."), ("review", "blocked", "Manual review", "Review the private preparation before any next step.")),
+            "steps": (("receipt", "recorded", "Receipt", "The supplied checkpoint is recorded."), ("safe-step", "pending", "Private preparation", "Re-enter private preparation manually."), ("review", "blocked", "Manual review", "Review the private preparation before any next step.")),
         },
         "clarify_context_before_reply": {
             "title": "Clarify context before replying",
             "kicker": "Safe clarification route",
-            "steps": (("receipt", "current", "Receipt", "The supplied checkpoint is recorded."), ("safe-step", "current", "Clarify context", "Clarify only the missing context before replying."), ("review", "blocked", "Manual review", "Re-enter the private conversation manually before replying.")),
+            "steps": (("receipt", "recorded", "Receipt", "The supplied checkpoint is recorded."), ("safe-step", "pending", "Clarify context", "Clarify only the missing context before replying."), ("review", "blocked", "Manual review", "Re-enter the private conversation manually before replying.")),
         },
         "debrief_after_screen": {
             "title": "Debrief the screen privately",
             "kicker": "Manual debrief route",
-            "steps": (("receipt", "current", "Receipt", "The supplied checkpoint is recorded."), ("safe-step", "current", "Debrief", "Record what was discussed and what remains unknown, privately."), ("review", "blocked", "Manual review", "Review the debrief before any follow-up.")),
+            "steps": (("receipt", "recorded", "Receipt", "The supplied checkpoint is recorded."), ("safe-step", "pending", "Debrief", "Record what was discussed and what remains unknown, privately."), ("review", "blocked", "Manual review", "Review the debrief before any follow-up.")),
         },
         "route_to_prepare-role-interviews": {
             "title": "Route to private preparation",
             "kicker": "Safe preparation route",
-            "steps": (("receipt", "current", "Receipt", "The supplied checkpoint is recorded."), ("safe-step", "current", "Preparation", "Re-enter private preparation manually to review the reported next step."), ("review", "blocked", "Manual review", "Review the preparation privately before any next step.")),
+            "steps": (("receipt", "recorded", "Receipt", "The supplied checkpoint is recorded."), ("safe-step", "pending", "Preparation", "Re-enter private preparation manually to review the reported next step."), ("review", "blocked", "Manual review", "Review the preparation privately before any next step.")),
         },
         "record_stop_decision": {
             "title": "Outcome recorded",
@@ -99,22 +99,22 @@ ACTION_RAIL_COPY = {
         "manual_reenter_private_prep": {
             "title": "Vuelve a entrar a la preparación privada",
             "kicker": "Ruta manual de preparación",
-            "steps": (("receipt", "current", "Recibo", "El punto de control reportado queda registrado."), ("safe-step", "current", "Preparación privada", "Vuelve a entrar manualmente a la preparación privada."), ("review", "blocked", "Revisión manual", "Revisa la preparación privada antes de cualquier siguiente paso.")),
+            "steps": (("receipt", "recorded", "Recibo", "El punto de control reportado queda registrado."), ("safe-step", "pending", "Preparación privada", "Vuelve a entrar manualmente a la preparación privada."), ("review", "blocked", "Revisión manual", "Revisa la preparación privada antes de cualquier siguiente paso.")),
         },
         "clarify_context_before_reply": {
             "title": "Aclara el contexto antes de responder",
             "kicker": "Ruta segura de aclaración",
-            "steps": (("receipt", "current", "Recibo", "El punto de control reportado queda registrado."), ("safe-step", "current", "Aclaración", "Aclara solo el contexto faltante antes de responder."), ("review", "blocked", "Revisión manual", "Vuelve a entrar manualmente a la conversación privada antes de responder.")),
+            "steps": (("receipt", "recorded", "Recibo", "El punto de control reportado queda registrado."), ("safe-step", "pending", "Aclaración", "Aclara solo el contexto faltante antes de responder."), ("review", "blocked", "Revisión manual", "Vuelve a entrar manualmente a la conversación privada antes de responder.")),
         },
         "debrief_after_screen": {
             "title": "Haz un debrief privado del filtro",
             "kicker": "Ruta manual de debrief",
-            "steps": (("receipt", "current", "Recibo", "El punto de control reportado queda registrado."), ("safe-step", "current", "Debrief", "Registra en privado lo que se habló y lo que sigue desconocido."), ("review", "blocked", "Revisión manual", "Revisa el debrief antes de cualquier seguimiento.")),
+            "steps": (("receipt", "recorded", "Recibo", "El punto de control reportado queda registrado."), ("safe-step", "pending", "Debrief", "Registra en privado lo que se habló y lo que sigue desconocido."), ("review", "blocked", "Revisión manual", "Revisa el debrief antes de cualquier seguimiento.")),
         },
         "route_to_prepare-role-interviews": {
             "title": "Dirige a preparación privada",
             "kicker": "Ruta segura de preparación",
-            "steps": (("receipt", "current", "Recibo", "El punto de control reportado queda registrado."), ("safe-step", "current", "Preparación", "Vuelve a entrar manualmente a la preparación para revisar el siguiente paso reportado."), ("review", "blocked", "Revisión manual", "Revisa la preparación en privado antes de cualquier siguiente paso.")),
+            "steps": (("receipt", "recorded", "Recibo", "El punto de control reportado queda registrado."), ("safe-step", "pending", "Preparación", "Vuelve a entrar manualmente a la preparación para revisar el siguiente paso reportado."), ("review", "blocked", "Revisión manual", "Revisa la preparación en privado antes de cualquier siguiente paso.")),
         },
         "record_stop_decision": {
             "title": "Resultado registrado",
@@ -124,7 +124,7 @@ ACTION_RAIL_COPY = {
     },
 }
 
-RAIL_STATES = {"en": {"current": "Current", "blocked": "Blocked", "recorded": "Recorded"}, "es": {"current": "Actual", "blocked": "Bloqueada", "recorded": "Registrado"}}
+RAIL_STATES = {"en": {"current": "Current", "pending": "Pending", "blocked": "Blocked", "recorded": "Recorded"}, "es": {"current": "Actual", "pending": "Pendiente", "blocked": "Bloqueada", "recorded": "Registrado"}}
 
 class CheckpointRenderValidationError(ValueError):
     def __init__(self, errors: Sequence[str]):
@@ -153,7 +153,7 @@ VALIDATOR = _load_validator()
 def _action_rail(locale: str, action: str, *, terminal: bool = False) -> str:
     labels = ACTION_RAIL_COPY[locale][action]
     steps = "".join(
-        f'<li class="continuity-step continuity-step--{state}" data-stage="{stage}" data-state="{state}">'
+        f'<li class="continuity-step continuity-step--{state}" data-stage="{stage}" data-state="{state}"{(" aria-current=\"step\"" if state == "pending" else "")}>'
         f'<span class="continuity-step-state">{RAIL_STATES[locale][state]}</span>'
         f'<strong>{html.escape(title)}</strong><p>{html.escape(description)}</p></li>'
         for stage, state, title, description in labels["steps"]

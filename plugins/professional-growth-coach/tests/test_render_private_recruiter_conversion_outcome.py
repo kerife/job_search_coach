@@ -47,6 +47,15 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
                 self.assertEqual(rendered.count('class="continuity-rail"'), 1)
                 self.assertNotIn("continuation", rendered.lower())
 
+    def test_action_rail_exposes_one_current_pending_step(self):
+        rendered = render_outcome_html(
+            load_outcome(FIXTURES / "screen-requested-en.json"), today=dt.date(2026, 8, 9)
+        )
+        self.assertIn('data-stage="observation" data-state="recorded"', rendered)
+        self.assertIn('data-stage="safe-step" data-state="pending" aria-current="step"', rendered)
+        self.assertIn('data-stage="review" data-state="blocked"', rendered)
+        self.assertEqual(1, rendered.count('aria-current="step"'))
+
     def test_stop_action_uses_terminal_recorded_rail_without_continuation_copy(self):
         source = load_outcome(FIXTURES / "stop-decision-en.json")
         for locale in ("en", "es"):
@@ -200,8 +209,8 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
         )
         self.assertEqual(rendered.count('class="continuity-rail"'), 1)
         self.assertEqual(rendered.count('class="continuity-step continuity-step--'), 3)
-        self.assertIn('data-stage="observation" data-state="current"', rendered)
-        self.assertIn('data-stage="safe-step" data-state="current"', rendered)
+        self.assertIn('data-stage="observation" data-state="recorded"', rendered)
+        self.assertIn('data-stage="safe-step" data-state="pending"', rendered)
         self.assertIn('data-stage="review" data-state="blocked"', rendered)
         self.assertNotIn("D-104", rendered)
         self.assertNotIn("contact_received", rendered)

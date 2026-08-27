@@ -137,6 +137,25 @@ def _canonical_url_path(path: str) -> str | None:
     return None
 
 
+def _normalized_source_url(value: object) -> str | None:
+    """Return a stable identity for an already policy-validated source URL."""
+    if not isinstance(value, str):
+        return None
+    from urllib.parse import urlsplit
+
+    try:
+        parsed = urlsplit(value)
+        host = (parsed.hostname or "").casefold().rstrip(".")
+        path = _canonical_url_path(parsed.path)
+    except ValueError:
+        return None
+    if not host or path is None:
+        return None
+    if len(path) > 1:
+        path = path.rstrip("/") or "/"
+    return f"https://{host}{path}"
+
+
 def _path_has_traversal(path: str) -> bool:
     """Reject dot segments after URL decoding, including encoded traversal."""
     return any(segment in {".", ".."} for segment in path.split("/"))
@@ -266,6 +285,7 @@ def _validate_vacancies(
         return
     vacancy_ids: set[str] = set()
     fingerprints: set[str] = set()
+    source_urls: set[str] = set()
     requirement_ids: set[str] = set()
     repeated_employer = False
     seen_employers: set[str] = set()
@@ -308,6 +328,13 @@ def _validate_vacancies(
         )
         if url_error:
             errors.append(url_error if url_error == "live evidence cannot use a reserved source domain" else f"{path}.source_url is invalid")
+        else:
+            normalized_url = _normalized_source_url(row.get("source_url"))
+            if normalized_url is not None:
+                if normalized_url in source_urls:
+                    errors.append("duplicate vacancy source URL")
+                else:
+                    source_urls.add(normalized_url)
         referrer = row.get("official_referrer_url")
         if referrer is not None:
             referrer_error = _url_error(referrer, evidence_mode=evidence_mode)
