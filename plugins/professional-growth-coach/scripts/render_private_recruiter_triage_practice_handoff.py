@@ -115,7 +115,11 @@ def write_handoff_html(handoff_path: Path, output_path: Path, *, force: bool = F
     output = Path(os.path.abspath(os.fspath(expanded)))
     renderer = _load_sibling("render_recruiter_practice_session")
     renderer._atomic_private_write(output, html.encode("utf-8"), force=force)
-    return {"artifact_type": "text/html", "schema_version": handoff["schema_version"]}
+    session = _mapping(handoff["practice_session"])
+    return {
+        "artifact_kind": "private_recruiter_triage_practice_handoff_html",
+        "ui_locale": session["ui_locale"],
+    }
 
 
 def _error(code: str) -> None:

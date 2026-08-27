@@ -51,7 +51,13 @@ class PrivateRecruiterTriagePracticeHandoffRendererTests(unittest.TestCase):
                     output = directory / f"{locale}.html"
                     result = self._run(str(source), "--output", str(output))
                     self.assertEqual(0, result.returncode, result.stderr)
-                    self.assertEqual({"artifact_type": "text/html", "schema_version": "private-recruiter-triage-practice-handoff-v1"}, json.loads(result.stdout))
+                    self.assertEqual(
+                        {
+                            "artifact_kind": "private_recruiter_triage_practice_handoff_html",
+                            "ui_locale": locale,
+                        },
+                        json.loads(result.stdout),
+                    )
                     rendered = output.read_text(encoding="utf-8")
                     self.assertIn(status, rendered)
                     self.assertNotIn("<form", rendered)
