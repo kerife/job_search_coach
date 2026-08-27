@@ -37,15 +37,19 @@ INTENT = re.compile(
     r"(?:\b(?:expand(?:ir|iendo)?|ampliar|crecer)\s+(?:mi\s+)?(?:red|network)\s+(?:de\s+)?(?:recruiters?|reclutadores?)\b|"
     r"\b(?:find|buscar|encontrar|identificar)\s+(?:a\s+)?(?:recruiters?|reclutadores?)\b|"
     r"\b(?:recruiter|recruiting|reclutador(?:a|es)?)\s+(?:screen|filtro|entrevista)\b|"
-    r"\b(?:first\s+(?:recruiter\s+)?screen|primer\s+filtro(?:\s+con\s+(?:un\s+)?reclutador)?)\b|"
+    r"\b(?:first\s+(?:recruiter\s+)?screen|primer\s+filtro(?:\s+con\s+(?:un\s+)?reclutador)?|"
+    r"first\s+interview\s+with\s+(?:a\s+)?recruiters?|"
+    r"primera\s+entrevista\s+con\s+(?:un\s+)?reclutadores?)\b|"
+    r"\b(?:network|networking)\s+(?:with|con)\s+recruiters?\b|"
+    r"\bred\s+profesional\s+con\s+reclutadores?\b|"
     r"\b(?:red|network)\s+de\s+(?:recruiters?|reclutadores?)\b)",
     re.I,
 )
 TECHNICAL_INTENT = re.compile(r"\b(?:technical|t[eé]cnica|t[eé]cnico)\b", re.I)
 EXPLICIT_RECRUITER_INTENT = re.compile(r"\b(?:recruiter|recruiting|reclutador(?:a|es)?)\b", re.I)
 INTAKE = {
-    "es": "Comparte de tres a seis objetivos manuales con contexto visible o proporcionado por ti y el tema de prueba que quieres revisar primero.",
-    "en": "Share three to six manually supplied targets with visible or candidate-provided context and the proof theme you want reviewed first.",
+    "es": "Comparte: 3–6 objetivos manuales con contexto visible o proporcionado por ti; la meta de red y sus segmentos; 3–5 consultas manuales; tu tiempo semanal; una condición de pausa o detención; y el tema de prueba que quieres revisar primero.",
+    "en": "Share: 3–6 manually supplied targets with visible or candidate-provided context; the networking goal and segments; 3–5 manual queries; your weekly time budget; a pause or stop condition; and the proof theme you want reviewed first.",
 }
 
 
@@ -83,14 +87,25 @@ def route_recruiter_request(
             "evidence_gaps": [],
             "artifact": None,
         }
-    if network_plan is None or targets is None or not 3 <= len(targets) <= 6:
+    if (
+        not isinstance(network_plan, Mapping)
+        or not isinstance(targets, Sequence)
+        or isinstance(targets, (str, bytes, bytearray))
+        or not 3 <= len(targets) <= 6
+    ):
         return {
             "route_kind": "recruiter_target_shortlist",
             "case_state": "needs_intake",
             "selected_module": "optimize-professional-profile",
             "next_action": "ask_one_intake_question",
             "authorization_required": False,
-            "evidence_gaps": ["three_to_six_manual_targets_with_context"],
+            "evidence_gaps": [
+                "three_to_six_manual_targets_with_context",
+                "network_goal_and_target_segments",
+                "three_to_five_manual_queries",
+                "weekly_time_budget_and_stop_condition",
+                "proof_theme",
+            ],
             "intake_question": INTAKE[locale],
             "artifact": None,
         }

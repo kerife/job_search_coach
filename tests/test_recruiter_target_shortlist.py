@@ -196,6 +196,24 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertEqual("ask_one_intake_question", intake["next_action"])
         self.assertIsNone(intake["artifact"])
 
+    def test_root_route_intake_question_is_actionable_and_bounded(self) -> None:
+        for request, locale, markers in (
+            (
+                "Quiero buscar recruiters.",
+                "es",
+                ("3–6", "segmentos", "3–5", "tiempo semanal", "condición de pausa"),
+            ),
+            (
+                "How do I network with recruiters?",
+                "en",
+                ("3–6", "segments", "3–5", "weekly time", "stop condition"),
+            ),
+        ):
+            routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-27")
+            with self.subTest(locale=locale):
+                for marker in markers:
+                    self.assertIn(marker, routed["intake_question"])
+
     def test_root_route_renders_private_surface_before_returning_ready(self) -> None:
         ready = route_recruiter_request(
             "Quiero expandir mi red de recruiters para conseguir un primer filtro.",
@@ -220,6 +238,35 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
             routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-27")
             with self.subTest(request=request):
                 self.assertEqual("ordinary_professional_growth", routed["route_kind"])
+
+    def test_root_route_accepts_natural_english_recruiter_intent(self) -> None:
+        for request in (
+            "How do I network with recruiters?",
+            "Prepare me for a first interview with a recruiter.",
+            "Quiero hacer networking con recruiters.",
+            "Quiero ampliar mi red profesional con reclutadores.",
+        ):
+            locale = "es" if request.startswith("Quiero") else "en"
+            routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-27")
+            with self.subTest(request=request):
+                self.assertEqual("recruiter_target_shortlist", routed["route_kind"])
+                self.assertEqual("needs_intake", routed["case_state"])
+                self.assertEqual("ask_one_intake_question", routed["next_action"])
+
+    def test_root_route_rejects_non_sequence_targets_without_uncaught_errors(self) -> None:
+        for invalid in (1, object(), iter(()), "abc"):
+            with self.subTest(invalid_type=type(invalid).__name__):
+                routed = route_recruiter_request(
+                    "Quiero buscar recruiters.",
+                    locale="es",
+                    as_of_date="2026-08-27",
+                    network_plan=valid_plan(),
+                    targets=invalid,
+                )
+                self.assertEqual("recruiter_target_shortlist", routed["route_kind"])
+                self.assertEqual("needs_intake", routed["case_state"])
+                self.assertEqual("ask_one_intake_question", routed["next_action"])
+                self.assertIsNone(routed["artifact"])
 
     def test_renderer_rejects_symlinked_output_parent(self) -> None:
         value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
