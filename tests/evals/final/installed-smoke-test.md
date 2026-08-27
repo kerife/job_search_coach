@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T09:45:00-06:00`
+release_timestamp: `2026-08-27T10:10:00-06:00`
 
-source_commit: `53b494c294395844e21c19cdfac9b39bb38e32eb`
+source_commit: `4dd0b4bb64068bc64f3dd537e37fa65a38ed4315`
 
-source_tree: `22234c0465fc3ddc98d1d18b1122a9c0cceed77a`
+source_tree: `0ed7bcf80def7adf6c7134ffccf40fae180a29cb`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827180000`
+installed_cache_version: `0.2.0+codex.20260827190000`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `139`
 
 installed_file_count: `139`
 
-normalized_source_cache_sha256: `486ba5cac0a10c1f53a5732bcc681246ff40324a3d7101307328b2ef3a6421eb`
+normalized_source_cache_sha256: `50f86822e59cc7c0ef47e9aad82205b74803946cfe2e1b6fa4e3d3e553f60388`
 
 normalized_excludes: `__pycache__`
 
@@ -102,6 +102,12 @@ installed_action_aligned_rail_smoke: `11/11 installed EN/ES outcome/checkpoint r
 installed_continuity_rail_semantics_smoke: `2/2 installed EN/ES outcome/checkpoint rails expose recorded -> pending -> blocked states with exactly one aria-current="step" pending safe step; terminal stop remains recorded`
 
 installed_duplicate_vacancy_source_url_smoke: `1/1 installed market validator rejects duplicate normalized vacancy source URLs even when vacancy IDs and fingerprints differ`
+
+installed_practice_continuity_accessibility_smoke: `2/2 installed EN/ES practice rails expose recorded evidence/decision states and exactly one pending-or-blocked aria-current="step" without private identifiers or interactive controls`
+
+installed_triage_handoff_continuity_smoke: `2/2 installed EN/ES triage handoffs expose recorded -> recorded -> pending states with one aria-current="step" re-entry stage and preserve manual-only boundaries`
+
+installed_duplicate_employer_source_url_smoke: `1/1 installed market validator rejects duplicate normalized employer official_source_url values without echoing the URL`
 
 installed_screen_debrief_smoke: `2/2 installed EN/ES completed screen_attended checkpoints render the closed debrief_after_screen action, preserve manual-only follow-up boundaries, and reject preparation routing`
 
