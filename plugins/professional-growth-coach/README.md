@@ -180,6 +180,16 @@ external action. Legacy v1 triage remains readable only through its existing
 legacy routes and is not eligible for this wrapper, renderer, or manual re-entry
 path; manually recreate a validated v2 triage instead.
 
+The direct practice-session commands use the same private terminal boundary:
+`render_recruiter_practice_session.py` returns only its fixed artifact-kind and
+locale receipt, while `validate_recruiter_practice_session.py` returns only a
+fixed valid acknowledgement. Their argument and input failures use fixed JSON
+error envelopes and never echo a supplied path, prose, or value. This is
+deliberately narrower than in-process library use: `write_session_html` may
+return its richer `RenderReceipt` to a trusted caller, and `load_session` plus
+`validate_session` retain bounded diagnostics for in-process handling. Do not
+relay those library values through a direct CLI transcript.
+
 The default composition begins with `learning_state=not_evaluated`. If bounded
 market research cannot finish, the plugin preserves the valid profile dossier
 and renders the limited or unavailable market state with one bounded reason;

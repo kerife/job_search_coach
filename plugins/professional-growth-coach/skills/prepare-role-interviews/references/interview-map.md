@@ -68,6 +68,18 @@ answer, sends, schedules, uploads, or authorizes an external action. A legacy v1
 triage is readable only on its legacy route: recreate a validated v2 triage
 manually before composing or rendering this private wrapper.
 
+### Direct practice-session CLI boundary
+
+When direct maintenance commands are needed, keep their terminal contract
+opaque. `render_recruiter_practice_session.py` acknowledges success only with a
+fixed artifact-kind and locale receipt; `validate_recruiter_practice_session.py`
+uses a fixed valid acknowledgement. For either command, parser and input errors
+are fixed JSON envelopes and must never reflect a supplied path, argument, or
+private prose. This differs from trusted in-process calls: the renderer's
+library receipt may contain a local artifact path and summary, while
+`load_session` and `validate_session` preserve bounded diagnostics for library
+handling. Do not copy those richer in-process values into a direct CLI log.
+
 The sequence is one-question/one-answer. Before the candidate answers, feedback and any score remain `unknown` (`score_state=unknown`); after the observed answer, feedback may reference only the observed answer and the rubric. In `feedback_available`, keep `score=unknown` and use `score_state=categorical` with only the rubric labels `solid`, `confirm`, or `do_not_assert`; numeric scores are invalid. Keep the answer ephemeral and no-save-by-default. The client-facing result contains only the private-session summary and verified local artifact link, never internal identifiers or raw vacancy or candidate-fact text. No external action is performed.
 
 In feedback_available, visible feedback uses fixed bilingual guidance selected

@@ -120,6 +120,18 @@ class SessionLoadError(ValueError):
     """Raised for deterministic, privacy-safe JSON input failures."""
 
 
+class _ArgumentError(ValueError):
+    """Raised when the private CLI receives unusable arguments."""
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    """Suppress argparse diagnostics that can reflect private CLI values."""
+
+    def error(self, message: str) -> None:
+        del message
+        raise _ArgumentError
+
+
 def _unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
     result: dict[str, object] = {}
     for key, value in pairs:
@@ -535,17 +547,24 @@ def validate_session(value: object) -> list[str]:
     return sorted(set(errors))
 
 
+def _cli_error(code: str) -> None:
+    print(json.dumps({"error": {"code": code}}, separators=(",", ":")), file=sys.stderr)
+
+
 def _cli(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Validate a private recruiter practice session.")
-    parser.add_argument("input", type=Path, help="Path to one session JSON file.")
+    parser = _PrivateArgumentParser(description="Validate a private recruiter practice session.")
+    parser.add_argument("input", type=Path)
     try:
         arguments = parser.parse_args(argv)
+    except _ArgumentError:
+        _cli_error("invalid_arguments")
+        return 3
     except SystemExit as error:
         return 0 if error.code == 0 else 3
     try:
         session = load_session(arguments.input)
-    except SessionLoadError as error:
-        print(str(error), file=sys.stderr)
+    except SessionLoadError:
+        _cli_error("invalid_input")
         return 3
     errors = validate_session(session)
     if errors:

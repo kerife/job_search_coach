@@ -369,7 +369,7 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
             )
 
         self.assertEqual(result.returncode, 3)
-        self.assertEqual(result.stderr, "session input is not valid JSON\n")
+        self.assertEqual(result.stderr, '{"error":{"code":"invalid_input"}}\n')
         self.assertNotIn("Traceback", result.stderr)
 
     def _feedback_session(self, observations):
@@ -777,6 +777,50 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
                     self.assertNotIn("PRIVATE_OCCUPIED_OUTPUT_PATH_SENTINEL", result.stdout + result.stderr)
                     self.assertNotIn("person@example.invalid", result.stdout + result.stderr)
                     self.assertNotIn("private.example.invalid", result.stdout + result.stderr)
+
+    def test_validator_cli_keeps_private_arguments_paths_and_validation_values_opaque(self):
+        """Catch CLI regressions that reflect private values via argparse or errors."""
+        sentinel = "PRIVATE_VALIDATOR_CLI_SENTINEL person@example.invalid https://private.example.invalid"
+        with tempfile.TemporaryDirectory() as raw:
+            directory = Path(raw)
+            source = directory / "PRIVATE_VALIDATOR_SESSION_PATH_SENTINEL.json"
+            source.write_text(json.dumps(self._triage_practice_session("en")), encoding="utf-8")
+            invalid_source = directory / "PRIVATE_VALIDATOR_INVALID_PATH_SENTINEL.json"
+            invalid = self._triage_practice_session("en")
+            invalid["schema_version"] = "PRIVATE_VALIDATION_VALUE_SENTINEL"
+            invalid_source.write_text(json.dumps(invalid), encoding="utf-8")
+            cases = (
+                ("success", [str(source)], 0, "valid recruiter practice session\n", ""),
+                ("unknown", ["--unknown", sentinel], 3, "", '{"error":{"code":"invalid_arguments"}}\n'),
+                ("missing", [], 3, "", '{"error":{"code":"invalid_arguments"}}\n'),
+                ("path", [f"/tmp/{sentinel}"], 3, "", '{"error":{"code":"invalid_input"}}\n'),
+                ("validation", [str(invalid_source)], 2, "", None),
+            )
+            for label, arguments, code, expected_stdout, expected_stderr in cases:
+                with self.subTest(label=label):
+                    result = subprocess.run(
+                        [sys.executable, "-B", str(VALIDATOR_SCRIPT), *arguments],
+                        text=True,
+                        capture_output=True,
+                        check=False,
+                    )
+                    self.assertEqual(code, result.returncode)
+                    self.assertEqual(expected_stdout, result.stdout)
+                    if expected_stderr is None:
+                        self.assertTrue(result.stderr)
+                        self.assertLessEqual(len(result.stderr.encode("utf-8")), 8_192)
+                    else:
+                        self.assertEqual(expected_stderr, result.stderr)
+                    for private_value in (
+                        "PRIVATE_VALIDATOR_CLI_SENTINEL",
+                        "PRIVATE_VALIDATOR_SESSION_PATH_SENTINEL",
+                        "PRIVATE_VALIDATOR_INVALID_PATH_SENTINEL",
+                        "PRIVATE_VALIDATION_VALUE_SENTINEL",
+                        "person@example.invalid",
+                        "private.example.invalid",
+                    ):
+                        with self.subTest(label=label, private_value=private_value):
+                            self.assertNotIn(private_value, result.stdout + result.stderr)
 
 
 if __name__ == "__main__":
