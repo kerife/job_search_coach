@@ -21,7 +21,10 @@ CHECKLIST_FIELDS = frozenset({"topic", "status"})
 HANDOFF_FIELDS = frozenset({"next_safe_action", "manual_review_required", "draft_only", "external_actions_authorized", "no_message_action", "no_calendar_action"})
 DELIVERY_FIELDS = frozenset({"draft_only", "external_actions_authorized", "no_message_action", "no_calendar_action", "raw_transcript_retained", "local_save_mode"})
 TOPICS = frozenset({"requirement", "scope", "team_context"})
-STAGES = frozenset({"first_interview", "technical_screen"})
+STAGES = frozenset({
+    "recruiter_screen", "first_interview", "technical_screen", "hiring_manager",
+    "technical_deep_dive", "take_home", "system_design", "behavioral_loop", "panel", "offer_stage",
+})
 STATES = frozenset({"ready", "blocked"})
 CHECK_STATUSES = frozenset({"covered", "needs_clarification"})
 FACT_ID = re.compile(r"^F-[0-9]{3}$")
@@ -42,6 +45,8 @@ def _sibling(name: str) -> Any:
 
 DEBRIEF = _sibling("validate_private_recruiter_screen_debrief.py")
 LOADER = _sibling("private_input_loader.py")
+TAXONOMY = _sibling("recruiter_stage_taxonomy.py")
+STAGES = frozenset(TAXONOMY.STAGES)
 
 
 class _PrivateArgumentParser(argparse.ArgumentParser):
@@ -155,6 +160,8 @@ def validate_next_stage_review(value: object, debrief: Mapping[str, object] | No
         source_stage = intake.get("intake", {}).get("stated_stage") if isinstance(intake.get("intake"), Mapping) else None
         if stage == source_stage:
             errors.append("next_stage must differ from current stage")
+        elif stage in STAGES and not TAXONOMY.is_supported_transition(source_stage, stage):
+            errors.append("next_stage transition is unsupported")
     facts = item.get("facts_used")
     if not isinstance(facts, list) or not 1 <= len(facts) <= 8 or any(not isinstance(fact, str) or not FACT_ID.fullmatch(fact) for fact in facts) or len({fact for fact in facts if isinstance(fact, str)}) != len(facts):
         errors.append("facts_used must contain one to eight unique fact IDs")

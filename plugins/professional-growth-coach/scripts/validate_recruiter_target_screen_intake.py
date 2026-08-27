@@ -59,6 +59,8 @@ PROSE = _sibling("private_prose_safety.py")
 LOADER = _sibling("private_input_loader.py")
 GATE = _sibling("validate_recruiter_target_decision_gate.py")
 SHORTLIST = GATE.SHORTLIST
+TAXONOMY = _sibling("recruiter_stage_taxonomy.py")
+STAGES = frozenset(TAXONOMY.STAGES)
 
 
 def _closed(value: object, path: str, fields: frozenset[str], errors: list[str]) -> Mapping[str, object] | None:

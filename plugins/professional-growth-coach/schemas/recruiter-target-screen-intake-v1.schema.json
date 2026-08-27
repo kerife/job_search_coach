@@ -15,7 +15,7 @@
     "target_id": {"type": "string", "pattern": "^T-[0-9]{3}$"},
     "target_decision": {"enum": ["advance", "clarify", "pause", "stop"]},
     "intake": {"type": "object", "additionalProperties": false, "required": ["stated_stage", "vacancy_requirements", "candidate_fact_ids", "company_evidence_state", "source_date"], "properties": {
-      "stated_stage": {"enum": ["recruiter_screen", "first_interview", "technical_screen"]},
+      "stated_stage": {"enum": ["recruiter_screen", "first_interview", "technical_screen", "hiring_manager", "technical_deep_dive", "take_home", "system_design", "behavioral_loop", "panel", "offer_stage"]},
       "vacancy_requirements": {"type": "array", "minItems": 1, "maxItems": 5, "items": {"type": "string", "pattern": "^V-[0-9]{3}:\\s+.+$", "maxLength": 240}},
       "candidate_fact_ids": {"type": "array", "minItems": 1, "maxItems": 8, "items": {"type": "string", "pattern": "^F-[0-9]{3}$"}},
       "company_evidence_state": {"enum": ["verified", "candidate_reported", "unknown"]},

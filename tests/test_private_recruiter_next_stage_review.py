@@ -97,6 +97,26 @@ class PrivateRecruiterNextStageReviewTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_next_stage_review(debrief, RECEIPT, intake, valid_checkpoint(), "first_interview")
 
+    def test_technical_screen_can_handoff_to_hiring_manager_with_transition_copy(self) -> None:
+        context = valid_screen_intake()
+        context["stated_stage"] = "technical_screen"
+        intake = build_screen_intake(self.gate, "T-001", context)
+        debrief = build_screen_debrief(valid_checkpoint(), RECEIPT, intake, valid_debrief())
+        review = build_next_stage_review(debrief, RECEIPT, intake, valid_checkpoint(), "hiring_manager")
+        self.assertEqual([], validate_next_stage_review(review, debrief, RECEIPT, intake, valid_checkpoint(), as_of=date(2026, 8, 27)))
+        rendered = render_next_stage_review_html(review, debrief, RECEIPT, intake, valid_checkpoint())
+        self.assertIn("Filtro técnico", rendered)
+        self.assertIn("Entrevista con hiring manager", rendered)
+        self.assertIn("→", rendered)
+
+    def test_unsupported_backward_stage_transition_is_rejected(self) -> None:
+        context = valid_screen_intake()
+        context["stated_stage"] = "technical_screen"
+        intake = build_screen_intake(self.gate, "T-001", context)
+        debrief = build_screen_debrief(valid_checkpoint(), RECEIPT, intake, valid_debrief())
+        with self.assertRaises(ValueError):
+            build_next_stage_review(debrief, RECEIPT, intake, valid_checkpoint(), "first_interview")
+
     def test_source_debrief_fingerprint_is_part_of_review_replay(self) -> None:
         artifact = build_next_stage_review(self.debrief, RECEIPT, self.intake, valid_checkpoint(), "first_interview")
         changed_debrief = copy.deepcopy(self.debrief)

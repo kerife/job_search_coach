@@ -154,6 +154,37 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         invalid["source_debrief"] = {}
         self.assertTrue(validate_schema_instance(invalid, schema))
 
+    def test_next_stage_taxonomy_schema_accepts_forward_hiring_manager_transition(self):
+        shortlist = build_shortlist("es", "2026-08-27", valid_plan(), valid_targets())
+        gate = build_decision_gate(shortlist)
+        intake = build_screen_intake(gate, "T-001", {
+            "stated_stage": "technical_screen", "vacancy_requirements": ["V-001: Platform reliability scope."],
+            "candidate_fact_ids": ["F-001"], "company_evidence_state": "verified", "source_date": "2026-08-27",
+            "checks": [
+                {"check": "target_context", "status": "pass", "evidence_note": "Named context supplied."},
+                {"check": "proof_packet", "status": "pass", "evidence_note": "Supported fact mapped."},
+                {"check": "low_friction_ask", "status": "pass", "evidence_note": "Process question only."},
+                {"check": "screen_readiness", "status": "pass", "evidence_note": "Stage is explicit."},
+            ],
+        })
+        receipt = json.loads((ROOT / "tests/fixtures/private-recruiter-conversion-outcome/screen-requested-en.json").read_text(encoding="utf-8"))
+        checkpoint = json.loads((ROOT / "tests/fixtures/private-recruiter-followthrough-checkpoint/completed-screen-attended-en.json").read_text(encoding="utf-8"))
+        debrief = build_screen_debrief(checkpoint, receipt, intake, {
+            "observed_date": "2026-08-27",
+            "coverage": [
+                {"topic": "requirement", "status": "discussed", "note": "Requirements discussed."},
+                {"topic": "scope", "status": "discussed", "note": "Scope discussed."},
+                {"topic": "team_context", "status": "discussed", "note": "Team context discussed."},
+            ],
+            "unknown_topics": [], "facts_used": ["F-001"], "decision": "continue_review",
+        })
+        review = build_next_stage_review(debrief, receipt, intake, checkpoint, "hiring_manager")
+        schema = self._schema("private-recruiter-next-stage-review-v1.schema.json")
+        self.assertEqual([], validate_schema_instance(review, schema))
+        invalid = copy.deepcopy(review)
+        invalid["next_stage"] = "not_a_stage"
+        self.assertTrue(validate_schema_instance(invalid, schema))
+
     def test_dossier_methodology_categories_keep_schema_runtime_and_registry_in_lockstep(self):
         helper = _load_v2_dossier_helper()
         validator = helper.load_validator()
