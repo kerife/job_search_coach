@@ -16,23 +16,23 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-26T21:54:44-06:00`
+release_timestamp: `2026-08-26T22:19:22-06:00`
 
-source_commit: `e94200a50236cd37bd3f35b295794ab18d35cf15`
+source_commit: `c6a0a9f6b0a423d981e347fc971b55a4da0a506b`
 
-source_tree: `0ba2117e1ffa691835005fefd1a0912fee6e61ab`
+source_tree: `5d6ba17a2ec84f64df6347c88aad52db4e42e60b`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827035444`
+installed_cache_version: `0.2.0+codex.20260827041629`
 
 installed_enabled: `true`
 
-source_file_count: `132`
+source_file_count: `133`
 
-installed_file_count: `132`
+installed_file_count: `133`
 
-normalized_source_cache_sha256: `7c92c504d43defc1323b3bbb6c322cf52ac44641fac8fa526e494e1b5f85d2a9`
+normalized_source_cache_sha256: `69070204914dc1b4c76cb6ff92b2da3ea9880ab71e348d696f5499c926598f44`
 
 active_config: `canonical_and_public_enabled`
 release_smoke_plugin: `professional-growth-coach@professional-growth-coach-local`
@@ -60,6 +60,8 @@ installed_practice_readiness_smoke: `2/2 ES/EN renderer locale checks with readi
 installed_triage_practice_smoke: `2/2 ES/EN installed builder, validator, and renderer checks with triage route`
 
 installed_answer_boundary_smoke: `2/2 ES/EN installed builder, validator, and renderer checks with answer boundary`
+
+installed_handoff_prose_smoke: `2/2 ES/EN installed valid renderer; validator-hostile and URL-hostile prose rejected before output`
 
 fresh_agent_smoke: `not_run`
 
