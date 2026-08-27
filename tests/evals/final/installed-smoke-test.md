@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T08:32:28-06:00`
+release_timestamp: `2026-08-27T09:02:23-06:00`
 
-source_commit: `f2c025318a99fd8390b765788ba8139f1e32b97e`
+source_commit: `4fe94261e9512caa0b36c38637dd25377b8b2cc2`
 
-source_tree: `750a9578a9352cf072267e63a13a3ec484b16698`
+source_tree: `21bdc823c9896615594ffdedb0e866e19d83a9e5`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827150000`
+installed_cache_version: `0.2.0+codex.20260827160000`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `139`
 
 installed_file_count: `139`
 
-normalized_source_cache_sha256: `b8b128a6833abd213af323f6c847c4d285f28d1cb7d2dba574ba315432f6dea5`
+normalized_source_cache_sha256: `65880269fed8b2ed06ad6cdf2d5be9add4881af34d627708eeec6a1ba51f0f7b`
 
 normalized_excludes: `__pycache__`
 
@@ -42,6 +42,8 @@ release_smoke_plugin: `professional-growth-coach@professional-growth-coach-local
 source_cache_equivalence: `diff_qr_silent`
 
 installed_renderer_smokes: `6/6 triage validator/renderer fixtures`
+
+installed_reading_path_smoke: `4/4 localized fragment links; aria-current fallback; IntersectionObserver enhancement`
 
 installed_dossier_v2_smoke: `4/4 EN/ES validator and renderer`
 
