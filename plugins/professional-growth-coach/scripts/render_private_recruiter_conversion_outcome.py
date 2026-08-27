@@ -187,6 +187,16 @@ class OutcomeRenderValidationError(ValueError):
         self.errors = tuple(errors); super().__init__("private recruiter outcome validation failed")
 
 
+class _ArgumentError(ValueError):
+    pass
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        del message
+        raise _ArgumentError
+
+
 def _validated(item: Mapping[str, object], *, today: dt.date | None) -> Mapping[str, object]:
     errors = VALIDATOR.validate_outcome(item, today=today)
     if errors: raise OutcomeRenderValidationError(errors)
@@ -273,9 +283,12 @@ def write_outcome_html(item: Mapping[str, object], output: Path, *, today: dt.da
 
 
 def _cli(argv=None) -> int:
-    parser = argparse.ArgumentParser(); parser.add_argument("input", type=Path); parser.add_argument("--output", type=Path, required=True); parser.add_argument("--force", action="store_true"); parser.add_argument("--include-artifact-path", action="store_true", help="include the local output path in the CLI receipt"); parser.add_argument("--as-of", dest="as_of", type=lambda value: dt.date.fromisoformat(value), required=True, help="Reference date for deterministic validation (YYYY-MM-DD).")
+    parser = _PrivateArgumentParser(); parser.add_argument("input", type=Path); parser.add_argument("--output", type=Path, required=True); parser.add_argument("--force", action="store_true"); parser.add_argument("--include-artifact-path", action="store_true", help="include the local output path in the CLI receipt"); parser.add_argument("--as-of", dest="as_of", type=lambda value: dt.date.fromisoformat(value), required=True, help="Reference date for deterministic validation (YYYY-MM-DD).")
     try:
         args = parser.parse_args(argv)
+    except _ArgumentError:
+        print(json.dumps({"error": {"code": "invalid_arguments"}}, separators=(",", ":")), file=sys.stderr)
+        return 3
     except SystemExit as error:
         return 0 if error.code == 0 else 3
     try: item = VALIDATOR.load_outcome(args.input); receipt = write_outcome_html(item, args.output, today=args.as_of, force=args.force)

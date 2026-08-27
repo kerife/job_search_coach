@@ -14,10 +14,10 @@ This plugin exposes no HTTP routes, SPA routes, framework page files, or router 
 
 ## Key artifact summaries
 
-- **Executive career dossier:** a private strategic LinkedIn analysis with an executive verdict, scorecard, priorities, copy studio, evidence/limits, and printable document treatment. The v2 renderer keeps an honest unavailable-market state unless validated dated vacancy context is present, in which case it renders separate vacancy cards with location/arrangement/source context, alignment coverage/band, a passive accessible link to each sanitized public source, the sample research date, and optional learning provenance. Eligibility and hiring fit are never inferred.
+- **Executive career dossier:** a private strategic LinkedIn analysis with an executive verdict, scorecard, priorities, copy studio, evidence/limits, and printable document treatment. The v2 renderer adds a localized reading-path landmark with fragment links to coverage, priorities, and market evidence, while keeping an honest unavailable-market state unless validated dated vacancy context is present. With dated context it renders separate vacancy cards with location/arrangement/source context, alignment coverage/band, a passive accessible link to each sanitized public source, the sample research date, and optional learning provenance. Eligibility and hiring fit are never inferred.
 - **Recruiter practice session:** one-question private recruiter-screen rehearsal with state, prompt, rehearsal cues, evidence boundaries, and feedback states.
 - **Private recruiter reply triage:** a closed decision card that communicates safe next steps and, when applicable, a manual preparation handoff.
 - **Follow-through checkpoint:** a compact candidate-supplied state, next measurement event, date, and safe-next-step receipt.
 - **Conversion outcome:** a compact candidate-supplied observed-event receipt with evidence count and safe-next-step boundary.
 
-No router config file exists, so there is no router source to include. All renderer CLIs keep local artifact paths out of successful receipts by default; a trusted caller that needs a verified local link must pass `--include-artifact-path`.
+No router config file exists, so there is no router source to include. All renderer CLIs keep local artifact paths out of successful receipts by default; a trusted caller that needs a verified local link must pass `--include-artifact-path`. Unknown arguments use the same fixed opaque diagnostic boundary and never echo rejected values.

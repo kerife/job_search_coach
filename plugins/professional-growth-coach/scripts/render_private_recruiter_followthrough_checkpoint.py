@@ -131,6 +131,16 @@ class CheckpointRenderValidationError(ValueError):
         self.errors = tuple(errors)
         super().__init__("private recruiter checkpoint validation failed")
 
+
+class _ArgumentError(ValueError):
+    pass
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        del message
+        raise _ArgumentError
+
 def _load_validator() -> Any:
     path = Path(__file__).with_name("validate_private_recruiter_followthrough_checkpoint.py")
     spec = importlib.util.spec_from_file_location("followthrough_checkpoint_validator", path)
@@ -248,10 +258,13 @@ def _date_arg(value: str) -> dt.date:
     except ValueError as error: raise argparse.ArgumentTypeError("must use YYYY-MM-DD") from error
 
 def _cli(argv=None) -> int:
-    parser = argparse.ArgumentParser(description="Render a private recruiter follow-through checkpoint.")
+    parser = _PrivateArgumentParser(description="Render a private recruiter follow-through checkpoint.")
     parser.add_argument("input", type=Path); parser.add_argument("--receipt", type=Path, required=True); parser.add_argument("--output", type=Path, required=True); parser.add_argument("--force", action="store_true"); parser.add_argument("--include-artifact-path", action="store_true", help="include the local output path in the CLI receipt"); parser.add_argument("--as-of", type=_date_arg, required=True)
     try:
         args = parser.parse_args(argv); item = VALIDATOR.load_checkpoint(args.input); receipt = VALIDATOR.load_receipt(args.receipt); result = write_checkpoint_html(item, receipt, args.output, as_of=args.as_of, force=args.force)
+    except _ArgumentError:
+        print(json.dumps({"error": {"code": "invalid_arguments"}}, separators=(",", ":")), file=sys.stderr)
+        return 3
     except SystemExit as error: return 0 if error.code == 0 else 3
     except (OSError, VALIDATOR.CheckpointLoadError): print("cannot render private recruiter checkpoint", file=sys.stderr); return 3
     except CheckpointRenderValidationError as error: print("\n".join(error.errors), file=sys.stderr); return 2

@@ -43,6 +43,16 @@ DossierValidationError = BASE.DossierValidationError
 RenderReceipt = BASE.RenderReceipt
 
 
+class _ArgumentError(ValueError):
+    pass
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        del message
+        raise _ArgumentError
+
+
 SECTION_LABELS = {
     "es": {
         "photo": "Foto", "banner": "Banner", "name": "Nombre",
@@ -145,6 +155,9 @@ AUTHORIZATION_QUESTIONS = {
 COPY = {
     "es": {
         "coverage_title": "Cobertura de secciones",
+        "reading_path_aria": "Ruta de lectura",
+        "reading_path_title": "Ruta de lectura",
+        "reading_path_items": (("section-coverage", "Cobertura"), ("coach-priorities", "Prioridades"), ("market-evidence", "Mercado")),
         "availability": "Disponibilidad", "reason": "Motivo", "request": "Decisión de inspección",
         "priorities": "Prioridades de coaching", "target": "Sección objetivo",
         "observation": "Observación", "why": "Por qué importa", "prompt": "Pregunta de coaching",
@@ -200,6 +213,9 @@ COPY = {
     },
     "en": {
         "coverage_title": "Section coverage", "availability": "Availability", "reason": "Reason",
+        "reading_path_aria": "Reading path",
+        "reading_path_title": "Reading path",
+        "reading_path_items": (("section-coverage", "Coverage"), ("coach-priorities", "Priorities"), ("market-evidence", "Market")),
         "request": "Inspection decision", "priorities": "Coaching priorities",
         "target": "Target section", "observation": "Observation", "why": "Why it matters",
         "prompt": "Coaching prompt", "template": "Private template",
@@ -342,7 +358,7 @@ def _render_section_coverage(dossier: Mapping[str, object], locale: str) -> str:
             f'{request_fact}</dl>\n'
             f'</article></li>'
         )
-    return f'''<section class="section-block section-coverage-ledger" aria-labelledby="section-coverage-ledger-title">
+    return f'''<section class="section-block section-coverage-ledger" aria-labelledby="section-coverage-ledger-title" id="section-coverage">
       <h2 id="section-coverage-ledger-title">{labels['coverage_title']}</h2>
       <ol class="section-coverage-list">{''.join(rows)}</ol>
     </section>'''
@@ -372,7 +388,7 @@ def _render_coach_priorities(dossier: Mapping[str, object], locale: str) -> str:
             <ul class="coach-template-list">{fields}</ul>
           </section>
         </article>''')
-    return f'''<section class="section-block coach-priorities" aria-labelledby="coach-priorities-title">
+    return f'''<section class="section-block coach-priorities" aria-labelledby="coach-priorities-title" id="coach-priorities">
       <h2 id="coach-priorities-title">{labels['priorities']}</h2>
       <div class="dossier-grid priorities-grid">{''.join(cards)}</div>
     </section>'''
@@ -381,7 +397,7 @@ def _render_coach_priorities(dossier: Mapping[str, object], locale: str) -> str:
 def _render_market_evidence_unavailable(locale: str) -> str:
     labels = COPY[locale]
     return f'''<div class="dossier-grid section-block">
-      <section class="card market-unavailable-card span-12" aria-labelledby="market-unavailable-title">
+      <section class="card market-unavailable-card span-12" aria-labelledby="market-unavailable-title" id="market-evidence">
         <h2 id="market-unavailable-title">{labels['market_title']}</h2>
         <p>{labels['market_body']}</p>
       </section>
@@ -617,7 +633,7 @@ def _render_market_context(market_dossier: Mapping[str, object], locale: str) ->
     )
     route = "".join(f"<li>{html.escape(step, quote=True)}</li>" for step in labels["market_route_steps"])
     learning_surface = _render_learning_roi(market_dossier, locale)
-    return f'''<section class="market-summary section-block" aria-labelledby="market-summary-title">
+    return f'''<section class="market-summary section-block" aria-labelledby="market-summary-title" id="market-evidence">
       <h2 id="market-summary-title">{labels['market_summary']}</h2>
       <p>{len(cards)} {'vacantes' if locale == 'es' else 'vacancies'}</p><p class="market-directional-legend market-boundary">{labels['market_directional_legend']}</p><p class="market-eligibility-boundary market-boundary">{labels['market_eligibility_boundary']}</p>{synthetic_boundary}{limitation}
       <div class="vacancy-alignment-list">{''.join(card_html)}</div>
@@ -633,7 +649,17 @@ def _render_market_context(market_dossier: Mapping[str, object], locale: str) ->
 
 def _render_main(dossier: Mapping[str, object], locale: str, market_dossier: Mapping[str, object] | None = None) -> str:
     projected = COMPAT.project_v2_to_v1(BASE._mapping(_plain(dossier)))
-    opening = BASE._render_verdict(projected, locale) + BASE._render_recruiter_scan(projected, locale)
+    labels = COPY[locale]
+    reading_links = "".join(
+        f'<li><a href="#{html.escape(target, quote=True)}">{html.escape(label, quote=True)}</a></li>'
+        for target, label in labels["reading_path_items"]
+    )
+    reading_path = (
+        f'<nav class="reading-path span-12" aria-label="{html.escape(labels["reading_path_aria"], quote=True)}">'
+        f'<span class="reading-path-title">{html.escape(labels["reading_path_title"], quote=True)}</span>'
+        f'<ol>{reading_links}</ol></nav>'
+    )
+    opening = BASE._render_verdict(projected, locale) + reading_path + BASE._render_recruiter_scan(projected, locale)
     bridge_holds = BASE._render_holds(projected, locale) + BASE._render_screen_bridge(projected, locale)
     market_context = projected.get("market_context")
     legacy_market_surface = (
@@ -737,13 +763,19 @@ def write_dossier_html(
 
 
 def _cli(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Render a private career dossier v2.")
+    parser = _PrivateArgumentParser(description="Render a private career dossier v2.")
     parser.add_argument("dossier", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--market-dossier", type=Path)
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--include-artifact-path", action="store_true", help="include the local output path in the CLI receipt")
-    arguments = parser.parse_args(argv)
+    try:
+        arguments = parser.parse_args(argv)
+    except _ArgumentError:
+        print(json.dumps({"error": {"code": "invalid_arguments"}}, separators=(",", ":")), file=sys.stderr)
+        return 3
+    except SystemExit as error:
+        return 0 if error.code == 0 else 3
     try:
         receipt = write_dossier_html(arguments.dossier, arguments.output, market_dossier_path=arguments.market_dossier, force=arguments.force)
     except OSError:

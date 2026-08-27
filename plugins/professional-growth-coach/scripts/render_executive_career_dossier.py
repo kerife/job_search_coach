@@ -72,6 +72,16 @@ class DossierValidationError(ValueError):
         super().__init__("dossier validation failed")
 
 
+class _ArgumentError(ValueError):
+    pass
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        del message
+        raise _ArgumentError
+
+
 @dataclass(frozen=True, slots=True)
 class RenderReceipt:
     artifact_path: Path
@@ -1249,12 +1259,18 @@ def write_dossier_html(
 
 
 def _cli(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Render a private career dossier.")
+    parser = _PrivateArgumentParser(description="Render a private career dossier.")
     parser.add_argument("dossier", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--include-artifact-path", action="store_true", help="include the local output path in the CLI receipt")
-    arguments = parser.parse_args(argv)
+    try:
+        arguments = parser.parse_args(argv)
+    except _ArgumentError:
+        print(json.dumps({"error": {"code": "invalid_arguments"}}, separators=(",", ":")), file=sys.stderr)
+        return 3
+    except SystemExit as error:
+        return 0 if error.code == 0 else 3
     try:
         receipt = write_dossier_html(
             arguments.dossier,

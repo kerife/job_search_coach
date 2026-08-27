@@ -565,7 +565,7 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
             with self.subTest(locale=locale):
                 rendered = self.renderer.render_dossier_html(make_v2_dossier(locale))
                 regions = re.findall(
-                    r'<section class="section-block section-coverage-ledger" aria-labelledby="([^"]+)">(.*?)</section>',
+                    r'<section class="section-block section-coverage-ledger" aria-labelledby="([^"]+)"(?: id="[^"]+")?>(.*?)</section>',
                     rendered,
                     re.DOTALL,
                 )
@@ -587,6 +587,31 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
                     self.assertIn("<dd>", facts)
                     self.assertGreaterEqual(facts.count("<dt>"), 2)
                     self.assertEqual(facts.count("<dt>"), len(re.findall(r"<dd(?:\s|>)", facts)))
+
+    def test_reading_path_is_localized_and_targets_three_unique_decision_regions(self) -> None:
+        expected = {
+            "es": ("Ruta de lectura", "Cobertura", "Prioridades", "Mercado"),
+            "en": ("Reading path", "Coverage", "Priorities", "Market"),
+        }
+        for locale, labels in expected.items():
+            with self.subTest(locale=locale):
+                rendered = self.renderer.render_dossier_html(make_v2_dossier(locale))
+                nav = re.search(
+                    r'<nav class="reading-path(?: span-12)?" aria-label="[^"]+">(.*?)</nav>',
+                    rendered,
+                    re.DOTALL,
+                )
+                self.assertIsNotNone(nav)
+                assert nav is not None
+                self.assertIn(f'<span class="reading-path-title">{labels[0]}</span>', nav.group(1))
+                for label, target in zip(labels[1:], ("section-coverage", "coach-priorities", "market-evidence"), strict=True):
+                    self.assertIn(f'href="#{target}"', nav.group(1))
+                    self.assertIn(label, nav.group(1))
+                    self.assertEqual(1, rendered.count(f'id="{target}"'))
+                css = (ASSETS_ROOT / "executive-career-dossier-v2.css").read_text(encoding="utf-8")
+                self.assertIn(".reading-path a", css)
+                self.assertIn("min-height: 44px", css)
+                self.assertIn("@media screen and (max-width: 640px)", css)
 
     def test_unavailable_rows_show_localized_reason_and_request_decision(self) -> None:
         for locale, labels in (
@@ -682,7 +707,7 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
                 dossier = json.loads((V2_FIXTURE_ROOT / name).read_text(encoding="utf-8"))
                 rendered = self.renderer.render_dossier_html(dossier)
                 regions = re.findall(
-                    r'<section class="card market-unavailable-card span-12" aria-labelledby="market-unavailable-title">(.*?)</section>',
+                    r'<section class="card market-unavailable-card span-12" aria-labelledby="market-unavailable-title"(?: id="[^"]+")?>(.*?)</section>',
                     rendered,
                     re.DOTALL,
                 )

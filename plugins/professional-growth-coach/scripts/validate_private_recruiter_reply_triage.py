@@ -12,7 +12,17 @@ import unicodedata
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 
-from private_prose_safety import format_bounded_diagnostics, is_safe_prose_text, safe_diagnostic_field_name
+try:
+    from private_prose_safety import format_bounded_diagnostics, is_safe_prose_text, safe_diagnostic_field_name
+except ModuleNotFoundError:
+    _prose_spec = importlib.util.spec_from_file_location("_pgc_private_prose_safety", Path(__file__).with_name("private_prose_safety.py"))
+    if _prose_spec is None or _prose_spec.loader is None:
+        raise
+    _prose_module = importlib.util.module_from_spec(_prose_spec)
+    _prose_spec.loader.exec_module(_prose_module)
+    format_bounded_diagnostics = _prose_module.format_bounded_diagnostics
+    is_safe_prose_text = _prose_module.is_safe_prose_text
+    safe_diagnostic_field_name = _prose_module.safe_diagnostic_field_name
 try:
     from private_input_loader import PrivateInputError, read_bounded_bytes
 except ModuleNotFoundError:
@@ -23,7 +33,16 @@ except ModuleNotFoundError:
     _loader_spec.loader.exec_module(_loader_module)
     PrivateInputError = _loader_module.PrivateInputError
     read_bounded_bytes = _loader_module.read_bounded_bytes
-from triage_snapshot import is_snapshot, snapshot_for_triage
+try:
+    from triage_snapshot import is_snapshot, snapshot_for_triage
+except ModuleNotFoundError:
+    _snapshot_spec = importlib.util.spec_from_file_location("_pgc_triage_snapshot", Path(__file__).with_name("triage_snapshot.py"))
+    if _snapshot_spec is None or _snapshot_spec.loader is None:
+        raise
+    _snapshot_module = importlib.util.module_from_spec(_snapshot_spec)
+    _snapshot_spec.loader.exec_module(_snapshot_module)
+    is_snapshot = _snapshot_module.is_snapshot
+    snapshot_for_triage = _snapshot_module.snapshot_for_triage
 
 
 SCHEMA_VERSION = "private-recruiter-reply-triage-v1"

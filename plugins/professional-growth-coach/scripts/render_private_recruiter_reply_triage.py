@@ -61,6 +61,16 @@ class TriageValidationError(ValueError):
         super().__init__("private recruiter triage validation failed")
 
 
+class _ArgumentError(ValueError):
+    pass
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        del message
+        raise _ArgumentError
+
+
 @dataclass(frozen=True, slots=True)
 class RenderReceipt:
     artifact_path: Path
@@ -679,13 +689,16 @@ def write_triage_html(triage_path: Path, output_path: Path, *, force: bool = Fal
 
 
 def _cli(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Render a private recruiter reply triage decision card.")
+    parser = _PrivateArgumentParser(description="Render a private recruiter reply triage decision card.")
     parser.add_argument("triage", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--include-artifact-path", action="store_true", help="include the local output path in the CLI receipt")
     try:
         arguments = parser.parse_args(argv)
+    except _ArgumentError:
+        print(json.dumps({"error": {"code": "invalid_arguments"}}, separators=(",", ":")), file=sys.stderr)
+        return 3
     except SystemExit as error:
         return 0 if error.code == 0 else 3
     try:

@@ -87,6 +87,59 @@ class CliReceiptPrivacyTests(unittest.TestCase):
         self.assertEqual("cannot load private recruiter triage input\n", result.stderr)
         self.assertFalse(output.exists())
 
+    def test_unknown_arguments_never_echo_private_values(self) -> None:
+        sentinel = "/private/hidden/candidate-record.json"
+        cases = (
+            (SCRIPTS / "render_executive_career_dossier.py", [str(V1_DOSSIER)]),
+            (SCRIPTS / "render_executive_career_dossier_v2.py", [str(V2_DOSSIER)]),
+            (SCRIPTS / "render_private_recruiter_reply_triage.py", [str(TRIAGE)]),
+            (SCRIPTS / "render_private_recruiter_followthrough_checkpoint.py", [str(CHECKPOINT), "--receipt", str(CHECKPOINT_RECEIPT), "--as-of", "2026-08-27"]),
+            (SCRIPTS / "render_private_recruiter_conversion_outcome.py", [str(OUTCOME), "--as-of", "2026-08-27"]),
+        )
+        for script, arguments in cases:
+            with self.subTest(script=script.name):
+                result, output = self._run(script, [*arguments, "--private-context", sentinel])
+                self.assertNotEqual(0, result.returncode)
+                self.assertNotIn(sentinel, result.stdout)
+                self.assertNotIn(sentinel, result.stderr)
+                self.assertFalse(output.exists())
+
+    def test_triage_renderer_imports_without_pythonpath_setup(self) -> None:
+        code = (
+            "import importlib.util, sys; "
+            f"spec=importlib.util.spec_from_file_location('isolated_triage_renderer', {str(SCRIPTS / 'render_private_recruiter_reply_triage.py')!r}); "
+            "module=importlib.util.module_from_spec(spec); sys.modules[spec.name]=module; spec.loader.exec_module(module)"
+        )
+        result = subprocess.run(
+            [sys.executable, "-B", "-c", code],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+
+    def test_private_receipt_renderers_import_without_pythonpath_setup(self) -> None:
+        for script in (
+            SCRIPTS / "render_private_recruiter_reply_triage.py",
+            SCRIPTS / "render_private_recruiter_followthrough_checkpoint.py",
+            SCRIPTS / "render_private_recruiter_conversion_outcome.py",
+        ):
+            with self.subTest(script=script.name):
+                code = (
+                    "import importlib.util, sys; "
+                    f"spec=importlib.util.spec_from_file_location('isolated_renderer', {str(script)!r}); "
+                    "module=importlib.util.module_from_spec(spec); sys.modules[spec.name]=module; spec.loader.exec_module(module)"
+                )
+                result = subprocess.run(
+                    [sys.executable, "-B", "-c", code],
+                    cwd=ROOT,
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                self.assertEqual(0, result.returncode, result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

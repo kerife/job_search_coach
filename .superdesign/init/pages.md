@@ -31,6 +31,10 @@ print keeps the semantic table layout and no horizontal-scroll affordance is
 required.
 The section-coverage ledger likewise keeps a single facts column at 640px and
 below, preserving the same semantic reading order without horizontal scrolling.
+The v2 opening also includes a localized `reading-path` landmark after the
+verdict. Its three static fragment links target section coverage, coaching
+priorities, and market evidence; links keep visible focus, print cleanly, and
+stack into 44px touch targets at 640px and below.
 
 ## /recruiter-practice-session (offline artifact)
 
@@ -55,6 +59,8 @@ Dependencies:
 - `plugins/professional-growth-coach/assets/private-recruiter-reply-triage-v1.css`
 
 The renderer validates the identity-free triage record, then emits its header, decision sections, and optional manual handoff as HTML. Its CLI receipt omits the local artifact path by default; use `--include-artifact-path` only for a trusted caller that must deliver a verified local link.
+Unknown CLI arguments return a fixed opaque diagnostic and never reflect the
+rejected value; sibling safety helpers also resolve for direct module imports.
 
 ## /private-recruiter-followthrough-checkpoint (offline artifact)
 
