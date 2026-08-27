@@ -1,5 +1,5 @@
 {
-  "schema_version": "career-market-learning-dossier-v1", "locale": "en", "as_of_date": "2026-08-13", "state": "limited_market_evidence",
+  "schema_version": "career-market-learning-dossier-v1", "evidence_mode": "synthetic", "locale": "en", "as_of_date": "2026-08-13", "state": "limited_market_evidence",
   "source_research_snapshot": "snap-market-sha256-0000000000000000000000000000000000000000000000000000000000000000", "source_executive_dossier_snapshot": "snap-dossier-sha256-0000000000000000000000000000000000000000000000000000000000000000",
   "search_summary": {"vacancy_sample_count": 4, "bounded_queries_run": 12, "limit_reason": "source_limit", "limitation": "Only four identity-free fixture vacancies were available."},
   "vacancy_cards": [

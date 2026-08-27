@@ -50,10 +50,16 @@ GATE_NAMES = frozenset({
 IMPORTANCES = frozenset({"must_have", "preferred", "responsibility_only"})
 GATE_STATES = frozenset({"pass", "blocked", "unknown"})
 FRESHNESS = frozenset({"current", "unknown"})
+EVIDENCE_MODES = frozenset({"synthetic", "live"})
 TOP_FIELDS = frozenset({
-    "schema_version", "research_kind", "locale", "as_of_date", "search_scope", "state",
+    "schema_version", "research_kind", "evidence_mode", "locale", "as_of_date", "search_scope", "state",
     "search_limit", "employers", "vacancies", "privacy_boundary", "no_external_action",
 })
+RESTRICTED_OBSERVATION = re.compile(
+    r"(?:https?://|www\.[a-z0-9.-]+\.[a-z]{2,}|[\w.+-]+@[\w.-]+\.[a-z]{2,}|"
+    r"\+?\d[\d\s().-]{7,}\d|\b(?:session(?:[_-]?(?:id|token|key))?|sid|jsessionid|phpsessid|cookie)\s*[=:])",
+    re.I,
+)
 
 
 def _closed(value: object, path: str, fields: frozenset[str], errors: list[str]) -> Mapping[str, object] | None:
@@ -83,56 +89,94 @@ def _text(value: object, path: str, errors: list[str], *, maximum: int) -> bool:
     return True
 
 
-def _date(value: object, path: str, errors: list[str]) -> date | None:
+def _observation_text(value: object, path: str, errors: list[str], *, maximum: int) -> None:
+    _text(value, path, errors, maximum=maximum)
+    if isinstance(value, str) and RESTRICTED_OBSERVATION.search(value):
+        errors.append(f"{path} contains restricted observation data")
+
+
+def _date(value: object, path: str, errors: list[str], *, live: bool = False) -> date | None:
     if not isinstance(value, str):
         errors.append(f"{path} must be an ISO date")
         return None
     try:
-        return date.fromisoformat(value)
+        parsed = date.fromisoformat(value)
     except ValueError:
         errors.append(f"{path} must be an ISO date")
         return None
+    if live and parsed > date.today():
+        errors.append(f"{path} cannot be in the future for live evidence")
+    return parsed
 
 
-def _url_error(value: object, *, source_kind: str | None = None) -> str | None:
+def _reserved_domain(host: str) -> bool:
+    return host in {"example.com", "example.net", "example.org", "localhost"} or host.endswith(
+        (".example.com", ".example.net", ".example.org", ".test", ".invalid", ".localhost"),
+    )
+
+
+def _canonical_url_path(path: str) -> str | None:
+    from urllib.parse import unquote
+
+    decoded = path
+    for _ in range(4):
+        next_path = unquote(decoded)
+        if next_path == decoded:
+            return decoded
+        decoded = next_path
+    return None
+
+
+def source_url_policy_error(
+    value: object, *, source_kind: str | None = None, evidence_mode: str,
+) -> str | None:
     if not isinstance(value, str):
         return "source URL must use HTTPS"
-    # The fixtures intentionally use example.com as a reserved test host.
-    if source_kind != "linkedin_jobs_backup" and value.startswith("https://example.com/"):
-        if any(marker in value.casefold() for marker in ("@", "?", "#")):
-            return "source URL contains restricted metadata"
-        return None
     try:
         from urllib.parse import urlsplit
 
         parsed = urlsplit(value)
     except ValueError:
         return "source URL must use HTTPS"
+    host = (parsed.hostname or "").casefold().rstrip(".")
+    try:
+        port = parsed.port
+    except ValueError:
+        return "source URL must use HTTPS"
+    if parsed.scheme.casefold() != "https" or parsed.username or parsed.password or port not in {None, 443}:
+        return "source URL must use HTTPS"
+    canonical_path = _canonical_url_path(parsed.path)
+    if (
+        parsed.query
+        or parsed.fragment
+        or canonical_path is None
+        or RESTRICTED_OBSERVATION.search(canonical_path)
+    ):
+        return "source URL contains restricted metadata"
+    if evidence_mode == "synthetic" and not _reserved_domain(host):
+        return "synthetic source URL must use a reserved domain"
+    if evidence_mode == "live" and _reserved_domain(host):
+        return "live evidence cannot use a reserved source domain"
     if source_kind == "linkedin_jobs_backup":
-        host = (parsed.hostname or "").casefold().rstrip(".")
         if host not in {"linkedin.com", "www.linkedin.com"} or not parsed.path.startswith("/jobs/"):
             return "LinkedIn backup URL must use the linkedin.com/jobs path"
-        try:
-            port = parsed.port
-        except ValueError:
-            return "source URL must use HTTPS"
-        if (
-            parsed.scheme.casefold() != "https"
-            or parsed.username
-            or parsed.password
-            or parsed.query
-            or parsed.fragment
-            or port not in {None, 443}
-        ):
-            return "source URL must use HTTPS"
+        return None
+    if evidence_mode == "synthetic":
         return None
     errors = _report.validate_secondary_source_url(value)
     if errors:
         return "source URL violates public HTTPS policy"
-    host = (parsed.hostname or "").casefold().rstrip(".")
     if host == "linkedin.com" or host.endswith(".linkedin.com"):
         return "official source URL cannot point to LinkedIn"
     return None
+
+
+def _url_error(
+    value: object, *, source_kind: str | None = None, evidence_mode: str,
+) -> str | None:
+    return source_url_policy_error(
+        value, source_kind=source_kind, evidence_mode=evidence_mode,
+    )
 
 
 def _depth(value: object, level: int = 0) -> bool:
@@ -165,7 +209,7 @@ def _validate_search_scope(value: object, errors: list[str]) -> None:
             errors.append(f"search_scope.{field} must be true")
 
 
-def _validate_employers(value: object, errors: list[str]) -> set[str]:
+def _validate_employers(value: object, evidence_mode: str, errors: list[str]) -> set[str]:
     if not isinstance(value, list):
         errors.append("employers must be an array")
         return set()
@@ -184,18 +228,21 @@ def _validate_employers(value: object, errors: list[str]) -> set[str]:
         _text(row.get("display_name"), f"{path}.display_name", errors, maximum=160)
         if row.get("qualification_type") not in {"official_headcount", "official_index_membership"}:
             errors.append(f"{path}.qualification_type has invalid value")
-        _text(row.get("qualification_observation"), f"{path}.qualification_observation", errors, maximum=500)
+        _observation_text(row.get("qualification_observation"), f"{path}.qualification_observation", errors, maximum=500)
         _text(row.get("official_source_title"), f"{path}.official_source_title", errors, maximum=240)
-        if _url_error(row.get("official_source_url")):
-            errors.append(f"{path}.official_source_url is invalid")
-        source_date = _date(row.get("source_date"), f"{path}.source_date", errors)
-        access_date = _date(row.get("access_date"), f"{path}.access_date", errors)
+        url_error = _url_error(row.get("official_source_url"), evidence_mode=evidence_mode)
+        if url_error:
+            errors.append(url_error if url_error == "live evidence cannot use a reserved source domain" else f"{path}.official_source_url is invalid")
+        source_date = _date(row.get("source_date"), f"{path}.source_date", errors, live=evidence_mode == "live")
+        access_date = _date(row.get("access_date"), f"{path}.access_date", errors, live=evidence_mode == "live")
         if source_date and access_date and source_date > access_date:
             errors.append(f"{path}.source_date cannot be after access_date")
     return ids
 
 
-def _validate_vacancies(value: object, employers: set[str], as_of: date | None, errors: list[str]) -> None:
+def _validate_vacancies(
+    value: object, employers: set[str], as_of: date | None, evidence_mode: str, errors: list[str],
+) -> None:
     if not isinstance(value, list):
         errors.append("vacancies must be an array")
         return
@@ -237,18 +284,24 @@ def _validate_vacancies(value: object, employers: set[str], as_of: date | None, 
         source_kind = row.get("source_kind")
         if source_kind not in SOURCE_KINDS:
             errors.append(f"{path}.source_kind has invalid value")
-        if _url_error(row.get("source_url"), source_kind=source_kind if isinstance(source_kind, str) else None):
-            errors.append(f"{path}.source_url is invalid")
+        url_error = _url_error(
+            row.get("source_url"), source_kind=source_kind if isinstance(source_kind, str) else None,
+            evidence_mode=evidence_mode,
+        )
+        if url_error:
+            errors.append(url_error if url_error == "live evidence cannot use a reserved source domain" else f"{path}.source_url is invalid")
         referrer = row.get("official_referrer_url")
-        if referrer is not None and _url_error(referrer):
-            errors.append(f"{path}.official_referrer_url is invalid")
+        if referrer is not None:
+            referrer_error = _url_error(referrer, evidence_mode=evidence_mode)
+            if referrer_error:
+                errors.append(referrer_error if referrer_error == "live evidence cannot use a reserved source domain" else f"{path}.official_referrer_url is invalid")
         if row.get("source_state") != "active":
             errors.append(f"{path}.source_state must be active")
-        access_date = _date(row.get("access_date"), f"{path}.access_date", errors)
+        access_date = _date(row.get("access_date"), f"{path}.access_date", errors, live=evidence_mode == "live")
         if as_of and access_date and access_date != as_of:
             errors.append(f"{path}.access_date must equal as_of_date")
         publication = row.get("publication_date")
-        publication_date = _date(publication, f"{path}.publication_date", errors) if publication is not None else None
+        publication_date = _date(publication, f"{path}.publication_date", errors, live=evidence_mode == "live") if publication is not None else None
         if as_of and publication_date and publication_date > as_of:
             errors.append(f"{path}.publication_date cannot be after as_of_date")
         if row.get("freshness_status") not in FRESHNESS:
@@ -270,7 +323,7 @@ def _validate_vacancies(value: object, employers: set[str], as_of: date | None, 
                 state = gate_row.get("state")
                 if state not in GATE_STATES:
                     errors.append(f"{gate_path}.state has invalid value")
-                _text(gate_row.get("observed_condition"), f"{gate_path}.observed_condition", errors, maximum=500)
+                _observation_text(gate_row.get("observed_condition"), f"{gate_path}.observed_condition", errors, maximum=500)
                 if state == "unknown" and re.search(r"\b(?:eligible|authorized|pass|cumple|aprobado)\b", str(gate_row.get("observed_condition", "")), re.I):
                     errors.append("unknown eligibility gate contains an inferred conclusion")
         requirements = row.get("requirements")
@@ -295,7 +348,7 @@ def _validate_vacancies(value: object, employers: set[str], as_of: date | None, 
                     signals.add(signal)
                 if req_row.get("importance") not in IMPORTANCES:
                     errors.append(f"{req_path}.importance has invalid value")
-                _text(req_row.get("source_paraphrase"), f"{req_path}.source_paraphrase", errors, maximum=500)
+                _observation_text(req_row.get("source_paraphrase"), f"{req_path}.source_paraphrase", errors, maximum=500)
     if repeated_employer:
         # The caller checks the search-limit flag after all rows are known.
         errors.append("__repeated_employer__")
@@ -319,7 +372,11 @@ def validate_research(value: object) -> list[str]:
             errors.append("research_kind has invalid value")
         if value.get("locale") not in {"es", "en"}:
             errors.append("locale has invalid value")
-        as_of = _date(value.get("as_of_date"), "as_of_date", errors)
+        evidence_mode = value.get("evidence_mode")
+        if evidence_mode not in EVIDENCE_MODES:
+            errors.append("evidence_mode has invalid value")
+        mode = str(evidence_mode)
+        as_of = _date(value.get("as_of_date"), "as_of_date", errors, live=mode == "live")
         _validate_search_scope(value.get("search_scope"), errors)
         state = value.get("state")
         if state not in ALLOWED_STATES:
@@ -332,10 +389,10 @@ def validate_research(value: object) -> list[str]:
                 errors.append("search_limit.limit_reason has invalid value")
             if type(search_limit.get("distinct_employer_search_exhausted")) is not bool:
                 errors.append("search_limit.distinct_employer_search_exhausted must be boolean")
-            _text(search_limit.get("limitation"), "search_limit.limitation", errors, maximum=500)
-        employers = _validate_employers(value.get("employers"), errors)
+            _observation_text(search_limit.get("limitation"), "search_limit.limitation", errors, maximum=500)
+        employers = _validate_employers(value.get("employers"), mode, errors)
         vacancies = value.get("vacancies")
-        _validate_vacancies(vacancies, employers, as_of, errors)
+        _validate_vacancies(vacancies, employers, as_of, mode, errors)
         count = len(vacancies) if isinstance(vacancies, list) else -1
         expected = state == "complete" and count == 5 or state == "limited_market_evidence" and 1 <= count <= 4 or state == "market_evidence_unavailable" and count == 0
         if not expected:

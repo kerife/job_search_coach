@@ -160,6 +160,7 @@ COPY = {
         "market_route": "Ruta para cerrar brechas",
         "market_route_steps": ("Confirmar la brecha", "Elegir una prueba", "Practicar el ejemplo", "Revisar la evidencia"),
         "market_limited": "Limitación de la muestra",
+        "market_synthetic": "Fixture sintético: no es evidencia del mercado actual.",
         "learning_title": "Ruta de aprendizaje",
         "learning_coach": "Decisión de coaching",
         "learning_decisions": "Decisiones priorizadas",
@@ -191,6 +192,7 @@ COPY = {
         "market_route": "Gap-closure route",
         "market_route_steps": ("Confirm the gap", "Choose evidence", "Practice the example", "Review the evidence"),
         "market_limited": "Sample limitation",
+        "market_synthetic": "Synthetic fixture: not current-market evidence.",
         "learning_title": "Learning route",
         "learning_coach": "Coaching decision",
         "learning_decisions": "Ranked decisions",
@@ -380,7 +382,15 @@ def _render_learning_roi(market_dossier: Mapping[str, object], locale: str) -> s
     for row_value in BASE._rows(market_dossier["learning_decisions"]):
         row = BASE._mapping(row_value)
         option = options[str(row["option_id"])]
-        decision_rows.append(f'''<article class="learning-decision-row">
+        decision_class = {
+            "project_first": "project-first",
+            "consider": "consider",
+            "not_needed": "not-needed",
+            "recommended": "recommended",
+            "pause": "pause",
+            "apply_with_boundary": "apply-with-boundary",
+        }[str(row["decision"])]
+        decision_rows.append(f'''<article class="learning-decision-row learning-decision-row--{decision_class}">
           <h4>{copy_labels[str(row['decision'])]}</h4>
           <dl class="learning-decision-facts">
             <dt>{labels['learning_frequency']}</dt><dd>{_learning_text(row['frequency_display'])}</dd>
@@ -474,11 +484,16 @@ def _render_market_context(market_dossier: Mapping[str, object], locale: str) ->
     limitation = ""
     if market_dossier.get("state") == "limited_market_evidence":
         limitation = f'<p class="market-limitation"><strong>{labels["market_limited"]}:</strong> {html.escape(str(summary["limitation"]), quote=True)}</p>'
+    synthetic_boundary = (
+        f'<p class="market-synthetic-boundary market-boundary">{labels["market_synthetic"]}</p>'
+        if market_dossier.get("evidence_mode") == "synthetic"
+        else ""
+    )
     route = "".join(f"<li>{html.escape(step, quote=True)}</li>" for step in labels["market_route_steps"])
     learning_surface = _render_learning_roi(market_dossier, locale)
     return f'''<section class="market-summary section-block" aria-labelledby="market-summary-title">
       <h2 id="market-summary-title">{labels['market_summary']}</h2>
-      <p>{len(cards)} {'vacantes' if locale == 'es' else 'vacancies'}</p>{limitation}
+      <p>{len(cards)} {'vacantes' if locale == 'es' else 'vacancies'}</p>{synthetic_boundary}{limitation}
       <div class="vacancy-alignment-list">{''.join(card_html)}</div>
       <section class="market-key" aria-labelledby="market-key-title"><h3 id="market-key-title">{labels['market_key']}</h3><ol>{''.join(key_rows)}</ol></section>
       <section class="market-matrix-wrap" aria-labelledby="market-matrix-title"><h3 id="market-matrix-title">{labels['market_matrix']}</h3>

@@ -728,7 +728,7 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         visible = visible_text(rendered)
 
         self.assertEqual(rendered.count('class="market-learning-roi"'), 1)
-        self.assertEqual(rendered.count('class="learning-decision-row"'), 3)
+        self.assertEqual(len(re.findall(r'class="learning-decision-row(?: learning-decision-row--[a-z-]+)?"', rendered)), 3)
         self.assertIn('class="learning-coach-decision"', rendered)
         self.assertIn('class="learning-proof-sprint"', rendered)
         self.assertEqual(rendered.count('class="learning-reuse-row"'), 3)
@@ -744,12 +744,38 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         for private_token in ("snap-market", "snap-learning", "LO-001", "E-001", "https://example.com"):
             self.assertNotIn(private_token, region)
 
+    def test_learning_decision_cards_expose_semantic_state_treatment(self) -> None:
+        dossier = make_v2_dossier("es")
+        market = make_composable_learning_market_dossier(
+            "project-first-five-es.json", dossier, self.renderer,
+        )
+        rendered = self.renderer.render_dossier_html(dossier, market)
+
+        self.assertIn('class="learning-decision-row learning-decision-row--project-first"', rendered)
+        self.assertIn('class="learning-decision-row learning-decision-row--consider"', rendered)
+        self.assertIn('class="learning-decision-row learning-decision-row--not-needed"', rendered)
+        css = (ASSETS_ROOT / "career-market-learning-dossier-v1.css").read_text(encoding="utf-8")
+        self.assertIn(".learning-decision-row--project-first", css)
+        self.assertIn(".learning-decision-row--consider", css)
+        self.assertIn(".learning-decision-row--not-needed", css)
+        self.assertIn("border-left", css)
+
     def test_market_v1_keeps_its_existing_gap_route_without_learning_decisions(self) -> None:
         dossier = make_v2_dossier("en")
         market = make_composable_market_dossier("complete-five-es.json", dossier)
         rendered = self.renderer.render_dossier_html(dossier, market)
         self.assertIn('class="gap-closure-route"', rendered)
         self.assertNotIn('class="market-learning-roi"', rendered)
+
+    def test_synthetic_market_is_visibly_not_current_market_evidence(self) -> None:
+        dossier = make_v2_dossier("en")
+        market = make_composable_market_dossier("complete-five-es.json", dossier)
+        market["evidence_mode"] = "synthetic"
+
+        rendered = self.renderer.render_dossier_html(dossier, market)
+
+        self.assertIn('class="market-synthetic-boundary market-boundary"', rendered)
+        self.assertIn("Synthetic fixture: not current-market evidence.", visible_text(rendered))
 
     def test_evaluated_learning_market_rejects_stale_research_snapshot(self) -> None:
         dossier = make_v2_dossier("es")

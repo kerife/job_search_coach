@@ -6,7 +6,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import importlib.util
-import ipaddress
 import json
 import re
 import sys
@@ -29,6 +28,7 @@ def _sibling(name: str) -> Any:
 
 _loader = _sibling("private_input_loader.py")
 _prose = _sibling("private_prose_safety.py")
+RESEARCH = _sibling("validate_target_vacancy_research.py")
 
 SCHEMA_VERSION = "career-market-learning-dossier-v1"
 MAX_INPUT_BYTES = 256 * 1024
@@ -46,8 +46,9 @@ SUPPORT_NUMERATORS = {
     "unknown": 0,
 }
 IMPORTANCE_WEIGHTS = {"must_have": 2, "preferred": 1, "responsibility_only": 0}
+EVIDENCE_MODES = frozenset({"synthetic", "live"})
 TOP_FIELDS = frozenset({
-    "schema_version", "locale", "as_of_date", "state", "source_research_snapshot",
+    "schema_version", "evidence_mode", "locale", "as_of_date", "state", "source_research_snapshot",
     "source_executive_dossier_snapshot", "search_summary", "vacancy_cards", "matrix_rows",
     "recurrence_rows", "learning_state", "learning_decisions", "methodology_boundary",
     "privacy_boundary", "no_external_action",
@@ -139,44 +140,29 @@ def _private_text(value: object, path: str, errors: list[str], maximum: int = 50
         errors.append(f"{path} contains private value")
 
 
-def _date(value: object, path: str, errors: list[str]) -> date | None:
+def _date(value: object, path: str, errors: list[str], *, live: bool = False) -> date | None:
     if not isinstance(value, str):
         errors.append(f"{path} must be an ISO date")
         return None
     try:
-        return date.fromisoformat(value)
+        parsed = date.fromisoformat(value)
     except ValueError:
         errors.append(f"{path} must be an ISO date")
         return None
+    if live and parsed > date.today():
+        errors.append(f"{path} cannot be in the future for live evidence")
+    return parsed
 
 
-def _source_url_error(value: object, source_kind: object) -> str | None:
-    if not isinstance(value, str):
-        return "source URL is invalid"
-    try:
-        from urllib.parse import urlsplit
-        parsed = urlsplit(value)
-    except ValueError:
-        return "source URL is invalid"
-    if parsed.scheme.casefold() != "https" or parsed.username or parsed.password:
-        return "source URL is invalid"
-    host = (parsed.hostname or "").casefold().rstrip(".")
-    if not host or host == "localhost" or host.endswith(".localhost"):
-        return "source URL is invalid"
-    try:
-        address = ipaddress.ip_address(host)
-    except ValueError:
-        address = None
-    if address is not None and (address.is_private or address.is_loopback or address.is_link_local or address.is_reserved):
-        return "source URL is invalid"
-    if source_kind == "linkedin_jobs_backup":
-        if host not in {"linkedin.com", "www.linkedin.com"} or not parsed.path.startswith("/jobs/"):
-            return "source URL is invalid"
-    elif host == "linkedin.com" or host.endswith(".linkedin.com"):
-        return "source URL is invalid"
-    if any(marker in value for marker in ("?", "#")):
-        return "source URL is invalid"
-    return None
+def _source_url_error(value: object, source_kind: object, evidence_mode: object) -> str | None:
+    error = RESEARCH.source_url_policy_error(
+        value,
+        source_kind=source_kind if isinstance(source_kind, str) else None,
+        evidence_mode=evidence_mode if isinstance(evidence_mode, str) else "",
+    )
+    if error == "live evidence cannot use a reserved source domain":
+        return "live source URL cannot use a reserved domain"
+    return error
 
 
 def _depth(value: object, level: int = 0) -> bool:
@@ -293,9 +279,12 @@ def validate_market_dossier(value: object) -> list[str]:
             errors.append("market learning dossier is missing required fields")
         if value.get("schema_version") != SCHEMA_VERSION:
             errors.append("schema_version has invalid value")
+        evidence_mode = value.get("evidence_mode")
+        if evidence_mode not in EVIDENCE_MODES:
+            errors.append("evidence_mode has invalid value")
         if value.get("locale") not in {"es", "en"}:
             errors.append("locale has invalid value")
-        _date(value.get("as_of_date"), "as_of_date", errors)
+        _date(value.get("as_of_date"), "as_of_date", errors, live=evidence_mode == "live")
         if not isinstance(value.get("source_research_snapshot"), str) or not MARKET_SNAPSHOT.fullmatch(value["source_research_snapshot"]):
             errors.append("source_research_snapshot has invalid value")
         if not isinstance(value.get("source_executive_dossier_snapshot"), str) or not DOSSIER_SNAPSHOT.fullmatch(value["source_executive_dossier_snapshot"]):
@@ -333,8 +322,9 @@ def validate_market_dossier(value: object) -> list[str]:
                 source_kind = row.get("source_kind")
                 if source_kind not in {"official_employer", "employer_operated_ats", "linkedin_jobs_backup"}:
                     errors.append(f"vacancy_cards[{index}].source_kind has invalid value")
-                if _source_url_error(row.get("source_url"), source_kind):
-                    errors.append(f"vacancy_cards[{index}].source_url is invalid")
+                source_error = _source_url_error(row.get("source_url"), source_kind, evidence_mode)
+                if source_error:
+                    errors.append(source_error if "reserved domain" in source_error else f"vacancy_cards[{index}].source_url is invalid")
                 requirements = _card_requirements(row.get("requirements"), f"vacancy_cards[{index}].requirements", errors)
                 row = dict(row)
                 row["requirements"] = requirements

@@ -6,6 +6,7 @@ import copy
 import json
 import sys
 import unittest
+from datetime import date, timedelta
 from pathlib import Path
 
 
@@ -98,9 +99,11 @@ class CareerMarketLearningDossierV2Tests(unittest.TestCase):
 
     def test_builder_emits_project_first_for_exact_recurring_gap(self) -> None:
         market = _recurring_market(5)
+        market["evidence_mode"] = "synthetic"
         research = _research(market, project=True, course=True)
         dossier = build_learning_dossier(market, research)
         self.assertEqual("career-market-learning-dossier-v2", dossier["schema_version"])
+        self.assertEqual("synthetic", dossier["evidence_mode"])
         self.assertEqual("evaluated", dossier["learning_state"])
         self.assertEqual(3, len(dossier["learning_decisions"]))
         first = dossier["learning_decisions"][0]
@@ -115,6 +118,35 @@ class CareerMarketLearningDossierV2Tests(unittest.TestCase):
         self.assertEqual(5, sprint["duration_days"])
         self.assertEqual(3, len(dossier["reuse_map"]))
         self.assertEqual([], validate_learning_dossier(dossier))
+
+    def test_v2_inherits_live_future_date_rejection_from_market_contract(self) -> None:
+        fixture = _load(
+            ROOT / "tests" / "evals" / "with-skill" / "fixtures"
+            / "career-market-learning-dossier-v2" / "project-first-five-es.json",
+        )
+        future = (date.today() + timedelta(days=1)).isoformat()
+        fixture["evidence_mode"] = "live"
+        fixture["as_of_date"] = future
+        for card in fixture["vacancy_cards"]:
+            card["source_url"] = "https://careers.public.example/roles/123"
+
+        errors = validate_learning_dossier(fixture)
+
+        self.assertIn("as_of_date cannot be in the future for live evidence", errors)
+        self.assertNotIn(future, " ".join(errors))
+
+    def test_v2_inherits_synthetic_source_url_policy_from_market_contract(self) -> None:
+        fixture = _load(
+            ROOT / "tests" / "evals" / "with-skill" / "fixtures"
+            / "career-market-learning-dossier-v2" / "project-first-five-es.json",
+        )
+        source_url = "https://example.com/careers/session%25255Fid%253Dprivate-marker"
+        fixture["vacancy_cards"][0]["source_url"] = source_url
+
+        errors = validate_learning_dossier(fixture)
+
+        self.assertIn("vacancy_cards[0].source_url is invalid", errors)
+        self.assertNotIn(source_url, " ".join(errors))
 
     def test_unknown_budgets_block_paid_recommended_but_permit_consider(self) -> None:
         market = _recurring_market(4)

@@ -3,9 +3,10 @@
   "title": "Career market learning dossier v2",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "locale", "as_of_date", "state", "source_research_snapshot", "source_executive_dossier_snapshot", "source_market_snapshot", "source_learning_research_snapshot", "search_summary", "vacancy_cards", "matrix_rows", "recurrence_rows", "learning_state", "learning_decisions", "learning_options", "coach_decision", "proof_sprint", "reuse_map", "methodology_boundary", "privacy_boundary", "no_external_action"],
+  "required": ["schema_version", "evidence_mode", "locale", "as_of_date", "state", "source_research_snapshot", "source_executive_dossier_snapshot", "source_market_snapshot", "source_learning_research_snapshot", "search_summary", "vacancy_cards", "matrix_rows", "recurrence_rows", "learning_state", "learning_decisions", "learning_options", "coach_decision", "proof_sprint", "reuse_map", "methodology_boundary", "privacy_boundary", "no_external_action"],
   "properties": {
     "schema_version": {"const": "career-market-learning-dossier-v2"},
+    "evidence_mode": {"enum": ["synthetic", "live"]},
     "locale": {"enum": ["es", "en"]},
     "as_of_date": {"type": "string", "format": "date"},
     "state": {"enum": ["complete", "limited_market_evidence", "market_evidence_unavailable"]},

@@ -59,6 +59,13 @@ not infer work-authorization, internal-mobility, EOR, or remote-eligibility.
 This policy permits read-only inspection only: no apply, message, connect,
 follow, publish, enroll, or purchase action.
 
+Set `evidence_mode=live` for a current capture and `evidence_mode=synthetic`
+only for reproducible fixtures. Live captures reject reserved example/test
+domains and future-dated observations. Observation prose must remain
+identity-free; URLs, contact details, and session-shaped identifiers are
+rejected before downstream composition, and diagnostics do not echo their
+values.
+
 ## Confidence
 
 `high` requires multiple current, direct, matching sources with disclosed bases and compatible context. `medium` requires some matching current evidence with stated limitations. `low` is required for one source, an indirect source, missing date/sample/basis, or unresolved eligibility/comparability. `unknown` is appropriate where no evidence exists.

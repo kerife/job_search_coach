@@ -40,6 +40,19 @@ Report every recurring signal against the actual sample `k/N`, not a presumed
 five-posting denominator. Keep `learning_state=not_evaluated` until a later
 learning-decision increment consumes the validated market dossier.
 
+Set `evidence_mode=live` for current research and `evidence_mode=synthetic`
+only for clearly marked reproducible fixtures. Live artifacts reject reserved
+example/test domains and any future `as_of_date`, source, access, or
+publication date. Observational prose is identity-free: URLs, contact details,
+and session-shaped identifiers are rejected before rendering, with bounded
+diagnostics that do not echo their values. Synthetic mode does not upgrade
+fixture evidence into a current-market claim. The field is required by the
+v1 artifact contract, so existing producers must migrate before validation.
+
+When composing `career-market-learning-dossier-v1` or derived v2, propagate
+the validated mode unchanged. Older v1 artifacts without `evidence_mode` must
+be rebuilt from their source research because their snapshot binding changes.
+
 Do not infer work-authorization, internal-mobility, EOR, or remote-eligibility
 from a role title, employer, country, remote label, or source location. This is
 read-only research: no apply, message, connect, follow, publish, enroll, or

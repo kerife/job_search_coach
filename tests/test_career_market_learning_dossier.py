@@ -9,7 +9,9 @@ import os
 import sys
 import tempfile
 import unittest
+from datetime import date, timedelta
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -20,6 +22,7 @@ MARKET_FIXTURES = ROOT / "tests" / "evals" / "with-skill" / "fixtures" / "career
 sys.path.insert(0, str(SCRIPTS))
 
 from build_career_market_learning_dossier import (  # noqa: E402
+    _cli,
     _load_alignment,
     _write_private_json,
     build_market_dossier,
@@ -86,6 +89,52 @@ def bindings_for(research: dict[str, object], dossier: dict[str, object]) -> dic
 
 
 class CareerMarketLearningDossierTests(unittest.TestCase):
+    def test_builder_propagates_evidence_mode_and_enforces_mode_specific_source_domains(self) -> None:
+        research = valid_research()
+        dossier = valid_dossier()
+        built = build_market_dossier(research, dossier, bindings_for(research, dossier))
+
+        self.assertEqual("synthetic", built.get("evidence_mode"))
+
+        synthetic_nonreserved = copy.deepcopy(built)
+        synthetic_nonreserved["evidence_mode"] = "synthetic"
+        synthetic_nonreserved["vacancy_cards"][0]["source_url"] = "https://careers.invalid.example/role"
+        errors = validate_market_dossier(synthetic_nonreserved)
+        self.assertIn("synthetic source URL must use a reserved domain", errors)
+        self.assertNotIn("careers.invalid.example", " ".join(errors))
+
+        live_reserved = copy.deepcopy(built)
+        live_reserved["evidence_mode"] = "live"
+        errors = validate_market_dossier(live_reserved)
+        self.assertIn("live source URL cannot use a reserved domain", errors)
+        self.assertNotIn("example.com", " ".join(errors))
+
+    def test_market_validator_rejects_synthetic_url_policy_bypasses_and_live_future_dates(self) -> None:
+        research = valid_research()
+        dossier = valid_dossier()
+        built = build_market_dossier(research, dossier, bindings_for(research, dossier))
+        for url in (
+            "https://careers.public.example/roles/123",
+            "https://example.com/careers/session_id=private-marker",
+            "https://example.com/careers/session%25255Fid%253Dprivate-marker",
+        ):
+            with self.subTest(url=url):
+                value = copy.deepcopy(built)
+                value["vacancy_cards"][0]["source_url"] = url
+                errors = validate_market_dossier(value)
+                self.assertTrue(errors)
+                self.assertNotIn(url, " ".join(errors))
+
+        live = copy.deepcopy(built)
+        live["evidence_mode"] = "live"
+        future = (date.today() + timedelta(days=1)).isoformat()
+        live["as_of_date"] = future
+        for card in live["vacancy_cards"]:
+            card["source_url"] = "https://careers.public.example/roles/123"
+        errors = validate_market_dossier(live)
+        self.assertIn("as_of_date cannot be in the future for live evidence", errors)
+        self.assertNotIn(future, " ".join(errors))
+
     def test_exact_integer_score_and_evidence_coverage(self) -> None:
         requirements = [
             {"signal": "a", "importance": "must_have"},
@@ -156,7 +205,7 @@ class CareerMarketLearningDossierTests(unittest.TestCase):
 
     def test_builder_alignment_loader_rejects_duplicate_keys_and_writer_is_private(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
-            root = Path(temporary_directory)
+            root = Path(temporary_directory).resolve()
             duplicate = root / "duplicate.json"
             duplicate.write_text('{"signal_bindings": [], "signal_bindings": []}', encoding="utf-8")
             with self.assertRaises(ValueError):
@@ -164,9 +213,135 @@ class CareerMarketLearningDossierTests(unittest.TestCase):
 
             output = root / "nested" / "market.json"
             _write_private_json(output, {"schema_version": "test"})
+            original = output.read_bytes()
             self.assertEqual(0o600, os.stat(output).st_mode & 0o777)
             with self.assertRaises(FileExistsError):
+                _write_private_json(output, {"schema_version": "replacement"})
+            self.assertEqual(original, output.read_bytes())
+
+    def test_private_json_writer_refuses_symlinked_parent(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory).resolve()
+            real_parent = root / "real-parent"
+            real_parent.mkdir()
+            linked_parent = root / "linked-parent"
+            linked_parent.symlink_to(real_parent, target_is_directory=True)
+            output = linked_parent / "market.json"
+
+            with self.assertRaises(OSError):
                 _write_private_json(output, {"schema_version": "test"})
+
+            self.assertFalse((real_parent / output.name).exists())
+
+    def test_private_json_writer_refuses_leaf_symlink_and_hardlink(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory).resolve()
+            for link_kind in ("symlink", "hardlink"):
+                with self.subTest(link_kind=link_kind):
+                    victim = root / f"{link_kind}-victim.json"
+                    victim.write_text("keep\n", encoding="utf-8")
+                    output = root / f"{link_kind}-output.json"
+                    if link_kind == "symlink":
+                        output.symlink_to(victim)
+                    else:
+                        os.link(victim, output)
+
+                    with self.assertRaises(OSError):
+                        _write_private_json(output, {"schema_version": "test"})
+
+                    self.assertEqual("keep\n", victim.read_text(encoding="utf-8"))
+
+    def test_private_json_writer_cleans_temporary_file_when_fsync_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory).resolve()
+            output = root / "private" / "market.json"
+
+            with mock.patch(
+                "build_career_market_learning_dossier.os.fsync",
+                side_effect=OSError("simulated durability failure"),
+            ):
+                with self.assertRaises(OSError):
+                    _write_private_json(output, {"schema_version": "test"})
+
+            self.assertFalse(output.exists())
+            self.assertEqual([], list(output.parent.glob(".market.json.tmp-*")))
+
+    def test_private_json_writer_preserves_racing_existing_target(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory).resolve()
+            output = root / "market.json"
+
+            def create_competing_target(*_args: object, **_kwargs: object) -> None:
+                output.write_text("prior\n", encoding="utf-8")
+                raise FileExistsError("simulated competing writer")
+
+            with mock.patch(
+                "build_career_market_learning_dossier.os.link",
+                side_effect=create_competing_target,
+            ):
+                with self.assertRaises(FileExistsError):
+                    _write_private_json(output, {"schema_version": "test"})
+
+            self.assertEqual("prior\n", output.read_text(encoding="utf-8"))
+            self.assertEqual([], list(root.glob(".market.json.tmp-*")))
+
+    def test_builder_cli_uses_private_json_writer_for_valid_output(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory).resolve()
+            research = valid_research()
+            dossier = valid_dossier()
+            alignment = bindings_for(research, dossier)
+            research_path = root / "research.json"
+            dossier_path = root / "dossier.json"
+            alignment_path = root / "alignment.json"
+            output = root / "private" / "market.json"
+            for path, value in (
+                (research_path, research),
+                (dossier_path, dossier),
+                (alignment_path, alignment),
+            ):
+                path.write_text(json.dumps(value), encoding="utf-8")
+
+            exit_code = _cli([
+                str(research_path),
+                str(dossier_path),
+                str(alignment_path),
+                "--output",
+                str(output),
+            ])
+
+            self.assertEqual(0, exit_code)
+            self.assertEqual([], validate_market_dossier(load_json(output)))
+            self.assertEqual(0o600, os.stat(output).st_mode & 0o777)
+
+    def test_builder_cli_does_not_write_output_rejected_by_final_validator(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory).resolve()
+            research = valid_research()
+            dossier = valid_dossier()
+            alignment = bindings_for(research, dossier)
+            research_path = root / "research.json"
+            dossier_path = root / "dossier.json"
+            alignment_path = root / "alignment.json"
+            output = root / "private" / "market.json"
+            for path, value in (
+                (research_path, research),
+                (dossier_path, dossier),
+                (alignment_path, alignment),
+            ):
+                path.write_text(json.dumps(value), encoding="utf-8")
+
+            with mock.patch(
+                "build_career_market_learning_dossier.OUTPUT.validate_market_dossier",
+                return_value=["derived output is invalid"],
+            ):
+                exit_code = _cli([
+                    str(research_path), str(dossier_path), str(alignment_path),
+                    "--output", str(output),
+                ])
+
+            self.assertEqual(2, exit_code)
+            self.assertFalse(output.exists())
 
     def test_builder_rejects_inferred_or_unknown_evidence_for_explicit_gap(self) -> None:
         research = valid_research()

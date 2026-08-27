@@ -26,6 +26,12 @@ The plugin can prepare drafts, plans, rubrics, and analyses. It must ask again b
 
 This source tree is repo-local at `plugins/professional-growth-coach`. Source edits do not update the installed plugin cache. A separate explicitly authorized installation is required to publish a source increment into the local marketplace cache; existing chats may continue using their loaded version, so verify the new installation from a fresh chat. Use the repo-local marketplace workflow only after the exact target and command are approved.
 
+Private JSON market artifacts are written through a descriptor-anchored,
+collision-safe path: parent symlinks, leaf symlinks, and hardlinked targets are
+rejected; bytes are flushed before an atomic no-overwrite publication; and the
+result remains mode `0600`. A failed write removes its temporary file and does
+not alter an existing artifact.
+
 ## Starter prompts
 
 - “Analiza mi perfil de LinkedIn y entrégame una conclusión breve más un dossier HTML privado v2 y completo. No inventes datos ni realices acciones externas.”
@@ -69,6 +75,20 @@ public-source provenance, and exposes only `complete`,
 snapshot is suitable for downstream dossier work; it never performs external
 actions or infers candidate eligibility.
 
+Every vacancy artifact declares `evidence_mode` as `live` or `synthetic`.
+Synthetic fixtures may use reserved example sources for reproducible tests;
+live evidence rejects reserved domains and future-dated observations. Both
+modes reject URLs, contact details, and session-shaped identifiers inside
+observational prose, and diagnostics never echo the restricted value. A live
+artifact must therefore be re-captured with dated public evidence before it is
+used for a current-market decision. This required field is a v1 contract
+migration: existing producers must add it before their artifact is accepted.
+
+Migration: `career-market-learning-dossier-v1` and derived v2 artifacts now
+require the propagated `evidence_mode`. Rebuild older v1 artifacts from their
+source research instead of editing a snapshot-bound JSON file; synthetic
+artifacts render with an explicit non-current-market boundary.
+
 For a normal local profile dossier, the default route is bounded five-vacancy
 research: SRE, Platform Engineering, and DevOps in Mexico or stated remote
 scope. It searches five distinct employers first, prefers official employer
@@ -81,11 +101,16 @@ remote-eligibility is inferred. Research remains read-only: no apply, message,
 connect, follow, publish, enroll, or purchase action.
 
 The v2 renderer can optionally compose a validated
-`career-market-learning-dossier-v1` with `--market-dossier`. The composition
+`career-market-learning-dossier-v1` or evaluated v2 learning dossier with
+`--market-dossier`. The v2 composition
 shows documented alignment cards, a semantic vacancy matrix, exact sample
 recurrence, and a four-stage gap-closure route. Locale, evidence date, and the
 executive-dossier snapshot must match before any HTML is written; omitting the
-option preserves the existing no-market render byte-for-byte.
+option preserves the existing no-market render byte-for-byte. Evaluated v2
+cards expose a static coach decision, proof-first rationale, and a semantic
+border treatment for project-first, consider, not-needed, and other states;
+the state is always textual as well as visual and remains readable in print,
+forced-colors, and narrow layouts.
 
 The default composition begins with `learning_state=not_evaluated`. If bounded
 market research cannot finish, the plugin preserves the valid profile dossier

@@ -695,6 +695,11 @@ details summary {
 .learning-coach-decision, .learning-proof-sprint, .learning-reuse { margin-top: 1rem; padding: .75rem; border: 1px solid var(--muted); background: var(--paper); }
 .learning-decision-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: .75rem; }
 .learning-decision-row { min-width: 0; padding: .75rem; border: 1px solid var(--muted); background: var(--paper); break-inside: avoid; page-break-inside: avoid; }
+.learning-decision-row--project-first { border-left: 4px solid var(--forest); }
+.learning-decision-row--consider { border-left: 4px solid var(--gold); }
+.learning-decision-row--not-needed { border-left: 4px solid var(--muted); }
+.learning-decision-row--recommended { border-left: 4px solid var(--forest); }
+.learning-decision-row--pause, .learning-decision-row--apply-with-boundary { border-left: 4px solid var(--coral); }
 .learning-decision-facts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .35rem .75rem; }
 .learning-decision-facts dt { color: var(--muted); font-weight: 700; }
 .learning-decision-facts dd { margin: 0; overflow-wrap: anywhere; }

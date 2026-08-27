@@ -3,10 +3,11 @@
   "title": "Identity-free target vacancy research v1",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "research_kind", "locale", "as_of_date", "search_scope", "state", "search_limit", "employers", "vacancies", "privacy_boundary", "no_external_action"],
+  "required": ["schema_version", "research_kind", "evidence_mode", "locale", "as_of_date", "search_scope", "state", "search_limit", "employers", "vacancies", "privacy_boundary", "no_external_action"],
   "properties": {
     "schema_version": {"const": "target-vacancy-research-v1"},
     "research_kind": {"const": "sre_platform_devops_current_vacancies"},
+    "evidence_mode": {"enum": ["synthetic", "live"]},
     "locale": {"enum": ["es", "en"]},
     "as_of_date": {"type": "string", "format": "date"},
     "search_scope": {"$ref": "#/$defs/search_scope"},

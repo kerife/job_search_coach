@@ -1,6 +1,7 @@
 {
   "schema_version": "target-vacancy-research-v1",
   "research_kind": "sre_platform_devops_current_vacancies",
+  "evidence_mode": "synthetic",
   "locale": "en",
   "as_of_date": "2026-08-13",
   "search_scope": {"geography_scope": "mexico_or_stated_remote", "target_role_families": ["site_reliability_engineering", "platform_engineering", "devops_engineering"], "maximum_vacancies": 5, "distinct_employers_preferred": true, "official_sources_first": true, "linkedin_jobs_backup_allowed": true, "no_eligibility_inference": true},

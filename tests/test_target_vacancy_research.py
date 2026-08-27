@@ -8,6 +8,7 @@ import json
 import sys
 import tempfile
 import unittest
+from datetime import date, timedelta
 from pathlib import Path
 
 
@@ -30,6 +31,71 @@ def load_fixture(name: str) -> dict[str, object]:
 
 
 class TargetVacancyResearchTests(unittest.TestCase):
+    def test_synthetic_evidence_mode_keeps_shipped_fixture_contract_valid(self) -> None:
+        value = load_fixture("complete-five-es.json")
+        value["evidence_mode"] = "synthetic"
+
+        self.assertEqual([], validate_research(value))
+
+    def test_live_evidence_rejects_reserved_domains_without_echoing_them(self) -> None:
+        value = load_fixture("complete-five-es.json")
+        value["evidence_mode"] = "live"
+
+        errors = validate_research(value)
+
+        self.assertIn("live evidence cannot use a reserved source domain", errors)
+        self.assertNotIn("example.com", " ".join(errors))
+
+    def test_live_evidence_rejects_future_dates_without_echoing_them(self) -> None:
+        value = load_fixture("complete-five-es.json")
+        value["evidence_mode"] = "live"
+        future = (date.today() + timedelta(days=1)).isoformat()
+        value["as_of_date"] = future
+
+        errors = validate_research(value)
+
+        self.assertIn("as_of_date cannot be in the future for live evidence", errors)
+        self.assertNotIn(future, " ".join(errors))
+
+    def test_synthetic_source_urls_reject_public_domains_and_session_path_material(self) -> None:
+        source = load_fixture("complete-five-es.json")
+        for url in (
+            "https://careers.public.example/roles/123",
+            "https://example.com/careers/session_id=private-marker",
+            "https://example.com/careers/session%25255Fid%253Dprivate-marker",
+        ):
+            with self.subTest(url=url):
+                value = copy.deepcopy(source)
+                value["vacancies"][0]["source_url"] = url
+
+                errors = validate_research(value)
+
+                self.assertTrue(errors)
+                self.assertNotIn(url, " ".join(errors))
+
+    def test_observation_text_rejects_urls_contacts_and_session_identifiers_without_echo(self) -> None:
+        source = load_fixture("complete-five-es.json")
+        mutations = (
+            ("qualification_observation", "See https://private.invalid/role", "employers[0].qualification_observation"),
+            ("observed_condition", "Call +52 55 1234 5678", "vacancies[0].eligibility_gates[0].observed_condition"),
+            ("source_paraphrase", "session_id=private-marker", "vacancies[0].requirements[0].source_paraphrase"),
+        )
+        for field, restricted_text, path in mutations:
+            with self.subTest(field=field):
+                value = copy.deepcopy(source)
+                value["evidence_mode"] = "synthetic"
+                if field == "qualification_observation":
+                    value["employers"][0][field] = restricted_text
+                elif field == "observed_condition":
+                    value["vacancies"][0]["eligibility_gates"][0][field] = restricted_text
+                else:
+                    value["vacancies"][0]["requirements"][0][field] = restricted_text
+
+                errors = validate_research(value)
+
+                self.assertIn(f"{path} contains restricted observation data", errors)
+                self.assertNotIn(restricted_text, " ".join(errors))
+
     def test_supported_states_have_exact_bounded_counts(self) -> None:
         expected = {
             "complete-five-es.json": ("complete", 5),

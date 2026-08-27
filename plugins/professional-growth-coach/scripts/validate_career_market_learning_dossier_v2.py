@@ -48,7 +48,7 @@ def _is_professional_signal(signal: object) -> bool:
     value = str(signal)
     return value in PROFESSIONAL_EXPERIENCE_SIGNALS or "experience" in value or value.startswith(("production_", "operational_", "leadership_"))
 TOP_FIELDS = frozenset({
-    "schema_version", "locale", "as_of_date", "state", "source_research_snapshot",
+    "schema_version", "evidence_mode", "locale", "as_of_date", "state", "source_research_snapshot",
     "source_executive_dossier_snapshot", "source_market_snapshot", "source_learning_research_snapshot",
     "candidate_preferences", "search_summary", "vacancy_cards", "matrix_rows", "recurrence_rows",
     "learning_state", "learning_decisions", "learning_options", "coach_decision", "proof_sprint", "reuse_map",

@@ -8,6 +8,8 @@ import copy
 import importlib.util
 import json
 import os
+import secrets
+import stat
 import sys
 from collections.abc import Mapping
 from pathlib import Path
@@ -68,17 +70,117 @@ def _load_alignment(path: Path) -> dict[str, object]:
     return value
 
 
+def _open_private_parent(parent: Path) -> int:
+    parent = Path(os.path.abspath(parent))
+    no_follow = getattr(os, "O_NOFOLLOW", 0)
+    directory_flag = getattr(os, "O_DIRECTORY", 0)
+    base_flags = os.O_RDONLY | directory_flag
+    descriptor = os.open(os.sep, base_flags)
+    try:
+        for index, component in enumerate(parent.parts[1:]):
+            if component in {"", ".", ".."}:
+                raise OSError("output parent is unsafe")
+            created = False
+            try:
+                os.mkdir(component, 0o700, dir_fd=descriptor)
+                created = True
+            except FileExistsError:
+                pass
+            candidate = os.path.join(os.sep, component)
+            trusted_system_alias = (
+                index == 0
+                and component in {"tmp", "var"}
+                and os.path.islink(candidate)
+                and os.path.realpath(candidate)
+                == os.path.join(os.sep, "private", component)
+            )
+            next_descriptor = os.open(
+                component,
+                base_flags | (0 if trusted_system_alias else no_follow),
+                dir_fd=descriptor,
+            )
+            if not stat.S_ISDIR(os.fstat(next_descriptor).st_mode):
+                os.close(next_descriptor)
+                raise OSError("output parent is not a directory")
+            if created:
+                os.fchmod(next_descriptor, 0o700)
+            os.close(descriptor)
+            descriptor = next_descriptor
+        return descriptor
+    except BaseException:
+        os.close(descriptor)
+        raise
+
+
 def _write_private_json(path: Path, value: Mapping[str, object]) -> None:
     encoded = (json.dumps(value, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
-    path.parent.mkdir(parents=True, exist_ok=True)
-    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0)
-    descriptor = os.open(path, flags, 0o600)
+    output = Path(os.path.abspath(path))
+    if not output.name or output.name in {".", ".."}:
+        raise OSError("output name is unsafe")
+    parent_descriptor = _open_private_parent(output.parent)
+    temporary_name: str | None = None
+    descriptor: int | None = None
     try:
-        offset = 0
-        while offset < len(encoded):
-            offset += os.write(descriptor, encoded[offset:])
+        try:
+            target_status = os.stat(
+                output.name,
+                dir_fd=parent_descriptor,
+                follow_symlinks=False,
+            )
+        except FileNotFoundError:
+            target_status = None
+        if target_status is not None:
+            if stat.S_ISLNK(target_status.st_mode):
+                raise OSError("output target is a symbolic link")
+            if not stat.S_ISREG(target_status.st_mode):
+                raise OSError("output target is not a regular file")
+            raise FileExistsError("output already exists")
+        for _ in range(100):
+            candidate = f".{output.name}.tmp-{secrets.token_hex(8)}"
+            try:
+                descriptor = os.open(
+                    candidate,
+                    os.O_WRONLY
+                    | os.O_CREAT
+                    | os.O_EXCL
+                    | getattr(os, "O_NOFOLLOW", 0),
+                    0o600,
+                    dir_fd=parent_descriptor,
+                )
+                temporary_name = candidate
+                break
+            except FileExistsError:
+                continue
+        if temporary_name is None or descriptor is None:
+            raise OSError("cannot create private temporary artifact")
+        with os.fdopen(descriptor, "wb") as stream:
+            descriptor = None
+            os.fchmod(stream.fileno(), 0o600)
+            stream.write(encoded)
+            stream.flush()
+            os.fsync(stream.fileno())
+        try:
+            os.link(
+                temporary_name,
+                output.name,
+                src_dir_fd=parent_descriptor,
+                dst_dir_fd=parent_descriptor,
+                follow_symlinks=False,
+            )
+        except FileExistsError as error:
+            raise FileExistsError("output already exists") from error
+        os.unlink(temporary_name, dir_fd=parent_descriptor)
+        temporary_name = None
+        os.fsync(parent_descriptor)
     finally:
-        os.close(descriptor)
+        if descriptor is not None:
+            os.close(descriptor)
+        if temporary_name is not None:
+            try:
+                os.unlink(temporary_name, dir_fd=parent_descriptor)
+            except FileNotFoundError:
+                pass
+        os.close(parent_descriptor)
 
 
 def _closed(value: object, fields: frozenset[str], errors: list[str], path: str) -> Mapping[str, object] | None:
@@ -240,8 +342,9 @@ def build_market_dossier(
                 for card in cards
             ],
         })
-    return {
+    output = {
         "schema_version": "career-market-learning-dossier-v1",
+        "evidence_mode": research_copy["evidence_mode"],
         "locale": research_copy["locale"],
         "as_of_date": research_copy["as_of_date"],
         "state": research_copy["state"],
@@ -262,6 +365,9 @@ def build_market_dossier(
         "privacy_boundary": "identity_free_evidence_references_only",
         "no_external_action": True,
     }
+    if OUTPUT.validate_market_dossier(output):
+        raise ValueError("built market dossier failed validation")
+    return output
 
 
 def _cli(argv: list[str] | None = None) -> int:

@@ -1,5 +1,6 @@
 {
   "schema_version": "career-market-learning-dossier-v1",
+  "evidence_mode": "synthetic",
   "locale": "es",
   "as_of_date": "2026-08-13",
   "state": "complete",
