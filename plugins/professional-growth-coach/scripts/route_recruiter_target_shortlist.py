@@ -29,6 +29,10 @@ SCREEN_INTAKE_BUILDER = _sibling("build_recruiter_target_screen_intake.py")
 SCREEN_DEBRIEF_BUILDER = _sibling("build_private_recruiter_screen_debrief.py")
 NEXT_STAGE_REVIEW_BUILDER = _sibling("build_private_recruiter_next_stage_review.py")
 RENDERER = _sibling("render_recruiter_target_shortlist.py")
+GATE_RENDERER = _sibling("render_recruiter_target_decision_gate.py")
+SCREEN_INTAKE_RENDERER = _sibling("render_recruiter_target_screen_intake.py")
+SCREEN_DEBRIEF_RENDERER = _sibling("render_private_recruiter_screen_debrief.py")
+NEXT_STAGE_REVIEW_RENDERER = _sibling("render_private_recruiter_next_stage_review.py")
 INTENT = re.compile(
     r"(?:\b(?:expand(?:ir|iendo)?|ampliar|crecer)\s+(?:mi\s+)?(?:red|network)\s+(?:de\s+)?(?:recruiters?|reclutadores?)\b|"
     r"\b(?:find|buscar|encontrar|identificar)\s+(?:a\s+)?(?:recruiters?|reclutadores?)\b|"
@@ -136,6 +140,7 @@ def route_recruiter_decision_gate(
         }
     try:
         artifact = GATE_BUILDER.build_decision_gate(shortlist)
+        rendered_html = GATE_RENDERER.render_decision_gate_html(artifact)
     except (TypeError, ValueError):
         return {
             "route_kind": "recruiter_target_decision_gate",
@@ -152,6 +157,7 @@ def route_recruiter_decision_gate(
         "next_action": artifact["handoff"]["next_safe_action"],
         "authorization_required": False,
         "artifact": artifact,
+        "rendered_html": rendered_html,
     }
 
 
@@ -163,6 +169,7 @@ def route_recruiter_screen_intake(
     """Route one target through bounded intake before manual interview review."""
     try:
         artifact = SCREEN_INTAKE_BUILDER.build_screen_intake(gate, target_id, context)
+        rendered_html = SCREEN_INTAKE_RENDERER.render_screen_intake_html(artifact)
     except (TypeError, ValueError):
         return {
             "route_kind": "recruiter_target_screen_intake",
@@ -180,6 +187,7 @@ def route_recruiter_screen_intake(
         "next_action": artifact["handoff"]["next_safe_action"],
         "authorization_required": False,
         "artifact": artifact,
+        "rendered_html": rendered_html,
     }
 
 
@@ -192,6 +200,9 @@ def route_recruiter_screen_debrief(
     """Route one attended screen through a private structured debrief."""
     try:
         artifact = SCREEN_DEBRIEF_BUILDER.build_screen_debrief(checkpoint, receipt, intake, debrief)
+        rendered_html = SCREEN_DEBRIEF_RENDERER.render_screen_debrief_html(
+            artifact, receipt, intake, checkpoint=checkpoint
+        )
     except (TypeError, ValueError):
         return {
             "route_kind": "private_recruiter_screen_debrief",
@@ -210,6 +221,7 @@ def route_recruiter_screen_debrief(
         "next_action": artifact["handoff"]["next_safe_action"],
         "authorization_required": False,
         "artifact": artifact,
+        "rendered_html": rendered_html,
     }
 
 
@@ -223,6 +235,9 @@ def route_recruiter_next_stage_review(
     """Route a completed screen debrief to an explicit, manual next-stage review."""
     try:
         artifact = NEXT_STAGE_REVIEW_BUILDER.build_next_stage_review(debrief, receipt, intake, checkpoint, next_stage)
+        rendered_html = NEXT_STAGE_REVIEW_RENDERER.render_next_stage_review_html(
+            artifact, debrief, receipt, intake, checkpoint
+        )
     except (TypeError, ValueError):
         return {
             "route_kind": "private_recruiter_next_stage_review",
@@ -241,4 +256,5 @@ def route_recruiter_next_stage_review(
         "next_action": artifact["handoff"]["next_safe_action"],
         "authorization_required": False,
         "artifact": artifact,
+        "rendered_html": rendered_html,
     }

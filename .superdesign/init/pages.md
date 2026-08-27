@@ -109,7 +109,7 @@ Dependencies:
 - `plugins/professional-growth-coach/assets/recruiter-target-decision-gate-v1.html`
 - `plugins/professional-growth-coach/assets/recruiter-target-decision-gate-v1.css`
 
-The gate is a static decision brief: it binds and revalidates the full shortlist snapshot, presents reconciled decision counts and one row per target, then stops at a manual screen-context or interview-preparation review boundary. Its legacy screen context accepts only bounded, non-contact-shaped prose; it contains no controls, network calls, contact details, URLs, message actions, or calendar actions.
+The gate is a static decision brief: it binds and revalidates the full shortlist snapshot, presents reconciled decision counts and one row per target, then stops at a manual screen-context or interview-preparation review boundary. Its legacy screen context accepts only bounded, non-contact-shaped prose; it contains no controls, network calls, contact details, URLs, message actions, or calendar actions. The route handoff returns this private in-memory HTML whenever the gate artifact validates; an intake failure remains artifact-free.
 
 ## /recruiter-target-screen-intake (offline artifact)
 
@@ -122,7 +122,7 @@ Dependencies:
 - `plugins/professional-growth-coach/assets/recruiter-target-screen-intake-v1.html`
 - `plugins/professional-growth-coach/assets/recruiter-target-screen-intake-v1.css`
 
-The screen-intake brief is target-specific and snapshot-bound. It reconciles exactly four checks (`target_context`, `proof_packet`, `low_friction_ask`, and `screen_readiness`) and permits `manual_prepare_role_interviews_review` only for an `advance` target with all checks passing. Other decisions remain in intake or stop-and-record states; the artifact never sends, schedules, or auto-starts preparation.
+The screen-intake brief is target-specific and snapshot-bound. It reconciles exactly four checks (`target_context`, `proof_packet`, `low_friction_ask`, and `screen_readiness`) and permits `manual_prepare_role_interviews_review` only for an `advance` target with all checks passing. Other decisions remain in intake or stop-and-record states; a validated blocked artifact still gets the same private in-memory HTML handoff, while an invalid target remains artifact-free. The artifact never sends, schedules, or auto-starts preparation.
 
 ## /private-recruiter-screen-debrief (offline artifact)
 
@@ -135,7 +135,7 @@ Dependencies:
 - `plugins/professional-growth-coach/assets/private-recruiter-screen-debrief-v1.html`
 - `plugins/professional-growth-coach/assets/private-recruiter-screen-debrief-v1.css`
 
-The debrief is a private post-screen bridge bound to a completed `screen_attended` checkpoint and a ready target-specific intake. It records exactly three coverage topics, bounded unknown counts, supported fact counts, and a manual decision. Complete coverage exposes `ready` with `manual_prepare_next_stage_review`; incomplete coverage exposes `needs_intake` for context collection; stop decisions expose terminal `stopped` with recording only. The renderer hides all internal IDs and notes and performs no follow-up action.
+The debrief is a private post-screen bridge bound to a completed `screen_attended` checkpoint and a ready target-specific intake. It records exactly three coverage topics, bounded unknown counts, supported fact counts, and a manual decision. Complete coverage exposes `ready` with `manual_prepare_next_stage_review`; incomplete coverage exposes `needs_intake` for context collection; stop decisions expose terminal `stopped` with recording only. Every validated state returns the private in-memory HTML handoff, while the renderer hides all internal IDs and notes and performs no follow-up action.
 
 The renderer validates a candidate-supplied outcome, computes the localized evidence-count label, and writes a compact offline receipt. The default CLI receipt is path-free; `--include-artifact-path` is an explicit trusted-caller opt-in.
 
@@ -150,7 +150,7 @@ Dependencies:
 - `plugins/professional-growth-coach/assets/private-recruiter-next-stage-review-v1.html`
 - `plugins/professional-growth-coach/assets/private-recruiter-next-stage-review-v1.css`
 
-The review requires a manually selected forward stage transition and a validated source debrief. It renders localized current-stage → target-stage labels in the header plus a three-topic checklist with ready/blocked state; when blocked, a structured “clarify before continuing” list names only the pending topics. It preserves the source snapshot and replay binding, and exposes no raw answers or external controls.
+The review requires a manually selected forward stage transition and a validated source debrief. It renders localized current-stage → target-stage labels in the header plus a three-topic checklist with ready/blocked state; when blocked, a structured “clarify before continuing” list names only the pending topics. The route returns the same private in-memory HTML contract for ready, blocked, and terminal stop artifacts. It preserves the source snapshot and replay binding, and exposes no raw answers or external controls.
 
 Outcome and follow-through receipts share a non-interactive continuity rail:
 the supplied observation/receipt is `recorded`, one manual safe step is

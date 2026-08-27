@@ -186,6 +186,8 @@ class PrivateRecruiterNextStageReviewTests(unittest.TestCase):
         routed = route_recruiter_next_stage_review(self.debrief, RECEIPT, self.intake, valid_checkpoint(), "first_interview")
         self.assertEqual("ready", routed["case_state"])
         self.assertEqual("manual_prepare_next_stage_review", routed["next_action"])
+        self.assertIn("Revisión de la siguiente etapa", routed["rendered_html"])
+        self.assertNotIn("F-001", routed["rendered_html"])
 
         stopped = valid_debrief()
         stopped["decision"] = "stop"
@@ -193,6 +195,7 @@ class PrivateRecruiterNextStageReviewTests(unittest.TestCase):
         routed = route_recruiter_next_stage_review(stopped_debrief, RECEIPT, self.intake, valid_checkpoint(), "first_interview")
         self.assertEqual("stopped", routed["case_state"])
         self.assertEqual("record_stop_decision", routed["next_action"])
+        self.assertIn("Revisión de la siguiente etapa", routed["rendered_html"])
 
 
 if __name__ == "__main__":

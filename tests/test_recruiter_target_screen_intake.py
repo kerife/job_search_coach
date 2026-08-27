@@ -159,9 +159,14 @@ class RecruiterTargetScreenIntakeTests(unittest.TestCase):
         ready = route_recruiter_screen_intake(self.gate(), "T-001", valid_screen_intake())
         self.assertEqual("ready", ready["case_state"])
         self.assertEqual("manual_prepare_role_interviews_review", ready["next_action"])
+        self.assertIn("Preparar entrevista para revisión", ready["rendered_html"])
+        self.assertNotIn("T-001", ready["rendered_html"])
+        self.assertNotIn("F-001", ready["rendered_html"])
         blocked = route_recruiter_screen_intake(self.gate(), "T-002", valid_screen_intake())
         self.assertEqual("needs_intake", blocked["case_state"])
         self.assertEqual("collect_screen_intake", blocked["next_action"])
+        self.assertIsNone(blocked["artifact"])
+        self.assertNotIn("rendered_html", blocked)
 
     def test_legacy_gate_route_cannot_bypass_target_specific_intake(self) -> None:
         shortlist = RecruiterTargetDecisionGateTests().shortlist()

@@ -150,9 +150,13 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
         self.assertEqual("recruiter_target_decision_gate", ready["route_kind"])
         self.assertEqual("ready", ready["case_state"])
         self.assertEqual("collect_screen_context", ready["next_action"])
+        self.assertIn("Siguiente decisión", ready["rendered_html"])
+        self.assertNotIn("T-001", ready["rendered_html"])
+        self.assertNotIn("F-001", ready["rendered_html"])
         intake = route_recruiter_decision_gate({})
         self.assertEqual("needs_intake", intake["case_state"])
         self.assertEqual("collect_screen_context", intake["next_action"])
+        self.assertNotIn("rendered_html", intake)
 
 
 if __name__ == "__main__":

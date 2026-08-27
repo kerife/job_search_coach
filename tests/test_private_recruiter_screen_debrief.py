@@ -199,6 +199,8 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
         routed = route_recruiter_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, valid_debrief())
         self.assertEqual("ready", routed["case_state"])
         self.assertEqual("manual_prepare_next_stage_review", routed["next_action"])
+        self.assertIn("Debrief privado del filtro", routed["rendered_html"])
+        self.assertNotIn("F-001", routed["rendered_html"])
         paused = valid_debrief()
         paused["decision"] = "pause"
         paused["unknown_topics"] = ["Decision criteria remain unknown."]
@@ -206,12 +208,14 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
         routed = route_recruiter_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, paused)
         self.assertEqual("needs_intake", routed["case_state"])
         self.assertEqual("collect_debrief_context", routed["next_action"])
+        self.assertIn("Debrief privado del filtro", routed["rendered_html"])
 
         stopped = valid_debrief()
         stopped["decision"] = "stop"
         routed = route_recruiter_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, stopped)
         self.assertEqual("stopped", routed["case_state"])
         self.assertEqual("record_stop_decision", routed["next_action"])
+        self.assertIn("Debrief privado del filtro", routed["rendered_html"])
 
 
 if __name__ == "__main__":
