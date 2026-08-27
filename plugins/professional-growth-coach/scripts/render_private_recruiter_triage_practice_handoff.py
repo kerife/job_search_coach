@@ -18,6 +18,10 @@ class HandoffRenderError(ValueError):
     """A private handoff cannot be rendered safely."""
 
 
+class HandoffInputError(HandoffRenderError):
+    """The supplied private input could not be loaded safely."""
+
+
 class _ArgumentError(ValueError):
     pass
 
@@ -56,15 +60,44 @@ def _mapping(value: object) -> Mapping[str, object]:
     return value
 
 
+_DELIVERY_STATUS_COPY = {
+    "es": "Borrador privado · Reingreso manual requerido · No inicia, envía ni guarda automáticamente.",
+    "en": "Private draft · Manual re-entry required · It does not start, send, or save automatically.",
+}
+
+
+def _wrapper_delivery_status(locale: object) -> str:
+    if locale not in _DELIVERY_STATUS_COPY:
+        raise HandoffRenderError("handoff locale is invalid")
+    return (
+        '<aside class="triage-handoff-delivery-status" role="status">'
+        f'{_DELIVERY_STATUS_COPY[locale]}</aside>'
+    )
+
+
+def _add_wrapper_delivery_status(rendered: str, locale: object) -> str:
+    """Add static wrapper state only after the enclosing wrapper was validated."""
+    marker = '</section>'
+    route_start = rendered.find('<section class="triage-practice-route"')
+    if route_start < 0:
+        raise HandoffRenderError("triage practice route is unavailable")
+    route_end = rendered.find(marker, route_start)
+    if route_end < 0:
+        raise HandoffRenderError("triage practice route is unavailable")
+    route_end += len(marker)
+    return rendered[:route_end] + _wrapper_delivery_status(locale) + rendered[route_end:]
+
+
 def render_handoff_html(handoff: Mapping[str, object]) -> str:
     """Validate a closed wrapper then render only its in-memory session projection."""
     validator = _load_sibling("validate_private_recruiter_triage_practice_handoff")
     if validator.validate_handoff(handoff):
         raise HandoffRenderError("handoff validation failed")
     session = _mapping(handoff.get("practice_session"))
-    delivery = _mapping(handoff.get("delivery"))
+    _mapping(handoff.get("delivery"))
     renderer = _load_sibling("render_recruiter_practice_session")
-    return renderer.render_session_html(session, handoff_delivery=delivery)
+    rendered = renderer.render_session_html(session)
+    return _add_wrapper_delivery_status(rendered, session.get("ui_locale"))
 
 
 def write_handoff_html(handoff_path: Path, output_path: Path, *, force: bool = False) -> dict[str, object]:
@@ -73,7 +106,7 @@ def write_handoff_html(handoff_path: Path, output_path: Path, *, force: bool = F
     try:
         handoff = validator.load_handoff(Path(handoff_path))
     except validator.HandoffLoadError as error:
-        raise HandoffRenderError("handoff input is invalid") from error
+        raise HandoffInputError("handoff input is invalid") from error
     html = render_handoff_html(handoff)
     try:
         expanded = Path(output_path).expanduser()
@@ -103,8 +136,11 @@ def _cli(argv: list[str] | None = None) -> int:
         return 0 if error.code == 0 else 3
     try:
         receipt = write_handoff_html(arguments.handoff, arguments.output, force=arguments.force)
-    except HandoffRenderError:
+    except HandoffInputError:
         _error("invalid_input")
+        return 3
+    except HandoffRenderError:
+        _error("validation_failed")
         return 2
     except FileExistsError:
         _error("output_exists")

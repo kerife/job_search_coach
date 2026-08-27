@@ -63,6 +63,8 @@ class PrivateRecruiterTriagePracticeHandoffRendererTests(unittest.TestCase):
         session = self._handoff("en")["practice_session"]
         rendered = render_session_html(session)
         self.assertNotIn("Private draft · Manual re-entry required", rendered)
+        with self.assertRaises(TypeError):
+            render_session_html(session, handoff_delivery=self._handoff("en")["delivery"])
 
     def test_rejects_delivery_provenance_and_unsafe_prose_without_output(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
@@ -82,7 +84,7 @@ class PrivateRecruiterTriagePracticeHandoffRendererTests(unittest.TestCase):
                 output = directory / f"bad-{index}.html"
                 result = self._run(str(source), "--output", str(output))
                 self.assertEqual(2, result.returncode)
-                self.assertEqual({"error": {"code": "invalid_input"}}, json.loads(result.stderr))
+                self.assertEqual({"error": {"code": "validation_failed"}}, json.loads(result.stderr))
                 self.assertNotIn("RAW_REPLY_SENTINEL", result.stderr)
                 self.assertFalse(output.exists())
 
@@ -100,7 +102,7 @@ class PrivateRecruiterTriagePracticeHandoffRendererTests(unittest.TestCase):
             link.symlink_to(valid)
             for source in (duplicate, deep, oversized, link):
                 result = self._run(str(source), "--output", str(directory / f"{source.stem}.html"))
-                self.assertEqual(2, result.returncode)
+                self.assertEqual(3, result.returncode)
                 self.assertEqual({"error": {"code": "invalid_input"}}, json.loads(result.stderr))
                 self.assertNotIn("RAW_REPLY_SENTINEL", result.stderr)
 
@@ -123,3 +125,10 @@ class PrivateRecruiterTriagePracticeHandoffRendererTests(unittest.TestCase):
         self.assertEqual({"error": {"code": "invalid_arguments"}}, json.loads(result.stderr))
         self.assertNotIn("RAW_REPLY_SENTINEL", result.stderr)
 
+    def test_parsed_but_invalid_wrapper_is_a_validation_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            directory = Path(raw)
+            source = self._write(directory, "invalid-wrapper.json", {"schema_version": "not-a-wrapper"})
+            result = self._run(str(source), "--output", str(directory / "out.html"))
+            self.assertEqual(2, result.returncode)
+            self.assertEqual({"error": {"code": "validation_failed"}}, json.loads(result.stderr))
