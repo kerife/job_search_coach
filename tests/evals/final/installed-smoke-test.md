@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T16:57:30-06:00`
+release_timestamp: `2026-08-27T17:13:09-06:00`
 
-source_commit: `5e6fc23ac468d265bfb4853415c4d84a9dd13b31`
+source_commit: `4f297cc448427ca62be2f3a821e3713bfad74551`
 
-source_tree: `27effc604a6aee472547b75cde28fab643d0a7bf`
+source_tree: `845560609925be9a9d4273a2abc55c15838c006c`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827165607`
+installed_cache_version: `0.2.0+codex.20260827171300`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `172`
 
 installed_file_count: `172`
 
-normalized_source_cache_sha256: `b4086f6cf7bf1167390d9ca02b628f63da4c0c561fb31feefc6b66a867d0abe4`
+normalized_source_cache_sha256: `54e57dc1f126cb6e5d493153e89aad34f518a522be0c5b5bbb4b39a9373dccbc`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -118,6 +118,10 @@ installed_shortlist_boundary_smoke: `4/4 installed shortlist rejects asset symli
 installed_decision_gate_smoke: `3/3 installed EN/ES decision-gate builder, validator, and renderer; counts/snapshot reconcile, screen context remains manual-only, and HTML omits target/fact identifiers`
 
 installed_screen_intake_smoke: `3/3 installed EN/ES target-specific intake builder, validator, and renderer; advance-only manual handoff, snapshot/locale binding, private IDs hidden, and 0600 output`
+
+installed_screen_debrief_intake_smoke: `3/3 installed artifact-free EN/ES attended-screen bridge; validated checkpoint/receipt/intake carries forward, structured coverage is the only next input, malformed recovery stays bounded`
+
+installed_next_stage_schema_typed_closure_smoke: `2/2 installed next-stage schema rejects object-shaped network_goal and coverage note values while accepting the canonical handoff`
 
 installed_duplicate_employer_source_url_smoke: `1/1 installed market validator rejects duplicate normalized employer official_source_url values without echoing the URL`
 
