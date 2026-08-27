@@ -903,6 +903,12 @@ html { color-scheme: light; background: var(--paper); }
 .recruiter-practice-document .practice-handoff p { max-width: var(--measure); margin: 0.45rem 0 0; }
 .recruiter-practice-document .practice-handoff--dossier { border-left: 4px solid var(--forest); }
 .recruiter-practice-document .practice-handoff--reply { border-left: 4px solid var(--coral); }
+.recruiter-practice-document .triage-practice-route { padding: 1rem; border: 1px solid var(--line); border-left: 4px solid var(--coral); background: var(--coral-soft); }
+.recruiter-practice-document .triage-practice-route-kicker { margin: 0; color: var(--forest); font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.recruiter-practice-document .triage-practice-route h2 { margin: .25rem 0 0; font-size: 1.25rem; }
+.recruiter-practice-document .triage-practice-route-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .65rem; margin: .75rem 0 0; padding: 0; list-style: none; counter-reset: triage-practice-route-step; }
+.recruiter-practice-document .triage-practice-route-step { counter-increment: triage-practice-route-step; min-width: 0; padding: .7rem .7rem .7rem 2.5rem; border: 1px solid var(--line); background: var(--surface); position: relative; }
+.recruiter-practice-document .triage-practice-route-step::before { content: counter(triage-practice-route-step); display: inline-grid; position: absolute; top: .65rem; left: .65rem; width: 1.35rem; height: 1.35rem; place-items: center; border: 1px solid var(--forest); border-radius: 50%; color: var(--forest); font-size: .8rem; font-weight: 800; line-height: 1; }
 .recruiter-practice-document .continuity-rail { margin-top: 1rem; padding: 1rem; border: 1px solid var(--line); border-left: 4px solid var(--forest); background: var(--surface); }
 .recruiter-practice-document .continuity-rail-kicker { margin: 0; color: var(--forest); font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .recruiter-practice-document .continuity-rail h2 { margin: .25rem 0 0; font-size: 1.2rem; }
@@ -1000,7 +1006,8 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .state-chip--feedback_available { color: var(--coral); background: var(--coral-soft); }
   .recruiter-practice-document .state-chip--awaiting_answer { color: var(--decision-term); background: var(--forest-soft); }
   .recruiter-practice-document .practice-rehearsal,
-  .recruiter-practice-document .practice-handoff { background: var(--surface); }
+  .recruiter-practice-document .practice-handoff,
+  .recruiter-practice-document .triage-practice-route { background: var(--surface); }
   .recruiter-practice-document .screen-readiness { background: var(--surface); }
   .recruiter-practice-document .practice-rehearsal-hint { color: var(--muted); }
   .recruiter-practice-document .practice-next-action,
@@ -1029,6 +1036,7 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .state-chip { text-align: left; }
   .recruiter-practice-document .practice-decision dl { grid-template-columns: 1fr; }
   .recruiter-practice-document .screen-readiness-grid { grid-template-columns: 1fr 1fr; }
+  .recruiter-practice-document .triage-practice-route-list { grid-template-columns: 1fr; }
   .recruiter-practice-document .continuity-rail-list { grid-template-columns: 1fr; }
 }
 
@@ -1046,6 +1054,11 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document main:focus-visible { outline-color: Highlight; }
   .recruiter-practice-document .practice-handoff { border: 1px dashed CanvasText; background: Canvas; color: CanvasText; }
   .recruiter-practice-document .practice-handoff h2 { color: CanvasText; }
+  .recruiter-practice-document .triage-practice-route { border-color: CanvasText; background: Canvas; color: CanvasText; }
+  .recruiter-practice-document .triage-practice-route h2,
+  .recruiter-practice-document .triage-practice-route-kicker { color: CanvasText; }
+  .recruiter-practice-document .triage-practice-route-step { border-color: CanvasText; background: Canvas; color: CanvasText; }
+  .recruiter-practice-document .triage-practice-route-step::before { border-color: CanvasText; color: CanvasText; }
   .recruiter-practice-document .practice-next-action { background: Canvas; color: CanvasText; border-color: CanvasText; }
   .recruiter-practice-document .practice-next-action h2 { color: CanvasText; }
   .recruiter-practice-document .practice-next-action--ready_to_practice,
@@ -1076,11 +1089,15 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .state-chip,
   .recruiter-practice-document .practice-next-action,
   .recruiter-practice-document .practice-handoff,
+  .recruiter-practice-document .triage-practice-route,
+  .recruiter-practice-document .triage-practice-route-step,
   .recruiter-practice-document .practice-feedback,
   .recruiter-practice-document .feedback-item,
   .recruiter-practice-document .practice-decision { border-width: 2px; }
   .recruiter-practice-document .screen-readiness,
-  .recruiter-practice-document .screen-readiness-item { border-width: 2px; }
+  .recruiter-practice-document .screen-readiness-item,
+  .recruiter-practice-document .triage-practice-route,
+  .recruiter-practice-document .triage-practice-route-step { border-width: 2px; }
   .recruiter-practice-document .feedback-label { text-decoration: underline; text-decoration-thickness: 0.12em; }
 }
 
@@ -1095,6 +1112,8 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-prompt,
   .recruiter-practice-document .practice-rehearsal,
   .recruiter-practice-document .screen-readiness,
+  .recruiter-practice-document .triage-practice-route,
+  .recruiter-practice-document .triage-practice-route-step,
   .recruiter-practice-document .practice-next-action,
   .recruiter-practice-document .practice-evidence,
   .recruiter-practice-document .practice-boundary,
@@ -1103,6 +1122,8 @@ html { color-scheme: light; background: var(--paper); }
     page-break-inside: avoid;
   }
   .recruiter-practice-document .practice-handoff,
+  .recruiter-practice-document .triage-practice-route,
+  .recruiter-practice-document .triage-practice-route-step,
   .recruiter-practice-document .continuity-rail,
   .recruiter-practice-document .continuity-step {
     break-inside: avoid;

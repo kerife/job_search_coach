@@ -1,5 +1,6 @@
 import copy
 import importlib.util
+import json
 import re
 import subprocess
 import sys
@@ -9,6 +10,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "render_recruiter_practice_session.py"
+FIXTURE_DIRECTORY = (
+    ROOT.parent.parent / "tests/evals/with-skill/fixtures/private-recruiter-reply-triage"
+)
+sys.path.insert(0, str(ROOT / "scripts"))
+from build_private_recruiter_triage_practice_handoff import build_handoff
+from triage_snapshot import snapshot_for_triage
+
 spec = importlib.util.spec_from_file_location("practice_renderer", SCRIPT)
 renderer = importlib.util.module_from_spec(spec)
 assert spec.loader is not None
@@ -24,6 +32,49 @@ validator_spec.loader.exec_module(validator)
 
 
 class RecruiterPracticeRendererTests(unittest.TestCase):
+    def _triage_practice_session(self, locale: str) -> dict[str, object]:
+        triage = json.loads((FIXTURE_DIRECTORY / f"ready-{locale}.json").read_text())
+        triage["schema_version"] = "private-recruiter-reply-triage-v2"
+        triage["ui_locale"] = locale
+        triage["content_locale"] = locale
+        del triage["locale"]
+        snapshot = snapshot_for_triage(triage)
+        triage["handoff"]["packet"]["source_snapshot"] = snapshot
+        triage["handoff"]["reentry_packet"]["source_snapshot"] = snapshot
+        return build_handoff(triage)["practice_session"]
+
+    def test_triage_practice_route_is_localized_static_and_safe(self):
+        expected_stages = {
+            "es": ("Triaje validado", "Ensayo privado", "Revisión privada"),
+            "en": ("Validated triage", "Private rehearsal", "Private review"),
+        }
+        for locale, stages in expected_stages.items():
+            with self.subTest(locale=locale):
+                rendered = renderer.render_session_html(
+                    self._triage_practice_session(locale)
+                )
+                self.assertEqual(rendered.count('class="triage-practice-route"'), 1)
+                route = rendered.split('<section class="triage-practice-route"', 1)[1].split(
+                    "</section>", 1
+                )[0]
+                for stage in stages:
+                    self.assertIn(stage, route)
+                self.assertNotRegex(route, r"\b(?:Q|R|F|C|E|OBS|RB)-\d{3}\b")
+                self.assertEqual(rendered.count("href="), 1)
+                self.assertNotRegex(rendered, r"<(?:form|button|script)\b")
+                self.assertRegex(
+                    rendered,
+                    r"(?s)@media \(max-width: 640px\).*?\.triage-practice-route-list \{[^}]*grid-template-columns: 1fr;",
+                )
+                self.assertRegex(
+                    rendered,
+                    r"(?s)@media \(forced-colors: active\).*?\.triage-practice-route \{[^}]*background: Canvas;[^}]*color: CanvasText;",
+                )
+                self.assertRegex(
+                    rendered,
+                    r"(?s)@media print.*?\.triage-practice-route[^}]*\{[^}]*break-inside: avoid;",
+                )
+
     def test_invalid_utf8_input_is_reported_without_traceback(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "invalid.json"
@@ -276,6 +327,7 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
             "Regresa a la conversación privada de Codex que originó esta práctica",
             sourced_html,
         )
+        self.assertNotIn('class="triage-practice-route"', sourced_html)
 
     def test_next_action_forced_colors_uses_explicit_system_color_surface_in_both_locales(self):
         session = {

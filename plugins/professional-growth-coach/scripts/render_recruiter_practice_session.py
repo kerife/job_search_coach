@@ -322,6 +322,33 @@ READINESS_COPY = {
 }
 
 
+TRIAGE_ROUTE_COPY = {
+    "en": {
+        "title": "Private practice route",
+        "kicker": "Validated private handoff",
+        "steps": ("Validated triage", "Private rehearsal", "Private review"),
+    },
+    "es": {
+        "title": "Ruta de práctica privada",
+        "kicker": "Traspaso privado validado",
+        "steps": ("Triaje validado", "Ensayo privado", "Revisión privada"),
+    },
+}
+
+
+def _render_triage_practice_route(locale: str) -> str:
+    labels = TRIAGE_ROUTE_COPY[locale]
+    steps = "".join(
+        f'<li class="triage-practice-route-step"><strong>{html.escape(step)}</strong></li>'
+        for step in labels["steps"]
+    )
+    return f'''<section class="triage-practice-route" aria-label="{labels["title"]}">
+      <p class="triage-practice-route-kicker">{labels["kicker"]}</p>
+      <h2>{labels["title"]}</h2>
+      <ol class="triage-practice-route-list">{steps}</ol>
+    </section>'''
+
+
 def _continuity_rail(locale: str) -> str:
     labels = CONTINUITY_COPY[locale]
     steps = "".join(
@@ -595,11 +622,14 @@ def _render_main(
     rehearsal = _render_rehearsal_scaffold(locale, question_kind, labels)
     sourced = session.get("handoff_context") is not None
     handoff = ""
+    triage_route = ""
     if sourced:
         source = _text(_mapping(session["handoff_context"])["source"])
         text_key = "handoff_text_reply" if source == "private_recruiter_reply_triage" else "handoff_text_dossier"
         source_class = "reply" if source == "private_recruiter_reply_triage" else "dossier"
         handoff = f'''<aside class="practice-handoff practice-handoff--{source_class}" aria-labelledby="practice-handoff-title" aria-describedby="prompt-title practice-question-text"><h2 id="practice-handoff-title">{labels["handoff_title"]}</h2><p>{labels[text_key]}</p></aside>'''
+        if source == "private_recruiter_reply_triage":
+            triage_route = _render_triage_practice_route(locale)
     if state == "feedback_available":
         feedback_data = _mapping(session["feedback"])
         observations = _rows(feedback_data["observations"])
@@ -607,10 +637,10 @@ def _render_main(
         governing_label = _governing_feedback_label(feedback_labels)
         feedback = _render_feedback(locale, question_kind, feedback_labels, labels)
         decision = _render_decision(locale, question_kind, governing_label, labels)
-        practice_sequence = f"{handoff}{rehearsal}{feedback}{decision}"
+        practice_sequence = f"{triage_route}{handoff}{rehearsal}{feedback}{decision}"
     elif sourced:
         next_action = _render_next_action(state, labels, sourced=sourced)
-        practice_sequence = f"{handoff}{next_action}{rehearsal}"
+        practice_sequence = f"{triage_route}{handoff}{next_action}{rehearsal}"
     else:
         next_action = _render_next_action(state, labels, sourced=sourced)
         practice_sequence = f"{rehearsal}{next_action}"
