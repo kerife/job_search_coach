@@ -13,6 +13,18 @@ from collections.abc import Mapping, Sequence
 from datetime import date
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import Path
+
+
+class _ArgumentError(ValueError):
+    """Raised without reflecting private command-line values."""
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        del message
+        raise _ArgumentError
+
+
 try:
     from private_prose_safety import format_bounded_diagnostics
 except ModuleNotFoundError:
@@ -2366,9 +2378,15 @@ def validate_dossier(value: object) -> list[str]:
 
 
 def _cli(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Validate an executive career dossier.")
+    parser = _PrivateArgumentParser(description="Validate an executive career dossier.")
     parser.add_argument("dossier", type=Path)
-    arguments = parser.parse_args(argv)
+    try:
+        arguments = parser.parse_args(argv)
+    except _ArgumentError:
+        print(json.dumps({"error": {"code": "invalid_arguments"}}, separators=(",", ":")), file=sys.stderr)
+        return 3
+    except SystemExit as error:
+        return 0 if error.code == 0 else 3
     try:
         dossier = load_dossier(arguments.dossier)
     except DossierLoadError as error:

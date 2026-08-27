@@ -14,6 +14,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "plugins" / "professional-growth-coach" / "scripts"
 V1_DOSSIER = ROOT / "tests/evals/with-skill/fixtures/executive-career-dossier/scenario-c-en.json"
 V2_DOSSIER = ROOT / "tests/evals/with-skill/fixtures/executive-career-dossier-v2/scenario-c-en.json"
+V1_VALIDATOR = SCRIPTS / "validate_executive_career_dossier.py"
+V2_VALIDATOR = SCRIPTS / "validate_executive_career_dossier_v2.py"
 TRIAGE = ROOT / "tests/evals/with-skill/fixtures/private-recruiter-reply-triage/ready-en.json"
 OUTCOME = ROOT / "plugins/professional-growth-coach/tests/fixtures/private-recruiter-conversion-outcome/contact-received-en.json"
 CHECKPOINT = ROOT / "plugins/professional-growth-coach/tests/fixtures/private-recruiter-followthrough-checkpoint/completed-screen-attended-en.json"
@@ -124,6 +126,22 @@ class CliReceiptPrivacyTests(unittest.TestCase):
             with self.subTest(script=script.name):
                 result = subprocess.run(
                     [sys.executable, "-B", str(script), *arguments, "--unexpected", sentinel],
+                    cwd=ROOT,
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                self.assertEqual(3, result.returncode)
+                self.assertEqual("", result.stdout)
+                self.assertEqual('{"error":{"code":"invalid_arguments"}}\n', result.stderr)
+                self.assertNotIn(sentinel, result.stderr)
+
+    def test_dossier_validators_return_opaque_unknown_argument_errors(self) -> None:
+        sentinel = "PRIVATE_DOSSIER_ARGUMENT_SENTINEL"
+        for script, dossier in ((V1_VALIDATOR, V1_DOSSIER), (V2_VALIDATOR, V2_DOSSIER)):
+            with self.subTest(script=script.name):
+                result = subprocess.run(
+                    [sys.executable, "-B", str(script), str(dossier), "--unexpected", sentinel],
                     cwd=ROOT,
                     capture_output=True,
                     text=True,

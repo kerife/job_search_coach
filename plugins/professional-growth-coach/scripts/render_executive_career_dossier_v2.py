@@ -659,7 +659,7 @@ def _render_main(dossier: Mapping[str, object], locale: str, market_dossier: Map
         f'<span class="reading-path-title">{html.escape(labels["reading_path_title"], quote=True)}</span>'
         f'<ol>{reading_links}</ol></nav>'
     )
-    opening = BASE._render_verdict(projected, locale) + reading_path + BASE._render_recruiter_scan(projected, locale)
+    opening = BASE._render_verdict(projected, locale) + BASE._render_recruiter_scan(projected, locale) + reading_path
     bridge_holds = BASE._render_holds(projected, locale) + BASE._render_screen_bridge(projected, locale)
     market_context = projected.get("market_context")
     legacy_market_surface = (

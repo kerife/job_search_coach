@@ -31,11 +31,11 @@ print keeps the semantic table layout and no horizontal-scroll affordance is
 required.
 The section-coverage ledger likewise keeps a single facts column at 640px and
 below, preserving the same semantic reading order without horizontal scrolling.
-The v2 opening also includes a localized `reading-path` landmark after the
-verdict. Its four static fragment links target section coverage, coaching
-priorities, market evidence, and first-conversation preparation; links keep
-visible focus, print cleanly, and stack into 44px touch targets at 640px and
-below.
+The v2 opening keeps the verdict and recruiter scan together in the first
+decision row, followed by a localized `reading-path` landmark. Its four static
+fragment links target section coverage, coaching priorities, market evidence,
+and first-conversation preparation; links keep visible focus, print cleanly,
+and stack into 44px touch targets at 640px and below.
 
 ## /recruiter-practice-session (offline artifact)
 

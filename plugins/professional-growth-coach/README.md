@@ -84,11 +84,12 @@ must be present in the official registry, and secondary market sources must
 use HTTPS. Unknown categories and non-HTTPS URLs are rejected by both schema
 and runtime validation before rendering.
 
-The v2 dossier adds a localized, keyboard-visible reading path immediately
-after the verdict, linking to section coverage, coaching priorities, market
-evidence, and first-conversation preparation. The anchors are static fragment
-links, remain available in print, and stack into 44px touch targets at 640px
-and below; they do not hide or reorder any evidence.
+The v2 dossier keeps the verdict and recruiter scan together as the first
+decision row, then adds a localized, keyboard-visible reading path linking to
+section coverage, coaching priorities, market evidence, and first-conversation
+preparation. The anchors are static fragment links, remain available in print,
+and stack into 44px touch targets at 640px and below; they do not hide or
+reorder any evidence.
 
 Current vacancy research uses the closed `target-vacancy-research-v1` artifact.
 It is identity-free, bounded to at most five distinct postings, records dated

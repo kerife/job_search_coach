@@ -613,6 +613,13 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
                 self.assertIn("min-height: 44px", css)
                 self.assertIn("@media screen and (max-width: 640px)", css)
 
+    def test_reading_path_follows_verdict_and_recruiter_scan(self) -> None:
+        for locale in ("es", "en"):
+            with self.subTest(locale=locale):
+                rendered = self.renderer.render_dossier_html(make_v2_dossier(locale))
+                self.assertLess(rendered.index('id="verdict-title"'), rendered.index('id="scan-title"'))
+                self.assertLess(rendered.index('id="scan-title"'), rendered.index('<nav class="reading-path'))
+
     def test_unavailable_rows_show_localized_reason_and_request_decision(self) -> None:
         for locale, labels in (
             ("es", ("No disponible", "Autorización requerida", "Respuesta pendiente")),

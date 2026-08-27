@@ -13,6 +13,16 @@ from pathlib import Path
 from typing import Any
 
 
+class _ArgumentError(ValueError):
+    """Raised without reflecting private command-line values."""
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        del message
+        raise _ArgumentError
+
+
 def _sibling(name: str) -> Any:
     path = Path(__file__).with_name(name)
     spec = importlib.util.spec_from_file_location(f"_pgc_{path.stem}", path)
@@ -357,9 +367,15 @@ def load_dossier(path: Path) -> dict[str, object]:
 
 
 def _cli(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Validate an executive career dossier v2.")
+    parser = _PrivateArgumentParser(description="Validate an executive career dossier v2.")
     parser.add_argument("dossier", type=Path)
-    arguments = parser.parse_args(argv)
+    try:
+        arguments = parser.parse_args(argv)
+    except _ArgumentError:
+        print(json.dumps({"error": {"code": "invalid_arguments"}}, separators=(",", ":")), file=sys.stderr)
+        return 3
+    except SystemExit as error:
+        return 0 if error.code == 0 else 3
     try:
         dossier = load_dossier(arguments.dossier)
     except DossierLoadError as error:
