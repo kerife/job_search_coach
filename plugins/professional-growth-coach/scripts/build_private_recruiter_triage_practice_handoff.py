@@ -234,6 +234,17 @@ def _unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
     return result
 
 
+def _assert_max_depth(value: object, maximum: int = 12, depth: int = 0) -> None:
+    if depth > maximum:
+        raise TriageInputError("triage input is unavailable")
+    if isinstance(value, Mapping):
+        for child in value.values():
+            _assert_max_depth(child, maximum, depth + 1)
+    elif isinstance(value, list):
+        for child in value:
+            _assert_max_depth(child, maximum, depth + 1)
+
+
 def load_triage(path: Path) -> dict[str, object]:
     """Load exactly one bounded v2 triage object without following symlinks."""
     loader = _load_sibling("private_input_loader")
@@ -241,8 +252,9 @@ def load_triage(path: Path) -> dict[str, object]:
         raw_bytes = loader.read_bounded_bytes(path, 64_000)
         decoded = raw_bytes.decode("utf-8")
         value = json.loads(decoded, object_pairs_hook=_unique_object)
-    except (UnicodeError, json.JSONDecodeError, RecursionError, CompositionError, loader.PrivateInputError) as error:
+    except (UnicodeError, json.JSONDecodeError, RecursionError, CompositionError, ValueError, loader.PrivateInputError) as error:
         raise TriageInputError("triage input is unavailable") from error
+    _assert_max_depth(value)
     if not isinstance(value, dict):
         raise TriageInputError("triage input must be an object")
     return value

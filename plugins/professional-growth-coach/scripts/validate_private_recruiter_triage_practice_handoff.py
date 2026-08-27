@@ -107,7 +107,7 @@ def load_handoff(path: Path) -> dict[str, object]:
     try:
         raw = raw_bytes.decode("utf-8")
         value = json.loads(raw, object_pairs_hook=_unique_object)
-    except (UnicodeError, json.JSONDecodeError, RecursionError, HandoffLoadError) as error:
+    except (UnicodeError, json.JSONDecodeError, RecursionError, HandoffLoadError, ValueError) as error:
         raise HandoffLoadError("handoff input is not valid JSON") from error
     _assert_max_depth(value)
     if not isinstance(value, dict):

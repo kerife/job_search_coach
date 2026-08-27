@@ -180,7 +180,7 @@ def load_triage(path: Path) -> dict[str, object]:
         raise TriageLoadError("triage input is not valid JSON") from error
     try:
         value = json.loads(raw, object_pairs_hook=_unique_object)
-    except (json.JSONDecodeError, RecursionError, TriageLoadError) as error:
+    except (json.JSONDecodeError, RecursionError, TriageLoadError, ValueError) as error:
         raise TriageLoadError("triage input is not valid JSON") from error
     _assert_max_depth(value)
     if not isinstance(value, dict):
