@@ -26,6 +26,8 @@ class RecruiterShortlistRoutingDocsTests(unittest.TestCase):
             "route_recruiter_screen_debrief",
             "manual_prepare_next_stage_review",
             "collect_debrief_context",
+            "evidence_gaps",
+            "intake_question",
             "network with recruiters",
             "primera entrevista con un reclutador",
             "3–5 manual queries",

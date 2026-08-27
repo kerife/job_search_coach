@@ -18,7 +18,12 @@ from build_recruiter_target_shortlist import build_shortlist  # noqa: E402
 from build_recruiter_target_decision_gate import build_decision_gate  # noqa: E402
 from render_recruiter_target_decision_gate import render_decision_gate_html  # noqa: E402
 from validate_recruiter_target_decision_gate import validate_decision_gate  # noqa: E402
-from route_recruiter_target_shortlist import route_recruiter_decision_gate  # noqa: E402
+from route_recruiter_target_shortlist import (  # noqa: E402
+    route_recruiter_decision_gate,
+    route_recruiter_next_stage_review,
+    route_recruiter_screen_debrief,
+    route_recruiter_screen_intake,
+)
 sys.path.insert(0, str(ROOT / "plugins" / "professional-growth-coach" / "tests"))
 from validate_private_schema_conformance import validate_schema_instance  # noqa: E402
 
@@ -157,6 +162,24 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
         self.assertEqual("needs_intake", intake["case_state"])
         self.assertEqual("collect_screen_context", intake["next_action"])
         self.assertNotIn("rendered_html", intake)
+
+    def test_artifact_free_handoffs_explain_the_next_intake_step(self) -> None:
+        cases = (
+            route_recruiter_decision_gate(
+                {},
+                screen_context={"vacancy_summary": "bounded", "confirmed_fact_summary": "bounded"},
+            ),
+            route_recruiter_screen_intake({}, "T-001", {}),
+            route_recruiter_screen_debrief({}, {}, {}, {}),
+            route_recruiter_next_stage_review({}, {}, {}, {}, "first_interview"),
+        )
+        for result in cases:
+            with self.subTest(route=result["route_kind"]):
+                self.assertEqual("needs_intake", result["case_state"])
+                self.assertIsNone(result["artifact"])
+                self.assertTrue(result["evidence_gaps"])
+                self.assertIsInstance(result["intake_question"], str)
+                self.assertNotIn("T-001", result["intake_question"])
 
 
 if __name__ == "__main__":

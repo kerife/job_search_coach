@@ -43,6 +43,8 @@ No router config file exists, so there is no router source to include. All rende
 For the recruiter handoff chain, route functions return `artifact` plus
 private in-memory `rendered_html` only when a validated artifact exists. The
 decision gate, screen intake, post-screen debrief, and next-stage review share
-this contract; invalid intake remains artifact-free. The HTML is a review
+this contract; invalid intake remains artifact-free but includes fixed
+`evidence_gaps` and one localized `intake_question` so the next safe input is
+clear. Recovery text never echoes rejected values. The HTML is a review
 surface, not a public serialization format, and keeps IDs, snapshots, contact
 details, URLs, and external actions out of the rendered document.

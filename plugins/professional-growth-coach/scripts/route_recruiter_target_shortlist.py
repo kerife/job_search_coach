@@ -51,6 +51,37 @@ INTAKE = {
     "es": "Comparte: 3–6 objetivos manuales con contexto visible o proporcionado por ti; la meta de red y sus segmentos; 3–5 consultas manuales; tu tiempo semanal; una condición de pausa o detención; y el tema de prueba que quieres revisar primero.",
     "en": "Share: 3–6 manually supplied targets with visible or candidate-provided context; the networking goal and segments; 3–5 manual queries; your weekly time budget; a pause or stop condition; and the proof theme you want reviewed first.",
 }
+HANDOFF_GAPS = {
+    "recruiter_target_decision_gate": ["validated_shortlist_artifact"],
+    "recruiter_target_screen_intake": ["target_specific_screen_context"],
+    "private_recruiter_screen_debrief": ["valid_screen_checkpoint_receipt_intake_and_debrief"],
+    "private_recruiter_next_stage_review": ["valid_debrief_checkpoint_and_forward_stage"],
+}
+
+
+def _safe_locale(value: object) -> str:
+    if isinstance(value, Mapping) and value.get("locale") in INTAKE:
+        return str(value["locale"])
+    return "es"
+
+
+def _artifact_free_intake(
+    route_kind: str,
+    *,
+    selected_module: str,
+    next_action: str,
+    locale: str,
+) -> dict[str, object]:
+    return {
+        "route_kind": route_kind,
+        "case_state": "needs_intake",
+        "selected_module": selected_module,
+        "next_action": next_action,
+        "authorization_required": False,
+        "evidence_gaps": list(HANDOFF_GAPS[route_kind]),
+        "intake_question": INTAKE[locale],
+        "artifact": None,
+    }
 
 
 def route_recruiter_request(
@@ -145,26 +176,22 @@ def route_recruiter_decision_gate(
         # Generic screen context is intentionally no longer a handoff signal.
         # The target-specific bridge must bind one target, its snapshot, and
         # four explicit readiness checks before interview preparation review.
-        return {
-            "route_kind": "recruiter_target_screen_intake",
-            "case_state": "needs_intake",
-            "selected_module": "prepare-role-interviews",
-            "next_action": "collect_screen_intake",
-            "authorization_required": False,
-            "artifact": None,
-        }
+        return _artifact_free_intake(
+            "recruiter_target_screen_intake",
+            selected_module="prepare-role-interviews",
+            next_action="collect_screen_intake",
+            locale=_safe_locale(shortlist),
+        )
     try:
         artifact = GATE_BUILDER.build_decision_gate(shortlist)
         rendered_html = GATE_RENDERER.render_decision_gate_html(artifact)
     except (TypeError, ValueError):
-        return {
-            "route_kind": "recruiter_target_decision_gate",
-            "case_state": "needs_intake",
-            "selected_module": "prepare-role-interviews",
-            "next_action": "collect_screen_context",
-            "authorization_required": False,
-            "artifact": None,
-        }
+        return _artifact_free_intake(
+            "recruiter_target_decision_gate",
+            selected_module="prepare-role-interviews",
+            next_action="collect_screen_context",
+            locale=_safe_locale(shortlist),
+        )
     return {
         "route_kind": "recruiter_target_decision_gate",
         "case_state": "ready",
@@ -186,14 +213,12 @@ def route_recruiter_screen_intake(
         artifact = SCREEN_INTAKE_BUILDER.build_screen_intake(gate, target_id, context)
         rendered_html = SCREEN_INTAKE_RENDERER.render_screen_intake_html(artifact)
     except (TypeError, ValueError):
-        return {
-            "route_kind": "recruiter_target_screen_intake",
-            "case_state": "needs_intake",
-            "selected_module": "prepare-role-interviews",
-            "next_action": "collect_screen_intake",
-            "authorization_required": False,
-            "artifact": None,
-        }
+        return _artifact_free_intake(
+            "recruiter_target_screen_intake",
+            selected_module="prepare-role-interviews",
+            next_action="collect_screen_intake",
+            locale=_safe_locale(gate),
+        )
     ready = artifact["readiness_decision"] == "ready"
     return {
         "route_kind": "recruiter_target_screen_intake",
@@ -219,14 +244,12 @@ def route_recruiter_screen_debrief(
             artifact, receipt, intake, checkpoint=checkpoint
         )
     except (TypeError, ValueError):
-        return {
-            "route_kind": "private_recruiter_screen_debrief",
-            "case_state": "needs_intake",
-            "selected_module": "track-career-outcomes",
-            "next_action": "collect_debrief_context",
-            "authorization_required": False,
-            "artifact": None,
-        }
+        return _artifact_free_intake(
+            "private_recruiter_screen_debrief",
+            selected_module="track-career-outcomes",
+            next_action="collect_debrief_context",
+            locale=_safe_locale(intake),
+        )
     ready = artifact["decision"] == "continue_review"
     stopped = artifact["decision"] == "stop"
     return {
@@ -254,14 +277,12 @@ def route_recruiter_next_stage_review(
             artifact, debrief, receipt, intake, checkpoint
         )
     except (TypeError, ValueError):
-        return {
-            "route_kind": "private_recruiter_next_stage_review",
-            "case_state": "needs_intake",
-            "selected_module": "prepare-role-interviews",
-            "next_action": "collect_debrief_context",
-            "authorization_required": False,
-            "artifact": None,
-        }
+        return _artifact_free_intake(
+            "private_recruiter_next_stage_review",
+            selected_module="prepare-role-interviews",
+            next_action="collect_debrief_context",
+            locale=_safe_locale(debrief),
+        )
     ready = artifact["review_state"] == "ready"
     stopped = artifact["handoff"]["next_safe_action"] == "record_stop_decision"
     return {
