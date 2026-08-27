@@ -105,6 +105,9 @@ class PrivateRecruiterTriagePracticeHandoffTests(unittest.TestCase):
         stop = json.loads((FIXTURE_DIRECTORY / "stop-en.json").read_text(encoding="utf-8"))
         candidate_reported = self._ready_triage("en")
         candidate_reported["facts"][0]["state"] = "candidate_reported"
+        snapshot = snapshot_for_triage(candidate_reported)
+        candidate_reported["handoff"]["packet"]["source_snapshot"] = snapshot
+        candidate_reported["handoff"]["reentry_packet"]["source_snapshot"] = snapshot
 
         for label, triage in (
             ("clarify_first", clarify),
