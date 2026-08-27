@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T14:57:59-06:00`
+release_timestamp: `2026-08-27T15:09:32-06:00`
 
-source_commit: `0359cf80bafbdaa3cd4be9a457b77587d82e2048`
+source_commit: `33dd45992c4d49ca172ed15fba7796725d6ffdca`
 
-source_tree: `032385f924d01e6390fcf9dc2246272e4e8b451a`
+source_tree: `471d55fdf3b437ba43f48380687b19c3350ecfd5`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827145759`
+installed_cache_version: `0.2.0+codex.20260827150932`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `171`
 
 installed_file_count: `171`
 
-normalized_source_cache_sha256: `76ba5a6c892bd0739fedb1237fb93ad85e478c6ecba1e7a18e4fb292fea0c64b`
+normalized_source_cache_sha256: `a76b59fc27fa47f9cdb97d96d17ffea51f54cb417dba81df8e4c63a066fcd514`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -132,6 +132,8 @@ installed_screen_context_safety_smoke: `1/1 installed builder and validator reje
 installed_stage_transition_smoke: `2/2 installed technical-screen to hiring-manager handoff and backward-transition rejection with localized current → target copy`
 
 installed_stage_label_localization_smoke: `13/13 installed EN/ES intake and debrief renderers cover all supported stages without visible internal stage/check/state tokens; stop routes remain terminal`
+
+installed_shortlist_route_e2e_smoke: `5/5 installed route runs builder → validator → renderer, returns private HTML without placeholders/IDs/action tokens, and rejects unrelated network or technical-interview phrasing`
 
 fresh_agent_smoke: `not_run`
 
