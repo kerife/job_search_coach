@@ -24,6 +24,7 @@ def _sibling(name: str) -> Any:
 
 
 BUILDER = _sibling("build_recruiter_target_shortlist.py")
+GATE_BUILDER = _sibling("build_recruiter_target_decision_gate.py")
 INTENT = re.compile(r"(?:recruiter|recruiting|reclutador|reclutadora|network|red de|first interview|first screen|primer filtro|primera entrevista)", re.I)
 INTAKE = {
     "es": "Comparte de tres a seis objetivos manuales con contexto visible o proporcionado por ti y el tema de prueba que quieres revisar primero.",
@@ -83,5 +84,32 @@ def route_recruiter_request(
         "next_action": "render_recruiter_target_shortlist",
         "authorization_required": False,
         "evidence_gaps": [],
+        "artifact": artifact,
+    }
+
+
+def route_recruiter_decision_gate(
+    shortlist: Mapping[str, object],
+    *,
+    screen_context: Mapping[str, object] | None = None,
+) -> dict[str, object]:
+    """Route one validated shortlist to a manual-only decision gate."""
+    try:
+        artifact = GATE_BUILDER.build_decision_gate(shortlist, screen_context=screen_context)
+    except (TypeError, ValueError):
+        return {
+            "route_kind": "recruiter_target_decision_gate",
+            "case_state": "needs_intake",
+            "selected_module": "prepare-role-interviews",
+            "next_action": "collect_screen_context",
+            "authorization_required": False,
+            "artifact": None,
+        }
+    return {
+        "route_kind": "recruiter_target_decision_gate",
+        "case_state": "ready",
+        "selected_module": "prepare-role-interviews",
+        "next_action": artifact["handoff"]["next_safe_action"],
+        "authorization_required": False,
         "artifact": artifact,
     }

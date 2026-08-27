@@ -17,10 +17,13 @@ from validate_private_schema_conformance import (
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from build_dossier_recruiter_practice_handoff import build_handoff
+from build_recruiter_target_decision_gate import build_decision_gate
+from build_recruiter_target_shortlist import build_shortlist
 from validate_dossier_recruiter_practice_handoff import validate_handoff
 from private_prose_safety import is_safe_prose_text
 from validate_private_recruiter_reply_triage import validate_triage
 from validate_recruiter_practice_session import validate_session
+from tests.test_recruiter_target_shortlist import valid_plan, valid_targets
 
 
 def _load_v2_dossier_helper():
@@ -46,6 +49,15 @@ V2_TRIAGE_PRACTICE_SNAPSHOT = (
 class PrivateSchemaConformanceTests(unittest.TestCase):
     def _schema(self, name):
         return json.loads((ROOT / "schemas" / name).read_text(encoding="utf-8"))
+
+    def test_recruiter_decision_gate_schema_matches_runtime(self):
+        shortlist = build_shortlist("es", "2026-08-27", valid_plan(), valid_targets())
+        gate = build_decision_gate(shortlist)
+        schema = self._schema("recruiter-target-decision-gate-v1.schema.json")
+        self.assertEqual([], validate_schema_instance(gate, schema))
+        invalid = copy.deepcopy(gate)
+        invalid["source_shortlist"] = {}
+        self.assertTrue(validate_schema_instance(invalid, schema))
 
     def test_dossier_methodology_categories_keep_schema_runtime_and_registry_in_lockstep(self):
         helper = _load_v2_dossier_helper()

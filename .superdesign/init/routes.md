@@ -12,6 +12,7 @@ This plugin exposes no HTTP routes, SPA routes, framework page files, or router 
 | `/private-recruiter-followthrough-checkpoint` | `plugins/professional-growth-coach/scripts/render_private_recruiter_followthrough_checkpoint.py` | `plugins/professional-growth-coach/assets/private-recruiter-followthrough-checkpoint-v1.html` | `PrivateRecruiterFollowthroughCheckpointDocument` |
 | `/private-recruiter-conversion-outcome` | `plugins/professional-growth-coach/scripts/render_private_recruiter_conversion_outcome.py` | `plugins/professional-growth-coach/assets/private-recruiter-conversion-outcome-v1.html` | `PrivateRecruiterConversionOutcomeDocument` |
 | `/recruiter-target-shortlist` | `plugins/professional-growth-coach/scripts/render_recruiter_target_shortlist.py` | `plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.html` | `RecruiterTargetShortlistDocument` |
+| `/recruiter-target-decision-gate` | `plugins/professional-growth-coach/scripts/render_recruiter_target_decision_gate.py` | `plugins/professional-growth-coach/assets/recruiter-target-decision-gate-v1.html` | `RecruiterTargetDecisionGateDocument` |
 
 ## Key artifact summaries
 
@@ -20,6 +21,7 @@ This plugin exposes no HTTP routes, SPA routes, framework page files, or router 
 - **Private recruiter reply triage:** a closed decision card that communicates safe next steps and, when applicable, a manual preparation handoff.
 - **Follow-through checkpoint:** a compact candidate-supplied state, next measurement event, date, and safe-next-step receipt.
 - **Conversion outcome:** a compact candidate-supplied observed-event receipt with evidence count and safe-next-step boundary.
+- **Recruiter target decision gate:** a private decision brief bound to a validated shortlist snapshot; it reconciles four decision states, shows the next safe input, and exposes only a manual `prepare-role-interviews` review handoff.
 
 Both compact receipt routes use the same static continuity semantics (`recorded`
 then `pending` then `blocked`) and expose exactly one current step to assistive

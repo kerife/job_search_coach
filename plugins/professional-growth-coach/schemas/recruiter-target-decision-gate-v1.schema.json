@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.invalid/professional-growth-coach/recruiter-target-decision-gate-v1.schema.json",
+  "title": "Private recruiter target decision gate v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_kind", "locale", "as_of_date", "source_shortlist", "source_snapshot", "decision_counts", "decision_rows", "screen_context", "handoff", "delivery"],
+  "properties": {
+    "schema_version": {"const": "recruiter-target-decision-gate-v1"},
+    "artifact_kind": {"const": "private_recruiter_target_decision_gate"},
+    "locale": {"enum": ["es", "en"]},
+    "as_of_date": {"type": "string", "format": "date"},
+    "source_shortlist": {"$ref": "#/$defs/source_shortlist"},
+    "source_snapshot": {"type": "string", "pattern": "^snap-shortlist-sha256-[0-9a-f]{64}$"},
+    "decision_counts": {"type": "object", "additionalProperties": false, "required": ["advance", "clarify", "pause", "stop"], "properties": {"advance": {"type": "integer", "minimum": 0}, "clarify": {"type": "integer", "minimum": 0}, "pause": {"type": "integer", "minimum": 0}, "stop": {"type": "integer", "minimum": 0}}},
+    "decision_rows": {"type": "array", "minItems": 3, "maxItems": 6, "items": {"$ref": "#/$defs/decision_row"}},
+    "screen_context": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/screen_context"}]},
+    "handoff": {"$ref": "#/$defs/handoff"},
+    "delivery": {"$ref": "#/$defs/delivery"}
+  },
+  "$defs": {
+    "source_shortlist": {"type": "object", "required": ["schema_version", "artifact_kind", "locale", "as_of_date", "network_plan", "targets", "batch_decision", "top_priority_target_id", "delivery"], "additionalProperties": true},
+    "decision_row": {"type": "object", "additionalProperties": false, "required": ["target_id", "decision", "decision_reason", "contactability_status", "missing_context", "recommended_draft_type", "first_contact_strategy", "warm_intro_readiness", "next_safe_action", "draft_only", "consent", "authorization_required", "no_message_action", "no_calendar_action"], "properties": {
+      "target_id": {"type": "string", "pattern": "^T-[0-9]{3}$"},
+      "decision": {"enum": ["advance", "clarify", "pause", "stop"]},
+      "decision_reason": {"type": "string", "minLength": 1, "maxLength": 300},
+      "contactability_status": {"enum": ["contactable", "context_needed", "do_not_contact"]},
+      "missing_context": {"type": "string", "minLength": 1, "maxLength": 300},
+      "recommended_draft_type": {"enum": ["connection_note", "recruiter_interest", "referral_request", "none"]},
+      "first_contact_strategy": {"type": "string", "minLength": 1, "maxLength": 300},
+      "warm_intro_readiness": {"type": "string", "minLength": 1, "maxLength": 240},
+      "next_safe_action": {"enum": ["draft_only_review", "collect_recipient_context", "record_observation_only"]},
+      "draft_only": {"const": true}, "consent": {"const": "not_granted"}, "authorization_required": {"const": true}, "no_message_action": {"const": true}, "no_calendar_action": {"const": true}
+    }},
+    "screen_context": {"type": "object", "additionalProperties": false, "required": ["vacancy_summary", "confirmed_fact_summary"], "properties": {"vacancy_summary": {"type": "string", "minLength": 1, "maxLength": 280}, "confirmed_fact_summary": {"type": "string", "minLength": 1, "maxLength": 280}}},
+    "handoff": {"type": "object", "additionalProperties": false, "required": ["screen_context_state", "next_safe_action", "manual_review_required", "selected_module", "draft_only", "external_actions_authorized", "no_message_action", "no_calendar_action"], "properties": {"screen_context_state": {"enum": ["missing", "provided"]}, "next_safe_action": {"enum": ["collect_screen_context", "prepare_role_interviews_review"]}, "manual_review_required": {"const": true}, "selected_module": {"const": "prepare-role-interviews"}, "draft_only": {"const": true}, "external_actions_authorized": {"const": false}, "no_message_action": {"const": true}, "no_calendar_action": {"const": true}}},
+    "delivery": {"type": "object", "additionalProperties": false, "required": ["draft_only", "external_actions_authorized", "local_save_mode", "raw_contact_details_retained"], "properties": {"draft_only": {"const": true}, "external_actions_authorized": {"const": false}, "local_save_mode": {"const": "disabled"}, "raw_contact_details_retained": {"const": false}}}
+  }
+}

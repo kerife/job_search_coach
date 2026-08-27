@@ -98,6 +98,19 @@ Dependencies:
 
 The shortlist route is intentionally static and offline: `route_recruiter_request` supplies a validated artifact to `render_recruiter_target_shortlist.py`; no network or external-action surface is part of the page.
 
+## /recruiter-target-decision-gate (offline artifact)
+
+Entry: `plugins/professional-growth-coach/scripts/render_recruiter_target_decision_gate.py`
+
+Dependencies:
+
+- `plugins/professional-growth-coach/scripts/build_recruiter_target_decision_gate.py`
+- `plugins/professional-growth-coach/scripts/validate_recruiter_target_decision_gate.py`
+- `plugins/professional-growth-coach/assets/recruiter-target-decision-gate-v1.html`
+- `plugins/professional-growth-coach/assets/recruiter-target-decision-gate-v1.css`
+
+The gate is a static decision brief: it binds and revalidates the full shortlist snapshot, presents reconciled decision counts and one row per target, then stops at a manual screen-context or interview-preparation review boundary. It contains no controls, network calls, contact details, URLs, message actions, or calendar actions.
+
 The renderer validates a candidate-supplied outcome, computes the localized evidence-count label, and writes a compact offline receipt. The default CLI receipt is path-free; `--include-artifact-path` is an explicit trusted-caller opt-in.
 
 Outcome and follow-through receipts share a non-interactive continuity rail:

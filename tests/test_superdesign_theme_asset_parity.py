@@ -21,6 +21,7 @@ ASSET_NAMES = (
     "private-recruiter-followthrough-checkpoint-v1.css",
     "private-recruiter-conversion-outcome-v1.css",
     "recruiter-target-shortlist-v1.css",
+    "recruiter-target-decision-gate-v1.css",
 )
 EXPECTED_THEME_ASSET_NAMES = {
     "executive-career-dossier-v1.css",
@@ -31,6 +32,7 @@ EXPECTED_THEME_ASSET_NAMES = {
     "private-recruiter-followthrough-checkpoint-v1.css",
     "private-recruiter-conversion-outcome-v1.css",
     "recruiter-target-shortlist-v1.css",
+    "recruiter-target-decision-gate-v1.css",
 }
 HTML_ASSET_NAMES = (
     "executive-career-dossier-v1.html",
@@ -39,6 +41,7 @@ HTML_ASSET_NAMES = (
     "private-recruiter-followthrough-checkpoint-v1.html",
     "private-recruiter-conversion-outcome-v1.html",
     "recruiter-target-shortlist-v1.html",
+    "recruiter-target-decision-gate-v1.html",
 )
 EXPECTED_LAYOUT_SOURCES = {
     f"plugins/professional-growth-coach/assets/{name}"
@@ -80,7 +83,7 @@ class SuperdesignThemeAssetParityTests(unittest.TestCase):
     def test_superdesign_docs_describe_current_asset_inventory_and_tokens(self):
         components = COMPONENTS.read_text(encoding="utf-8")
         theme = THEME.read_text(encoding="utf-8")
-        self.assertIn("eight standalone CSS files", components)
+        self.assertIn("nine standalone CSS files", components)
         self.assertIn("--line #b8c7c0", theme)
         self.assertIn("--decision-term #dfbf70", theme)
         self.assertIn("--decision-term #f5d68a", theme)

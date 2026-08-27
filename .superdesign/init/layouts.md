@@ -35,6 +35,63 @@ the print rendering stays tabular.
 </html>
 ```
 
+## RecruiterTargetDecisionGateDocument
+
+- Source: `plugins/professional-growth-coach/assets/recruiter-target-decision-gate-v1.html`
+- Renders: private decision brief with a dominant next-decision card, reconciled batch counts, manual screen-context boundary, and ordered target decisions.
+
+```html
+<!doctype html>
+<html lang="{{LANG}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'none'; font-src 'none'; connect-src 'none'; form-action 'none'; frame-ancestors 'none'">
+  <title>{{TITLE}}</title>
+  <style>{{INLINE_CSS}}</style>
+</head>
+<body class="decision-gate-document">
+  <a class="skip-link" href="#main-content">{{SKIP_LINK}}</a>
+  <main id="main-content" tabindex="-1" class="gate-shell">
+    <header class="gate-header">
+      <p class="gate-kicker">{{KICKER}}</p>
+      <h1>{{HEADING}}</h1>
+      <p class="gate-date"><span>{{DATE_LABEL}}</span> <time datetime="{{AS_OF_DATE}}">{{AS_OF_DATE}}</time></p>
+    </header>
+    <section class="gate-card gate-next" aria-labelledby="next-title">
+      <p class="gate-state">{{NEXT_STATE}}</p>
+      <h2 id="next-title">{{NEXT_ACTION}}</h2>
+      <p class="gate-next-copy">{{MISSING}}</p>
+    </section>
+    <section class="gate-card" aria-labelledby="overview-title">
+      <h2 id="overview-title">{{OVERVIEW_LABEL}}</h2>
+      <dl class="gate-overview-grid">
+        <div><dt>{{TARGET_COUNT_LABEL}}</dt><dd>{{TARGET_COUNT}}</dd></div>
+        <div><dt>{{PRIORITY_LABEL}}</dt><dd>{{PRIORITY}}</dd></div>
+        <div><dt>{{WHY_LABEL}}</dt><dd>{{WHY}}</dd></div>
+      </dl>
+      <div class="gate-count-summary" aria-labelledby="counts-title">
+        <h3 id="counts-title">{{COUNTS_LABEL}}</h3>
+        <ul class="gate-counts">{{COUNTS}}</ul>
+      </div>
+    </section>
+    <section class="gate-card gate-context" aria-labelledby="missing-title">
+      <h2 id="missing-title">{{MISSING_LABEL}}</h2>
+      <p>{{MISSING}}</p>
+    </section>
+    <section aria-labelledby="rows-title">
+      <h2 id="rows-title" class="gate-section-title">{{ROWS_LABEL}}</h2>
+      <ol class="gate-rows">{{ROWS}}</ol>
+    </section>
+    <footer class="gate-footer">
+      <p>{{BOUNDARY}}</p>
+      <p>{{FOOTER}}</p>
+    </footer>
+  </main>
+</body>
+</html>
+```
+
 ## RecruiterPracticeSessionDocument
 
 - Source: `plugins/professional-growth-coach/assets/recruiter-practice-session-v1.html`

@@ -28,6 +28,8 @@ CANONICAL_RENDERER_ASSETS = (
     "assets/private-recruiter-conversion-outcome-v1.css",
     "assets/recruiter-target-shortlist-v1.html",
     "assets/recruiter-target-shortlist-v1.css",
+    "assets/recruiter-target-decision-gate-v1.html",
+    "assets/recruiter-target-decision-gate-v1.css",
 )
 
 
