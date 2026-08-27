@@ -63,9 +63,11 @@ ASSET_LOADER = _load_asset_loader()
 
 COPY = {
     "es": {
+        "skip": "Saltar al contenido principal",
         "title": "Objetivos de reclutamiento",
         "kicker": "Revisión privada de networking",
         "heading": "Shortlist de objetivos",
+        "targets_label": "Objetivos revisados",
         "goal": "Objetivo de red",
         "segments": "Segmentos prioritarios",
         "queries": "Hipótesis de búsqueda manual",
@@ -87,9 +89,11 @@ COPY = {
         "no_save": "Guardado local deshabilitado.",
     },
     "en": {
+        "skip": "Skip to main content",
         "title": "Recruiter target shortlist",
         "kicker": "Private networking review",
         "heading": "Target shortlist",
+        "targets_label": "Reviewed targets",
         "goal": "Network goal",
         "segments": "Priority segments",
         "queries": "Manual search hypotheses",
@@ -126,7 +130,7 @@ def _target_card(target: Mapping[str, object], locale: str, index: int) -> str:
     if missing == "none":
         missing = labels["do_not_contact"] if decision != "advance" else "none"
     action_labels = {"es": {"draft_only_review": "Revisar borrador", "collect_recipient_context": "Recopilar contexto", "record_observation_only": "Registrar observación"}, "en": {"draft_only_review": "Review draft", "collect_recipient_context": "Collect context", "record_observation_only": "Record observation"}}
-    return f'''<article class="target-shortlist-card target-shortlist-card--{html.escape(decision)}" aria-labelledby="target-title-{index}">
+    return f'''<li class="target-shortlist-item"><article class="target-shortlist-card target-shortlist-card--{html.escape(decision)}" aria-labelledby="target-title-{index}">
       <p class="target-shortlist-index">{index}</p>
       <h2 id="target-title-{index}">{html.escape(str(target["target_label"]), quote=True)}</h2>
       <p class="target-shortlist-status"><strong>{html.escape(status)}</strong> · {labels["score"]}: {int(target["priority_score"])} / 100</p>
@@ -137,7 +141,7 @@ def _target_card(target: Mapping[str, object], locale: str, index: int) -> str:
         <div><dt>{html.escape(labels["missing"])}</dt><dd>{html.escape(missing, quote=True)}</dd></div>
         <div><dt>{html.escape(labels["next"])}</dt><dd>{html.escape(action_labels[locale][str(target["next_safe_action"])] , quote=True)}</dd></div>
       </dl>
-    </article>'''
+    </article></li>'''
 
 
 def render_shortlist_html(value: Mapping[str, object]) -> str:
@@ -160,6 +164,7 @@ def render_shortlist_html(value: Mapping[str, object]) -> str:
     css = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, CSS_PATH)
     replacements = {
         "{{LANG}}": locale,
+        "{{SKIP}}": html.escape(labels["skip"]),
         "{{TITLE}}": html.escape(labels["title"], quote=True),
         "{{KICKER}}": html.escape(labels["kicker"]),
         "{{HEADING}}": html.escape(labels["heading"]),
@@ -176,6 +181,7 @@ def render_shortlist_html(value: Mapping[str, object]) -> str:
         "{{DECISION_COUNTS}}": decision_counts,
         "{{PRIORITY}}": priority,
         "{{TARGETS}}": target_cards,
+        "{{TARGETS_LABEL}}": html.escape(labels["targets_label"]),
         "{{BOUNDARY}}": html.escape(labels["boundary"]),
         "{{NO_SAVE}}": html.escape(labels["no_save"]),
     }

@@ -8,7 +8,8 @@
   <style>{{INLINE_CSS}}</style>
 </head>
 <body class="target-shortlist-document">
-  <main class="shortlist-shell">
+  <a class="skip-link" href="#main-content">{{SKIP}}</a>
+  <main id="main-content" tabindex="-1" class="shortlist-shell">
     <header class="shortlist-header">
       <p class="shortlist-kicker">{{KICKER}}</p>
       <h1>{{HEADING}}</h1>
@@ -28,8 +29,9 @@
         <ul class="shortlist-decision-counts">{{DECISION_COUNTS}}</ul>
       </div>
     </section>
-    <section aria-label="{{HEADING}}">
-      <div class="target-shortlist-list">{{TARGETS}}</div>
+    <section aria-labelledby="targets-title">
+      <h2 id="targets-title">{{TARGETS_LABEL}}</h2>
+      <ol class="target-shortlist-list">{{TARGETS}}</ol>
     </section>
     <footer class="shortlist-footer">
       <p class="shortlist-boundary">{{BOUNDARY}}</p>

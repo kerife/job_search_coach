@@ -361,6 +361,7 @@ the print rendering stays tabular.
 
 - Source: `plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.html`
 - Renders: compact bilingual private target-review artifact with a deterministic batch gate and explicit no-contact boundary.
+- Accessibility: keyboard skip link, focusable main landmark, named ordered target list, and print-safe privacy boundary.
 
 ```html
 <!doctype html>
@@ -373,7 +374,8 @@ the print rendering stays tabular.
   <style>{{INLINE_CSS}}</style>
 </head>
 <body class="target-shortlist-document">
-  <main class="shortlist-shell">
+  <a class="skip-link" href="#main-content">{{SKIP}}</a>
+  <main id="main-content" tabindex="-1" class="shortlist-shell">
     <header class="shortlist-header">
       <p class="shortlist-kicker">{{KICKER}}</p>
       <h1>{{HEADING}}</h1>
@@ -393,8 +395,9 @@ the print rendering stays tabular.
         <ul class="shortlist-decision-counts">{{DECISION_COUNTS}}</ul>
       </div>
     </section>
-    <section aria-label="{{HEADING}}">
-      <div class="target-shortlist-list">{{TARGETS}}</div>
+    <section aria-labelledby="targets-title">
+      <h2 id="targets-title">{{TARGETS_LABEL}}</h2>
+      <ol class="target-shortlist-list">{{TARGETS}}</ol>
     </section>
     <footer class="shortlist-footer">
       <p class="shortlist-boundary">{{BOUNDARY}}</p>

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import datetime as dt
+import re
 import sys
 import tempfile
 import unittest
@@ -156,6 +157,28 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertNotIn("draft_only_review", rendered)
         self.assertNotIn("collect_recipient_context", rendered)
         self.assertIn("shortlist-decision-counts", rendered)
+
+    def test_print_layout_keeps_target_cards_and_privacy_boundary_together(self) -> None:
+        css = (ROOT / "plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css").read_text(encoding="utf-8")
+        self.assertIn("@page", css)
+        print_css = css.split("@media print", 1)[1]
+        for selector in (".target-shortlist-card", ".shortlist-footer"):
+            block = re.search(rf"{re.escape(selector)}\s*\{{.*?\}}", print_css, re.S)
+            self.assertIsNotNone(block)
+            self.assertIn("break-inside: avoid", block.group(0))
+            self.assertIn("page-break-inside: avoid", block.group(0))
+
+    def test_renderer_exposes_keyboard_and_ordered_list_accessibility_contract(self) -> None:
+        rendered = render_shortlist_html(build_shortlist("es", "2026-08-27", valid_plan(), valid_targets()))
+        self.assertIn('href="#main-content"', rendered)
+        self.assertIn('id="main-content" tabindex="-1"', rendered)
+        self.assertIn('aria-labelledby="targets-title"', rendered)
+        self.assertIn('<h2 id="targets-title">Objetivos revisados</h2>', rendered)
+        self.assertEqual(3, rendered.count('<li class="target-shortlist-item">'))
+        css = (ROOT / "plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css").read_text(encoding="utf-8")
+        self.assertIn(":focus-visible", css)
+        self.assertIn("@media (prefers-contrast: more)", css)
+        self.assertIn("@media (forced-colors: active)", css)
 
     def test_root_route_builds_ready_artifact_or_one_intake_question(self) -> None:
         ready = route_recruiter_request(
