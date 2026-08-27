@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T16:10:29-06:00`
+release_timestamp: `2026-08-27T16:27:59-06:00`
 
-source_commit: `258a23352e26dd334e5948a292da7eb9bf1338e7`
+source_commit: `ac186792fa0345afd111182613e753c69e030bc8`
 
-source_tree: `45409fceda661f9dde493d965d9505a07d3a648f`
+source_tree: `9e1ef845cacba8f23e1d999a4d906a529388062e`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827161029`
+installed_cache_version: `0.2.0+codex.20260827162759`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `171`
 
 installed_file_count: `171`
 
-normalized_source_cache_sha256: `b2abd7bef9764572ed3543fdb0cdc045bf44f6c7425de2a46ca24be729492805`
+normalized_source_cache_sha256: `0b02a2c89350611d706d3e3bce26da9a6aa019cbad04c1629534f0de67d84d1c`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -142,6 +142,8 @@ installed_recruiter_review_design_token_smoke: `5/5 recruiter review stylesheets
 installed_recruiter_handoff_render_smoke: `16/16 installed decision-gate, screen-intake, debrief, and next-stage routes return private HTML only for validated artifacts; IDs, placeholders, and internal action tokens stay absent`
 
 installed_recruiter_intake_hardening_smoke: `41/41 installed natural-language triggers, invalid target containers, and artifact-free downstream recovery responses stay bounded and actionable`
+
+installed_recruiter_recovery_smoke: `3/3 installed valid recruiter chain, route-specific ES/EN recovery copy, and taxonomy-derived invalid-transition recovery`
 
 installed_recruiter_schema_contract_smoke: `11/11 installed valid recruiter handoff chain accepted; unknown snapshot fields and impossible decision/state/forward-transition combinations rejected`
 
