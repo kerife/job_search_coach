@@ -45,6 +45,11 @@ Never promise a job, interview, offer, salary increase, ATS score, recruiter boo
 - `unavailable`: source cannot be accessed.
 - `synthetic`: test fixture only, not current public evidence.
 
+The provider artifact also declares `evidence_mode=synthetic|live`. Synthetic
+rows remain fixture-only even when paired with a live vacancy market; v2 keeps
+this distinction in `learning_evidence_mode` and shows the boundary to the
+client.
+
 If current cost, duration, prerequisites, or certification rules are unavailable, write `unknown:` and do not fill the gap from memory.
 
 ## Official source capture

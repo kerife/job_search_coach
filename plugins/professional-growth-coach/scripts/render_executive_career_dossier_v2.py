@@ -164,7 +164,12 @@ COPY = {
         "learning_title": "Ruta de aprendizaje",
         "learning_coach": "Decisión de coaching",
         "learning_decisions": "Decisiones priorizadas",
+        "learning_decision_label": "Decisión",
         "learning_frequency": "Frecuencia de la muestra",
+        "learning_option_type": "Tipo de opción",
+        "learning_decision_basis": "Base de decisión",
+        "learning_opportunity_cost": "Costo de oportunidad",
+        "learning_provider_synthetic": "Proveedor sintético: no es evidencia actual de disponibilidad, precio ni certificación.",
         "learning_proof": "Prueba necesaria",
         "learning_cost": "Costo actual",
         "learning_currency": "Moneda",
@@ -196,7 +201,12 @@ COPY = {
         "learning_title": "Learning route",
         "learning_coach": "Coaching decision",
         "learning_decisions": "Ranked decisions",
+        "learning_decision_label": "Decision",
         "learning_frequency": "Sample frequency",
+        "learning_option_type": "Option type",
+        "learning_decision_basis": "Decision basis",
+        "learning_opportunity_cost": "Opportunity cost",
+        "learning_provider_synthetic": "Synthetic provider: not current evidence of availability, price, or certification.",
         "learning_proof": "Proof needed",
         "learning_cost": "Current cost",
         "learning_currency": "Currency",
@@ -390,10 +400,13 @@ def _render_learning_roi(market_dossier: Mapping[str, object], locale: str) -> s
             "pause": "pause",
             "apply_with_boundary": "apply-with-boundary",
         }[str(row["decision"])]
-        decision_rows.append(f'''<article class="learning-decision-row learning-decision-row--{decision_class}">
-          <h4>{copy_labels[str(row['decision'])]}</h4>
+        decision_rows.append(f'''<article class="learning-decision-row learning-decision-row--{decision_class}" data-decision="{_learning_text(row['decision'])}" data-option-type="{_learning_text(row['option_type'])}">
+          <header class="learning-decision-heading"><div><span class="learning-decision-kicker">{labels['learning_decision_label']}</span><h4>{copy_labels[str(row['decision'])]}</h4></div><span class="learning-option-type">{copy_labels[str(row['option_type'])]}</span></header>
           <dl class="learning-decision-facts">
             <dt>{labels['learning_frequency']}</dt><dd>{_learning_text(row['frequency_display'])}</dd>
+            <dt>{labels['learning_option_type']}</dt><dd>{copy_labels[str(row['option_type'])]}</dd>
+            <dt>{labels['learning_decision_basis']}</dt><dd class="decision-basis">{_learning_text(row['decision_basis'])}</dd>
+            <dt>{labels['learning_opportunity_cost']}</dt><dd class="opportunity-cost">{_learning_text(row['opportunity_cost'])}</dd>
             <dt>{labels['learning_proof']}</dt><dd>{_learning_text(row['proof_needed'])}</dd>
             <dt>{labels['learning_cost']}</dt><dd>{_learning_text(option['current_cost'])}</dd>
             <dt>{labels['learning_currency']}</dt><dd>{_learning_text(option['currency'])}</dd>
@@ -423,8 +436,9 @@ def _render_learning_roi(market_dossier: Mapping[str, object], locale: str) -> s
         for row in BASE._rows(market_dossier["reuse_map"])
     )
     reuse_surface = f'<section class="learning-reuse" aria-labelledby="learning-reuse-title"><h3 id="learning-reuse-title">{labels["learning_reuse"]}</h3><ul>{reuse_rows}</ul></section>' if reuse_rows else ""
+    provider_boundary = f'<p class="market-provider-evidence-boundary market-boundary">{labels["learning_provider_synthetic"]}</p>' if market_dossier.get("learning_evidence_mode") == "synthetic" else ""
     return f'''<section class="market-learning-roi" aria-labelledby="market-learning-title">
-      <h3 id="market-learning-title">{labels['learning_title']}</h3>{coach_surface}
+      <h3 id="market-learning-title">{labels['learning_title']}</h3>{provider_boundary}{coach_surface}
       <section aria-labelledby="learning-decisions-title"><h4 id="learning-decisions-title">{labels['learning_decisions']}</h4><div class="learning-decision-list">{''.join(decision_rows)}</div></section>
       {sprint_surface}{reuse_surface}<p class="market-boundary">{labels['learning_boundary']}</p>
     </section>'''

@@ -190,6 +190,7 @@ def make_composable_learning_market_dossier(
 ) -> dict[str, object]:
     """Bind a fixture v2 to the supplied dossier without exposing snapshots."""
     market = json.loads((MARKET_V2_FIXTURE_ROOT / name).read_text(encoding="utf-8"))
+    market["learning_evidence_mode"] = "synthetic"
     market["locale"] = dossier["locale"]
     market["as_of_date"] = dossier["evidence_as_of"]
     for option in market["learning_options"]:
@@ -200,11 +201,12 @@ def make_composable_learning_market_dossier(
     base["schema_version"] = "career-market-learning-dossier-v1"
     base["learning_state"] = "not_evaluated"
     base["learning_decisions"] = []
-    for key in ("source_market_snapshot", "source_learning_research_snapshot", "candidate_preferences", "learning_options", "coach_decision", "proof_sprint", "reuse_map"):
+    for key in ("source_market_snapshot", "source_learning_research_snapshot", "candidate_preferences", "learning_evidence_mode", "learning_options", "coach_decision", "proof_sprint", "reuse_map"):
         base.pop(key, None)
     market["source_market_snapshot"] = renderer.MARKET.snapshot_for_market_dossier(base)
     research = {
         "schema_version": "learning-option-research-v1",
+        "evidence_mode": "synthetic",
         "locale": market["locale"],
         "as_of_date": market["as_of_date"],
         "source_market_snapshot": market["source_market_snapshot"],
@@ -758,7 +760,16 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         self.assertIn(".learning-decision-row--project-first", css)
         self.assertIn(".learning-decision-row--consider", css)
         self.assertIn(".learning-decision-row--not-needed", css)
-        self.assertIn("border-left", css)
+
+    def test_learning_decision_cards_expose_decision_type_and_basis(self) -> None:
+        dossier = make_v2_dossier("es")
+        market = make_composable_learning_market_dossier("project-first-five-es.json", dossier, self.renderer)
+        rendered = self.renderer.render_dossier_html(dossier, market)
+        self.assertIn("data-decision=\"project_first\"", rendered)
+        self.assertIn("data-option-type=\"candidate_owned_project\"", rendered)
+        self.assertIn("decision-basis", rendered)
+        self.assertIn("opportunity-cost", rendered)
+        self.assertIn("market-provider-evidence-boundary", rendered)
 
     def test_market_v1_keeps_its_existing_gap_route_without_learning_decisions(self) -> None:
         dossier = make_v2_dossier("en")

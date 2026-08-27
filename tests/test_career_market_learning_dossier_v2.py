@@ -119,6 +119,30 @@ class CareerMarketLearningDossierV2Tests(unittest.TestCase):
         self.assertEqual(3, len(dossier["reuse_map"]))
         self.assertEqual([], validate_learning_dossier(dossier))
 
+    def test_builder_chooses_project_before_lab_when_research_order_changes(self) -> None:
+        market = _recurring_market(5)
+        market["evidence_mode"] = "synthetic"
+        research = _research(market, project=True, course=True)
+        project = next(option for option in research["options"] if option["option_type"] == "candidate_owned_project")
+        lab = next(option for option in research["options"] if option["option_type"] == "lab")
+        research["options"] = [lab, project] + [option for option in research["options"] if option["option_id"] not in {project["option_id"], lab["option_id"]}]
+        dossier = build_learning_dossier(market, research)
+        first = next(row for row in dossier["learning_decisions"] if row["gap_signal"] == "terraform_iac")
+        self.assertEqual("LO-001", first["option_id"])
+
+    def test_market_and_provider_evidence_modes_are_separate_and_propagated(self) -> None:
+        market = _recurring_market(5)
+        market["evidence_mode"] = "live"
+        for card in market["vacancy_cards"]:
+            card["source_url"] = f"https://www.python.org/dev/jobs/{card['vacancy_id']}"
+        research = _research(market, project=True, course=True)
+        research["evidence_mode"] = "synthetic"
+        dossier = build_learning_dossier(market, research)
+        self.assertEqual("live", dossier["evidence_mode"])
+        self.assertEqual("synthetic", dossier["learning_evidence_mode"])
+        self.assertTrue(all(row["decision"] != "recommended" for row in dossier["learning_decisions"]))
+        self.assertEqual([], validate_learning_dossier(dossier))
+
     def test_v2_inherits_live_future_date_rejection_from_market_contract(self) -> None:
         fixture = _load(
             ROOT / "tests" / "evals" / "with-skill" / "fixtures"

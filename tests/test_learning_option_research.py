@@ -36,10 +36,25 @@ class LearningOptionResearchTests(unittest.TestCase):
             with self.subTest(filename=filename):
                 value = load_fixture(filename)
                 self.assertEqual([], validate_research(value))
+                self.assertEqual("synthetic", value["evidence_mode"])
                 self.assertEqual(expected_count, len(value["options"]))
                 self.assertEqual("synthetic", {row["source_state"] for row in value["options"]}.pop())
                 self.assertTrue(all(str(row["url"] or "").startswith("https://example.com/") or row["url"] is None for row in value["options"]))
                 self.assertFalse(value["candidate_preferences"]["purchase_authorized"])
+
+    def test_evidence_mode_is_required_and_matches_provider_source_state(self) -> None:
+        source = load_fixture("complete-five-es.json")
+        missing = copy.deepcopy(source)
+        missing.pop("evidence_mode", None)
+        self.assertIn("learning option research is missing required fields", validate_research(missing))
+
+        synthetic_active = copy.deepcopy(source)
+        synthetic_active["options"][0]["source_state"] = "active"
+        self.assertIn("synthetic evidence requires synthetic provider sources", " ".join(validate_research(synthetic_active)))
+
+        live = copy.deepcopy(source)
+        live["evidence_mode"] = "live"
+        self.assertIn("live evidence requires active provider sources", " ".join(validate_research(live)))
 
     def test_option_text_rejects_profile_and_session_material_without_echoing(self) -> None:
         for field in ("proof_artifact", "option", "source_title"):

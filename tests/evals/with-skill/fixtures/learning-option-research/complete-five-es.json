@@ -1,5 +1,6 @@
 {
   "schema_version": "learning-option-research-v1",
+  "evidence_mode": "synthetic",
   "locale": "es",
   "as_of_date": "2026-08-13",
   "source_market_snapshot": "snap-market-sha256-abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789",

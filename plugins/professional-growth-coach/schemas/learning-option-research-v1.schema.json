@@ -3,9 +3,10 @@
   "title": "Identity-free learning option research v1",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "locale", "as_of_date", "source_market_snapshot", "candidate_preferences", "options", "privacy_boundary", "no_external_action"],
+  "required": ["schema_version", "evidence_mode", "locale", "as_of_date", "source_market_snapshot", "candidate_preferences", "options", "privacy_boundary", "no_external_action"],
   "properties": {
     "schema_version": {"const": "learning-option-research-v1"},
+    "evidence_mode": {"enum": ["synthetic", "live"]},
     "locale": {"enum": ["es", "en"]},
     "as_of_date": {"type": "string", "format": "date"},
     "source_market_snapshot": {"type": "string", "pattern": "^snap-market-sha256-[0-9a-f]{64}$"},

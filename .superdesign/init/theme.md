@@ -22,6 +22,7 @@ This plugin has **no shared Tailwind config, CSS module system, theme provider, 
 - **Spacing:** no named scale; repeated steps range from `.25rem` to `3rem`, with `.5rem`, `.75rem`, `1rem`, `1.5rem`, and `2rem` most common.
 - **Radius:** dossier/practice/triage remain square; compact receipt cards use `1rem`.
 - **Shadows:** dossier none; practice/triage `0 1px 0 rgb(23 62 48 / 10%)`; compact cards `0 .5rem 2rem rgb(23 32 51 / .08)`.
+- Learning cards lead with readable decision and option-type labels; decision basis and opportunity cost remain visible without new shadows or decorative effects.
 - **Breakpoints:** dossier: 900px, 680px, 480px; practice/triage: 640px; compact receipts: `min-width: 641px` (one column through 640px). All families include print, reduced-motion, forced-color, and high-contrast handling.
 
 ## Raw source dumps

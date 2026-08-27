@@ -15,14 +15,19 @@ Do not recommend certificate collecting. A learning option needs repeated vacanc
 
 Record a separate official-source row for every provider option with these explicit fields: `provider`, `option`, `source_title`, `source_date`, `source_state`, official provider `url`, `geography`, `availability`, `role`, `seniority`, `current_cost`, `currency`, `tax`, `duration`, `prerequisite`, `renewal`, `maintenance`, and `unknowns`. Do not combine renewal and maintenance. For Mexico-facing advice, state whether Mexico eligibility or access is verified; an online or public page alone does not establish Mexico eligibility. Every unavailable or unstated value is `unknown:` rather than inferred from memory.
 
-For structured runs, keep provider rows in the closed `learning-option-research-v1` artifact and validate it with `scripts/validate_learning_option_research.py` before any ROI composition. The artifact is identity-free, source-snapshot bound, synthetic-fixture safe, and always `no_external_action=true`; stale or unavailable sources remain blocked from current recommendations.
+For structured runs, keep provider rows in the closed `learning-option-research-v1` artifact and validate it with `scripts/validate_learning_option_research.py` before any ROI composition. The artifact is identity-free, source-snapshot bound, synthetic-fixture safe, and always `no_external_action=true`; stale or unavailable sources remain blocked from current recommendations. Set its own `evidence_mode` to `synthetic` or `live`: synthetic mode requires every provider row to be synthetic, while live mode requires active provider rows and public current URLs. This provider mode is distinct from vacancy-market evidence.
 
 For market-linked runs, compose `career-market-learning-dossier-v2` only after
 validating both the v1 market dossier and the exact learning-research snapshot.
 Return three to five ranked decisions tied to recurring vacancy signals; use a
 candidate-owned project or lab before paid learning when it can produce the
 needed proof, and keep a paid option at `consider` when budget or current
-provider evidence is unknown. The v2 artifact is draft-only, includes a fixed
+provider evidence is unknown. Preserve the provider mode as
+`learning_evidence_mode`; it must not be inferred from the market mode. The v2
+builder selects one option per gap deterministically in this precedence order:
+candidate-owned project, lab, free resource, course, certification, then
+no-learning, with stable option ID as the tie-breaker. The v2 artifact is
+draft-only, includes a fixed
 five-day proof sprint when a project is selected, and never performs an external
 action.
 

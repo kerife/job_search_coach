@@ -38,6 +38,15 @@ MARKET_SNAPSHOT = re.compile(r"^snap-market-sha256-[0-9a-f]{64}$")
 LEARNING_SNAPSHOT = re.compile(r"^snap-learning-sha256-[0-9a-f]{64}$")
 SIGNAL = re.compile(r"^[a-z][a-z0-9_]{1,63}$")
 DECISIONS = frozenset({"recommended", "consider", "pause", "project_first", "apply_with_boundary", "not_needed"})
+EVIDENCE_MODES = frozenset({"synthetic", "live"})
+OPTION_TYPE_PRECEDENCE = {
+    "candidate_owned_project": 0,
+    "lab": 1,
+    "free_resource": 2,
+    "course": 3,
+    "certification": 4,
+    "do_nothing_now": 5,
+}
 PAID_OPTIONS = frozenset({"course", "certification"})
 PROFESSIONAL_EXPERIENCE_SIGNALS = frozenset({
     "professional_experience", "production_experience", "operational_experience", "leadership_experience",
@@ -48,7 +57,7 @@ def _is_professional_signal(signal: object) -> bool:
     value = str(signal)
     return value in PROFESSIONAL_EXPERIENCE_SIGNALS or "experience" in value or value.startswith(("production_", "operational_", "leadership_"))
 TOP_FIELDS = frozenset({
-    "schema_version", "evidence_mode", "locale", "as_of_date", "state", "source_research_snapshot",
+    "schema_version", "evidence_mode", "learning_evidence_mode", "locale", "as_of_date", "state", "source_research_snapshot",
     "source_executive_dossier_snapshot", "source_market_snapshot", "source_learning_research_snapshot",
     "candidate_preferences", "search_summary", "vacancy_cards", "matrix_rows", "recurrence_rows",
     "learning_state", "learning_decisions", "learning_options", "coach_decision", "proof_sprint", "reuse_map",
@@ -102,7 +111,7 @@ def _base_market(value: Mapping[str, object]) -> dict[str, object]:
     base["schema_version"] = "career-market-learning-dossier-v1"
     base["learning_state"] = "not_evaluated"
     base["learning_decisions"] = []
-    for key in ("source_market_snapshot", "source_learning_research_snapshot", "candidate_preferences", "learning_options", "coach_decision", "proof_sprint", "reuse_map"):
+    for key in ("source_market_snapshot", "source_learning_research_snapshot", "candidate_preferences", "learning_evidence_mode", "learning_options", "coach_decision", "proof_sprint", "reuse_map"):
         base.pop(key, None)
     return base
 
@@ -176,6 +185,11 @@ def _validate_decision(value: object, index: int, recurrence: Mapping[str, Mappi
         expected_decision = "not_needed"
     if decision != expected_decision:
         errors.append(f"{path}.decision does not reconcile with option, recurrence, and preferences")
+    candidates = [candidate for candidate in options.values() if candidate.get("gap_signal") == signal]
+    if candidates:
+        preferred = min(candidates, key=lambda candidate: (OPTION_TYPE_PRECEDENCE.get(str(candidate.get("option_type")), 99), str(candidate.get("option_id"))))
+        if option_id != preferred.get("option_id"):
+            errors.append(f"{path}.option_id does not use deterministic option precedence")
     for field in ("proof_needed", "opportunity_cost", "decision_basis", "next_action_gate", "expected_signal"):
         _text(row.get(field), f"{path}.{field}", errors)
     if not str(row.get("expected_signal", "")).startswith("bounded hypothesis "):
@@ -200,6 +214,9 @@ def validate_learning_dossier(value: object) -> list[str]:
             errors.append("market learning dossier v2 is missing required fields")
         if value.get("schema_version") != SCHEMA_VERSION:
             errors.append("schema_version has invalid value")
+        learning_evidence_mode = value.get("learning_evidence_mode")
+        if learning_evidence_mode not in EVIDENCE_MODES:
+            errors.append("learning_evidence_mode has invalid value")
         base = _base_market(value)
         errors.extend(V1.validate_market_dossier(base))
         if value.get("source_market_snapshot") != V1.snapshot_for_market_dossier(base):
@@ -219,7 +236,7 @@ def validate_learning_dossier(value: object) -> list[str]:
             errors.append("learning_options has invalid item count")
         else:
             research_wrapper = {
-                "schema_version": "learning-option-research-v1", "locale": value.get("locale"), "as_of_date": value.get("as_of_date"),
+                "schema_version": "learning-option-research-v1", "evidence_mode": learning_evidence_mode, "locale": value.get("locale"), "as_of_date": value.get("as_of_date"),
                 "source_market_snapshot": value.get("source_market_snapshot"), "candidate_preferences": preferences,
                 "options": options_value, "privacy_boundary": "identity_free_market_and_provider_evidence_only", "no_external_action": True,
             }
@@ -230,6 +247,10 @@ def validate_learning_dossier(value: object) -> list[str]:
             for option in options_value:
                 if isinstance(option, Mapping) and isinstance(option.get("option_id"), str):
                     options[option["option_id"]] = option
+            if learning_evidence_mode in EVIDENCE_MODES:
+                expected_state = "synthetic" if learning_evidence_mode == "synthetic" else "active"
+                if any(isinstance(option, Mapping) and option.get("source_state") != expected_state for option in options_value):
+                    errors.append(f"{learning_evidence_mode} learning evidence requires {expected_state} provider sources")
         recurrence_value = value.get("recurrence_rows")
         recurrence: dict[str, Mapping[str, object]] = {}
         if isinstance(recurrence_value, list):

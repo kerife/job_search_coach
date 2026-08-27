@@ -66,6 +66,12 @@ identity-free; URLs, contact details, and session-shaped identifiers are
 rejected before downstream composition, and diagnostics do not echo their
 values.
 
+Provider research uses an independent `evidence_mode` in
+`learning-option-research-v1`; propagate it as `learning_evidence_mode` rather
+than borrowing the vacancy mode. A live vacancy sample must not upgrade a
+synthetic provider row into current availability, price, or certification
+evidence.
+
 ## Confidence
 
 `high` requires multiple current, direct, matching sources with disclosed bases and compatible context. `medium` requires some matching current evidence with stated limitations. `low` is required for one source, an indirect source, missing date/sample/basis, or unresolved eligibility/comparability. `unknown` is appropriate where no evidence exists.

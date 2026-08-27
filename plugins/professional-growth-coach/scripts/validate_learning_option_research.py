@@ -31,6 +31,7 @@ _loader = _sibling("private_input_loader.py")
 _prose = _sibling("private_prose_safety.py")
 
 SCHEMA_VERSION = "learning-option-research-v1"
+EVIDENCE_MODES = frozenset({"synthetic", "live"})
 MAX_INPUT_BYTES = 256 * 1024
 MAX_DEPTH = 12
 # Research cites the complete canonical market snapshot identifier; it is never
@@ -46,7 +47,7 @@ SOURCE_STATES = frozenset({"active", "stale", "unavailable", "synthetic"})
 DURATION_BASES = frozenset({"provider_verified", "provider_duration_unknown", "candidate_estimated"})
 REVIEW_STATES = frozenset({"required", "not_applicable"})
 TOP_FIELDS = frozenset({
-    "schema_version", "locale", "as_of_date", "source_market_snapshot",
+    "schema_version", "evidence_mode", "locale", "as_of_date", "source_market_snapshot",
     "candidate_preferences", "options", "privacy_boundary", "no_external_action",
 })
 OPTION_FIELDS = frozenset({
@@ -114,11 +115,11 @@ def _date(value: object, path: str, errors: list[str]) -> date | None:
         return None
 
 
-def _url_error(value: object, source_state: object) -> str | None:
+def _url_error(value: object, source_state: object, evidence_mode: object) -> str | None:
     if not isinstance(value, str):
         return "learning source URL is invalid"
     # Reserved test URLs are allowed only for explicitly synthetic fixtures.
-    if source_state == "synthetic":
+    if evidence_mode == "synthetic":
         if not value.startswith("https://example.com/") or any(marker in value for marker in ("@", "?", "#")):
             return "learning source URL is invalid"
         return None
@@ -136,7 +137,7 @@ def _url_error(value: object, source_state: object) -> str | None:
     # hostnames even when the standard library does not parse them as IPs.
     if not host or host.isdigit() or host == "localhost" or host.endswith(".localhost"):
         return "learning source URL is invalid"
-    if source_state != "synthetic" and (host == "example.com" or host.endswith(".example.com") or host == "example.org" or host.endswith(".example.org") or host == "example.net" or host.endswith(".example.net")):
+    if host == "example.com" or host.endswith(".example.com") or host == "example.org" or host.endswith(".example.org") or host == "example.net" or host.endswith(".example.net"):
         return "learning source URL is invalid"
     if re.fullmatch(r"(?:0x[0-9a-f]+|[0-9]+)(?:\.(?:0x[0-9a-f]+|[0-9]+)){1,3}", host, re.I):
         return "learning source URL is invalid"
@@ -187,7 +188,7 @@ def _validate_action_gate(value: object, path: str, option_type: object, errors:
                 errors.append(message)
 
 
-def _validate_option(value: object, index: int, as_of: date | None, seen_ids: set[str], seen_urls: set[str], errors: list[str]) -> None:
+def _validate_option(value: object, index: int, as_of: date | None, evidence_mode: object, seen_ids: set[str], seen_urls: set[str], errors: list[str]) -> None:
     path = f"options[{index}]"
     row = _closed(value, path, OPTION_FIELDS, errors)
     if row is None:
@@ -219,6 +220,10 @@ def _validate_option(value: object, index: int, as_of: date | None, seen_ids: se
         errors.append(f"{path}.source_state has invalid value")
     elif source_state in {"stale", "unavailable"}:
         errors.append(f"{path}.source_state must be active or synthetic")
+    if evidence_mode == "synthetic" and source_state != "synthetic":
+        errors.append("synthetic evidence requires synthetic provider sources")
+    if evidence_mode == "live" and source_state != "active":
+        errors.append("live evidence requires active provider sources")
     url = row.get("url")
     if row.get("duration_basis") not in DURATION_BASES:
         errors.append(f"{path}.duration_basis has invalid value")
@@ -227,7 +232,7 @@ def _validate_option(value: object, index: int, as_of: date | None, seen_ids: se
             errors.append("do_nothing_now option must not have a URL")
         if row.get("provider") != "none" or any(row.get(field) != "not_applicable" for field in ("current_cost", "currency", "tax", "renewal", "maintenance")):
             errors.append("do_nothing_now option has invalid provider fields")
-    elif _url_error(url, source_state):
+    elif _url_error(url, source_state, evidence_mode):
         errors.append(f"{path}.url is invalid")
     elif isinstance(url, str):
         if url in seen_urls:
@@ -269,6 +274,9 @@ def validate_research(value: object) -> list[str]:
             errors.append("learning option research is missing required fields")
         if value.get("schema_version") != SCHEMA_VERSION:
             errors.append("schema_version has invalid value")
+        evidence_mode = value.get("evidence_mode")
+        if evidence_mode not in EVIDENCE_MODES:
+            errors.append("evidence_mode has invalid value")
         if value.get("locale") not in {"es", "en"}:
             errors.append("locale has invalid value")
         as_of = _date(value.get("as_of_date"), "as_of_date", errors)
@@ -284,7 +292,7 @@ def validate_research(value: object) -> list[str]:
             seen_ids: set[str] = set()
             seen_urls: set[str] = set()
             for index, option in enumerate(options):
-                _validate_option(option, index, as_of, seen_ids, seen_urls, errors)
+                _validate_option(option, index, as_of, evidence_mode, seen_ids, seen_urls, errors)
         if value.get("privacy_boundary") != "identity_free_market_and_provider_evidence_only":
             errors.append("privacy_boundary has invalid value")
         if value.get("no_external_action") is not True:

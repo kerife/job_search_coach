@@ -341,6 +341,7 @@
   "reuse_map": [],
   "schema_version": "career-market-learning-dossier-v2",
   "evidence_mode": "synthetic",
+  "learning_evidence_mode": "synthetic",
   "search_summary": {
     "bounded_queries_run": 12,
     "limit_reason": "target_reached",
@@ -348,7 +349,7 @@
     "vacancy_sample_count": 4
   },
   "source_executive_dossier_snapshot": "snap-dossier-sha256-0000000000000000000000000000000000000000000000000000000000000000",
-  "source_learning_research_snapshot": "snap-learning-sha256-2ccd6121adc944813f0549055aac0c5635af49ab022ec038aeb27daccb3fcc95",
+  "source_learning_research_snapshot": "snap-learning-sha256-5554909af34d277196546bf4bf290a7db31d78be553f1b85f542e0b9a47b6664",
   "source_market_snapshot": "snap-market-sha256-7af5fe1ae765415c0113e639fa60282211b1aebcfe3eaee393f9b7b9282fd468",
   "source_research_snapshot": "snap-market-sha256-0000000000000000000000000000000000000000000000000000000000000000",
   "state": "limited_market_evidence",

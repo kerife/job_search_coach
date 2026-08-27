@@ -66,6 +66,16 @@ def _decision_rank(decision: str) -> int:
     return {"project_first": 0, "recommended": 1, "consider": 2, "apply_with_boundary": 3, "pause": 4, "not_needed": 5}[decision]
 
 
+def _preferred_option(options: list[Mapping[str, object]]) -> Mapping[str, object]:
+    return min(
+        options,
+        key=lambda option: (
+            V2.OPTION_TYPE_PRECEDENCE.get(str(option.get("option_type")), 99),
+            str(option.get("option_id")),
+        ),
+    )
+
+
 def _decision_row(rank: int, option: Mapping[str, object], recurrence: Mapping[str, object], decision: str, preferences: Mapping[str, object]) -> dict[str, object]:
     signal = str(option["gap_signal"])
     option_type = str(option["option_type"])
@@ -105,6 +115,7 @@ def build_learning_dossier(market: Mapping[str, object], learning_research: Mapp
         raise ValueError("learning research is bound to a different market dossier")
     output = copy.deepcopy(dict(market))
     output["schema_version"] = "career-market-learning-dossier-v2"
+    output["learning_evidence_mode"] = learning_research["evidence_mode"]
     output["source_market_snapshot"] = V1.snapshot_for_market_dossier(market)
     output["source_learning_research_snapshot"] = RESEARCH.snapshot_for_learning_research(learning_research)
     output["candidate_preferences"] = copy.deepcopy(learning_research["candidate_preferences"])
@@ -121,12 +132,11 @@ def build_learning_dossier(market: Mapping[str, object], learning_research: Mapp
         raise ValueError("three through five exact recurring learning options are required")
     preferences = learning_research["candidate_preferences"]
     pending: list[tuple[Mapping[str, object], str]] = []
-    used_signals: set[str] = set()
+    by_signal: dict[str, list[Mapping[str, object]]] = {}
     for option in options:
-        signal = str(option["gap_signal"])
-        if signal in used_signals:
-            continue
-        used_signals.add(signal)
+        by_signal.setdefault(str(option["gap_signal"]), []).append(option)
+    for signal, candidates in by_signal.items():
+        option = _preferred_option(candidates)
         pending.append((option, _decision_for(option, recurrence[signal], preferences)))
     if len(pending) < 3:
         raise ValueError("three distinct explicit recurring learning gaps are required")

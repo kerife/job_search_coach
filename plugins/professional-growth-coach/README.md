@@ -89,6 +89,13 @@ require the propagated `evidence_mode`. Rebuild older v1 artifacts from their
 source research instead of editing a snapshot-bound JSON file; synthetic
 artifacts render with an explicit non-current-market boundary.
 
+Learning-provider research declares its own `evidence_mode`. The v2 artifact
+preserves this separately as `learning_evidence_mode`, so a live vacancy sample
+cannot make synthetic provider availability, price, or certification evidence
+look current. When several options cover one recurring gap, selection is
+deterministic: candidate-owned project, lab, free resource, course,
+certification, then no-learning; ties use the stable option ID.
+
 For a normal local profile dossier, the default route is bounded five-vacancy
 research: SRE, Platform Engineering, and DevOps in Mexico or stated remote
 scope. It searches five distinct employers first, prefers official employer
@@ -111,6 +118,9 @@ cards expose a static coach decision, proof-first rationale, and a semantic
 border treatment for project-first, consider, not-needed, and other states;
 the state is always textual as well as visual and remains readable in print,
 forced-colors, and narrow layouts.
+Each learning card also leads with the decision and option type, then exposes
+its decision basis and opportunity cost. Synthetic provider research receives
+an explicit non-current-provider boundary in the rendered dossier.
 
 The default composition begins with `learning_state=not_evaluated`. If bounded
 market research cannot finish, the plugin preserves the valid profile dossier
