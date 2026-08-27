@@ -1,0 +1,83 @@
+"""Contract tests for the standalone triage-practice handoff validator."""
+
+from __future__ import annotations
+
+import copy
+import json
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+FIXTURES = ROOT.parent.parent / "tests/evals/with-skill/fixtures/private-recruiter-reply-triage"
+SCRIPTS = ROOT / "scripts"
+sys.path.insert(0, str(SCRIPTS))
+
+from build_private_recruiter_triage_practice_handoff import build_handoff  # noqa: E402
+from triage_snapshot import snapshot_for_triage  # noqa: E402
+from validate_private_recruiter_triage_practice_handoff import validate_handoff  # noqa: E402
+
+
+def _ready_triage(locale: str) -> dict[str, object]:
+    triage = json.loads((FIXTURES / f"ready-{locale}.json").read_text(encoding="utf-8"))
+    triage["schema_version"] = "private-recruiter-reply-triage-v2"
+    triage["ui_locale"] = locale
+    triage["content_locale"] = locale
+    del triage["locale"]
+    snapshot = snapshot_for_triage(triage)
+    triage["handoff"]["packet"]["source_snapshot"] = snapshot
+    triage["handoff"]["reentry_packet"]["source_snapshot"] = snapshot
+    return triage
+
+
+class PrivateRecruiterTriagePracticeHandoffValidatorTests(unittest.TestCase):
+    def _handoff(self, locale: str = "en") -> dict[str, object]:
+        return build_handoff(_ready_triage(locale))
+
+    def test_accepts_valid_es_and_en_handoffs(self) -> None:
+        for locale in ("es", "en"):
+            with self.subTest(locale=locale):
+                self.assertEqual([], validate_handoff(self._handoff(locale)))
+
+    def test_rejects_each_fixed_wrapper_invariant(self) -> None:
+        mutations = {
+            "source": lambda value: value.update({"source_artifact_kind": "other"}),
+            "snapshot": lambda value: value.update({"source_snapshot": "snap-triage-sha256-" + "0" * 64}),
+            "scope": lambda value: value.update({"prep_scope": "screen_opening" if value["prep_scope"] != "screen_opening" else "proof_example"}),
+            "delivery": lambda value: value["delivery"].update({"auto_start": True}),
+        }
+        for label, mutate in mutations.items():
+            with self.subTest(label=label):
+                value = copy.deepcopy(self._handoff())
+                mutate(value)
+                self.assertTrue(validate_handoff(value))
+
+    def test_rejects_unsafe_prose_and_nested_projection_drift(self) -> None:
+        unsafe = self._handoff()
+        unsafe["practice_session"]["safe_context"]["summary"] = "Send a message to the recruiter now."
+        self.assertTrue(validate_handoff(unsafe))
+
+        drifted = self._handoff()
+        drifted["practice_session"]["handoff_context"]["question_id"] = "Q-999"
+        self.assertTrue(validate_handoff(drifted))
+
+    def test_cli_returns_zero_only_for_a_valid_wrapper(self) -> None:
+        script = SCRIPTS / "validate_private_recruiter_triage_practice_handoff.py"
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "handoff.json"
+            path.write_text(json.dumps(self._handoff()), encoding="utf-8")
+            valid = subprocess.run([sys.executable, str(script), str(path)], text=True, capture_output=True, check=False)
+            self.assertEqual(0, valid.returncode)
+            self.assertIn("valid private recruiter triage practice handoff", valid.stdout)
+
+            path.write_text('{"schema_version":"wrong"}', encoding="utf-8")
+            invalid = subprocess.run([sys.executable, str(script), str(path)], text=True, capture_output=True, check=False)
+            self.assertEqual(2, invalid.returncode)
+            self.assertNotIn("handoff.json", invalid.stderr)
+
+
+if __name__ == "__main__":
+    unittest.main()
