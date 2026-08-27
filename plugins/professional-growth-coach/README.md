@@ -152,14 +152,27 @@ the validated context in a later private practice request. Snapshot drift,
 candidate-reported facts, non-ready triage states, or mismatched handoff
 references are rejected rather than converted into practice material.
 
-For an explicit private file workflow, run
-`build_private_recruiter_triage_practice_handoff.py --input TRIAGE.json --output HANDOFF.json`.
-This CLI accepts only the v2 triage contract, reads one bounded non-symlink JSON
-object, verifies the generated handoff before an atomic private write, and will
-not overwrite an existing regular file without `--force`. Its output is canonical
-JSON; failures use a compact JSON error envelope and never echo supplied prose.
-Legacy v1 triage remains readable only through its existing legacy routes and is
-not eligible for this handoff or its manual re-entry path.
+For an explicit private file workflow, use two deliberate commands: first run
+`build_private_recruiter_triage_practice_handoff.py --input TRIAGE.json --output HANDOFF.json`,
+then, after inspecting that closed wrapper, run
+`render_private_recruiter_triage_practice_handoff.py HANDOFF.json --output PRACTICE.html`.
+The builder accepts only the v2 triage contract, reads one bounded non-symlink
+JSON object, recalculates and verifies the handoff provenance before an atomic
+private write, and will not overwrite an existing regular file without
+`--force`. The renderer independently validates the wrapper and its nested
+practice session before projecting HTML; it does not render a bare session as a
+wrapper. Both outputs are private mode `0600`, and failures use compact JSON
+error envelopes without echoing supplied prose.
+
+The renderer receipt is intentionally minimal:
+`{"artifact_kind":"private_recruiter_triage_practice_handoff_html","ui_locale":"es|en"}`.
+It confirms only the local artifact kind and interface locale; it contains no
+path, source identifier, snapshot, raw reply, answer, score, or action result.
+The rendered status remains a private draft that requires manual re-entry. It
+does not start a rehearsal, send, schedule, save, upload, or authorize an
+external action. Legacy v1 triage remains readable only through its existing
+legacy routes and is not eligible for this wrapper, renderer, or manual re-entry
+path; manually recreate a validated v2 triage instead.
 
 The default composition begins with `learning_state=not_evaluated`. If bounded
 market research cannot finish, the plugin preserves the valid profile dossier

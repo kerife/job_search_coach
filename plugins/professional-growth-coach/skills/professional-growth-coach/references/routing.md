@@ -51,13 +51,22 @@ When both inputs are supplied, create only the closed `private-recruiter-reply-t
 For `ready_for_private_prep`, the closed handoff is only a manual re-entry cue for `prepare-role-interviews`, scoped to one recruiter-screen question and an identity-free summary plus verified fact. It is **manual input only**: it does not auto-start, transfer execution context, create a `module_execution_packet`, or emit router rows. Its exact boundary is `candidate_answer_state=unanswered` and `score_state=unknown` until the candidate supplies an answer in a later explicit preparation request. Clarify-first and stop cards omit the handoff. Private triage precedence applies before all ordinary recruiter and LinkedIn routes; normal recruiter-reply behavior remains unchanged, including legacy debug/eval/detail behavior.
 
 When the candidate explicitly supplies a v2 triage JSON file for private re-entry,
-the only file route is `build_private_recruiter_triage_practice_handoff.py` with
-`--input` and `--output`. It accepts only a validated
-`private-recruiter-reply-triage-v2` ready handoff and produces the closed practice
-handoff after a manual file choice; it never reads v1 as a compatible substitute,
-auto-starts rehearsal, persists an answer, or creates an external action. A v1
-triage remains in its legacy route and must be manually re-created as v2 before
-this private handoff can be considered.
+the only file route is a deliberate two-step projection: first
+`build_private_recruiter_triage_practice_handoff.py --input TRIAGE.json --output HANDOFF.json`,
+then `render_private_recruiter_triage_practice_handoff.py HANDOFF.json --output PRACTICE.html`.
+The builder accepts only a validated `private-recruiter-reply-triage-v2` ready
+handoff and revalidates its snapshot-bound provenance before producing the closed
+wrapper. The renderer independently validates that wrapper and its nested
+practice session before it writes a private `0600` HTML artifact. Its minimal
+receipt exposes only `artifact_kind=private_recruiter_triage_practice_handoff_html`
+and `ui_locale`; do not surface a path, source snapshot, IDs, raw reply, answer,
+score, or action result.
+
+This remains a draft-only, manual re-entry route: neither command starts
+rehearsal, persists an answer, sends, schedules, uploads, or authorizes an
+external action. A v1 triage remains in its legacy route and cannot be passed as
+a compatible substitute to either command; manually recreate and validate v2
+before considering this private handoff.
 
 ## Multi-module routing
 

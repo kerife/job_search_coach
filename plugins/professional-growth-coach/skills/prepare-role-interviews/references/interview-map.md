@@ -42,6 +42,26 @@ and never auto-starts practice. It is a manual re-entry cue for a later explicit
 private rehearsal request; it is not an execution control, authorization, or
 prediction about interview readiness or outcome.
 
+### Triage wrapper to private HTML
+
+File delivery is an explicit, two-stage manual action. First compose a validated
+v2 triage into `private-recruiter-triage-practice-handoff-v1` with
+`build_private_recruiter_triage_practice_handoff.py --input TRIAGE.json --output HANDOFF.json`.
+Then independently validate and render only that wrapper with
+`render_private_recruiter_triage_practice_handoff.py HANDOFF.json --output PRACTICE.html`.
+The renderer must verify the wrapper's exact snapshot provenance and nested
+practice-session contract before it projects HTML; a direct practice session is
+not a substitute for the wrapper route.
+
+Both private outputs are written atomically with mode `0600`. The renderer emits
+only the minimal receipt `artifact_kind=private_recruiter_triage_practice_handoff_html`
+and `ui_locale`; it never reveals the output path, snapshot, source IDs, raw
+reply, answer, feedback, score, or an action outcome. The HTML remains a private
+draft with a visible manual re-entry boundary. It never starts practice, saves an
+answer, sends, schedules, uploads, or authorizes an external action. A legacy v1
+triage is readable only on its legacy route: recreate a validated v2 triage
+manually before composing or rendering this private wrapper.
+
 The sequence is one-question/one-answer. Before the candidate answers, feedback and any score remain `unknown` (`score_state=unknown`); after the observed answer, feedback may reference only the observed answer and the rubric. In `feedback_available`, keep `score=unknown` and use `score_state=categorical` with only the rubric labels `solid`, `confirm`, or `do_not_assert`; numeric scores are invalid. Keep the answer ephemeral and no-save-by-default. The client-facing result contains only the private-session summary and verified local artifact link, never internal identifiers or raw vacancy or candidate-fact text. No external action is performed.
 
 In feedback_available, visible feedback uses fixed bilingual guidance selected
