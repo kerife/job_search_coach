@@ -76,6 +76,8 @@ class PrivateRecruiterTriagePracticeHandoffValidatorTests(unittest.TestCase):
             "Read /private/tmp/private-note before practice.",
             "Review linkedin.com/in/private-profile before practice.",
             "Use api_key=private-value before practice.",
+            "Use Bearer abc123 before practice.",
+            "Authorization: Bearer abc123 before practice.",
         )
         for target_name, target_path in targets.items():
             for sentinel in sentinels:

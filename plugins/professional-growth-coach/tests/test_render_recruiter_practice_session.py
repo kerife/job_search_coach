@@ -210,6 +210,8 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
             "Read https://example.invalid/private before practice.",
             "Reply to person@example.invalid before practice.",
             "Read /private/tmp/private-note before practice.",
+            "Use Bearer abc123 before practice.",
+            "Authorization: Bearer abc123 before practice.",
         )
         for target_name, target_path in targets.items():
             for sentinel in sentinels:

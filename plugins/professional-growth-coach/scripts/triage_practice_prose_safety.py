@@ -15,6 +15,10 @@ _CREDENTIAL_SHAPED = re.compile(
     r"(?:[_\-\s]*(?:key|token|secret|value))?\s*[:=]",
     re.IGNORECASE,
 )
+_BEARER_CREDENTIAL = re.compile(
+    r"\b(?:authorization\s*:\s*)?bearer\s+[A-Z0-9._~+/-]{3,}\b",
+    re.IGNORECASE,
+)
 
 
 def is_safe_triage_practice_prose(value: object, maximum: int) -> bool:
@@ -24,4 +28,5 @@ def is_safe_triage_practice_prose(value: object, maximum: int) -> bool:
         and isinstance(value, str)
         and _LINKEDIN_PROFILE.search(value) is None
         and _CREDENTIAL_SHAPED.search(value) is None
+        and _BEARER_CREDENTIAL.search(value) is None
     )
