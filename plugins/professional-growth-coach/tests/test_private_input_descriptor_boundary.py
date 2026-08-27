@@ -145,9 +145,7 @@ CLI_RECURSION_CASES = (
         "practice",
         PRACTICE._cli,
         ("{input}",),
-        _expected_decoder_or_post_decode_messages(
-            "session input is not valid JSON", "JSON nesting exceeds safe limit"
-        ),
+        frozenset({"{\"error\":{\"code\":\"invalid_input\"}}"}),
         3,
     ),
     (
