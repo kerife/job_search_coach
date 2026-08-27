@@ -104,6 +104,36 @@ class CliReceiptPrivacyTests(unittest.TestCase):
                 self.assertNotIn(sentinel, result.stderr)
                 self.assertFalse(output.exists())
 
+    def test_private_validators_return_opaque_unknown_argument_errors(self) -> None:
+        sentinel = "PRIVATE_ARGUMENT_SENTINEL"
+        cases = (
+            (
+                SCRIPTS / "validate_private_recruiter_reply_triage.py",
+                [str(TRIAGE)],
+            ),
+            (
+                SCRIPTS / "validate_private_recruiter_followthrough_checkpoint.py",
+                [str(CHECKPOINT), "--receipt", str(CHECKPOINT_RECEIPT), "--as-of", "2026-08-27"],
+            ),
+            (
+                SCRIPTS / "validate_private_recruiter_conversion_outcome.py",
+                [str(OUTCOME), "--as-of", "2026-08-27"],
+            ),
+        )
+        for script, arguments in cases:
+            with self.subTest(script=script.name):
+                result = subprocess.run(
+                    [sys.executable, "-B", str(script), *arguments, "--unexpected", sentinel],
+                    cwd=ROOT,
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                self.assertEqual(3, result.returncode)
+                self.assertEqual("", result.stdout)
+                self.assertEqual('{"error":{"code":"invalid_arguments"}}\n', result.stderr)
+                self.assertNotIn(sentinel, result.stderr)
+
     def test_triage_renderer_imports_without_pythonpath_setup(self) -> None:
         code = (
             "import importlib.util, sys; "

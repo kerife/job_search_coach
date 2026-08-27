@@ -1770,7 +1770,7 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
 
         self.assertIn(
             '<section class="card screen-preparation-card span-7" '
-            'aria-labelledby="screen-preparation-title">',
+            'aria-labelledby="screen-preparation-title" id="screen-preparation">',
             html,
         )
         self.assertIn(

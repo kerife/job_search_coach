@@ -72,6 +72,18 @@ CLASSIFICATION_QUESTION_KINDS = {
     "compensation_question": "compensation_boundary",
     "unknown": "missing_detail",
 }
+
+
+class _ArgumentError(ValueError):
+    """Raised without reflecting private command-line values."""
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        del message
+        raise _ArgumentError
+
+
 STATE_NEXT_SAFE_ACTIONS = {
     "clarify_first": "clarify_context_before_private_prep",
     "ready_for_private_prep": "manual_reenter_private_prep",
@@ -500,10 +512,13 @@ def validate_triage(value: object) -> list[str]:
 
 
 def _cli(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Validate a private recruiter reply triage.")
+    parser = _PrivateArgumentParser(description="Validate a private recruiter reply triage.")
     parser.add_argument("input", type=Path, help="Path to one triage JSON file.")
     try:
         arguments = parser.parse_args(argv)
+    except _ArgumentError:
+        print(json.dumps({"error": {"code": "invalid_arguments"}}, separators=(",", ":")), file=sys.stderr)
+        return 3
     except SystemExit as error:
         return 0 if error.code == 0 else 3
     try:

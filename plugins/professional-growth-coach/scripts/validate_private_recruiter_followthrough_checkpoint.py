@@ -49,6 +49,18 @@ DELIVERY = {
     "raw_event_retained": False,
     "local_save_mode": "disabled",
 }
+
+
+class _ArgumentError(ValueError):
+    """Raised without reflecting private command-line values."""
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        del message
+        raise _ArgumentError
+
+
 def _enum(value: object, allowed: set[str] | frozenset[str]) -> bool:
     return isinstance(value, str) and value in allowed
 FORBIDDEN = re.compile(
@@ -280,7 +292,7 @@ def _date_arg(value: str) -> dt.date:
 
 
 def _cli(argv=None) -> int:
-    parser = argparse.ArgumentParser(description="Validate a private recruiter follow-through checkpoint.")
+    parser = _PrivateArgumentParser(description="Validate a private recruiter follow-through checkpoint.")
     parser.add_argument("input", type=Path)
     parser.add_argument("--receipt", type=Path, required=True)
     parser.add_argument("--as-of", type=_date_arg, required=True)
@@ -288,6 +300,9 @@ def _cli(argv=None) -> int:
         args = parser.parse_args(argv)
         item = load_checkpoint(args.input)
         receipt = load_receipt(args.receipt)
+    except _ArgumentError:
+        print(json.dumps({"error": {"code": "invalid_arguments"}}, separators=(",", ":")), file=sys.stderr)
+        return 3
     except SystemExit as error:
         return 0 if error.code == 0 else 3
     except CheckpointLoadError as error:

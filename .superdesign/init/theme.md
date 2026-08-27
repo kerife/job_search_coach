@@ -6,7 +6,9 @@ Receipt surfaces are intentionally path-minimal: successful CLI output carries o
 
 The v2 `reading-path` uses the existing forest, line, surface, and focus tokens;
 it stays editorial rather than floating, preserves print visibility, and stacks
-as full-width 44px links at 640px and below.
+as full-width 44px links at 640px and below. The fourth destination, first-
+conversation preparation, closes the dossier-to-coaching handoff without
+adding an action control.
 
 This plugin has **no shared Tailwind config, CSS module system, theme provider, or global stylesheet**. Each rendered offline artifact inlines its co-located CSS; the v2 dossier composes the base dossier stylesheet with its v2 and optional market extensions. There is no `.dark` selector; every surface now declares a screen-scoped `prefers-color-scheme: dark` contract while print remains light.
 

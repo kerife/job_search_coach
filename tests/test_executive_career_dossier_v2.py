@@ -588,10 +588,10 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
                     self.assertGreaterEqual(facts.count("<dt>"), 2)
                     self.assertEqual(facts.count("<dt>"), len(re.findall(r"<dd(?:\s|>)", facts)))
 
-    def test_reading_path_is_localized_and_targets_three_unique_decision_regions(self) -> None:
+    def test_reading_path_is_localized_and_targets_four_unique_decision_regions(self) -> None:
         expected = {
-            "es": ("Ruta de lectura", "Cobertura", "Prioridades", "Mercado"),
-            "en": ("Reading path", "Coverage", "Priorities", "Market"),
+            "es": ("Ruta de lectura", "Cobertura", "Prioridades", "Mercado", "Preparar conversación"),
+            "en": ("Reading path", "Coverage", "Priorities", "Market", "Prepare conversation"),
         }
         for locale, labels in expected.items():
             with self.subTest(locale=locale):
@@ -604,7 +604,7 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
                 self.assertIsNotNone(nav)
                 assert nav is not None
                 self.assertIn(f'<span class="reading-path-title">{labels[0]}</span>', nav.group(1))
-                for label, target in zip(labels[1:], ("section-coverage", "coach-priorities", "market-evidence"), strict=True):
+                for label, target in zip(labels[1:], ("section-coverage", "coach-priorities", "market-evidence", "screen-preparation"), strict=True):
                     self.assertIn(f'href="#{target}"', nav.group(1))
                     self.assertIn(label, nav.group(1))
                     self.assertEqual(1, rendered.count(f'id="{target}"'))

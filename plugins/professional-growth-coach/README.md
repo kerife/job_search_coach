@@ -40,9 +40,10 @@ artifact itself.
 
 Bounded JSON validators and market-dossier builders also reject duplicate
 keys, oversized integers, and excessive nesting before validation or output;
-their command-line failures stay opaque and never echo supplied content. The
-private renderers apply the same boundary to unknown CLI arguments: they return
-the fixed `invalid_arguments` diagnostic without reflecting the rejected value.
+their command-line failures stay opaque and never echo supplied content. All
+private validators and renderers apply the same boundary to unknown CLI
+arguments: they return the fixed `invalid_arguments` diagnostic without
+reflecting the rejected value.
 Renderer modules can also be imported directly from an installed checkout;
 sibling safety helpers resolve relative to the module when no `PYTHONPATH` is
 configured.
@@ -84,10 +85,10 @@ use HTTPS. Unknown categories and non-HTTPS URLs are rejected by both schema
 and runtime validation before rendering.
 
 The v2 dossier adds a localized, keyboard-visible reading path immediately
-after the verdict, linking to section coverage, coaching priorities, and market
-evidence. The anchors are static fragment links, remain available in print,
-and stack into 44px touch targets at 640px and below; they do not hide or
-reorder any evidence.
+after the verdict, linking to section coverage, coaching priorities, market
+evidence, and first-conversation preparation. The anchors are static fragment
+links, remain available in print, and stack into 44px touch targets at 640px
+and below; they do not hide or reorder any evidence.
 
 Current vacancy research uses the closed `target-vacancy-research-v1` artifact.
 It is identity-free, bounded to at most five distinct postings, records dated

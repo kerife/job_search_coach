@@ -31,6 +31,18 @@ TOP_LEVEL_FIELDS = frozenset({"schema_version", "artifact_kind", "locale", "even
 EVENTS = frozenset({"contact_received", "reply_received", "referral_received", "screen_requested", "interview_requested", "stop_decision"})
 ACTION_BY_EVENT = {"contact_received": "clarify_context_before_reply", "reply_received": "clarify_context_before_reply", "referral_received": "prepare_fact_checked_summary", "screen_requested": "route_to_prepare-role-interviews", "interview_requested": "route_to_prepare-role-interviews", "stop_decision": "record_stop_decision"}
 DELIVERY = {"draft_only": True, "external_actions_authorized": False, "no_message_action": True, "no_calendar_action": True, "raw_event_retained": False, "local_save_mode": "disabled"}
+
+
+class _ArgumentError(ValueError):
+    """Raised without reflecting private command-line values."""
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        del message
+        raise _ArgumentError
+
+
 def _enum(value: object, allowed: set[str] | frozenset[str]) -> bool:
     return isinstance(value, str) and value in allowed
 FORBIDDEN = re.compile(r"(?:raw|verbatim|quoted|original|inbound|texto\s+(?:crudo|original)|[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}|https?://|www\.|linkedin\.com/|\+?\d[\d .()\-]{7,}\d|(?:company|empresa|employer|recruiter|reclutador|contact|contacto)\s*(?::|is|es|named|llamad[oa])|\b(?:send|message|contact|reach out|apply|submit|schedule|book|confirm|accept|call|email|enviar|escribir|contactar|agendar|programar|reservar|confirmar|aceptar|llamar)\b|\b(?:interview|entrevista|offer|oferta|fit|encaje|guarantee|garantiz|score|puntaje|probability|probabilidad)\b)", re.I)
@@ -111,9 +123,12 @@ def validate_outcome(value: object, *, today: dt.date | None = None, as_of: dt.d
     if FORBIDDEN.search(prose): errors.append("outcome contains forbidden raw, identity, action, outcome, score, or contact prose")
     return sorted(set(errors))
 def _cli(argv=None):
-    parser=argparse.ArgumentParser(description="Validate a private recruiter conversion outcome."); parser.add_argument("input",type=Path); parser.add_argument("--as-of",dest="as_of",type=lambda value: dt.date.fromisoformat(value), required=True, help="Reference date for deterministic future-date validation (YYYY-MM-DD).")
+    parser=_PrivateArgumentParser(description="Validate a private recruiter conversion outcome."); parser.add_argument("input",type=Path); parser.add_argument("--as-of",dest="as_of",type=lambda value: dt.date.fromisoformat(value), required=True, help="Reference date for deterministic future-date validation (YYYY-MM-DD).")
     try:
         args=parser.parse_args(argv)
+    except _ArgumentError:
+        print(json.dumps({"error": {"code": "invalid_arguments"}}, separators=(",", ":")), file=sys.stderr)
+        return 3
     except SystemExit as error:
         return 0 if error.code == 0 else 3
     try: item=load_outcome(args.input)

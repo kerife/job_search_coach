@@ -955,7 +955,7 @@ def _render_screen_bridge(dossier: Mapping[str, object], locale: str) -> str:
         else ""
     )
     return f"""
-    <section class="card screen-preparation-card span-7" aria-labelledby="screen-preparation-title">
+    <section class="card screen-preparation-card span-7" aria-labelledby="screen-preparation-title" id="screen-preparation">
       <p class="readiness-chip screen-preparation-state screen-preparation-state--{view['state_tone'].replace('_', '-')}">{view['state_label']}</p>
       <h2 id="screen-preparation-title">{text(labels['title'])}</h2>
       {opener}

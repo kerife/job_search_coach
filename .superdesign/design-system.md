@@ -33,6 +33,10 @@ changing the visual family:
    and no-learning options;
 6. finish with evidence, limitations, privacy, and no-external-action copy.
 
+The v2 reading path provides four static landmarks—coverage, priorities, market,
+and first-conversation preparation—so the long dossier can be scanned in the
+same order as the coaching journey without hiding or reordering evidence.
+
 The current design task must improve the clarity of steps 3 and 4 without
 adding a form, fake button, link, persistence, automatic transfer, recruiter
 identity, or external action.
