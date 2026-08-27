@@ -722,7 +722,10 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
 
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertEqual(
-            {"artifact_kind": "private_recruiter_practice_session_html"},
+            {
+                "artifact_kind": "private_recruiter_practice_session_html",
+                "locale": "en",
+            },
             json.loads(result.stdout),
         )
         self.assertEqual("", result.stderr)
@@ -744,10 +747,18 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
             directory = Path(raw)
             source = directory / "valid-session.json"
             source.write_text(json.dumps(self._triage_practice_session("en")), encoding="utf-8")
+            invalid = self._triage_practice_session("en")
+            invalid["schema_version"] = "PRIVATE_VALIDATION_SENTINEL"
+            invalid_source = directory / "PRIVATE_INVALID_INPUT_PATH_SENTINEL.json"
+            invalid_source.write_text(json.dumps(invalid), encoding="utf-8")
+            occupied = directory / "PRIVATE_OCCUPIED_OUTPUT_PATH_SENTINEL.html"
+            occupied.write_text("preserve", encoding="utf-8")
             cases = (
                 ("unknown", ["--unknown", sentinel], 3, {"error": {"code": "invalid_arguments"}}),
                 ("missing-input", [sentinel, "--output", "/tmp/private-output.html"], 3, {"error": {"code": "invalid_input"}}),
                 ("unsafe-output", [str(source), "--output", f"/dev/null/{sentinel}"], 3, {"error": {"code": "unsafe_output"}}),
+                ("validation", [str(invalid_source), "--output", str(directory / "validation.html")], 2, {"error": {"code": "validation_failed"}}),
+                ("occupied", [str(source), "--output", str(occupied)], 3, {"error": {"code": "output_exists"}}),
             )
             for label, arguments, code, expected in cases:
                 with self.subTest(label=label):
@@ -761,6 +772,9 @@ class RecruiterPracticeRendererTests(unittest.TestCase):
                     self.assertEqual(expected, json.loads(result.stderr))
                     self.assertEqual("", result.stdout)
                     self.assertNotIn("PRIVATE_CLI_SENTINEL", result.stdout + result.stderr)
+                    self.assertNotIn("PRIVATE_VALIDATION_SENTINEL", result.stdout + result.stderr)
+                    self.assertNotIn("PRIVATE_INVALID_INPUT_PATH_SENTINEL", result.stdout + result.stderr)
+                    self.assertNotIn("PRIVATE_OCCUPIED_OUTPUT_PATH_SENTINEL", result.stdout + result.stderr)
                     self.assertNotIn("person@example.invalid", result.stdout + result.stderr)
                     self.assertNotIn("private.example.invalid", result.stdout + result.stderr)
 

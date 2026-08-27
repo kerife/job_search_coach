@@ -947,7 +947,7 @@ def _cli(argv: list[str] | None = None) -> int:
     except SystemExit as error:
         return 0 if error.code == 0 else 3
     try:
-        write_session_html(arguments.session, arguments.output, force=arguments.force)
+        receipt = write_session_html(arguments.session, arguments.output, force=arguments.force)
     except VALIDATOR.SessionLoadError:
         _cli_error("invalid_input")
         return 3
@@ -960,7 +960,15 @@ def _cli(argv: list[str] | None = None) -> int:
     except OSError:
         _cli_error("unsafe_output")
         return 3
-    print(json.dumps({"artifact_kind": "private_recruiter_practice_session_html"}, separators=(",", ":")))
+    print(
+        json.dumps(
+            {
+                "artifact_kind": "private_recruiter_practice_session_html",
+                "locale": receipt.locale,
+            },
+            separators=(",", ":"),
+        )
+    )
     return 0
 
 
