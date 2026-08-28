@@ -108,7 +108,7 @@ Dependencies:
 - `plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.html`
 - `plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css`
 
-The shortlist route is intentionally static and offline: `route_recruiter_request` runs the builder → validator → renderer chain and returns both the validated artifact and private in-memory HTML; no network or external-action surface is part of the page. Missing target context returns one bounded intake question instead.
+The shortlist route is intentionally static and offline: `route_recruiter_request` runs the builder → validator → renderer chain and returns both the validated artifact and private in-memory HTML; no network or external-action surface is part of the page. The header exposes a localized semantic review date, and a single prominent batch next-step panel maps `advance`, `clarify`, `pause`, or `stop` to fixed manual guidance without creating a control. Missing target context returns one bounded intake question instead.
 
 ## /recruiter-target-decision-gate (offline artifact)
 

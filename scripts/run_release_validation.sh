@@ -11,6 +11,7 @@ SOURCE_PLUGIN_ROOT="${SOURCE_PLUGIN_ROOT:-$PROJECT_ROOT/plugins/professional-gro
 LINKEDIN_SKILL_ROOT="${LINKEDIN_SKILL_ROOT:-$SOURCE_PLUGIN_ROOT/skills/optimize-professional-profile}"
 EXPECTED_SKILL_SHA256="1fd66498c219616fd9249eacdf16c458412ea9065a9d887fd716aeef03907762"
 EXPECTED_PLUGIN_SHA256="6ff4bc1cc8ca94827c30c8299951efdac900ff38a5069c03e9a6554fc194a723"
+EXPECTED_PLUGIN_VALIDATOR_SUPPORT_SHA256="a6d51ce4a9a7e8f85626ff5808a467a67574e7f8cdf1167ffb467c5f67e57223"
 
 for required_path in "$VALIDATION_PYTHON" "$SKILL_VALIDATOR_PATH" "$PLUGIN_VALIDATOR_PATH"; do
   if [[ ! -f "$required_path" ]]; then
@@ -29,24 +30,38 @@ if [[ "$actual_plugin_sha" != "$EXPECTED_PLUGIN_SHA256" ]]; then
   echo "VALIDATOR_CHECKSUM_MISMATCH: validate_plugin.py" >&2
   exit 1
 fi
+PLUGIN_VALIDATOR_SUPPORT_PATH="$(dirname "$PLUGIN_VALIDATOR_PATH")/identifier_validation.py"
+if [[ ! -f "$PLUGIN_VALIDATOR_SUPPORT_PATH" ]]; then
+  echo "RELEASE_VALIDATION_INPUT_MISSING" >&2
+  exit 1
+fi
+actual_plugin_support_sha="$(shasum -a 256 "$PLUGIN_VALIDATOR_SUPPORT_PATH" | awk '{print $1}')"
+if [[ "$actual_plugin_support_sha" != "$EXPECTED_PLUGIN_VALIDATOR_SUPPORT_SHA256" ]]; then
+  echo "VALIDATOR_CHECKSUM_MISMATCH: identifier_validation.py" >&2
+  exit 1
+fi
 
 VALIDATOR_TMPDIR="$(mktemp -d "${TMPDIR:-/tmp}/pgc-release-XXXXXX")"
 trap 'rm -rf "$VALIDATOR_TMPDIR"' EXIT
 SKILL_VALIDATOR_COPY="$VALIDATOR_TMPDIR/quick_validate.py"
 PLUGIN_VALIDATOR_COPY="$VALIDATOR_TMPDIR/validate_plugin.py"
-PLUGIN_VALIDATOR_SUPPORT_PATH="$(dirname "$PLUGIN_VALIDATOR_PATH")/identifier_validation.py"
 cp -p "$SKILL_VALIDATOR_PATH" "$SKILL_VALIDATOR_COPY"
 cp -p "$PLUGIN_VALIDATOR_PATH" "$PLUGIN_VALIDATOR_COPY"
 cp -p "$PLUGIN_VALIDATOR_SUPPORT_PATH" "$VALIDATOR_TMPDIR/identifier_validation.py"
 
 copied_skill_sha="$(shasum -a 256 "$SKILL_VALIDATOR_COPY" | awk '{print $1}')"
 copied_plugin_sha="$(shasum -a 256 "$PLUGIN_VALIDATOR_COPY" | awk '{print $1}')"
+copied_plugin_support_sha="$(shasum -a 256 "$VALIDATOR_TMPDIR/identifier_validation.py" | awk '{print $1}')"
 if [[ "$copied_skill_sha" != "$EXPECTED_SKILL_SHA256" ]]; then
   echo "VALIDATOR_CHECKSUM_MISMATCH: quick_validate.py copy" >&2
   exit 1
 fi
 if [[ "$copied_plugin_sha" != "$EXPECTED_PLUGIN_SHA256" ]]; then
   echo "VALIDATOR_CHECKSUM_MISMATCH: validate_plugin.py copy" >&2
+  exit 1
+fi
+if [[ "$copied_plugin_support_sha" != "$EXPECTED_PLUGIN_VALIDATOR_SUPPORT_SHA256" ]]; then
+  echo "VALIDATOR_CHECKSUM_MISMATCH: identifier_validation.py copy" >&2
   exit 1
 fi
 

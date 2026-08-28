@@ -17,6 +17,7 @@ validator can execute:
 
 - `quick_validate.py`: `1fd66498c219616fd9249eacdf16c458412ea9065a9d887fd716aeef03907762`
 - `validate_plugin.py`: `6ff4bc1cc8ca94827c30c8299951efdac900ff38a5069c03e9a6554fc194a723`
+- `identifier_validation.py`: `a6d51ce4a9a7e8f85626ff5808a467a67574e7f8cdf1167ffb467c5f67e57223` (validator support)
 
 After the initial checks, the runner copies both validators into a private
 temporary directory, re-hashes those copies, and executes only the verified

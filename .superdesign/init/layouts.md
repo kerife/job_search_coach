@@ -401,7 +401,7 @@ the print rendering stays tabular.
     <header class="shortlist-header">
       <p class="shortlist-kicker">{{KICKER}}</p>
       <h1>{{HEADING}}</h1>
-      <p class="shortlist-date">{{AS_OF_DATE}}</p>
+      <p class="shortlist-date"><span class="shortlist-date-label">{{AS_OF_DATE_LABEL}}</span> <time datetime="{{AS_OF_DATE}}">{{AS_OF_DATE}}</time></p>
     </header>
     <section class="continuity-rail" aria-labelledby="continuity-rail-title">
       <p id="continuity-rail-title" class="continuity-rail__label">{{FLOW_RAIL_LABEL}}</p>
@@ -420,6 +420,10 @@ the print rendering stays tabular.
         <h3>{{COUNT_LABEL}}</h3>
         <ul class="shortlist-decision-counts">{{DECISION_COUNTS}}</ul>
       </div>
+    </section>
+    <section class="shortlist-next-step shortlist-next-step--{{NEXT_STEP_CLASS}}" aria-labelledby="next-step-title">
+      <p class="shortlist-next-step-kicker">{{BATCH_LABEL}}</p>
+      <h2 id="next-step-title">{{NEXT_STEP}}</h2>
     </section>
     <section aria-labelledby="targets-title">
       <h2 id="targets-title">{{TARGETS_LABEL}}</h2>

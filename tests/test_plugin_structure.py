@@ -933,6 +933,7 @@ raise SystemExit(64)
         for variable, label in (
             ("EXPECTED_SKILL_SHA256", "quick_validate.py"),
             ("EXPECTED_PLUGIN_SHA256", "validate_plugin.py"),
+            ("EXPECTED_PLUGIN_VALIDATOR_SUPPORT_SHA256", "identifier_validation.py"),
         ):
             match = re.search(rf'{variable}="([0-9a-f]{{64}})"', runner)
             self.assertIsNotNone(match, variable)
@@ -978,6 +979,17 @@ raise SystemExit(64)
             '"$VALIDATION_PYTHON" -B "$PLUGIN_VALIDATOR_PATH" "$SOURCE_PLUGIN_ROOT"',
             runner,
         )
+
+    def test_release_runner_pins_validator_support_dependency(self) -> None:
+        runner = RELEASE_RUNNER_PATH.read_text(encoding="utf-8")
+        self.assertIn(
+            'EXPECTED_PLUGIN_VALIDATOR_SUPPORT_SHA256="a6d51ce4a9a7e8f85626ff5808a467a67574e7f8cdf1167ffb467c5f67e57223"',
+            runner,
+        )
+        self.assertIn('PLUGIN_VALIDATOR_SUPPORT_PATH=', runner)
+        self.assertIn('actual_plugin_support_sha=', runner)
+        self.assertIn('copied_plugin_support_sha=', runner)
+        self.assertIn('"$VALIDATOR_TMPDIR/identifier_validation.py"', runner)
 
     def test_bootstrap_replaces_stale_final_environment_and_is_repeatable(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:

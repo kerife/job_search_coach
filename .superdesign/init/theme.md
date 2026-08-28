@@ -1933,6 +1933,7 @@ main:focus-visible { outline-color: var(--accent); }
 h1, h2, p { margin-top: 0; }
 h1 { margin-bottom: 0; font-size: clamp(2rem, 5vw, 3.25rem); letter-spacing: -.04em; line-height: 1.05; }
 .shortlist-date { margin: 0; color: var(--muted); font-variant-numeric: tabular-nums; }
+.shortlist-date-label { margin-right: .25rem; font-size: .75rem; font-weight: 750; letter-spacing: .05em; text-transform: uppercase; }
 .shortlist-card { background: var(--surface); border: 1px solid var(--line); border-radius: 1rem; box-shadow: 0 .5rem 1.5rem rgb(23 33 43 / 8%); padding: 1.25rem; }
 .shortlist-overview { border-top: .35rem solid var(--accent); margin-bottom: 1rem; }
 .shortlist-overview h2 { margin-bottom: .4rem; font-size: 1rem; }
@@ -1949,6 +1950,13 @@ h1 { margin-bottom: 0; font-size: clamp(2rem, 5vw, 3.25rem); letter-spacing: -.0
 .shortlist-decision-count--clarify { border-top-color: var(--clarify); }
 .shortlist-decision-count--pause { border-top-color: var(--pause); }
 .shortlist-decision-count--stop { border-top-color: var(--stop); }
+.shortlist-next-step { margin: 1rem 0 1.5rem; padding: 1rem 1.2rem; border-left: .45rem solid var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+.shortlist-next-step--advance { border-left-color: var(--advance); }
+.shortlist-next-step--clarify { border-left-color: var(--clarify); }
+.shortlist-next-step--pause { border-left-color: var(--pause); }
+.shortlist-next-step--stop { border-left-color: var(--stop); }
+.shortlist-next-step-kicker { margin: 0 0 .25rem; color: var(--muted); font-size: .75rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.shortlist-next-step h2 { margin: 0; font-size: 1.1rem; }
 .shortlist-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 1rem 0 0; }
 .shortlist-facts div, .target-shortlist-facts div { min-width: 0; }
 dt { color: var(--muted); font-size: .75rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
@@ -1988,7 +1996,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
 @media screen and (prefers-color-scheme: dark) and (prefers-contrast: more) { :root { --line: #adbac4; } }
 @media (forced-colors: active) {
   .skip-link { forced-color-adjust: none; color: Canvas; background: CanvasText; }
-  .shortlist-card { forced-color-adjust: none; border: 2px solid CanvasText; box-shadow: none; }
+  .shortlist-card, .shortlist-next-step { forced-color-adjust: none; border: 2px solid CanvasText; box-shadow: none; }
   .target-shortlist-card--advance, .target-shortlist-card--clarify, .target-shortlist-card--pause, .target-shortlist-card--stop { border-left: .6rem solid CanvasText; }
 }
 @media print {
@@ -1996,7 +2004,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
   @page { margin: 1.4cm; }
   body { background: #fff; color: #000; }
   .shortlist-shell { width: 100%; padding: 0; }
-  .shortlist-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
+  .shortlist-card, .shortlist-next-step { box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
   .target-shortlist-card { break-inside: avoid; page-break-inside: avoid; }
   .shortlist-footer { break-inside: avoid; page-break-inside: avoid; }
   .skip-link { display: none; }

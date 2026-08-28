@@ -181,6 +181,21 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertIn("Recruiter target shortlist", english_rendered)
         self.assertIn("Do not contact yet", english_rendered)
 
+    def test_renderer_promotes_localized_date_and_batch_next_step(self) -> None:
+        value = build_shortlist("es", "2026-08-27", valid_plan(), valid_targets())
+        rendered = render_shortlist_html(value)
+        self.assertIn("Revisado al", rendered)
+        self.assertIn('<time datetime="2026-08-27">2026-08-27</time>', rendered)
+        self.assertIn('class="shortlist-next-step shortlist-next-step--advance"', rendered)
+        self.assertIn("Revisar el borrador localmente antes de cualquier contacto.", rendered)
+        self.assertEqual(1, rendered.count('class="shortlist-next-step '))
+        english = copy.deepcopy(value)
+        english["locale"] = "en"
+        english_rendered = render_shortlist_html(english)
+        self.assertIn("Reviewed on", english_rendered)
+        self.assertIn('<time datetime="2026-08-27">2026-08-27</time>', english_rendered)
+        self.assertIn("Review the draft locally before any contact.", english_rendered)
+
     def test_validator_rejects_restricted_or_unbounded_target_segments(self) -> None:
         value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
         value["network_plan"]["target_segments"] = ["https://private.example/profile"]
@@ -225,6 +240,15 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertIn(":focus-visible", css)
         self.assertIn("@media (prefers-contrast: more)", css)
         self.assertIn("@media (forced-colors: active)", css)
+
+    def test_batch_next_step_has_print_and_forced_color_contract(self) -> None:
+        css = (ROOT / "plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css").read_text(encoding="utf-8")
+        self.assertIn(".shortlist-next-step", css)
+        self.assertIn(".shortlist-next-step--advance", css)
+        forced_colors = css.split("@media (forced-colors: active)", 1)[1]
+        self.assertIn(".shortlist-next-step", forced_colors)
+        print_css = css.split("@media print", 1)[1]
+        self.assertRegex(print_css, r"\.shortlist-next-step\s*\{[^}]*break-inside: avoid")
 
     def test_root_route_builds_ready_artifact_or_one_intake_question(self) -> None:
         ready = route_recruiter_request(

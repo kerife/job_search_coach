@@ -90,6 +90,7 @@ COPY = {
         "title": "Objetivos de reclutamiento",
         "kicker": "Revisión privada de networking",
         "heading": "Shortlist de objetivos",
+        "date_label": "Revisado al",
         "targets_label": "Objetivos revisados",
         "goal": "Objetivo de red",
         "segments": "Segmentos prioritarios",
@@ -110,12 +111,19 @@ COPY = {
         "do_not_contact": "No contactar todavía",
         "boundary": "No contactar todavía: este artefacto organiza investigación manual. No contiene contactos ni URLs, no envía mensajes, no conecta, no agenda y no promete una entrevista.",
         "no_save": "Guardado local deshabilitado.",
+        "next_step": {
+            "advance": "Revisar el borrador localmente antes de cualquier contacto.",
+            "clarify": "Recopilar contexto del destinatario antes de redactar.",
+            "pause": "Registrar la observación y pausar la búsqueda.",
+            "stop": "Registrar la detención; no continuar con este lote.",
+        },
     },
     "en": {
         "skip": "Skip to main content",
         "title": "Recruiter target shortlist",
         "kicker": "Private networking review",
         "heading": "Target shortlist",
+        "date_label": "Reviewed on",
         "targets_label": "Reviewed targets",
         "goal": "Network goal",
         "segments": "Priority segments",
@@ -136,6 +144,12 @@ COPY = {
         "do_not_contact": "Do not contact yet",
         "boundary": "Do not contact yet: this artifact organizes manual research. It contains no contact details or URLs, sends no messages, creates no connection, schedules nothing, and promises no interview.",
         "no_save": "Local saving is disabled.",
+        "next_step": {
+            "advance": "Review the draft locally before any contact.",
+            "clarify": "Collect recipient context before drafting.",
+            "pause": "Record the observation and pause the search.",
+            "stop": "Record the stop; do not continue with this batch.",
+        },
     },
 }
 
@@ -175,6 +189,7 @@ def render_shortlist_html(value: Mapping[str, object]) -> str:
     labels = COPY[locale]
     plan = value["network_plan"]
     targets = value["targets"]
+    batch_decision = str(value["batch_decision"])
     target_cards = "".join(_target_card(target, locale, index) for index, target in enumerate(targets, start=1))
     counts = {decision: sum(1 for target in targets if target["decision"] == decision) for decision in ("advance", "clarify", "pause", "stop")}
     count_labels = {"es": {"advance": "Avanzar", "clarify": "Aclarar", "pause": "Pausar", "stop": "Detener"}, "en": {"advance": "Advance", "clarify": "Clarify", "pause": "Pause", "stop": "Stop"}}[locale]
@@ -193,6 +208,7 @@ def render_shortlist_html(value: Mapping[str, object]) -> str:
         "{{KICKER}}": html.escape(labels["kicker"]),
         "{{HEADING}}": html.escape(labels["heading"]),
         "{{AS_OF_DATE}}": html.escape(str(value["as_of_date"]), quote=True),
+        "{{AS_OF_DATE_LABEL}}": html.escape(labels["date_label"]),
         "{{GOAL_LABEL}}": html.escape(labels["goal"]),
         "{{GOAL}}": html.escape(str(plan["network_goal"]), quote=True),
         "{{SEGMENTS_LABEL}}": html.escape(labels["segments"]),
@@ -201,6 +217,8 @@ def render_shortlist_html(value: Mapping[str, object]) -> str:
         "{{QUERIES}}": queries,
         "{{BATCH_LABEL}}": html.escape(labels["batch"]),
         "{{BATCH}}": html.escape(DECISION_LABELS[locale][str(value["batch_decision"])]),
+        "{{NEXT_STEP}}": html.escape(labels["next_step"][batch_decision]),
+        "{{NEXT_STEP_CLASS}}": html.escape(batch_decision),
         "{{COUNT_LABEL}}": html.escape(labels["count"]),
         "{{DECISION_COUNTS}}": decision_counts,
         "{{PRIORITY}}": priority,

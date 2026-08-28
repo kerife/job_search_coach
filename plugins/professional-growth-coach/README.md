@@ -22,7 +22,7 @@ Keep one `candidate_id` per case. Coach mode must split combined requests into s
 
 The plugin can prepare drafts, plans, rubrics, and analyses. It must ask again before editing LinkedIn, publishing content, sending messages, applying to jobs, uploading files, or sharing candidate work with a third party.
 
-The recruiter-networking flow includes a private `recruiter-target-shortlist-v1` artifact for manually supplied targets. It is a deterministic three-to-six-row review batch with `advance`, `clarify`, `pause`, or `stop` decisions. The builder and validator keep each row draft-only, consent-not-granted, authorization-required, and blocked from message or calendar actions; the bilingual offline renderer omits target identifiers, contact details, and URLs.
+The recruiter-networking flow includes a private `recruiter-target-shortlist-v1` artifact for manually supplied targets. It is a deterministic three-to-six-row review batch with `advance`, `clarify`, `pause`, or `stop` decisions. The builder and validator keep each row draft-only, consent-not-granted, authorization-required, and blocked from message or calendar actions; the bilingual offline renderer shows a localized semantic review date and one prominent, fixed batch next-step panel while omitting target identifiers, contact details, and URLs.
 
 The shortlist privacy boundary also rejects phone-like strings, credential or bearer-token markers, and generic local filesystem paths in every bounded text field. This keeps private contact or machine material out of both the JSON artifact and its in-memory HTML review surface, even when it is supplied as `context_source`.
 
