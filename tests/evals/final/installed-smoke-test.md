@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T16:58:52-06:00`
+release_timestamp: `2026-08-28T17:11:11-06:00`
 
-source_commit: `ef8b17ef828fba68984fb50d6b2a0b2aa12f0aa5`
+source_commit: `724909c2c296ff20874a520678c3a58539bdd517`
 
-source_tree: `066f0b13f5983bce198e655533f361cccd216ee8`
+source_tree: `2bc4150c1d0f5c34327e3e1ba70bf4ff8de922fd`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828165852`
+installed_cache_version: `0.2.0+codex.20260828171111`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `b00a457fd3b7ee269dc16190ac9ab228db763c8ab96908146bfac20f6056bdc2`
+normalized_source_cache_sha256: `6c87fab873ad8978d4c07ccde823e164727320df584ac1f49d0e2c25108373c5`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -83,6 +83,10 @@ installed_validator_support_hash_smoke: `1/1 release runner pins, copies, and re
 installed_shortlist_next_step_smoke: `2/2 ES/EN localized review date and fixed batch next-step panel`
 installed_recruiter_date_canonicalization_smoke: `5/5 recruiter builders/validators reject alternate ISO date spellings and preserve YYYY-MM-DD`
 installed_recruiter_continuity_orientation_smoke: `5/5 recruiter review surfaces state that the rail is orientation only, not progress or contact tracking`
+
+installed_recruiter_negative_outcome_smoke: `4/4 EN/ES explicit recruiter rejection or failed-screen observations route to artifact-free private debrief; non-attendance remains screen intake`
+
+installed_recruiter_print_wrap_smoke: `5/5 recruiter review print rules preserve overflow-wrap:anywhere for long localized target/company names`
 
 installed_recruiter_private_input_encoding_smoke: `focused regression suite passes for percent- and HTML-decoded email, URL, password-marker, diagnostic, and Unicode-control variants; rejected or opaque`
 
