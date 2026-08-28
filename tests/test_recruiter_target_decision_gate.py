@@ -193,6 +193,17 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
         self.assertIn("Ruta de revisión recruiter", rendered)
         self.assertIn("Recruiter review path", english_rendered)
 
+    def test_renderer_labels_each_decision_row_with_safe_target_name(self) -> None:
+        gate = build_decision_gate(self.shortlist())
+        rendered = render_decision_gate_html(gate)
+        for label in ("Named platform recruiter", "Alumni referral path", "Community technical peer"):
+            with self.subTest(label=label):
+                self.assertIn(f'class="gate-row-target">{label}</h3>', rendered)
+        self.assertEqual(3, rendered.count('class="gate-row-target"'))
+        self.assertNotIn("T-001", rendered)
+        self.assertNotIn("F-001", rendered)
+        self.assertIn('class="gate-row-decision"', rendered)
+
     def test_downstream_routes_recover_from_non_string_locale(self) -> None:
         cases = (
             lambda: route_recruiter_decision_gate({"locale": []}),

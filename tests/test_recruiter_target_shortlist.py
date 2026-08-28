@@ -266,6 +266,19 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertEqual("ask_one_intake_question", intake["next_action"])
         self.assertIsNone(intake["artifact"])
 
+    def test_root_route_recovers_from_non_string_locale_without_traceback(self) -> None:
+        for locale in (None, [], {}, 7):
+            with self.subTest(locale=locale):
+                result = route_recruiter_request(
+                    "How do I network with recruiters?",
+                    locale=locale,
+                    as_of_date="2026-08-27",
+                )
+                self.assertEqual("needs_intake", result["case_state"])
+                self.assertEqual("ask_one_intake_question", result["next_action"])
+                self.assertIsNone(result["artifact"])
+                self.assertIn("intake_question", result)
+
     def test_root_route_preserves_external_action_authorization_in_ready_and_intake(self) -> None:
         ready = route_recruiter_request(
             "Quiero expandir mi red de recruiters y enviar mensajes a los objetivos.",

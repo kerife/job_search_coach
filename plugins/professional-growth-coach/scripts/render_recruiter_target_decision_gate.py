@@ -72,6 +72,8 @@ COPY = {
         "screen_missing": "Comparte un resumen de vacante y un hecho verificable antes de preparar la entrevista.",
         "screen_ready": "El contexto está recibido; la preparación de entrevista requiere revisión manual.",
         "rows": "Decisiones por objetivo",
+        "target": "Objetivo",
+        "decision": "Decisión",
         "reason": "Razón",
         "context": "Contexto faltante",
         "strategy": "Estrategia de primer contacto",
@@ -102,6 +104,8 @@ COPY = {
         "screen_missing": "Provide a vacancy summary and one verifiable fact before preparing the interview.",
         "screen_ready": "Context is provided; interview preparation still requires manual review.",
         "rows": "Decisions by target",
+        "target": "Target",
+        "decision": "Decision",
         "reason": "Reason",
         "context": "Missing context",
         "strategy": "First-contact strategy",
@@ -116,11 +120,12 @@ COPY = {
 }
 
 
-def _row(row: Mapping[str, object], locale: str, index: int) -> str:
+def _row(row: Mapping[str, object], target: Mapping[str, object], locale: str, index: int) -> str:
     labels = COPY[locale]
     decision = str(row["decision"])
+    target_label = html.escape(str(target["target_label"]), quote=True)
     return f'''<li class="gate-row gate-row--{html.escape(decision)}">
-      <div class="gate-row-heading"><span class="gate-row-index">{index}</span><h3>{html.escape(labels[decision])}</h3></div>
+      <div class="gate-row-heading"><span class="gate-row-index">{index}</span><div class="gate-row-heading-copy"><span class="gate-row-kicker">{html.escape(labels["target"])}</span><h3 class="gate-row-target">{target_label}</h3></div><span class="gate-row-decision">{html.escape(labels["decision"])}: {html.escape(labels[decision])}</span></div>
       <p class="gate-row-reason">{html.escape(str(row["decision_reason"]), quote=True)}</p>
       <dl class="gate-row-facts">
         <div><dt>{html.escape(labels["context"])}</dt><dd>{html.escape(str(row["missing_context"]), quote=True)}</dd></div>
@@ -171,7 +176,7 @@ def render_decision_gate_html(value: Mapping[str, object]) -> str:
         "{{MISSING_LABEL}}": html.escape(labels["missing"]),
         "{{MISSING}}": html.escape(labels["screen_ready"] if screen_present else labels["screen_missing"]),
         "{{ROWS_LABEL}}": html.escape(labels["rows"]),
-        "{{ROWS}}": "".join(_row(row, locale, index) for index, row in enumerate(value["decision_rows"], start=1)),
+        "{{ROWS}}": "".join(_row(row, source_targets[index - 1], locale, index) for index, row in enumerate(value["decision_rows"], start=1)),
         "{{BOUNDARY}}": html.escape(labels["boundary"]),
         "{{FOOTER}}": html.escape(labels["footer"]),
         "{{INLINE_CSS}}": css,

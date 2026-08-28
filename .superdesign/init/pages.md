@@ -124,7 +124,7 @@ Dependencies:
 - `plugins/professional-growth-coach/assets/recruiter-target-decision-gate-v1.html`
 - `plugins/professional-growth-coach/assets/recruiter-target-decision-gate-v1.css`
 
-The gate is a static decision brief: it binds and revalidates the full shortlist snapshot, presents reconciled decision counts and one row per target, then stops at a manual screen-context or interview-preparation review boundary. Its legacy screen context accepts only bounded, non-contact-shaped prose; it contains no controls, network calls, contact details, URLs, message actions, or calendar actions. The route handoff returns this private in-memory HTML whenever the gate artifact validates; an intake failure remains artifact-free.
+The gate is a static decision brief: it binds and revalidates the full shortlist snapshot, presents reconciled decision counts and one row per target, then stops at a manual screen-context or interview-preparation review boundary. Each row now names the safe target label separately from its visible decision, preserving traceability without exposing target IDs or facts. Its legacy screen context accepts only bounded, non-contact-shaped prose; it contains no controls, network calls, contact details, URLs, message actions, or calendar actions. The route handoff returns this private in-memory HTML whenever the gate artifact validates; an intake failure remains artifact-free. The root recruiter route fails closed to a bounded Spanish intake when locale input is missing or non-string instead of surfacing a traceback.
 
 ## /recruiter-target-screen-intake (offline artifact)
 

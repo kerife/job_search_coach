@@ -186,8 +186,17 @@ def route_recruiter_request(
     targets: Sequence[Mapping[str, object]] | None = None,
 ) -> dict[str, object]:
     """Return an internal route receipt without echoing the request or executing actions."""
-    if locale not in INTAKE:
-        raise ValueError("locale must be es or en")
+    if not isinstance(locale, str) or locale not in INTAKE:
+        return {
+            "route_kind": "recruiter_target_shortlist",
+            "case_state": "needs_intake",
+            "selected_module": "optimize-professional-profile",
+            "next_action": "ask_one_intake_question",
+            "authorization_required": bool(isinstance(request, str) and EXTERNAL_ACTION_INTENT.search(request)),
+            "evidence_gaps": ["valid_locale"],
+            "intake_question": INTAKE["es"],
+            "artifact": None,
+        }
     if not isinstance(request, str) or not request.strip() or not INTENT.search(request):
         return {
             "route_kind": "ordinary_professional_growth",
