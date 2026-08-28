@@ -100,7 +100,7 @@ def build_screen_intake(gate: Mapping[str, object], target_id: str, context: Map
     }
     # `checks` is deliberately a sibling of `intake` so each decision can be audited independently.
     output["intake"] = intake_context
-    output["checks"] = context.get("checks")
+    output["checks"] = copy.deepcopy(context.get("checks"))
     statuses = [check.get("status") for check in output["checks"] if isinstance(check, Mapping)] if isinstance(output["checks"], list) else []
     if target["decision"] == "stop" or "stop" in statuses:
         readiness = "stop"

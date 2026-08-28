@@ -172,7 +172,7 @@ RECRUITER_INBOUND_INTENT = re.compile(
     re.I,
 )
 RECRUITER_REPLY_REQUEST_INTENT = re.compile(
-    r"(?:\b(?:what\s+should\s+i\s+(?:say|reply)(?:\s+back)?|what\s+do\s+i\s+tell|how\s+(?:should|do)\s+i\s+respond\s+to|respond\s+to\s+(?:a\s+|the\s+)?recruiters?|say\s+back|reply\s+to\s+(?:a\s+|the\s+)?recruiters?|help\s+me\s+(?:formulate|write|draft)\s+(?:a\s+)?response|help\s+me\s+respond\s+to\s+(?:a\s+|the\s+)?recruiters?|formulate\s+(?:a\s+)?response|help\s+me\s+answer|get\s+back\s+to)\b|"
+    r"(?:\b(?:what\s+should\s+i\s+(?:say|reply)(?:\s+back)?|what\s+do\s+i\s+tell|how\s+(?:should|do)\s+i\s+respond\s+to|respond\s+to\s+(?:a\s+|the\s+)?recruiters?|say\s+back|reply\s+to\s+(?:a\s+|the\s+)?recruiters?|help\s+me\s+(?:formulate|write|draft)\s+(?:a\s+)?response|help\s+me\s+respond\s+to\s+(?:a\s+|the\s+)?recruiters?|formulate\s+(?:a\s+)?response|help\s+me\s+answer|(?:help\s+me|i\s+need\s+to|i\s+want\s+to)\s+get\s+back\s+to\s+(?:a\s+|the\s+)?recruiters?)\b|"
     r"\b(?:qu[eé]\s+(?:le\s+)?(?:digo|contesto|escribo)|c[oó]mo\s+(?:le\s+)?respondo|ay[uú]dame\s+a\s+(?:contestar|responder)|responderle|formular\s+(?:una\s+)?respuesta)\b)",
     re.I,
 )
@@ -195,7 +195,7 @@ POST_SCREEN_PROGRESSION_INTENT = re.compile(
 )
 POST_SCREEN_FOLLOWTHROUGH_INTENT = re.compile(
     r"(?:\b(?:follow[- ]?up|thank[- ]?you(?:\s+note)?|no\s+(?:response|reply)|"
-    r"(?:hasn['’]?t|has\s+not|have\s+not|never)\s+repl(?:ied|y)|stopped\s+replying|not\s+heard\s+back|has\s+not\s+gotten\s+back|"
+    r"(?:hasn['’]?t|has\s+not|have\s+not|never)\s+repl(?:ied|y)|(?:didn['’]?t|did\s+not)\s+get\s+back|stopped\s+replying|not\s+heard\s+back|has\s+not\s+gotten\s+back|"
     r"no\s+update|still\s+waiting|have\s+not\s+heard\s+anything|thank(?:ed|s)?\s+(?:them|the\s+recruiter)|ghosted|"
     r"wait\s+(?:or|and)\s+follow[- ]?up)\b|"
     r"\b(?:seguimiento|agradecimiento|dar\s+las\s+gracias|sin\s+respuesta|"

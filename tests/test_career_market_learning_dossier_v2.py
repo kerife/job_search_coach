@@ -338,6 +338,26 @@ class CareerMarketLearningDossierV2Tests(unittest.TestCase):
                 self.assertTrue(errors)
                 self.assertNotIn(encoded, " ".join(errors))
 
+    def test_validator_rejects_encoded_private_prose_in_auxiliary_learning_fields(self) -> None:
+        market = _recurring_market(5)
+        dossier = build_learning_dossier(market, _research(market))
+        mutations = (
+            (("coach_decision", "rationale"), "person%40example.com"),
+            (("coach_decision", "review_gate"), "&lt;script&gt;alert(1)&lt;/script&gt;"),
+            (("proof_sprint", "scope"), "hello&#x202e;world"),
+            (("reuse_map", 0, "claim_boundary"), "https&amp;#x3a;&amp;#x2f;&amp;#x2f;example.com"),
+        )
+        for path, encoded in mutations:
+            mutated = copy.deepcopy(dossier)
+            current = mutated
+            for key in path[:-1]:
+                current = current[key]
+            current[path[-1]] = encoded
+            with self.subTest(path=path):
+                errors = validate_learning_dossier(mutated)
+                self.assertTrue(errors)
+                self.assertNotIn(encoded, " ".join(errors))
+
     def test_research_snapshot_must_bind_to_exact_market_snapshot(self) -> None:
         market = _recurring_market(5)
         research = _research(market)

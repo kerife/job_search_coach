@@ -108,11 +108,12 @@ def _text(value: object, path: str, errors: list[str], maximum: int = 500) -> No
     if not isinstance(value, str) or not value or len(value) > maximum:
         errors.append(f"{path} must be bounded text")
         return
-    if _PROSE.contains_unicode_controls(value):
+    normalized = _PROSE.normalize_prose_for_validation(value)
+    if _PROSE.contains_unicode_controls(normalized):
         errors.append(f"{path} contains forbidden control characters")
-    if re.search(r"<\/?(?:script|iframe|object|style)\b", value, re.I):
+    if re.search(r"<\/?(?:script|iframe|object|style)\b", normalized, re.I):
         errors.append(f"{path} contains forbidden markup")
-    if re.search(r"(?:[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|(?:^|\s)(?:/[A-Za-z]|[A-Za-z]:[\\/]))", value):
+    if re.search(r"(?:[a-z][a-z0-9+.-]{1,31}://|www\.|linkedin\.com/|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|(?:^|\s)(?:/[A-Za-z]|[A-Za-z]:[\\/]))", normalized, re.I):
         errors.append(f"{path} contains private value")
 
 

@@ -298,6 +298,41 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         for internal in ("named_recruiter", "warm_referral", "technical_peer", ">none<"):
             self.assertNotIn(internal, english_rendered)
 
+    def test_renderer_explains_non_advance_contact_boundary_without_internal_reason_tokens(self) -> None:
+        reason_copy = {
+            "no_context": ("Falta contexto", "Context is missing"),
+            "missing_context": ("Falta confirmar el contexto", "Context needs confirmation"),
+            "no_consent": ("No hay consentimiento", "Consent has not been granted"),
+            "confidentiality_risk": ("Riesgo de confidencialidad", "Confidentiality risk"),
+            "unsupported_claim": ("Afirmación sin respaldo", "Unsupported claim"),
+            "closed_role": ("Rol cerrado", "Role is closed"),
+            "missing_authorization": ("Falta autorización", "Authorization is missing"),
+        }
+        for reason, (spanish, english) in reason_copy.items():
+            value = build_shortlist("es", "2026-08-27", valid_plan(), valid_targets())
+            value["targets"][1]["do_not_contact_reason"] = reason
+            rendered = render_shortlist_html(value)
+            self.assertIn("Límite de contacto", rendered)
+            self.assertIn(spanish, rendered)
+            self.assertNotIn(reason, rendered)
+
+            value["locale"] = "en"
+            english_rendered = render_shortlist_html(value)
+            self.assertIn("Contact boundary", english_rendered)
+            self.assertIn(english, english_rendered)
+            self.assertNotIn(reason, english_rendered)
+
+        baseline = render_shortlist_html(build_shortlist("es", "2026-08-27", valid_plan(), valid_targets()))
+        self.assertNotIn("Límite de contacto", baseline.split("Named platform recruiter", 1)[0])
+
+    def test_contact_boundary_copy_has_cross_media_accessibility_contract(self) -> None:
+        css = (ROOT / "plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css").read_text(encoding="utf-8")
+        self.assertIn(".target-shortlist-no-contact", css)
+        self.assertRegex(css, r"\.target-shortlist-no-contact\s*\{[^}]*border")
+        self.assertIn(".target-shortlist-no-contact", css.split("@media (prefers-contrast: more)", 1)[1])
+        self.assertIn(".target-shortlist-no-contact", css.split("@media (forced-colors: active)", 1)[1])
+        self.assertIn(".target-shortlist-no-contact", css.split("@media print", 1)[1])
+
     def test_print_layout_keeps_target_cards_and_privacy_boundary_together(self) -> None:
         css = (ROOT / "plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css").read_text(encoding="utf-8")
         self.assertIn("@page", css)
@@ -941,6 +976,16 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual(expected_route, routed["route_kind"])
                 self.assertEqual(authorization_required, routed["authorization_required"])
                 self.assertIsNone(routed["artifact"])
+
+    def test_negative_get_back_wording_keeps_post_screen_debrief_precedence(self) -> None:
+        routed = route_recruiter_request(
+            "The recruiter didn't get back to me after the screen.",
+            locale="en",
+            as_of_date="2026-08-27",
+        )
+        self.assertEqual("private_recruiter_screen_debrief", routed["route_kind"])
+        self.assertEqual("collect_debrief_context", routed["next_action"])
+        self.assertFalse(routed["authorization_required"])
 
     def test_additional_recruiter_schedule_and_received_message_language_enters_private_triage(self) -> None:
         for request, locale in (

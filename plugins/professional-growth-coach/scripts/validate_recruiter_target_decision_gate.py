@@ -168,6 +168,8 @@ def validate_decision_gate(value: object, *, as_of: dt.date | None = None) -> li
             and item["as_of_date"] != source["as_of_date"]
         ):
             errors.append("as_of_date must match source_shortlist.as_of_date")
+        if locale in {"es", "en"} and source.get("locale") in {"es", "en"} and locale != source.get("locale"):
+            errors.append("locale must match source_shortlist.locale")
     snapshot = item.get("source_snapshot")
     if not isinstance(snapshot, str) or not snapshot.startswith(SNAPSHOT_PREFIX) or len(snapshot) != len(SNAPSHOT_PREFIX) + 64:
         errors.append("source_snapshot has invalid value")

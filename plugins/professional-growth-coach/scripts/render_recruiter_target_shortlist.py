@@ -110,6 +110,7 @@ COPY = {
         "reason": "Razón de decisión",
         "missing": "Falta resolver",
         "next": "Siguiente paso seguro",
+        "contact_boundary": "Límite de contacto",
         "do_not_contact": "No contactar todavía",
         "boundary": "No contactar todavía: este artefacto organiza investigación manual. No contiene contactos ni URLs, no envía mensajes, no conecta, no agenda y no promete una entrevista.",
         "no_save": "Guardado local deshabilitado.",
@@ -145,6 +146,7 @@ COPY = {
         "reason": "Decision reason",
         "missing": "Resolve first",
         "next": "Safe next step",
+        "contact_boundary": "Contact boundary",
         "do_not_contact": "Do not contact yet",
         "boundary": "Do not contact yet: this artifact organizes manual research. It contains no contact details or URLs, sends no messages, creates no connection, schedules nothing, and promises no interview.",
         "no_save": "Local saving is disabled.",
@@ -154,6 +156,27 @@ COPY = {
             "pause": "Record the observation and pause the search.",
             "stop": "Record the stop; do not continue with this batch.",
         },
+    },
+}
+
+NO_CONTACT_REASON_LABELS = {
+    "es": {
+        "no_context": "Falta contexto",
+        "missing_context": "Falta confirmar el contexto",
+        "no_consent": "No hay consentimiento",
+        "confidentiality_risk": "Riesgo de confidencialidad",
+        "unsupported_claim": "Afirmación sin respaldo",
+        "closed_role": "Rol cerrado",
+        "missing_authorization": "Falta autorización",
+    },
+    "en": {
+        "no_context": "Context is missing",
+        "missing_context": "Context needs confirmation",
+        "no_consent": "Consent has not been granted",
+        "confidentiality_risk": "Confidentiality risk",
+        "unsupported_claim": "Unsupported claim",
+        "closed_role": "Role is closed",
+        "missing_authorization": "Authorization is missing",
     },
 }
 
@@ -188,6 +211,11 @@ def _target_card(target: Mapping[str, object], locale: str, index: int) -> str:
     if missing == "none":
         missing = "Sin contexto adicional" if locale == "es" else "No additional context"
     action_labels = {"es": {"draft_only_review": "Revisar borrador", "collect_recipient_context": "Recopilar contexto", "record_observation_only": "Registrar observación"}, "en": {"draft_only_review": "Review draft", "collect_recipient_context": "Collect context", "record_observation_only": "Record observation"}}
+    do_not_contact_reason = str(target["do_not_contact_reason"])
+    contact_boundary = "" if do_not_contact_reason == "none" else (
+        f'<p class="target-shortlist-no-contact"><strong>{html.escape(labels["contact_boundary"])}:</strong> '
+        f'{html.escape(NO_CONTACT_REASON_LABELS[locale][do_not_contact_reason])}</p>'
+    )
     return f'''<li class="target-shortlist-item"><article class="target-shortlist-card target-shortlist-card--{html.escape(decision)}" aria-labelledby="target-title-{index}">
       <p class="target-shortlist-index">{index}</p>
       <h2 id="target-title-{index}">{html.escape(str(target["target_label"]), quote=True)}</h2>
@@ -199,6 +227,7 @@ def _target_card(target: Mapping[str, object], locale: str, index: int) -> str:
         <div><dt>{html.escape(labels["missing"])}</dt><dd>{html.escape(missing, quote=True)}</dd></div>
         <div><dt>{html.escape(labels["next"])}</dt><dd>{html.escape(action_labels[locale][str(target["next_safe_action"])] , quote=True)}</dd></div>
       </dl>
+      {contact_boundary}
     </article></li>'''
 
 

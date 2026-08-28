@@ -61,8 +61,8 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
 
-    def shortlist(self) -> dict[str, object]:
-        return build_shortlist("es", "2026-08-27", valid_plan(), valid_targets())
+    def shortlist(self, locale: str = "es") -> dict[str, object]:
+        return build_shortlist(locale, "2026-08-27", valid_plan(), valid_targets())
 
     def test_builder_reconciles_counts_and_binds_full_shortlist_snapshot(self) -> None:
         shortlist = self.shortlist()
@@ -78,6 +78,14 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
         shortlist["as_of_date"] = "2999-01-01"
         with self.assertRaises(ValueError):
             build_decision_gate(shortlist)
+
+    def test_validator_rejects_locale_drift_from_source_shortlist(self) -> None:
+        gate = build_decision_gate(self.shortlist())
+        gate["locale"] = "en"
+        self.assertIn(
+            "locale must match source_shortlist.locale",
+            validate_decision_gate(gate, as_of=date(2026, 8, 27)),
+        )
 
     def test_validator_rejects_future_evaluation_date(self) -> None:
         gate = build_decision_gate(self.shortlist())
@@ -180,8 +188,7 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
         )
         self.assertNotIn("T-001", rendered)
         self.assertNotIn("F-001", rendered)
-        english = copy.deepcopy(gate)
-        english["locale"] = "en"
+        english = build_decision_gate(self.shortlist("en"))
         english_rendered = render_decision_gate_html(english)
         self.assertIn("Next decision", english_rendered)
         self.assertIn("Collect screen context", english_rendered)
@@ -210,8 +217,7 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
         self.assertIn("Sin contexto adicional", rendered)
         self.assertNotIn(">none<", rendered)
 
-        english = copy.deepcopy(gate)
-        english["locale"] = "en"
+        english = build_decision_gate(self.shortlist("en"))
         english_rendered = render_decision_gate_html(english)
         self.assertIn("No additional context", english_rendered)
         self.assertNotIn(">none<", english_rendered)

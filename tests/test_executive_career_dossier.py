@@ -1166,6 +1166,14 @@ class ExecutiveCareerDossierEvidenceModuleTests(unittest.TestCase):
                 self.assertTrue(errors)
                 self.assertTrue(all(character not in error for error in errors))
 
+    def test_encoded_unicode_controls_are_rejected_in_private_prose(self) -> None:
+        for encoded in ("hello&#x202e;world", "hello%0aworld"):
+            with self.subTest(encoded=encoded):
+                dossier = mutate_path(self.es_dossier, ("verdict", "rationale"), encoded)
+                errors = self.validator.validate_dossier(dossier)
+                self.assertTrue(errors)
+                self.assertNotIn(encoded, " ".join(errors))
+
     def test_dated_market_context_requires_vacancy_provenance(self) -> None:
         cases = (
             ("zero sample", ("market_context", "vacancy_sample_count"), 0, "market_context.vacancy_sample_count must be greater than zero"),

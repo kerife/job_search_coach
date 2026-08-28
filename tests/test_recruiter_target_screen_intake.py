@@ -56,6 +56,15 @@ class RecruiterTargetScreenIntakeTests(unittest.TestCase):
         self.assertEqual("screen_context_submitted", intake["measurement_event"])
         self.assertFalse(intake["delivery"]["external_actions_authorized"])
 
+    def test_builder_detaches_checks_from_mutable_context_input(self) -> None:
+        context = valid_screen_intake()
+        intake = build_screen_intake(self.gate(), "T-001", context)
+        self.assertIsNot(intake["checks"], context["checks"])
+        context["checks"][0]["status"] = "stop"
+        context["checks"].append({"check": "unexpected", "status": "stop", "evidence_note": "mutated"})
+        self.assertEqual("pass", intake["checks"][0]["status"])
+        self.assertEqual(4, len(intake["checks"]))
+
     def test_non_advance_target_can_never_prepare(self) -> None:
         context = valid_screen_intake()
         context["candidate_fact_ids"] = ["F-002"]

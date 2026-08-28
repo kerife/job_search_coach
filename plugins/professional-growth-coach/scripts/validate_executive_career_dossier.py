@@ -26,7 +26,7 @@ class _PrivateArgumentParser(argparse.ArgumentParser):
 
 
 try:
-    from private_prose_safety import contains_unicode_controls, format_bounded_diagnostics
+    from private_prose_safety import contains_unicode_controls, format_bounded_diagnostics, normalize_prose_for_validation
 except ModuleNotFoundError:
     _prose_spec = importlib.util.spec_from_file_location(
         "_pgc_private_prose_safety", Path(__file__).with_name("private_prose_safety.py")
@@ -37,6 +37,7 @@ except ModuleNotFoundError:
     _prose_spec.loader.exec_module(_prose_module)
     format_bounded_diagnostics = _prose_module.format_bounded_diagnostics
     contains_unicode_controls = _prose_module.contains_unicode_controls
+    normalize_prose_for_validation = _prose_module.normalize_prose_for_validation
 try:
     from dossier_practice_safe_text import has_unlabelled_person_intro
 except ModuleNotFoundError:
@@ -501,10 +502,11 @@ def _closed(value: object, path: str, fields: frozenset[str], errors: list[str])
 def _text(value: object, path: str, errors: list[str], *, nullable: bool = False, limit: int = 500) -> bool:
     if nullable and value is None:
         return True
-    if not isinstance(value, str) or not value.strip() or len(value) > limit or contains_unicode_controls(value):
+    normalized = normalize_prose_for_validation(value) if isinstance(value, str) else ""
+    if not isinstance(value, str) or not value.strip() or len(value) > limit or contains_unicode_controls(normalized):
         errors.append(f"{path} must be bounded client-facing prose")
         return False
-    if PLACEHOLDER.search(value.strip()):
+    if PLACEHOLDER.search(normalized.strip()):
         errors.append(f"{path} must be client-facing prose")
         return False
     return True
@@ -1181,15 +1183,16 @@ def _scan_privacy(value: object, path: str = "") -> list[str]:
     if isinstance(value, list):
         return [error for index, nested in enumerate(value) for error in _scan_privacy(nested, f"{path}[{index}]")]
     if isinstance(value, str):
+        normalized = normalize_prose_for_validation(value)
         errors: list[str] = []
-        if contains_unicode_controls(value):
+        if contains_unicode_controls(normalized):
             errors.append(f"{path} contains forbidden Unicode controls")
         if (
             re.fullmatch(r"market_context\.public_sources\[\d+\]\.url", path)
-            and not LINKEDIN_SAFETY.validate_secondary_source_url(value)
+            and not LINKEDIN_SAFETY.validate_secondary_source_url(normalized)
         ):
             return errors
-        return errors + [f"{path} {error}" for error in _privacy_errors(value)]
+        return errors + [f"{path} {error}" for error in _privacy_errors(normalized)]
     return []
 
 
