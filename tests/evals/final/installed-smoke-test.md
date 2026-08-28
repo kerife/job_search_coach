@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T20:13:02-06:00`
+release_timestamp: `2026-08-27T20:31:10-06:00`
 
-source_commit: `81475c639bfa39226b68de64bf8727ff9a35137e`
+source_commit: `864fe64d5d1d1a620037adce8409b578919431e0`
 
-source_tree: `0bdef0ca35c24640b0d2192246170674fb010560`
+source_tree: `16636d9cb747e28a6877a43298efa248e825ffb5`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827201302`
+installed_cache_version: `0.2.0+codex.20260827203110`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `172`
 
 installed_file_count: `172`
 
-normalized_source_cache_sha256: `46f4769d61c1056bf77dfaab387063f79f45024793ab3854dd59a344a2525c7c`
+normalized_source_cache_sha256: `bbd58f7b19210d82e1d89fb9bd0ae2ae2780d11fbe4f328ab2d20b6b85fc782b`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -45,7 +45,7 @@ source_cache_equivalence: `diff_qr_silent`
 
 installed_renderer_smokes: `6/6 triage validator/renderer fixtures`
 
-installed_reading_path_smoke: `4/4 localized fragment links; aria-current fallback; nearest-target IntersectionObserver enhancement; print/mobile offsets`
+installed_reading_path_smoke: `5/5 localized fragment links; aria-current fallback; nearest-target IntersectionObserver enhancement; tablet sticky-rail offset; print/mobile offsets`
 
 installed_dossier_v2_smoke: `4/4 EN/ES validator and renderer`
 
@@ -80,7 +80,11 @@ installed_diagnostic_redaction_smoke: `6/6`
 
 installed_diagnostic_control_redaction_smoke: `3/3 zero-width, bidi, and newline field names stay opaque`
 
+installed_dossier_unicode_control_smoke: `6/6 v1/v2 dossier prose controls are rejected without echoing`
+
 installed_recruiter_gate_date_binding_smoke: `1/1 outer gate dates must match nested shortlist snapshots`
+
+installed_recruiter_decision_row_binding_smoke: `7/7 copied and derived row fields remain bound to the shortlist and decision`
 
 installed_market_print_matrix_smoke: `1/1 multi-vacancy matrix stacks labelled rows for paper readability`
 
