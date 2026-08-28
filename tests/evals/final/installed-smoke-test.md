@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T06:57:36-06:00`
+release_timestamp: `2026-08-28T07:23:22-06:00`
 
-source_commit: `fd964a9cc0efd529640751a9e36b90709f9d34bf`
+source_commit: `07d750d45756f7006418a544d9b3bd6741f1f22f`
 
-source_tree: `d5c393faeb5513ca4233add8b5eeecee64afafcc`
+source_tree: `29b711e53c5092eeed2a20a197383ed62b5074cb`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828130000`
+installed_cache_version: `0.2.0+codex.20260828140000`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `4a3c22f73ef44b2381575c5bac893b669c189463f80739342d8022dd4e13da20`
+normalized_source_cache_sha256: `d0ac69bb20afd12d7bfd9f974986275c270f4bfcd391cc0f24efe96d2016f3b6`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -106,6 +106,8 @@ installed_renderer_bounded_diagnostics_smoke: `2/2 v1/v2 renderer validation std
 
 installed_recruiter_intent_smoke: `2/2 singular Spanish first-recruiter-interview intent and recursively nested plans route to bounded, artifact-free intake`
 
+installed_recruiter_article_intent_smoke: `3/3 English/Spanish defined-article first-recruiter-interview variants route to bounded intake`
+
 installed_descriptor_boundary_smoke: `6/6`
 
 installed_linkedin_diagnostic_redaction_smoke: `4/4`
@@ -153,6 +155,8 @@ installed_triage_handoff_continuity_smoke: `2/2 installed EN/ES triage handoffs 
 installed_shortlist_artifact_smoke: `1/1 installed EN/ES shortlist builder, validator, and offline renderer; rows retain draft-only/no-message/no-calendar controls and HTML omits target/fact identifiers`
 installed_shortlist_boundary_smoke: `4/4 installed shortlist rejects asset symlinks, output-parent symlinks, non-HTTP URI prose, and future-dated direct renders`
 installed_shortlist_sensitive_material_smoke: `1/1 installed shortlist rejects phone-like strings, credential markers, and generic local paths in bounded text`
+
+installed_shortlist_forced_colors_smoke: `1/1 priority panel resets to Canvas/CanvasText with an explicit CanvasText border in forced-colors mode`
 
 installed_decision_gate_smoke: `3/3 installed EN/ES decision-gate builder, validator, and renderer; counts/snapshot reconcile, screen context remains manual-only, and HTML omits target/fact identifiers`
 
