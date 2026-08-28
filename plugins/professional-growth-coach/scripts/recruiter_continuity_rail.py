@@ -8,12 +8,12 @@ import html
 COPY = {
     "es": {
         "label": "Ruta de revisión recruiter · Orientación; no indica avance ni contacto realizado",
-        "current": "Paso actual",
+        "current": "Superficie actual de revisión",
         "steps": ("Shortlist", "Gate de decisión", "Intake de pantalla", "Debrief de pantalla", "Revisión de siguiente etapa"),
     },
     "en": {
         "label": "Recruiter review path · Review orientation; does not track progress or contact",
-        "current": "Current step",
+        "current": "Current review surface",
         "steps": ("Shortlist", "Decision gate", "Screen intake", "Screen debrief", "Next-stage review"),
     },
 }

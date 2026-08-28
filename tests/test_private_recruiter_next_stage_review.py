@@ -88,7 +88,7 @@ class PrivateRecruiterNextStageReviewTests(unittest.TestCase):
         self.assertEqual(1, rendered.count('<li data-state="current" aria-current="step">'))
         self.assertEqual(1, rendered.count('aria-current="step"'))
         self.assertIn("Ruta de revisión recruiter", rendered)
-        self.assertIn("Paso actual", rendered)
+        self.assertIn("Superficie actual de revisión", rendered)
         english_gate = build_decision_gate(build_shortlist("en", "2026-08-27", valid_plan(), valid_targets()))
         english_intake = build_screen_intake(english_gate, "T-001", valid_screen_intake())
         english_checkpoint = valid_checkpoint()
@@ -97,7 +97,7 @@ class PrivateRecruiterNextStageReviewTests(unittest.TestCase):
         english = build_next_stage_review(english_debrief, RECEIPT, english_intake, english_checkpoint, "first_interview")
         english_rendered = render_next_stage_review_html(english, english_debrief, RECEIPT, english_intake, english_checkpoint)
         self.assertIn("Recruiter review path", english_rendered)
-        self.assertIn("Current step", english_rendered)
+        self.assertIn("Current review surface", english_rendered)
 
     def test_blocked_renderer_explains_structured_topics_to_clarify(self) -> None:
         paused = valid_debrief()

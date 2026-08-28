@@ -247,7 +247,7 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertEqual(3, rendered.count('<li class="target-shortlist-item">'))
         self.assertEqual(1, rendered.count('aria-current="step"'))
         self.assertIn("Ruta de revisión recruiter", rendered)
-        self.assertIn("Paso actual", rendered)
+        self.assertIn("Superficie actual de revisión", rendered)
         css = (ROOT / "plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css").read_text(encoding="utf-8")
         self.assertIn(":focus-visible", css)
         self.assertIn("@media (prefers-contrast: more)", css)
@@ -405,6 +405,8 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
             ("Prepare me for a first interview with the recruiter.", "en"),
             ("Prepárame para mi primera entrevista con el reclutador.", "es"),
             ("Prepárame para mi primera entrevista con la reclutadora.", "es"),
+            ("I have an interview with the recruiter; help me prepare.", "en"),
+            ("Tengo una entrevista con la reclutadora; ayúdame a prepararme.", "es"),
         ):
             routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-27")
             with self.subTest(request=request):
@@ -490,6 +492,9 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
             "I didn't go to the recruiter screen; help me prepare.",
             "I never went through the recruiter screen; help me prepare.",
             "I never spoke with a recruiter; help me prepare.",
+            "I have a recruiter screen on September 2; help me prepare.",
+            "My recruiter screen is this Friday; help me prepare.",
+            "Tengo una entrevista con la reclutadora el viernes; ayúdame a prepararme.",
             "No he tenido el filtro con el reclutador; ¿qué sigue?",
             "No asistí al filtro con el reclutador; ¿qué sigue?",
             "No tuve la entrevista con el reclutador; ayúdame a prepararme.",
@@ -523,6 +528,29 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual("needs_intake", routed["case_state"])
                 self.assertEqual("collect_debrief_context", routed["next_action"])
                 self.assertIsNone(routed["artifact"])
+
+    def test_root_route_does_not_treat_completed_screen_dates_as_future_intent(self) -> None:
+        routed = route_recruiter_request(
+            "I completed a recruiter screen on Tuesday; help me debrief.",
+            locale="en",
+            as_of_date="2026-08-27",
+        )
+        self.assertEqual("private_recruiter_screen_debrief", routed["route_kind"])
+        self.assertEqual("track-career-outcomes", routed["selected_module"])
+        self.assertEqual("collect_debrief_context", routed["next_action"])
+        self.assertIsNone(routed["artifact"])
+
+    def test_root_route_keeps_readiness_negation_after_completed_screen_in_next_stage_flow(self) -> None:
+        routed = route_recruiter_request(
+            "I had a recruiter screen but I am not yet ready for the next stage.",
+            locale="en",
+            as_of_date="2026-08-27",
+        )
+        self.assertEqual("private_recruiter_next_stage_review", routed["route_kind"])
+        self.assertEqual("prepare-role-interviews", routed["selected_module"])
+        self.assertEqual("collect_debrief_context", routed["next_action"])
+        self.assertFalse(routed["authorization_required"])
+        self.assertIsNone(routed["artifact"])
 
     def test_root_route_keeps_recruiter_network_and_generic_technical_interview_precedence(self) -> None:
         shortlist = route_recruiter_request("How do I network with recruiters?", locale="en", as_of_date="2026-08-27")
@@ -558,6 +586,10 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
             "Please schedule an interview with the recruiter",
             "Quiero enviar mensaje al reclutador después del filtro",
             "Quiero agendar una entrevista con el reclutador",
+            "Can you respond to the recruiter?",
+            "Email the recruiter.",
+            "¿Puedes contestar al reclutador?",
+            "Mándale un correo al reclutador.",
         ):
             routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-27")
             with self.subTest(request=request):

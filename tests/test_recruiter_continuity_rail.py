@@ -15,6 +15,16 @@ from recruiter_continuity_rail import render_continuity_rail  # noqa: E402
 
 
 class RecruiterContinuityRailTests(unittest.TestCase):
+    def test_current_marker_is_named_as_review_surface_not_completed_progress(self) -> None:
+        expected = {
+            "es": "Superficie actual de revisión",
+            "en": "Current review surface",
+        }
+        for locale, marker in expected.items():
+            with self.subTest(locale=locale):
+                _label, rail = render_continuity_rail(locale, "decision_gate")
+                self.assertIn(marker, rail)
+
     def test_rail_labels_orientation_boundary_without_claiming_progress(self) -> None:
         for locale, marker in (("es", "no indica avance ni contacto realizado"), ("en", "does not track progress or contact")):
             with self.subTest(locale=locale):

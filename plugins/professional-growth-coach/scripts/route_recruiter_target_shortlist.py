@@ -46,7 +46,7 @@ INTENT = re.compile(
     r"primera\s+llamada\s+con\s+(?:(?:un|una|el|la)\s+)?reclutador(?:a|es)?)\b|"
     r"\b(?:contact|reach(?:\s+out\s+to)?|connect\s+with|talk\s+to|speak\s+with)\s+(?:(?:an?|the)\s+)?(?:(?:senior|technical|lead|principal|internal|executive|hiring|talent|agency|corporate|junior|experienced)\s+)?(?:recruiters?|reclutador(?:a|es)?)\b|"
     r"\b(?:contactar\s+(?:a\s+)?|conectar(?:me)?\s+con\s+|hablar\s+con\s+)(?:(?:un(?:a)?|el|la)\s+)?(?:recruiters?|reclutador(?:a|es)?)\b|"
-    r"\b(?:interview|entrevista)\s+(?:[a-záéíóúñ-]+\s+){0,3}(?:with|con)\s+(?:(?:an?|un(?:a)?)\s+)?(?:recruiters?|reclutador(?:a|es)?)\b|"
+    r"\b(?:interview|entrevista)\s+(?:[a-záéíóúñ-]+\s+){0,3}(?:with|con)\s+(?:(?:an?|the|un(?:a)?|el|la)\s+)?(?:recruiters?|reclutador(?:a|es)?)\b|"
     r"\b(?:recruiters?|reclutador(?:a|es)?)\s+(?:[a-záéíóúñ-]+\s+){0,3}(?:interview|entrevista)\b|"
     r"\b(?:network|networking)\s+(?:with|con)\s+recruiters?\b|"
     r"\bred\s+profesional\s+con\s+reclutadores?\b|"
@@ -73,7 +73,7 @@ SCREEN_NOT_COMPLETED = re.compile(
     r"(?:had|have)\s+no\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
     r"not\s+(?:yet\s+)?(?:had|attended|completed|finished)|haven['’]?t\s+"
     r"(?:had|attended|completed|finished)|have\s+not\s+(?:had|attended|completed|finished)|"
-    r"scheduled\s+for|upcoming|tomorrow|next\s+week|before\s+(?:the|my)|not\s+yet|"
+    r"scheduled\s+for|upcoming|tomorrow|next\s+week|before\s+(?:the|my)|"
     r"no\s+he\s+tenido|(?:nunca|no)\s+(?:habl[eé]|convers[eé])\s+con\s+(?:(?:un|una|el|la)\s+)?(?:recruiters?|reclutador(?:a|es)?)\b|"
     r"(?:nunca|no)\s+pas[eé]\s+por\s+(?:(?:un|una|el|la)\s+)?(?:recruiter\s+|reclutador(?:a|es)?\s+)?(?:screen|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)|"
     r"(?:nunca|no)\s+fui\s+(?:(?:a|al|a la|el|la)\s+)?(?:recruiter\s+|reclutador(?:a|es)?\s+)?(?:screen|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)|"
@@ -88,6 +88,16 @@ SCREEN_CONTEXT = re.compile(
     r"spoke\s+with|talked\s+to|habl[eé]\s+con|convers[eé]\s+con)\b",
     re.I,
 )
+FUTURE_SCREEN_DATE = re.compile(
+    r"\b(?:have|has|is|will|scheduled|upcoming)\b[^.!?\n]{0,100}\b(?:on|this|next)\s+"
+    r"(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|january|february|march|april|may|june|july|"
+    r"august|september|october|november|december)(?:\s+\d{1,2})?\b|"
+    r"\b(?:tengo|tiene|es|ser[aá]|est[aá])\b[^.!?\n]{0,100}\b(?:el|este|pr[oó]ximo|pr[oó]xima)\s+"
+    r"(?:lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo)\b|"
+    r"\b(?:tengo|tiene|es|ser[aá]|est[aá])\b[^.!?\n]{0,100}\b(?:el|este)\s+\d{1,2}\s+de\s+"
+    r"(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)\b",
+    re.I,
+)
 NEXT_STAGE_INTENT = re.compile(
     r"\b(?:next\s+stage|what(?:'s|\s+is)\s+next|what\s+comes\s+next|what\s+(?:do|should)\s+i\s+do\s+next|"
     r"next\s+step|move\s+on\s+to|advance\s+to|"
@@ -97,12 +107,18 @@ NEXT_STAGE_INTENT = re.compile(
     r"preparar(?:me)?\s+para\s+(?:la\s+)?siguiente\s+etapa)\b",
     re.I,
 )
+READINESS_NEGATION = re.compile(
+    r"\b(?:not\s+(?:yet\s+)?ready|not\s+prepared|a[uú]n\s+no\s+(?:estoy\s+)?list[oa]|todav[ií]a\s+no\s+(?:estoy\s+)?list[oa])\b",
+    re.I,
+)
 TECHNICAL_INTENT = re.compile(r"\b(?:technical|t[eé]cnica|t[eé]cnico)\b", re.I)
 EXPLICIT_RECRUITER_INTENT = re.compile(r"\b(?:recruiter|recruiting|reclutador(?:a|es)?)\b", re.I)
 EXTERNAL_ACTION_INTENT = re.compile(
-    r"\b(?:send|message|messages|reply|repl(?:y|ies)|connect|contact|reach|talk|speak|apply|publish|schedule|scheduled|book|calendar|"
+    r"\b(?:send|message|messages|reply|repl(?:y|ies)|respond\w*|connect|contact|reach|talk|speak|apply|publish|schedule|scheduled|book|calendar|"
     r"confirm|accept|enviar|mensaje|mensajes|responder|respuesta|conectar|contactar|hablar|aplicar|publicar|agendar|"
-    r"reservar|calendario|confirmar|aceptar|programar)\b",
+    r"reservar|calendario|confirmar|aceptar|programar|contesta\w*|responde\w*|m[aá]nd\w*)\b|"
+    r"\b(?:email|e-mail)\s+(?:(?:an?|the)\s+)?(?:recruiters?|reclutador(?:a|es)?)\b|"
+    r"\bcorreo\s+(?:a(?:l| la)?|para)\s+(?:recruiters?|reclutador(?:a|es)?)\b",
     re.I,
 )
 INTAKE = {
@@ -153,8 +169,12 @@ def _has_recruiter_screen_context(request: str) -> bool:
 def _natural_recruiter_route(request: str) -> str | None:
     """Classify natural recruiter follow-up language before shortlist routing."""
     has_screen_context = _has_recruiter_screen_context(request)
-    if has_screen_context and SCREEN_NOT_COMPLETED.search(request):
+    if has_screen_context and (
+        SCREEN_NOT_COMPLETED.search(request) or FUTURE_SCREEN_DATE.search(request)
+    ):
         return "pre_screen"
+    if has_screen_context and READINESS_NEGATION.search(request) and NEXT_STAGE_INTENT.search(request):
+        return "next_stage"
     if has_screen_context and DEBRIEF_INTENT.search(request):
         return "debrief"
     if has_screen_context and SCREEN_COMPLETION.search(request):
