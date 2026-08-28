@@ -132,7 +132,11 @@ the print rendering stays tabular.
     <section class="debrief-card" aria-labelledby="coverage-title">
       <h2 id="coverage-title">{{COVERAGE_LABEL}}</h2>
       <ol class="debrief-coverage-list">{{COVERAGE}}</ol>
-      <p class="debrief-counts">{{DISCUSSED_COUNT}} · {{UNCLEAR_COUNT}}</p>
+      <dl class="debrief-counts" aria-label="{{COVERAGE_COUNTS_LABEL}}">
+        <div><dt>{{DISCUSSED_LABEL}}</dt><dd>{{DISCUSSED_COUNT}}</dd></div>
+        <div><dt>{{NOT_DISCUSSED_LABEL}}</dt><dd>{{NOT_DISCUSSED_COUNT}}</dd></div>
+        <div><dt>{{UNCLEAR_LABEL}}</dt><dd>{{UNCLEAR_COUNT}}</dd></div>
+      </dl>
     </section>
     <footer class="debrief-footer">
       <p>{{BOUNDARY}}</p>
@@ -184,8 +188,8 @@ the print rendering stays tabular.
         <div><dt>{{COMPANY_LABEL}}</dt><dd>{{COMPANY_STATE}}</dd></div>
         <div><dt>{{FACTS_LABEL}}</dt><dd>{{FACT_COUNT}}</dd></div>
       </dl>
-      <h3>{{REQUIREMENTS_LABEL}}</h3>
-      <ul class="screen-requirements">{{REQUIREMENTS}}</ul>
+      <h3 id="requirements-title">{{REQUIREMENTS_LABEL}}</h3>
+      <ul id="requirements-list" class="screen-requirements" aria-labelledby="requirements-title">{{REQUIREMENTS}}</ul>
     </section>
     <section class="screen-card" aria-labelledby="checks-title">
       <h2 id="checks-title">{{CHECKS_LABEL}}</h2>

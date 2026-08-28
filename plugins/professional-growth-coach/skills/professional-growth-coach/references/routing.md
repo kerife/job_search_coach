@@ -182,7 +182,11 @@ safe action and next-stage state → handoff action coherent, and enumerate the
 forward transition matrix. Runtime validation remains authoritative for
 snapshot hashes, dates, and cross-artifact equality; schema-valid input never
 authorizes preparation, messaging, scheduling, or another external action.
-schema-only acceptance is therefore not an authorization signal.
+schema-only acceptance is therefore not an authorization signal. The private
+screen-debrief schema also closes the embedded shortlist network plan, target
+rows, and delivery envelope with the same typed fields, bounds, enums, and
+authorization constants as the standalone shortlist contract; schema-only
+consumers reject malformed nested values before runtime validation.
 
 ## Recruiter reply and send-now routing
 

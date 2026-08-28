@@ -153,7 +153,10 @@ intake exactly. Its source receipt must be `screen_requested` or
 `interview_requested`, and the checkpoint and receipt locales must match;
 legacy checkpoints without that binding, incompatible receipt events, or locale
 drift recover artifact-free and are never combined silently. Schema-only
-acceptance never grants preparation or external-action authorization.
+acceptance never grants preparation or external-action authorization. The
+private debrief schema also types the nested shortlist network plan, target
+rows, and delivery envelope with closed bounds and authorization constants, so
+schema-only consumers reject malformed nested values before runtime validation.
 
 Completed checkpoints that route to preparation (`screen_prepared` or
 `interview_requested`) apply the same receipt gate: only a matching
@@ -225,7 +228,7 @@ link is rendered on a single line.
 The decision gate presents its missing-context guidance once, alongside the
 next-decision card, so the primary action is not repeated for sighted or screen
 reader users.
-At the tablet breakpoint, section anchors reserve space for the sticky reading path so each destination opens below the rail; the mobile breakpoint reserves `18rem` for its taller one-column rail.
+At the tablet breakpoint, section anchors reserve space for the sticky reading path so each destination opens below the rail; at the mobile breakpoint the rail becomes static and anchors use a compact `1rem` margin, avoiding overlap when labels wrap or text is zoomed.
 The career-market matrix uses the same labelled stacked-row treatment in print
 as on narrow screens, keeping multi-vacancy comparisons readable on paper
 without changing table semantics; its generated mobile/print labels explicitly

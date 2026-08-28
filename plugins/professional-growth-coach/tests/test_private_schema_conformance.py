@@ -168,6 +168,12 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
             empty_source = copy.deepcopy(debrief)
             empty_source[field] = {}
             self.assertTrue(validate_schema_instance(empty_source, schema))
+        invalid_delivery = copy.deepcopy(debrief)
+        invalid_delivery["source_intake"]["source_gate"]["source_shortlist"]["delivery"]["authorization_required"] = False
+        self.assertTrue(validate_schema_instance(invalid_delivery, schema))
+        invalid_target = copy.deepcopy(debrief)
+        invalid_target["source_intake"]["source_gate"]["source_shortlist"]["targets"][0]["target_id"] = {"raw": "T-001"}
+        self.assertTrue(validate_schema_instance(invalid_target, schema))
 
     def test_private_recruiter_next_stage_review_schema_matches_runtime(self):
         shortlist = build_shortlist("es", "2026-08-27", valid_plan(), valid_targets())

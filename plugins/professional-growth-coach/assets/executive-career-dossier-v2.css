@@ -85,12 +85,12 @@
 }
 
 @media screen and (max-width: 640px) {
-  .reading-path { align-items: stretch; flex-direction: column; }
+  .reading-path { position: static; align-items: stretch; flex-direction: column; }
   .reading-path ol { display: grid; grid-template-columns: 1fr; justify-content: stretch; }
   .reading-path a { justify-content: center; }
   .section-coverage-facts { grid-template-columns: 1fr; }
   .market-next-investigation-facts { grid-template-columns: 1fr; }
-  #section-coverage, #coach-priorities, #market-evidence, #screen-preparation { scroll-margin-top: 18rem; }
+  #section-coverage, #coach-priorities, #market-evidence, #screen-preparation { scroll-margin-top: 1rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
