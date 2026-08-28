@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T08:06:15-06:00`
+release_timestamp: `2026-08-28T08:32:47-06:00`
 
-source_commit: `84960f96e22bdc8f5bbc8a08641bbed1cb40bd01`
+source_commit: `1a6482d8d2dd2d7d9257690f26972fa320a341b8`
 
-source_tree: `9e350b0d0e4a1fdd614579ff9af00182d7ff09cc`
+source_tree: `98cf4ac0e21cc424fc2de0cb2fd6027cbc18ba06`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828080615`
+installed_cache_version: `0.2.0+codex.20260828083247`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `173`
 
 installed_file_count: `173`
 
-normalized_source_cache_sha256: `5139b2387ee7e1b1703b964dc33af1cd1b102b4fd416d7cab52b7dcd85e2bc87`
+normalized_source_cache_sha256: `d5f3758797580c76851cf16b81916eeaf92a38607e32e0000e2aaf45c47781df`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -209,6 +209,16 @@ installed_recruiter_gate_freshness_smoke: `1/1 installed screen-intake bridge do
 installed_shortlist_color_fallback_smoke: `1/1 installed priority card keeps a surface background fallback when color-mix is unsupported`
 
 installed_market_source_link_touch_target_smoke: `1/1 installed market source links retain a minimum 44px touch target with centered text`
+
+installed_recruiter_natural_contact_routing_smoke: `17/17 installed English/Spanish recruiter-contact and recruiter-interview phrasings route to needs_intake; generic technical interviews remain ordinary coaching and contact-shaped wording preserves authorization_required`
+
+installed_noncanonical_date_boundary_smoke: `4/4 installed market-learning, vacancy-research, learning-option, and executive-dossier validators reject alternate ISO calendar spellings while accepting YYYY-MM-DD`
+
+installed_market_summary_layout_smoke: `1/1 installed market scan summary uses three compact columns plus a full-width hiring-fit limitation with responsive, print, and forced-colors contracts`
+
+installed_market_source_accessibility_smoke: `5/5 installed source links expose unique aria-label names with Vn vacancy key, escaped employer, and escaped title without internal IDs`
+
+installed_shortlist_next_step_fallback_smoke: `1/1 installed shortlist next-step panel keeps a surface fallback before color-mix tint`
 
 fresh_agent_smoke: `not_run`
 
