@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T19:59:39-06:00`
+release_timestamp: `2026-08-27T20:13:02-06:00`
 
-source_commit: `45589d1a427a500489878172736bb0eec5f08e25`
+source_commit: `81475c639bfa39226b68de64bf8727ff9a35137e`
 
-source_tree: `ac76e9b16c214632d0471637d4b500d529bab5f9`
+source_tree: `0bdef0ca35c24640b0d2192246170674fb010560`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827195939`
+installed_cache_version: `0.2.0+codex.20260827201302`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `172`
 
 installed_file_count: `172`
 
-normalized_source_cache_sha256: `1f9cfdbcf79ea83a55ef378673c8b9276d539a6b087a00764e7af3b64c991169`
+normalized_source_cache_sha256: `46f4769d61c1056bf77dfaab387063f79f45024793ab3854dd59a344a2525c7c`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -77,6 +77,12 @@ installed_url_policy_smoke: `1/1 encoded LinkedIn path traversal rejected`
 installed_market_json_boundary_smoke: `5/5 market validators and builder reject excessive JSON nesting`
 
 installed_diagnostic_redaction_smoke: `6/6`
+
+installed_diagnostic_control_redaction_smoke: `3/3 zero-width, bidi, and newline field names stay opaque`
+
+installed_recruiter_gate_date_binding_smoke: `1/1 outer gate dates must match nested shortlist snapshots`
+
+installed_market_print_matrix_smoke: `1/1 multi-vacancy matrix stacks labelled rows for paper readability`
 
 installed_descriptor_boundary_smoke: `6/6`
 
