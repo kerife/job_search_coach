@@ -602,7 +602,7 @@ def route_recruiter_screen_intake(
     try:
         artifact = SCREEN_INTAKE_BUILDER.build_screen_intake(gate, target_id, context)
         rendered_html = SCREEN_INTAKE_RENDERER.render_screen_intake_html(artifact)
-    except (TypeError, ValueError):
+    except (RecursionError, TypeError, ValueError):
         return _artifact_free_intake(
             "recruiter_target_screen_intake",
             selected_module="prepare-role-interviews",

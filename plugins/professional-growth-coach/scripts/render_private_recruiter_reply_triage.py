@@ -50,7 +50,18 @@ def _load_validator() -> Any:
     return module
 
 
+def _load_continuity_rail() -> Any:
+    path = Path(__file__).with_name("recruiter_continuity_rail.py")
+    specification = importlib.util.spec_from_file_location("private_recruiter_continuity_rail", path)
+    if specification is None or specification.loader is None:
+        raise RuntimeError("recruiter continuity rail is unavailable")
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    return module
+
+
 VALIDATOR = _load_validator()
+CONTINUITY_RAIL = _load_continuity_rail()
 
 
 class TriageValidationError(ValueError):
@@ -387,13 +398,18 @@ def _validate(triage: Mapping[str, object]) -> Mapping[str, object]:
     return triage
 
 
-def _render_header(locale: str) -> str:
+def _render_header(locale: str, state: str) -> str:
     labels = COPY[locale]
+    rail_label, rail_items = CONTINUITY_RAIL.render_triage_continuity_rail(locale, state)
     return f'''<a class="skip-link" href="#main-content">{labels["skip"]}</a>
   <header class="triage-header triage-shell">
     <p class="triage-kicker">{labels["kicker"]}</p>
     <h1 id="triage-title">{labels["heading"]}</h1>
-  </header>'''
+  </header>
+  <section class="triage-continuity triage-shell" aria-labelledby="triage-continuity-title">
+    <p id="triage-continuity-title" class="triage-continuity-label">{rail_label}</p>
+    <ol class="triage-continuity-list">{rail_items}</ol>
+  </section>'''
 
 
 def _render_main(
@@ -448,7 +464,7 @@ def _render_main(
               <p>{labels[CLASSIFICATION_FOCUS_KEYS[classification]]}</p>
             </section>
           </li>
-          <li data-state="pending" aria-current="step"><span class="triage-handoff-step-label">{handoff_states[2]} · {labels["sequence_reentry"]}</span>
+          <li data-state="pending"><span class="triage-handoff-step-label">{handoff_states[2]} · {labels["sequence_reentry"]}</span>
             <section class="triage-handoff-next-step" aria-labelledby="handoff-next-step-title">
               <h3 id="handoff-next-step-title">{labels["next_step"]}</h3>
               <p>{labels["next_step_text"]}</p>
@@ -555,7 +571,7 @@ def render_triage_html(triage: Mapping[str, object]) -> str:
         "{{LANG}}": locale,
         "{{TITLE}}": COPY[locale]["title"],
         "{{INLINE_CSS}}": ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, CSS_PATH),
-        "{{HEADER}}": _render_header(locale),
+        "{{HEADER}}": _render_header(locale, _text(validated["state"])),
         "{{MAIN}}": _render_main(validated, locale, content_locale),
     }
     return STATIC_TEMPLATE_TOKEN.sub(lambda match: substitutions[match.group(0)], template)

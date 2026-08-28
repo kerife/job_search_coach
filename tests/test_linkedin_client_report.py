@@ -1836,6 +1836,10 @@ class LinkedInClientReportSafetyTests(unittest.TestCase):
                 self.assertTrue(errors)
                 self.assertNotIn(value, "\n".join(errors))
 
+    def test_candidate_facing_text_rejects_control_obfuscated_dangerous_schemes(self) -> None:
+        errors = validator.validate_candidate_facing_text('<a href="java\t\tscript:alert(1)">open</a>')
+        self.assertIn("client report contains dangerous URL scheme", errors)
+
     def test_report_rejects_cross_candidate_identifiers_in_visible_and_normal_appendix_prose(self) -> None:
         foreign_bundle = self.bundle("scenario-b.json")
         tokens = (

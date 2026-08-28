@@ -29,8 +29,8 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
             rendered = renderer.render_triage_html(value)
             sequence = rendered.split('<ol class="triage-handoff-sequence"', 1)[1].split("</ol>", 1)[0]
             self.assertIn('data-state="recorded"', sequence)
-            self.assertIn('data-state="pending" aria-current="step"', sequence)
-            self.assertEqual(1, sequence.count('aria-current="step"'))
+            self.assertIn('data-state="pending"', sequence)
+            self.assertEqual(0, sequence.count('aria-current="step"'))
             self.assertNotIn("D-104", sequence)
             self.assertNotIn("F-105", sequence)
 

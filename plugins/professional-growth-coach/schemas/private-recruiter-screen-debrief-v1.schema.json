@@ -24,7 +24,7 @@
     "delivery": {"type": "object", "additionalProperties": false, "required": ["draft_only", "external_actions_authorized", "no_message_action", "no_calendar_action", "raw_transcript_retained", "local_save_mode"], "properties": {"draft_only": {"const": true}, "external_actions_authorized": {"const": false}, "no_message_action": {"const": true}, "no_calendar_action": {"const": true}, "raw_transcript_retained": {"const": false}, "local_save_mode": {"const": "disabled"}}}
   },
   "allOf": [
-    {"if": {"properties": {"decision": {"const": "continue_review"}}, "required": ["decision"]}, "then": {"properties": {"measurement_event": {"const": "next_stage_review"}, "handoff": {"properties": {"next_safe_action": {"const": "manual_prepare_next_stage_review"}}}}}},
+    {"if": {"properties": {"decision": {"const": "continue_review"}}, "required": ["decision"]}, "then": {"properties": {"measurement_event": {"const": "next_stage_review"}, "unknown_topics": {"maxItems": 0}, "coverage": {"not": {"contains": {"properties": {"status": {"enum": ["not_discussed", "unclear"]}}, "required": ["status"]}}}, "handoff": {"properties": {"next_safe_action": {"const": "manual_prepare_next_stage_review"}}}}}},
     {"if": {"properties": {"decision": {"const": "pause"}}, "required": ["decision"]}, "then": {"properties": {"measurement_event": {"const": "debrief_context"}, "handoff": {"properties": {"next_safe_action": {"const": "collect_debrief_context"}}}}}},
     {"if": {"properties": {"decision": {"const": "stop"}}, "required": ["decision"]}, "then": {"properties": {"measurement_event": {"const": "stop_decision"}, "handoff": {"properties": {"next_safe_action": {"const": "record_stop_decision"}}}}}}
   ],

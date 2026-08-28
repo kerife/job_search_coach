@@ -160,6 +160,10 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         invalid = copy.deepcopy(debrief)
         invalid["handoff"]["next_safe_action"] = "route_to_prepare-role-interviews"
         self.assertTrue(validate_schema_instance(invalid, schema))
+        impossible = copy.deepcopy(debrief)
+        impossible["coverage"][0]["status"] = "unclear"
+        impossible["unknown_topics"] = ["Decision criteria remain unknown."]
+        self.assertTrue(validate_schema_instance(impossible, schema))
         for field in ("source_receipt", "source_checkpoint", "source_intake"):
             empty_source = copy.deepcopy(debrief)
             empty_source[field] = {}

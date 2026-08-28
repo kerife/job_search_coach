@@ -18,11 +18,12 @@ SCRIPTS = ROOT / "plugins" / "professional-growth-coach" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 from build_recruiter_target_shortlist import _write_private_json, build_shortlist  # noqa: E402
+from build_recruiter_target_decision_gate import build_decision_gate  # noqa: E402
 from render_recruiter_target_shortlist import _cli as render_cli, render_shortlist_html, write_shortlist_html  # noqa: E402
 from validate_recruiter_target_shortlist import validate_shortlist  # noqa: E402
 
 
-from route_recruiter_target_shortlist import route_recruiter_request  # noqa: E402
+from route_recruiter_target_shortlist import route_recruiter_request, route_recruiter_screen_intake  # noqa: E402
 
 
 def valid_plan() -> dict[str, object]:
@@ -101,6 +102,16 @@ def valid_targets() -> list[dict[str, object]]:
 
 
 class RecruiterTargetShortlistTests(unittest.TestCase):
+    def test_screen_intake_router_fails_closed_for_deeply_nested_context(self) -> None:
+        gate = build_decision_gate(build_shortlist("en", "2026-08-27", valid_plan(), valid_targets()))
+        nested: object = {}
+        for _ in range(500):
+            nested = {"nested": nested}
+        routed = route_recruiter_screen_intake(gate, "T-001", {"nested": nested})
+        self.assertEqual("recruiter_target_screen_intake", routed["route_kind"])
+        self.assertEqual("needs_intake", routed["case_state"])
+        self.assertIsNone(routed["artifact"])
+
     def test_builder_returns_deterministic_closed_private_artifact(self) -> None:
         built = build_shortlist("es", "2026-08-27", valid_plan(), valid_targets())
         self.assertEqual([], validate_shortlist(built, as_of=date(2026, 8, 27)))

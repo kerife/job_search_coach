@@ -119,6 +119,14 @@ class PrivateRecruiterReplyTriageRendererTests(unittest.TestCase):
                 self.assertNotIn("<link ", document)
                 self.assertNotIn("<script", document)
 
+    def test_all_triage_states_expose_one_static_continuity_marker(self) -> None:
+        for name, triage in self.fixtures.items():
+            with self.subTest(fixture=name):
+                document = self.renderer.render_triage_html(triage)
+                self.assertEqual(1, document.count('class="triage-continuity triage-shell"'))
+                self.assertEqual(1, document.count('aria-current="step"'))
+                self.assertIn("triage-continuity-list", document)
+
     def test_question_surface_matches_decision_state_without_duplicate_prompts(self) -> None:
         for name, triage in self.fixtures.items():
             with self.subTest(fixture=name):
