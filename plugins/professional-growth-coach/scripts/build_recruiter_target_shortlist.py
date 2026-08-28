@@ -14,6 +14,8 @@ import stat
 import sys
 from collections.abc import Mapping, Sequence
 from pathlib import Path
+
+from canonical_date import parse_canonical_date
 from typing import Any
 
 
@@ -50,7 +52,7 @@ def build_shortlist(
 ) -> dict[str, object]:
     """Return a closed shortlist; target order is score-descending and deterministic."""
     try:
-        reference_date = dt.date.fromisoformat(as_of_date)
+        reference_date = parse_canonical_date(as_of_date, field="as_of_date")
     except ValueError as error:
         raise ValueError("as_of_date must be an ISO date") from error
     if reference_date > dt.date.today():

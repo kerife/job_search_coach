@@ -14,6 +14,8 @@ import stat
 import sys
 from collections.abc import Mapping
 from pathlib import Path
+
+from canonical_date import parse_canonical_date
 from typing import Any
 
 
@@ -90,7 +92,7 @@ def build_decision_gate(
     as_of_date = shortlist.get("as_of_date")
     if not isinstance(as_of_date, str):
         raise ValueError("source shortlist date is unavailable")
-    reference_date = dt.date.fromisoformat(as_of_date)
+    reference_date = parse_canonical_date(as_of_date, field="as_of_date")
     if reference_date > dt.date.today():
         raise ValueError("source shortlist date cannot be in the future")
     if screen_context is not None:

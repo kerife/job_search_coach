@@ -11,6 +11,8 @@ import json
 import sys
 from collections.abc import Mapping
 from pathlib import Path
+
+from canonical_date import parse_canonical_date
 from typing import Any
 
 
@@ -59,7 +61,7 @@ def build_screen_debrief(
         raise ValueError("screen debrief inputs are unavailable")
     observed_value = debrief.get("observed_date")
     try:
-        observed_date = dt.date.fromisoformat(str(observed_value))
+        observed_date = parse_canonical_date(observed_value, field="observed_date")
     except ValueError as error:
         raise ValueError("debrief date is unavailable") from error
     if observed_date > dt.date.today():

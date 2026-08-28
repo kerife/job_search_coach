@@ -12,6 +12,8 @@ import re
 import sys
 from collections.abc import Mapping
 from pathlib import Path
+
+from canonical_date import date_arg, parse_canonical_date
 from typing import Any
 
 SCHEMA_VERSION = "private-recruiter-next-stage-review-v1"
@@ -80,7 +82,7 @@ def _date(value: object, path: str, errors: list[str], as_of: dt.date | None) ->
         errors.append(f"{path} must be an ISO date")
         return None
     try:
-        parsed = dt.date.fromisoformat(value)
+        parsed = parse_canonical_date(value, field=path)
     except ValueError:
         errors.append(f"{path} must be an ISO date")
         return None
@@ -145,7 +147,7 @@ def validate_next_stage_review(value: object, debrief: Mapping[str, object] | No
         if item.get("unknown_topics") != debrief.get("unknown_topics"):
             errors.append("unknown_topics does not match source debrief")
         try:
-            if dt.date.fromisoformat(str(item.get("observed_date"))) < dt.date.fromisoformat(str(debrief.get("observed_date"))):
+            if parse_canonical_date(item.get("observed_date"), field="observed_date") < parse_canonical_date(debrief.get("observed_date"), field="source_debrief.observed_date"):
                 errors.append("observed_date cannot precede source debrief")
         except ValueError:
             pass
@@ -221,7 +223,7 @@ def validate_next_stage_review(value: object, debrief: Mapping[str, object] | No
 
 def _cli(argv: list[str] | None = None) -> int:
     parser = _PrivateArgumentParser(description="Validate a private next-stage review.")
-    parser.add_argument("input", type=Path); parser.add_argument("--debrief", type=Path, required=True); parser.add_argument("--receipt", type=Path, required=True); parser.add_argument("--intake", type=Path, required=True); parser.add_argument("--checkpoint", type=Path, required=True); parser.add_argument("--as-of", required=True, type=dt.date.fromisoformat)
+    parser.add_argument("input", type=Path); parser.add_argument("--debrief", type=Path, required=True); parser.add_argument("--receipt", type=Path, required=True); parser.add_argument("--intake", type=Path, required=True); parser.add_argument("--checkpoint", type=Path, required=True); parser.add_argument("--as-of", required=True, type=date_arg)
     try:
         args = parser.parse_args(argv)
         read = lambda path: json.loads(LOADER.read_bounded_bytes(path, 128_000), object_pairs_hook=_unique)

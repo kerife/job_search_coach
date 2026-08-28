@@ -11,6 +11,8 @@ import re
 import sys
 from collections.abc import Mapping
 from pathlib import Path
+
+from canonical_date import date_arg, parse_canonical_date
 from typing import Any
 
 
@@ -105,7 +107,7 @@ def _date(value: object, path: str, errors: list[str], reference: dt.date | None
         errors.append(f"{path} must be an ISO date")
         return None
     try:
-        parsed = dt.date.fromisoformat(value)
+        parsed = parse_canonical_date(value, field=path)
     except ValueError:
         errors.append(f"{path} must be an ISO date")
         return None
@@ -247,7 +249,7 @@ def validate_shortlist(value: object, *, as_of: dt.date | None = None) -> list[s
 def _cli(argv: list[str] | None = None) -> int:
     parser = _PrivateArgumentParser(description="Validate a private recruiter target shortlist.")
     parser.add_argument("input", type=Path)
-    parser.add_argument("--as-of", required=True, type=dt.date.fromisoformat)
+    parser.add_argument("--as-of", required=True, type=date_arg)
     try:
         args = parser.parse_args(argv)
     except (_ArgumentError, ValueError):

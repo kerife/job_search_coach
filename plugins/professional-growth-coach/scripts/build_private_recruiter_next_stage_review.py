@@ -11,6 +11,8 @@ import json
 import sys
 from collections.abc import Mapping
 from pathlib import Path
+
+from canonical_date import parse_canonical_date
 from typing import Any
 
 
@@ -60,7 +62,7 @@ def build_next_stage_review(
         raise ValueError("next-stage inputs are unavailable")
     observed_value = debrief.get("observed_date")
     try:
-        observed = dt.date.fromisoformat(str(observed_value))
+        observed = parse_canonical_date(observed_value, field="observed_date")
     except ValueError as error:
         raise ValueError("debrief date is unavailable") from error
     if observed > dt.date.today():

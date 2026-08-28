@@ -12,6 +12,8 @@ import re
 import sys
 from collections.abc import Mapping
 from pathlib import Path
+
+from canonical_date import date_arg, parse_canonical_date
 from typing import Any
 
 
@@ -106,7 +108,7 @@ def _date(value: object, path: str, errors: list[str], as_of: dt.date | None) ->
         errors.append(f"{path} must be an ISO date")
         return None
     try:
-        parsed = dt.date.fromisoformat(value)
+        parsed = parse_canonical_date(value, field=path)
     except ValueError:
         errors.append(f"{path} must be an ISO date")
         return None
@@ -218,7 +220,7 @@ def validate_screen_debrief(
         errors.append("source_snapshot does not match source intake")
     if observed is not None and isinstance(checkpoint, Mapping):
         try:
-            checkpoint_date = dt.date.fromisoformat(str(checkpoint.get("observed_date")))
+            checkpoint_date = parse_canonical_date(checkpoint.get("observed_date"), field="checkpoint.observed_date")
             if observed < checkpoint_date:
                 errors.append("observed_date cannot precede checkpoint date")
         except ValueError:
@@ -307,7 +309,7 @@ def _cli(argv: list[str] | None = None) -> int:
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--receipt", type=Path, required=True)
     parser.add_argument("--intake", type=Path, required=True)
-    parser.add_argument("--as-of", required=True, type=dt.date.fromisoformat)
+    parser.add_argument("--as-of", required=True, type=date_arg)
     try:
         args = parser.parse_args(argv)
         value = json.loads(LOADER.read_bounded_bytes(args.input, 128_000), object_pairs_hook=_unique)

@@ -111,7 +111,7 @@ Dependencies:
 - `plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.html`
 - `plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css`
 
-The shortlist route is intentionally static and offline: `route_recruiter_request` runs the builder → validator → renderer chain and returns both the validated artifact and private in-memory HTML; no network or external-action surface is part of the page. The header exposes a localized semantic review date, and a single prominent batch next-step panel maps `advance`, `clarify`, `pause`, or `stop` to fixed manual guidance without creating a control. Missing target context returns one bounded intake question instead.
+The shortlist route is intentionally static and offline: `route_recruiter_request` runs the builder → validator → renderer chain and returns both the validated artifact and private in-memory HTML; no network or external-action surface is part of the page. Its recruiter dates require canonical `YYYY-MM-DD` input, the header exposes a localized semantic review date, and a single prominent batch next-step panel maps `advance`, `clarify`, `pause`, or `stop` to fixed manual guidance without creating a control. Missing target context returns one bounded intake question instead.
 
 ## /recruiter-target-decision-gate (offline artifact)
 
@@ -165,7 +165,7 @@ Dependencies:
 
 The review requires a manually selected forward stage transition and a validated source debrief. It renders localized current-stage → target-stage labels in the header plus a three-topic checklist with ready/blocked state; when blocked, a structured “clarify before continuing” list names only the pending topics. The route returns the same private in-memory HTML contract for ready, blocked, and terminal stop artifacts. It preserves the source snapshot and replay binding, and exposes no raw answers or external controls.
 
-The five recruiter target surfaces share a localized, non-interactive continuity rail rendered by `scripts/recruiter_continuity_rail.py`. It lists shortlist, decision gate, screen intake, screen debrief, and next-stage review, marks only the current surface with `aria-current="step"`, and remains identity-free, responsive, print-safe, forced-colors-safe, and offline. It is an orientation aid only: it does not infer completed stages or expose links or actions.
+The five recruiter target surfaces share a localized, non-interactive continuity rail rendered by `scripts/recruiter_continuity_rail.py`. It lists shortlist, decision gate, screen intake, screen debrief, and next-stage review, marks only the current surface with `aria-current="step"`, and remains identity-free, responsive, print-safe, forced-colors-safe, and offline. Its visible label now states that the rail is orientation only and does not indicate progress or contact; it does not infer completed stages or expose links or actions.
 
 Outcome and follow-through receipts share a non-interactive continuity rail:
 the supplied observation/receipt is `recorded`, one manual safe step is

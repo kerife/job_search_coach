@@ -11,6 +11,8 @@ import json
 import sys
 from collections.abc import Mapping
 from pathlib import Path
+
+from canonical_date import parse_canonical_date
 from typing import Any
 
 
@@ -61,8 +63,8 @@ def build_screen_intake(gate: Mapping[str, object], target_id: str, context: Map
     intake_context = copy.deepcopy(dict(context))
     source_date = intake_context.get("source_date")
     try:
-        reference_date = dt.date.fromisoformat(str(gate["as_of_date"]))
-        parsed_source_date = dt.date.fromisoformat(str(source_date))
+        reference_date = parse_canonical_date(gate["as_of_date"], field="as_of_date")
+        parsed_source_date = parse_canonical_date(source_date, field="source_date")
         if parsed_source_date > reference_date:
             raise ValueError("screen intake date is in the future")
     except ValueError as error:

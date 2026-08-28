@@ -12,6 +12,8 @@ import re
 import sys
 from collections.abc import Mapping
 from pathlib import Path
+
+from canonical_date import date_arg, parse_canonical_date
 from typing import Any
 
 
@@ -128,7 +130,7 @@ def _date(value: object, path: str, errors: list[str], reference: dt.date | None
         errors.append(f"{path} must be an ISO date")
         return
     try:
-        parsed = dt.date.fromisoformat(value)
+        parsed = parse_canonical_date(value, field=path)
     except ValueError:
         errors.append(f"{path} must be an ISO date")
         return
@@ -274,7 +276,7 @@ def validate_decision_gate(value: object, *, as_of: dt.date | None = None) -> li
 def _cli(argv: list[str] | None = None) -> int:
     parser = _PrivateArgumentParser(description="Validate a private recruiter target decision gate.")
     parser.add_argument("input", type=Path)
-    parser.add_argument("--as-of", required=True, type=dt.date.fromisoformat)
+    parser.add_argument("--as-of", required=True, type=date_arg)
     try:
         args = parser.parse_args(argv)
         def _unique(pairs: list[tuple[str, object]]) -> dict[str, object]:

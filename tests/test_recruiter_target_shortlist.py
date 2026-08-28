@@ -206,6 +206,18 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_shortlist("en", "2999-01-01", valid_plan(), valid_targets())
 
+    def test_recruiter_dates_require_canonical_calendar_form(self) -> None:
+        for value in ("2026-W32-1", "2026-08-03T00:00:00"):
+            with self.subTest(value=value):
+                with self.assertRaises(ValueError):
+                    build_shortlist("en", value, valid_plan(), valid_targets())
+        built = build_shortlist("en", "2026-08-03", valid_plan(), valid_targets())
+        built["as_of_date"] = "2026-W32-1"
+        self.assertIn(
+            "as_of_date must be an ISO date",
+            validate_shortlist(built, as_of=date(2026, 8, 27)),
+        )
+
     def test_renderer_localizes_safe_actions_and_shows_decision_counts(self) -> None:
         value = build_shortlist("es", "2026-08-27", valid_plan(), valid_targets())
         rendered = render_shortlist_html(value)
