@@ -464,6 +464,7 @@ html { color-scheme: light; background: var(--paper); }
     break-inside: avoid;
     page-break-inside: avoid;
   }
+  .recruiter-practice-document .continuity-rail-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .recruiter-practice-document .continuity-rail--feedback-available .continuity-step--pending,
   .recruiter-practice-document .continuity-rail--feedback-available .continuity-step--blocked {
     background: transparent;

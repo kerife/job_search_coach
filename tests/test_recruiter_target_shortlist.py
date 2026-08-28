@@ -894,6 +894,22 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual("collect_debrief_context", routed["next_action"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_root_route_keeps_negative_screening_paraphrases_before_next_stage(self) -> None:
+        for request, locale in (
+            ("I failed the recruiter screening.", "en"),
+            ("I didn't get past the recruiter screen.", "en"),
+            ("The recruiter moved forward with another candidate.", "en"),
+            ("I got a no from recruiting after the screen; what should I do?", "en"),
+            ("No pasé el filtro con el reclutador.", "es"),
+            ("La reclutadora siguió con otra persona después del filtro.", "es"),
+        ):
+            routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+            with self.subTest(request=request):
+                self.assertEqual("private_recruiter_screen_debrief", routed["route_kind"])
+                self.assertEqual("track-career-outcomes", routed["selected_module"])
+                self.assertEqual("collect_debrief_context", routed["next_action"])
+                self.assertIsNone(routed["artifact"])
+
     def test_fallback_recruiter_action_synonyms_preserve_authorization_requirement(self) -> None:
         for request in (
             "Can you write back to the recruiter?",

@@ -83,3 +83,14 @@ class RecruiterContinuityRailTests(unittest.TestCase):
             with self.subTest(filename=filename):
                 css = (ROOT / "plugins/professional-growth-coach/assets" / filename).read_text(encoding="utf-8")
                 self.assertIn(f"{selector} {{ margin: .15rem 0 0; font-weight: 600; overflow-wrap: anywhere; }}", css)
+
+    def test_compact_and_practice_rails_use_two_print_columns(self) -> None:
+        for filename in (
+            "recruiter-practice-session-v1.css",
+            "private-recruiter-conversion-outcome-v1.css",
+            "private-recruiter-followthrough-checkpoint-v1.css",
+        ):
+            with self.subTest(filename=filename):
+                css = (ROOT / "plugins/professional-growth-coach/assets" / filename).read_text(encoding="utf-8")
+                print_block = css.split("@media print", 1)[-1]
+                self.assertIn(".continuity-rail-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }", print_block)

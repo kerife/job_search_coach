@@ -91,6 +91,13 @@ reply triage; future or not-yet-attended screens remain preparation intake. The
 screen-intake renderer strips internal `V-###` requirement keys from HTML while
 retaining them in validated source data.
 
+Negative screening paraphrases such as “I failed the recruiter screening”, “I
+didn’t get past the recruiter screen”, “I got a no from recruiting after the
+screen”, “the recruiter moved forward with another candidate”, “no pasé el
+filtro”, and “siguió con otra persona” keep negative-outcome precedence and
+enter the artifact-free private debrief route. They do not become a next-stage
+review or ordinary coaching request.
+
 The same preparation boundary covers explicit non-attendance such as “I never
 went to the recruiter interview”, “I didn’t go to the recruiter screen”,
 “Nunca fui a la entrevista con el reclutador”, “No fui”, “No me presenté”, and
@@ -487,6 +494,8 @@ screen now enter the same artifact-free debrief route, preserving the
 candidate-observation boundary and keeping explicit non-attendance in screen
 intake. Print styles retain `overflow-wrap: anywhere` for long target/company
 names in all five rail surfaces.
+The three compact/practice rail styles also switch to two columns in print,
+matching the paper layout used by the five-step review rails.
 The two terminal receipt fact lists also apply `overflow-wrap: anywhere` to
 their values, keeping bounded labels readable at narrow widths and in print.
 
