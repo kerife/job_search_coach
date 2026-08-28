@@ -32,7 +32,7 @@ source_file_count: `173`
 
 installed_file_count: `173`
 
-normalized_source_cache_sha256: `d5f3758797580c76851cf16b81916eeaf92a38607e32e0000e2aaf45c47781df`
+normalized_source_cache_sha256: `60d11554d3a0820380d2ae4a58df71f5b581033e0e8fdae61948d5a9fe44b3b6`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
