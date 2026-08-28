@@ -23,6 +23,16 @@ TEMPLATE_PATH = ASSET_ROOT / "recruiter-target-shortlist-v1.html"
 CSS_PATH = ASSET_ROOT / "recruiter-target-shortlist-v1.css"
 
 
+class _ArgumentError(ValueError):
+    """Raised without reflecting private command-line values."""
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        del message
+        raise _ArgumentError
+
+
 def _load_loader() -> Any:
     path = Path(__file__).with_name("private_input_loader.py")
     spec = importlib.util.spec_from_file_location("recruiter_target_shortlist_loader", path)
@@ -290,11 +300,11 @@ def write_shortlist_html(value: Mapping[str, object], output: Path) -> None:
 
 
 def _cli(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Render a private recruiter target shortlist.")
+    parser = _PrivateArgumentParser(description="Render a private recruiter target shortlist.")
     parser.add_argument("input", type=Path)
     parser.add_argument("output", type=Path)
-    args = parser.parse_args(argv)
     try:
+        args = parser.parse_args(argv)
         def _unique(pairs: list[tuple[str, object]]) -> dict[str, object]:
             result: dict[str, object] = {}
             for key, value in pairs:

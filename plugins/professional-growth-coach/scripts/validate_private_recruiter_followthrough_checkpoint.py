@@ -237,6 +237,8 @@ def validate_checkpoint(value: object, receipt: object, *, as_of: dt.date | None
         errors.append("artifact_kind has invalid value")
     if not _enum(item.get("locale"), {"en", "es"}):
         errors.append("locale has invalid value")
+    elif _enum(receipt.get("locale"), {"en", "es"}) and item.get("locale") != receipt.get("locale"):
+        errors.append("locale does not match receipt")
     source = _closed(item.get("source_receipt"), "source_receipt", SOURCE_FIELDS, errors)
     if source is not None:
         if not isinstance(source.get("id"), str) or not re.fullmatch(r"D-\d{3}", source.get("id", "")):
@@ -266,6 +268,8 @@ def validate_checkpoint(value: object, receipt: object, *, as_of: dt.date | None
                 errors.append("target_binding.source_gate_snapshot has invalid value")
     if _enum(state, {"accepted", "deferred", "declined"}) and event != "unknown":
         errors.append("non-completed action_state requires next_measurement_event=unknown")
+    if event == "screen_attended" and source is not None and source.get("event_type") not in {"screen_requested", "interview_requested"}:
+        errors.append("screen_attended requires a screen_requested or interview_requested receipt")
     receipt_date = None
     try:
         receipt_date = dt.date.fromisoformat(str(receipt.get("event_date", "")))

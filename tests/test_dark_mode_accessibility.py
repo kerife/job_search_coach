@@ -115,7 +115,7 @@ class DarkModeAccessibilityTests(unittest.TestCase):
         for filename, accent, marker_ink in cases:
             with self.subTest(filename=filename):
                 css = (ASSETS / filename).read_text(encoding="utf-8")
-                dark = css[css.index("@media (prefers-color-scheme: dark)"):css.index("@media print")]
+                dark = css[css.index("@media screen and (prefers-color-scheme: dark)"):css.index("@media print")]
                 self.assertIn(f"--continuity-marker-ink: {marker_ink};", dark)
                 self.assertIn("color: var(--continuity-marker-ink);", css)
                 self.assertGreaterEqual(_contrast(accent, marker_ink), 4.5)
@@ -135,6 +135,23 @@ class DarkModeAccessibilityTests(unittest.TestCase):
                 self.assertIn(".continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); }", css)
                 self.assertIn(".continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }", css[css.index("@media print"):])
                 self.assertIn(".continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; }", css[css.index("@media print"):])
+
+    def test_recruiter_dark_tokens_are_screen_only_and_print_resets_to_light(self) -> None:
+        surfaces = (
+            "recruiter-target-shortlist-v1.css",
+            "recruiter-target-decision-gate-v1.css",
+            "recruiter-target-screen-intake-v1.css",
+            "private-recruiter-screen-debrief-v1.css",
+            "private-recruiter-next-stage-review-v1.css",
+        )
+        for filename in surfaces:
+            with self.subTest(filename=filename):
+                css = (ASSETS / filename).read_text(encoding="utf-8")
+                self.assertIn("@media screen and (prefers-color-scheme: dark)", css)
+                print_css = css[css.index("@media print"):]
+                self.assertRegex(print_css, r"color-scheme\s*:\s*light")
+                self.assertRegex(print_css, r"background\s*:\s*#fff(?:fff)?")
+                self.assertIn("page-break-inside: avoid", print_css)
 
     def test_forced_colors_keeps_footer_boundary_readable(self) -> None:
         selectors = {

@@ -15,7 +15,7 @@
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--canvas); color: var(--ink); font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+body { margin: 0; background: var(--canvas); color: var(--ink); font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; overflow-wrap: anywhere; }
 .gate-shell { width: min(100% - 2rem, 58rem); margin: 0 auto; padding: 2rem 0 3rem; }
 .skip-link { position: absolute; left: .75rem; top: .75rem; transform: translateY(-180%); background: var(--ink); color: var(--surface); padding: .65rem .8rem; font-weight: 700; }
 .skip-link:focus { transform: translateY(0); }
@@ -61,7 +61,7 @@ dd { margin: .2rem 0 0; }
   .gate-date { margin-top: .5rem; }
   .gate-overview-grid, .gate-counts, .gate-row-facts { grid-template-columns: 1fr; }
 }
-@media (prefers-color-scheme: dark) {
+@media screen and (prefers-color-scheme: dark) {
   :root { --canvas: var(--dark-canvas); --surface: var(--dark-surface); --ink: var(--dark-ink); --muted: var(--dark-muted); --line: #5f718e; --accent: #8eb2ff; --continuity-marker-ink: #101a35; --accent-soft: #b8c4d8; }
   .gate-card, .gate-row { box-shadow: none; }
 }
@@ -76,6 +76,7 @@ dd { margin: .2rem 0 0; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 @media print {
+  html { color-scheme: light; }
   body { background: #fff; color: #000; }
   .gate-shell { width: 100%; padding: 0; }
   .gate-card, .gate-row { box-shadow: none; break-inside: avoid; }
@@ -95,4 +96,4 @@ dd { margin: .2rem 0 0; }
 @media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
-@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
+@media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }

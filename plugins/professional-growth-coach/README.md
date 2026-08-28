@@ -57,9 +57,11 @@ stage transitions as the runtime taxonomy. Runtime validation remains
 authoritative for dates, hashes, and cross-artifact provenance. A
 `screen_attended` checkpoint also carries the identity-free `target_binding`
 (`T-###` plus the shortlist snapshot) and must match the target-specific
-intake exactly; legacy checkpoints without that binding recover artifact-free
-and are never combined silently. Schema-only acceptance never grants
-preparation or external-action authorization.
+intake exactly. Its source receipt must be `screen_requested` or
+`interview_requested`, and the checkpoint and receipt locales must match;
+legacy checkpoints without that binding, incompatible receipt events, or locale
+drift recover artifact-free and are never combined silently. Schema-only
+acceptance never grants preparation or external-action authorization.
 
 After a validated `screen_attended` checkpoint, `route_recruiter_screen_debrief_intake` starts an artifact-free, bilingual debrief intake that carries the validated checkpoint/receipt/intake boundary forward and asks only for requirement coverage, scope, and team context. It accepts both `screen_requested` and `interview_requested` receipts, preserving event-specific copy without inferring a stage. `route_recruiter_screen_debrief` then builds `private-recruiter-screen-debrief-v1` once that structured context is supplied. The private bilingual debrief records only structured coverage, unknown topics, supported facts used, and a manual `continue_review|pause|stop` decision. Complete coverage returns `ready` for `manual_prepare_next_stage_review`; incomplete coverage returns `needs_intake` for context collection, while a stop decision returns terminal `stopped` with `record_stop_decision`. No raw conversation text, contacts, messages, calendar actions, automatic preparation, or outcome prediction is retained.
 
@@ -97,8 +99,8 @@ artifact itself.
 Bounded JSON validators and market-dossier builders also reject duplicate
 keys, oversized integers, and excessive nesting before validation or output;
 their command-line failures stay opaque and never echo supplied content. All
-private validators and renderers apply the same boundary to unknown CLI
-arguments: they return the fixed `invalid_arguments` diagnostic without
+private builders, validators, and renderers apply the same boundary to unknown
+CLI arguments: they return the fixed `invalid_arguments` diagnostic without
 reflecting the rejected value. The LinkedIn client-report validator also caps
 multi-error stderr at the shared 16 KiB diagnostic budget and emits a stable
 truncation marker, so malformed private fixtures cannot flood a terminal or

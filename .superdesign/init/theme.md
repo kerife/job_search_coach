@@ -691,7 +691,7 @@ details summary {
 ```css
 :root { color-scheme: light dark; --next-bg: #f5f7fa; --next-surface: #fff; --next-text: #16202a; --next-muted: #52606d; --next-accent: #126782; --next-border: #c8d2dc; --next-blocked: #8a4b08; }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--next-bg); color: var(--next-text); font: 16px/1.55 system-ui, -apple-system, sans-serif; }
+body { margin: 0; background: var(--next-bg); color: var(--next-text); font: 16px/1.55 system-ui, -apple-system, sans-serif; overflow-wrap: anywhere; }
 .skip-link { position: absolute; left: 1rem; top: -4rem; background: var(--next-text); color: var(--next-surface); padding: .5rem .75rem; border-radius: .25rem; }
 .skip-link:focus { top: 1rem; }
 .next-stage-shell { max-width: 52rem; margin: 0 auto; padding: 2rem 1rem 3rem; }
@@ -720,8 +720,8 @@ h2 { margin-top: 0; font-size: 1.2rem; }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
 @media (forced-colors: active) { .next-stage-card { border: 2px solid CanvasText; } .next-stage-summary { border-left: .35rem solid Highlight; } .next-stage-summary--blocked { border-left-style: dashed; border-left-color: CanvasText; } .next-stage-guidance { border-color: CanvasText; } .next-stage-guidance strong { color: CanvasText; } }
 @media (max-width: 640px) { .next-stage-shell { padding: 1.25rem .75rem 2rem; } .next-stage-check { align-items: flex-start; flex-direction: column; gap: .1rem; } }
-@media print { body { background: #fff; color: #000; } .next-stage-card { break-inside: avoid; box-shadow: none; } .skip-link { display: none; } }
-@media (prefers-color-scheme: dark) { :root { --next-bg: #101820; --next-surface: #18232d; --next-text: #eef3f7; --next-muted: #b4c0ca; --next-accent: #76c7dc; --next-border: #40515e; --next-blocked: #ffc078; } }
+@media print { html { color-scheme: light; } body { background: #fff; color: #000; } .next-stage-card { break-inside: avoid; page-break-inside: avoid; box-shadow: none; } .skip-link { display: none; } }
+@media screen and (prefers-color-scheme: dark) { :root { color-scheme: dark; --next-bg: #101820; --next-surface: #18232d; --next-text: #eef3f7; --next-muted: #b4c0ca; --next-accent: #76c7dc; --next-border: #40515e; --next-blocked: #ffc078; } }
 
 .continuity-rail { margin: 1rem 0 1.5rem; padding: .85rem 1rem 1rem; border: 1px solid currentColor; border-radius: .8rem; color: var(--next-text); }
 .continuity-rail__label { margin: 0 0 .65rem; color: var(--next-muted); font-size: .76rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
@@ -736,7 +736,7 @@ h2 { margin-top: 0; font-size: 1.2rem; }
 @media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
-@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
+@media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
 ```
 
 ### `plugins/professional-growth-coach/assets/private-recruiter-screen-debrief-v1.css`
@@ -745,7 +745,7 @@ h2 { margin-top: 0; font-size: 1.2rem; }
 :root { color-scheme: light; --debrief-ink:#172033; --debrief-muted:#536176; --debrief-surface:#fff; --debrief-soft:#f3f6fb; --debrief-border:#c7d2e5; --debrief-blue:#315bd6; --debrief-green:#176b4d; --debrief-amber:#8a5a00; }
 * { box-sizing: border-box; }
 html { background: var(--debrief-soft); }
-body { margin:0; color:var(--debrief-ink); background:var(--debrief-soft); font:16px/1.55 ui-sans-serif,system-ui,-apple-system,sans-serif; }
+body { margin:0; color:var(--debrief-ink); background:var(--debrief-soft); font:16px/1.55 ui-sans-serif,system-ui,-apple-system,sans-serif; overflow-wrap:anywhere; }
 .skip-link { position:absolute; left:1rem; top:-4rem; padding:.6rem .8rem; color:#fff; background:var(--debrief-ink); border-radius:.4rem; z-index:2; }
 .skip-link:focus { top:1rem; }
 .debrief-shell { width:min(960px,calc(100% - 2rem)); margin:0 auto; padding:3rem 0; }
@@ -765,8 +765,8 @@ dt { color:var(--debrief-muted); font-size:.78rem; font-weight:800; letter-spaci
 @media (prefers-contrast:more) { :root { --debrief-border:#536176; } .debrief-card { box-shadow:none; } }
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition:none !important; } }
 @media (forced-colors:active) { .debrief-card,.debrief-coverage { border:2px solid CanvasText; box-shadow:none; } .debrief-summary,.debrief-coverage { border-left-color:CanvasText; } }
-@media (prefers-color-scheme:dark) { :root { color-scheme:dark; --debrief-ink:#edf2fa; --debrief-muted:#b9c5d8; --debrief-surface:#1c2738; --debrief-soft:#111927; --debrief-border:#536176; } }
-@media print { html,body { background:#fff; } .debrief-shell { width:100%; padding:0; } .debrief-card { box-shadow:none; break-inside:avoid; } .skip-link { display:none; } }
+@media screen and (prefers-color-scheme: dark) { :root { color-scheme: dark; --debrief-ink:#edf2fa; --debrief-muted:#b9c5d8; --debrief-surface:#1c2738; --debrief-soft:#111927; --debrief-border:#536176; } }
+@media print { html,body { color-scheme:light; background:#fff; } .debrief-shell { width:100%; padding:0; } .debrief-card { box-shadow:none; break-inside:avoid; page-break-inside:avoid; } .skip-link { display:none; } }
 
 .continuity-rail { margin: 1rem 0 1.5rem; padding: .85rem 1rem 1rem; border: 1px solid currentColor; border-radius: .8rem; color: var(--debrief-ink); }
 .continuity-rail__label { margin: 0 0 .65rem; color: var(--debrief-muted); font-size: .76rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
@@ -781,7 +781,7 @@ dt { color:var(--debrief-muted); font-size:.78rem; font-weight:800; letter-spaci
 @media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
-@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
+@media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
 ```
 
 ### `plugins/professional-growth-coach/assets/recruiter-target-screen-intake-v1.css`
@@ -802,7 +802,7 @@ dt { color:var(--debrief-muted); font-size:.78rem; font-weight:800; letter-spaci
 
 * { box-sizing: border-box; }
 html { background: var(--screen-soft); }
-body { margin: 0; color: var(--screen-ink); background: var(--screen-soft); font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, sans-serif; }
+body { margin: 0; color: var(--screen-ink); background: var(--screen-soft); font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, sans-serif; overflow-wrap: anywhere; }
 .skip-link { position: absolute; left: 1rem; top: -4rem; padding: .6rem .8rem; color: #fff; background: var(--screen-ink); border-radius: .4rem; z-index: 2; }
 .skip-link:focus { top: 1rem; }
 .screen-shell { width: min(960px, calc(100% - 2rem)); margin: 0 auto; padding: 3rem 0; }
@@ -834,8 +834,8 @@ dd { margin: .25rem 0 0; font-weight: 700; }
 @media (prefers-contrast: more) { :root { --screen-border: #536176; } .screen-card, .screen-check { box-shadow: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
 @media (forced-colors: active) { .screen-card, .screen-check { border: 2px solid CanvasText; box-shadow: none; } .screen-decision, .screen-check { border-left-color: CanvasText; } }
-@media (prefers-color-scheme: dark) { :root { color-scheme: dark; --screen-ink: #edf2fa; --screen-muted: #b9c5d8; --screen-surface: #1c2738; --screen-soft: #111927; --screen-border: #536176; } }
-@media print { html, body { background: #fff; } .screen-shell { width: 100%; padding: 0; } .screen-card { box-shadow: none; break-inside: avoid; } .skip-link { display: none; } }
+@media screen and (prefers-color-scheme: dark) { :root { color-scheme: dark; --screen-ink: #edf2fa; --screen-muted: #b9c5d8; --screen-surface: #1c2738; --screen-soft: #111927; --screen-border: #536176; } }
+@media print { html, body { color-scheme: light; background: #fff; } .screen-shell { width: 100%; padding: 0; } .screen-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
 
 .continuity-rail { margin: 1rem 0 1.5rem; padding: .85rem 1rem 1rem; border: 1px solid currentColor; border-radius: .8rem; color: var(--screen-ink); }
 .continuity-rail__label { margin: 0 0 .65rem; color: var(--screen-muted); font-size: .76rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
@@ -850,7 +850,7 @@ dd { margin: .25rem 0 0; font-weight: 700; }
 @media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
-@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
+@media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
 ```
 
 ### `plugins/professional-growth-coach/assets/career-market-learning-dossier-v1.css`
@@ -1884,7 +1884,7 @@ dd { margin: .15rem 0 0; font-weight: 600; }
   --stop: #b42318;
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--canvas); color: var(--ink); font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+body { margin: 0; background: var(--canvas); color: var(--ink); font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; overflow-wrap: anywhere; }
 .skip-link { position: absolute; left: 1rem; top: -4rem; z-index: 2; padding: .6rem .8rem; color: var(--surface); background: var(--ink); }
 .skip-link:focus { top: 1rem; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
@@ -1942,7 +1942,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
   :root { --line: #17212b; --muted: #17212b; }
   .shortlist-card, .shortlist-decision-count, .target-shortlist-card { box-shadow: none; border-width: 2px; }
 }
-@media (prefers-color-scheme: dark) {
+@media screen and (prefers-color-scheme: dark) {
   :root { --canvas: #10171d; --surface: #17212b; --ink: #ecf2f6; --muted: #adbac4; --line: #3b4a55; --accent: #75d2e4; --continuity-marker-ink: #10232a; --advance: #69d39a; --clarify: #e7bd65; --pause: #c5a7f4; --stop: #ff938a; }
   .shortlist-card { box-shadow: none; }
   .shortlist-priority-card { background: #20313b; }
@@ -1953,6 +1953,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
   .target-shortlist-card--advance, .target-shortlist-card--clarify, .target-shortlist-card--pause, .target-shortlist-card--stop { border-left: .6rem solid CanvasText; }
 }
 @media print {
+  html { color-scheme: light; }
   @page { margin: 1.4cm; }
   body { background: #fff; color: #000; }
   .shortlist-shell { width: 100%; padding: 0; }
@@ -1975,7 +1976,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
 @media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
-@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
+@media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
 ```
 
 ### `plugins/professional-growth-coach/assets/recruiter-target-decision-gate-v1.css`
@@ -1998,7 +1999,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--canvas); color: var(--ink); font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+body { margin: 0; background: var(--canvas); color: var(--ink); font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; overflow-wrap: anywhere; }
 .gate-shell { width: min(100% - 2rem, 58rem); margin: 0 auto; padding: 2rem 0 3rem; }
 .skip-link { position: absolute; left: .75rem; top: .75rem; transform: translateY(-180%); background: var(--ink); color: var(--surface); padding: .65rem .8rem; font-weight: 700; }
 .skip-link:focus { transform: translateY(0); }
@@ -2044,7 +2045,7 @@ dd { margin: .2rem 0 0; }
   .gate-date { margin-top: .5rem; }
   .gate-overview-grid, .gate-counts, .gate-row-facts { grid-template-columns: 1fr; }
 }
-@media (prefers-color-scheme: dark) {
+@media screen and (prefers-color-scheme: dark) {
   :root { --canvas: var(--dark-canvas); --surface: var(--dark-surface); --ink: var(--dark-ink); --muted: var(--dark-muted); --line: #5f718e; --accent: #8eb2ff; --continuity-marker-ink: #101a35; --accent-soft: #b8c4d8; }
   .gate-card, .gate-row { box-shadow: none; }
 }
@@ -2059,6 +2060,7 @@ dd { margin: .2rem 0 0; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 @media print {
+  html { color-scheme: light; }
   body { background: #fff; color: #000; }
   .gate-shell { width: 100%; padding: 0; }
   .gate-card, .gate-row { box-shadow: none; break-inside: avoid; }
@@ -2078,5 +2080,5 @@ dd { margin: .2rem 0 0; }
 @media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
-@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
+@media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
 ```

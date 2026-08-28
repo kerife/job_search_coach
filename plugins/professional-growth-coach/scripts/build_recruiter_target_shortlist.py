@@ -32,6 +32,16 @@ VALIDATOR = _sibling("validate_recruiter_target_shortlist.py")
 LOADER = _sibling("private_input_loader.py")
 
 
+class _ArgumentError(ValueError):
+    """Raised without reflecting private command-line values."""
+
+
+class _PrivateArgumentParser(argparse.ArgumentParser):
+    def error(self, message: str) -> None:
+        del message
+        raise _ArgumentError
+
+
 def build_shortlist(
     locale: str,
     as_of_date: str,
@@ -173,7 +183,7 @@ def _write_private_json(path: Path, value: Mapping[str, object]) -> None:
 
 
 def _cli(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Build a private recruiter target shortlist.")
+    parser = _PrivateArgumentParser(description="Build a private recruiter target shortlist.")
     parser.add_argument("plan", type=Path)
     parser.add_argument("targets", type=Path)
     parser.add_argument("output", type=Path)

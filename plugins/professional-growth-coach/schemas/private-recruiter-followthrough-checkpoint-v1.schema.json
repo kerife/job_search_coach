@@ -25,7 +25,7 @@
     {"if": {"properties": {"action_state": {"const": "completed"}, "next_measurement_event": {"const": "stop_decision"}}, "required": ["action_state", "next_measurement_event"]}, "then": {"properties": {"next_safe_action": {"const": "record_stop_decision"}}}},
     {"if": {"properties": {"action_state": {"const": "completed"}, "next_measurement_event": {"const": "screen_attended"}}, "required": ["action_state", "next_measurement_event"]}, "then": {"properties": {"next_safe_action": {"const": "debrief_after_screen"}}}},
     {"if": {"properties": {"action_state": {"const": "completed"}, "next_measurement_event": {"const": "unknown"}}, "required": ["action_state", "next_measurement_event"]}, "then": {"properties": {"next_safe_action": {"const": "clarify_context_before_reply"}}}}
-    ,{"if": {"properties": {"next_measurement_event": {"const": "screen_attended"}}, "required": ["next_measurement_event"]}, "then": {"required": ["target_binding"]}}
+    ,{"if": {"properties": {"next_measurement_event": {"const": "screen_attended"}}, "required": ["next_measurement_event"]}, "then": {"required": ["target_binding", "source_receipt"], "properties": {"source_receipt": {"properties": {"event_type": {"enum": ["screen_requested", "interview_requested"]}}}}}}
   ],
   "$defs": {
     "target_binding": {

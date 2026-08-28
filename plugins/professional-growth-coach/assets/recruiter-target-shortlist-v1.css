@@ -13,7 +13,7 @@
   --stop: #b42318;
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--canvas); color: var(--ink); font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+body { margin: 0; background: var(--canvas); color: var(--ink); font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; overflow-wrap: anywhere; }
 .skip-link { position: absolute; left: 1rem; top: -4rem; z-index: 2; padding: .6rem .8rem; color: var(--surface); background: var(--ink); }
 .skip-link:focus { top: 1rem; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
@@ -71,7 +71,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
   :root { --line: #17212b; --muted: #17212b; }
   .shortlist-card, .shortlist-decision-count, .target-shortlist-card { box-shadow: none; border-width: 2px; }
 }
-@media (prefers-color-scheme: dark) {
+@media screen and (prefers-color-scheme: dark) {
   :root { --canvas: #10171d; --surface: #17212b; --ink: #ecf2f6; --muted: #adbac4; --line: #3b4a55; --accent: #75d2e4; --continuity-marker-ink: #10232a; --advance: #69d39a; --clarify: #e7bd65; --pause: #c5a7f4; --stop: #ff938a; }
   .shortlist-card { box-shadow: none; }
   .shortlist-priority-card { background: #20313b; }
@@ -82,6 +82,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
   .target-shortlist-card--advance, .target-shortlist-card--clarify, .target-shortlist-card--pause, .target-shortlist-card--stop { border-left: .6rem solid CanvasText; }
 }
 @media print {
+  html { color-scheme: light; }
   @page { margin: 1.4cm; }
   body { background: #fff; color: #000; }
   .shortlist-shell { width: 100%; padding: 0; }
@@ -104,4 +105,4 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
 @media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
-@media print { .continuity-rail { break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
+@media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }

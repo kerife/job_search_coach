@@ -6,6 +6,7 @@ is a conformance gate, not a general JSON Schema implementation.
 from __future__ import annotations
 
 import datetime as dt
+import copy
 import importlib.util
 import json
 import sys
@@ -51,10 +52,20 @@ def validate_private_fixture_semantics(root: Path, *, as_of: dt.date) -> list[st
         for error in validate_outcome_for_test(value, as_of=as_of):
             errors.append(f"{path.name}: {error}")
     checkpoint_dir = root / "tests/fixtures/private-recruiter-followthrough-checkpoint"
-    receipt_path = outcome_dir / "screen-requested-en.json"
-    receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+    receipts: dict[tuple[object, object, object], dict[str, object]] = {}
+    for receipt_path in sorted(outcome_dir.glob("*.json")):
+        receipt_value = json.loads(receipt_path.read_text(encoding="utf-8"))
+        receipts[(receipt_value.get("source_artifact_id"), receipt_value.get("source_version"), receipt_value.get("event_type"))] = receipt_value
     for path in sorted(checkpoint_dir.glob("*.json")):
         value = json.loads(path.read_text(encoding="utf-8"))
+        source = value.get("source_receipt", {})
+        receipt = receipts.get((source.get("id"), source.get("source_version"), source.get("event_type")))
+        if receipt is None:
+            errors.append(f"{path.name}: source receipt fixture is unavailable")
+            continue
+        receipt = copy.deepcopy(receipt)
+        if receipt.get("locale") != value.get("locale"):
+            receipt["locale"] = value.get("locale")
         for error in validate_checkpoint_for_test(value, receipt, as_of=as_of):
             errors.append(f"{path.name}: {error}")
     return sorted(set(errors))

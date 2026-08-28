@@ -89,7 +89,32 @@ class FollowthroughCheckpointContractTests(unittest.TestCase):
             item["locale"] = "es" if state in {"deferred", "completed"} else "en"
             if event == "screen_attended":
                 item["target_binding"] = {"target_id": "T-001", "source_gate_snapshot": "snap-shortlist-sha256-" + "0" * 64}
-            self.assertEqual([], checkpoint.validate_checkpoint(item, self.receipt, as_of=dt.date(2026, 8, 8)), (state, event))
+            receipt = copy.deepcopy(self.receipt)
+            receipt["locale"] = item["locale"]
+            self.assertEqual([], checkpoint.validate_checkpoint(item, receipt, as_of=dt.date(2026, 8, 8)), (state, event))
+
+    def test_attended_screen_requires_requested_screen_receipt_and_matching_locale(self):
+        for filename in ("contact-received-en.json", "reply-received-en.json", "referral-received-es.json"):
+            receipt = json.loads((FIXTURES / filename).read_text())
+            item = copy.deepcopy(self.valid)
+            item.update(action_state="completed", next_measurement_event="screen_attended", next_safe_action="debrief_after_screen")
+            item["target_binding"] = {"target_id": "T-001", "source_gate_snapshot": "snap-shortlist-sha256-" + "0" * 64}
+            item["source_receipt"] = {
+                "id": receipt["source_artifact_id"],
+                "source_version": receipt["source_version"],
+                "event_type": receipt["event_type"],
+            }
+            item["locale"] = receipt["locale"]
+            errors = checkpoint.validate_checkpoint(item, receipt, as_of=dt.date(2026, 8, 8))
+            self.assertTrue(any("screen_attended" in error for error in errors), filename)
+
+        receipt = copy.deepcopy(self.receipt)
+        item = copy.deepcopy(self.valid)
+        item.update(action_state="completed", next_measurement_event="screen_attended", next_safe_action="debrief_after_screen")
+        item["target_binding"] = {"target_id": "T-001", "source_gate_snapshot": "snap-shortlist-sha256-" + "0" * 64}
+        item["locale"] = "es"
+        errors = checkpoint.validate_checkpoint(item, receipt, as_of=dt.date(2026, 8, 8))
+        self.assertIn("locale does not match receipt", errors)
 
     def test_completed_screen_prepared_branch(self):
         item = copy.deepcopy(self.valid)

@@ -35,7 +35,7 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
                     next_measurement_event="interview_requested",
                     next_safe_action="route_to_prepare-role-interviews",
                 )
-                rendered = renderer.render_checkpoint_html(item, self.receipt, as_of=dt.date(2026, 8, 8))
+                rendered = renderer.render_checkpoint_html(item, self._receipt_for(item), as_of=dt.date(2026, 8, 8))
                 self.assertIn(label, rendered)
                 self.assertNotIn("Solicitaron entrevista", rendered)
 
@@ -54,7 +54,7 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
                     next_measurement_event="unknown" if action in {"manual_reenter_private_prep", "clarify_context_before_reply"} else "screen_attended" if action == "debrief_after_screen" else "screen_prepared",
                     next_safe_action=action,
                 )
-                rendered = renderer.render_checkpoint_html(item, self.receipt, as_of=dt.date(2026, 8, 8))
+                rendered = renderer.render_checkpoint_html(item, self._receipt_for(item), as_of=dt.date(2026, 8, 8))
                 self.assertIn(expected_copy, rendered)
                 self.assertEqual(rendered.count('class="continuity-rail"'), 1)
 
@@ -80,7 +80,7 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
                     next_measurement_event="screen_attended",
                     next_safe_action="debrief_after_screen",
                 )
-                rendered = renderer.render_checkpoint_html(item, self.receipt, as_of=dt.date(2026, 8, 8))
+                rendered = renderer.render_checkpoint_html(item, self._receipt_for(item), as_of=dt.date(2026, 8, 8))
                 for text in copy_set:
                     self.assertIn(text, rendered)
                 self.assertNotIn("Clarify context before replying", rendered)
@@ -107,7 +107,7 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
             with self.subTest(locale=locale):
                 localized = copy.deepcopy(item)
                 localized["locale"] = locale
-                rendered = renderer.render_checkpoint_html(localized, stop_receipt, as_of=dt.date(2026, 8, 8))
+                rendered = renderer.render_checkpoint_html(localized, self._receipt_for(localized, stop_receipt), as_of=dt.date(2026, 8, 8))
                 body = rendered.split("</style>", 1)[1]
                 self.assertEqual(body.count('class="continuity-rail"'), 1)
                 self.assertEqual(body.count('data-terminal="true"'), 1)
@@ -141,12 +141,17 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
             "delivery": {"draft_only": True, "external_actions_authorized": False, "no_message_action": True, "no_calendar_action": True, "raw_event_retained": False, "local_save_mode": "disabled"},
         }
 
+    def _receipt_for(self, item, receipt=None):
+        localized = copy.deepcopy(receipt or self.receipt)
+        localized["locale"] = item["locale"]
+        return localized
+
     def test_all_states_and_locales_use_fixed_labels_and_omit_private_values(self):
         mapping = [("accepted", "unknown", "manual_reenter_private_prep"), ("deferred", "unknown", "clarify_context_before_reply"), ("declined", "unknown", "record_stop_decision"), ("completed", "screen_prepared", "route_to_prepare-role-interviews"), ("completed", "screen_attended", "debrief_after_screen")]
         for locale in ("en", "es"):
             for state, event, action in mapping:
                 item = copy.deepcopy(self.item); item.update(locale=locale, action_state=state, next_measurement_event=event, next_safe_action=action)
-                html = renderer.render_checkpoint_html(item, self.receipt, as_of=dt.date(2026, 8, 8))
+                html = renderer.render_checkpoint_html(item, self._receipt_for(item), as_of=dt.date(2026, 8, 8))
                 self.assertIn(f'<html lang="{locale}">', html)
                 self.assertNotIn("D-104", html); self.assertNotIn("F-105", html); self.assertNotIn("screen_requested", html)
                 self.assertNotIn("<form", html.lower()); self.assertNotIn("<button", html.lower()); self.assertNotIn("javascript:", html.lower())
@@ -183,7 +188,7 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
                 localized = copy.deepcopy(item)
                 localized["locale"] = locale
                 rendered = renderer.render_checkpoint_html(
-                    localized, stop_receipt, as_of=dt.date(2026, 8, 8)
+                    localized, self._receipt_for(localized, stop_receipt), as_of=dt.date(2026, 8, 8)
                 )
                 self.assertIn(expected[locale]["action"], rendered)
                 self.assertIn(expected[locale]["boundary"], rendered)
@@ -204,7 +209,7 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
             with self.subTest(locale=f"declined-{locale}"):
                 declined["locale"] = locale
                 rendered = renderer.render_checkpoint_html(
-                    declined, stop_receipt, as_of=dt.date(2026, 8, 8)
+                    declined, self._receipt_for(declined, stop_receipt), as_of=dt.date(2026, 8, 8)
                 )
                 self.assertIn(expected[locale]["action"], rendered)
                 self.assertIn(expected[locale]["boundary"], rendered)
@@ -234,7 +239,7 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
                         next_safe_action=action,
                     )
                     rendered = renderer.render_checkpoint_html(
-                        item, self.receipt, as_of=dt.date(2026, 8, 8)
+                        item, self._receipt_for(item), as_of=dt.date(2026, 8, 8)
                     )
                     self.assertEqual(rendered.count(employment_boundary[locale]), 1)
                     self.assertEqual(
@@ -245,8 +250,8 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
                     self.assertNotIn("no-print", rendered)
 
     def test_css_accessibility_hooks_and_deterministic_render(self):
-        first = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
-        second = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
+        first = renderer.render_checkpoint_html(self.item, self._receipt_for(self.item), as_of=dt.date(2026, 8, 8))
+        second = renderer.render_checkpoint_html(self.item, self._receipt_for(self.item), as_of=dt.date(2026, 8, 8))
         self.assertEqual(first, second)
         self.assertIn('<main id="main-content" class="checkpoint-shell" tabindex="-1">', first)
         self.assertIn("main:focus-visible", first)
@@ -254,7 +259,7 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
             self.assertIn(hook, first)
 
     def test_continuity_rail_connects_receipt_checkpoint_and_manual_route(self):
-        rendered = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
+        rendered = renderer.render_checkpoint_html(self.item, self._receipt_for(self.item), as_of=dt.date(2026, 8, 8))
         self.assertEqual(rendered.count('class="continuity-rail"'), 1)
         self.assertEqual(rendered.count('class="continuity-step continuity-step--'), 3)
         self.assertIn('data-stage="receipt" data-state="recorded"', rendered)
@@ -265,7 +270,7 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
         self.assertNotIn("screen_requested", rendered)
 
     def test_prefers_contrast_more_reinforces_card_facts_and_boundary(self):
-        rendered = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
+        rendered = renderer.render_checkpoint_html(self.item, self._receipt_for(self.item), as_of=dt.date(2026, 8, 8))
         self.assertRegex(
             rendered,
             r"(?s)@media \(prefers-contrast: more\).*?\.checkpoint-card\s*\{[^}]*border:\s*2px solid var\(--ink\);[^}]*box-shadow:\s*none;",
@@ -289,7 +294,7 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
                 item = copy.deepcopy(self.item)
                 item["locale"] = locale
                 rendered = renderer.render_checkpoint_html(
-                    item, self.receipt, as_of=dt.date(2026, 8, 8)
+                    item, self._receipt_for(item), as_of=dt.date(2026, 8, 8)
                 )
                 self.assertRegex(
                     rendered,
@@ -304,25 +309,25 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
                 )
 
     def test_print_keeps_checkpoint_card_atomic(self):
-        rendered = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
+        rendered = renderer.render_checkpoint_html(self.item, self._receipt_for(self.item), as_of=dt.date(2026, 8, 8))
         self.assertRegex(
             rendered,
             r"(?s)@media print.*?\.checkpoint-card\s*\{[^}]*break-inside:\s*avoid;[^}]*page-break-inside:\s*avoid;",
         )
 
     def test_print_uses_deterministic_page_margins(self):
-        rendered = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
+        rendered = renderer.render_checkpoint_html(self.item, self._receipt_for(self.item), as_of=dt.date(2026, 8, 8))
         self.assertIn("@page { size: auto; margin: 14mm; }", rendered)
 
     def test_forced_colors_preserves_checkpoint_boundary_marker(self):
-        rendered = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
+        rendered = renderer.render_checkpoint_html(self.item, self._receipt_for(self.item), as_of=dt.date(2026, 8, 8))
         self.assertRegex(
             rendered,
             r"(?s)@media \(forced-colors: active\).*?\.checkpoint-boundary\s*\{[^}]*border:\s*1px solid CanvasText;[^}]*border-left-width:\s*\.25rem;",
         )
 
     def test_forced_colors_uses_explicit_system_color_surfaces(self):
-        rendered = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
+        rendered = renderer.render_checkpoint_html(self.item, self._receipt_for(self.item), as_of=dt.date(2026, 8, 8))
         self.assertRegex(
             rendered,
             r"(?s)@media \(forced-colors: active\).*?\.checkpoint-card\s*\{[^}]*background:\s*Canvas;[^}]*color:\s*CanvasText;",
@@ -348,7 +353,7 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
                 item = copy.deepcopy(self.item)
                 item["locale"] = locale
                 rendered = renderer.render_checkpoint_html(
-                    item, self.receipt, as_of=dt.date(2026, 8, 8)
+                    item, self._receipt_for(item), as_of=dt.date(2026, 8, 8)
                 )
                 self.assertEqual(rendered.count('class="checkpoint-manual-next-step"'), 1)
                 self.assertIn(
@@ -386,13 +391,13 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
                         next_safe_action=action,
                     )
                     rendered = renderer.render_checkpoint_html(
-                        item, self.receipt, as_of=dt.date(2026, 8, 8)
+                        item, self._receipt_for(item), as_of=dt.date(2026, 8, 8)
                     )
                     self.assertNotIn('class="checkpoint-manual-next-step"', rendered)
 
     def test_manual_next_step_preserves_320px_print_contrast_and_forced_color_contracts(self):
-        first = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
-        second = renderer.render_checkpoint_html(self.item, self.receipt, as_of=dt.date(2026, 8, 8))
+        first = renderer.render_checkpoint_html(self.item, self._receipt_for(self.item), as_of=dt.date(2026, 8, 8))
+        second = renderer.render_checkpoint_html(self.item, self._receipt_for(self.item), as_of=dt.date(2026, 8, 8))
         self.assertEqual(first, second)
         self.assertRegex(
             first,

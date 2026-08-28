@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import datetime as dt
 import re
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -290,6 +291,23 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
             duplicate = Path(directory) / "duplicate.json"
             duplicate.write_text('{"locale":"en","locale":"es"}', encoding="utf-8")
             self.assertEqual(3, render_cli([str(duplicate), str(Path(directory) / "duplicate.html")]))
+
+    def test_shortlist_clis_keep_invalid_argument_values_out_of_stderr(self) -> None:
+        build = subprocess.run(
+            [sys.executable, "-B", str(SCRIPTS / "build_recruiter_target_shortlist.py"), "--PRIVATE-SENTINEL"],
+            capture_output=True,
+            text=True,
+        )
+        render = subprocess.run(
+            [sys.executable, "-B", str(SCRIPTS / "render_recruiter_target_shortlist.py"), "--PRIVATE-SENTINEL"],
+            capture_output=True,
+            text=True,
+        )
+        for result in (build, render):
+            self.assertEqual(3, result.returncode)
+            self.assertEqual('{"error":{"code":"invalid_arguments"}}\n', result.stderr)
+            self.assertEqual("", result.stdout)
+            self.assertNotIn("PRIVATE-SENTINEL", result.stderr)
 
     def test_validator_rejects_non_http_uri_schemes_in_private_prose(self) -> None:
         value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
