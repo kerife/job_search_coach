@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T00:30:20-06:00`
+release_timestamp: `2026-08-28T06:42:05-06:00`
 
-source_commit: `816d9d58ed100f72dedad863f7965bc4acb089e9`
+source_commit: `0fc7997999d2cd3952f1d467f20cbfa328f6fe19`
 
-source_tree: `ef75589da8dab7c436f159088e4b1f4eab663118`
+source_tree: `704a4928273e10727b029b28e962b77c83c22eef`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828003020`
+installed_cache_version: `0.2.0+codex.20260828064205`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `172`
 
 installed_file_count: `172`
 
-normalized_source_cache_sha256: `0809f6fedf8c168c47c3a732562cf27b3f8f4e8fa785b3caab884f35a059ccc5`
+normalized_source_cache_sha256: `1040e6f416612f5b58701391d338d7e623bb539a516a6f6bff86434e4e4a1872`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -72,6 +72,7 @@ installed_v2_context_smoke: `2/2 EN/ES provenance, alignment coverage, vacancy c
 installed_vacancy_freshness_smoke: `2/2 EN/ES per-vacancy access/publication dates, 90-day status text, unknown-date boundary, and title-contextual source aria-label`
 installed_learning_source_identity_smoke: `1/1 installed learning validator rejects trailing-slash and percent-decoded equivalent source URLs`
 installed_release_digest_documentation_smoke: `1/1 release runner validator digests match the release documentation`
+installed_release_validator_copy_smoke: `1/1 release runner re-hashes private validator copies before execution`
 
 installed_replay_fingerprint_smoke: `1/1 stable identity-free receipt/checkpoint replay key`
 installed_source_traceability_smoke: `2/2 EN/ES public-source links and research dates`
