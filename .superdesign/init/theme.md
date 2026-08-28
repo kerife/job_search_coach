@@ -48,6 +48,7 @@ This plugin has **no shared Tailwind config, CSS module system, theme provider, 
 - Practice and triage handoff sequences reuse the same visual state language: recorded evidence/focus, one pending or blocked private next step, and a single `aria-current="step"` marker. State remains textual and non-interactive so color is never the only signal.
 - Practice sessions also use a four-cell first-conversation readiness card with textual current/pending states; it is derived from validated state, remains private, and never becomes an action control.
 - **Breakpoints:** dossier: 900px, 680px, 480px; practice/triage: 640px; compact receipts: `min-width: 641px` (one column through 640px). All families include print, reduced-motion, forced-color, and high-contrast handling.
+- Compact receipt skip links expose an explicit 3px `--accent` focus ring in normal mode and a 2px `Highlight` ring in forced-colors mode, so keyboard users can locate the jump target before entering the card.
 
 ## Raw source dumps
 
@@ -1705,6 +1706,7 @@ html { font: 100%/1.5 system-ui, sans-serif; background: #f4f6fa; color: var(--i
 body { margin: 0; }
 .skip-link { position: absolute; left: -10000px; top: auto; }
 .skip-link:focus { left: 1rem; top: 1rem; padding: .5rem; background: var(--surface); color: var(--ink); }
+.skip-link:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 main:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
 .checkpoint-shell { max-width: 48rem; margin: 0 auto; padding: clamp(1rem, 4vw, 3rem); }
 .checkpoint-card { background: var(--surface); border: 1px solid var(--line); border-radius: 1rem; padding: clamp(1.25rem, 4vw, 2.5rem); box-shadow: 0 .5rem 2rem rgb(23 32 51 / .08); }
@@ -1758,6 +1760,7 @@ html { font: 100%/1.5 system-ui, sans-serif; background: #f4f6fa; color: var(--i
 body { margin: 0; }
 .skip-link { position: absolute; left: -10000px; top: auto; }
 .skip-link:focus { left: 1rem; top: 1rem; padding: .5rem; background: var(--surface); color: var(--ink); }
+.skip-link:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 main:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
 .outcome-shell { max-width: 48rem; margin: 0 auto; padding: clamp(1rem, 4vw, 3rem); }
 .outcome-card { background: var(--surface); border: 1px solid var(--line); border-radius: 1rem; padding: clamp(1.25rem, 4vw, 2.5rem); box-shadow: 0 .5rem 2rem rgb(23 32 51 / .08); }

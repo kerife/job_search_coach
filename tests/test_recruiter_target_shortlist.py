@@ -604,6 +604,55 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertTrue(routed["authorization_required"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_root_route_recognizes_common_invitation_and_booking_language(self) -> None:
+        cases = (
+            ("I got invited to interview with the recruiter; help me prepare.", False),
+            ("I received an invitation to interview with a recruiter; help me prepare.", False),
+            ("I was asked to interview with a recruiter; help me prepare.", False),
+            ("I have a pending recruiter screen; help me prepare.", False),
+            ("The recruiter invited me to interview; help me prepare.", False),
+            ("I am scheduled to speak with the recruiter tomorrow; help me prepare.", True),
+            ("I have a recruiter screen booked for Friday; help me prepare.", False),
+            ("Tengo una entrevista con un recruiter la próxima semana; ayúdame a prepararme.", False),
+        )
+        for request, requires_authorization in cases:
+            locale = "es" if request.startswith("Tengo") else "en"
+            routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-27")
+            with self.subTest(request=request):
+                self.assertEqual("recruiter_target_screen_intake", routed["route_kind"])
+                self.assertEqual("collect_screen_intake", routed["next_action"])
+                self.assertEqual(requires_authorization, routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_invitation_with_reply_or_accept_request_enters_private_triage_boundary(self) -> None:
+        for request, locale in (
+            ("I was invited to a recruiter screen; can you help me respond?", "en"),
+            ("I received an invitation to interview with the recruiter; please confirm it.", "en"),
+            ("Me invitaron a una entrevista con el reclutador; ayúdame a contestar.", "es"),
+            ("Tengo un filtro pendiente con la reclutadora; quiero aceptar.", "es"),
+        ):
+            routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-27")
+            with self.subTest(request=request):
+                self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
+                self.assertEqual("optimize-professional-profile", routed["selected_module"])
+                self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
+                self.assertEqual("needs_intake", routed["case_state"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+                self.assertNotRegex(routed["intake_question"], r"(?:T-\d{3}|D-\d{3}|F-\d{3}|https?://)")
+
+    def test_follow_up_action_wording_preserves_authorization_requirement(self) -> None:
+        for request in (
+            "Follow up with the recruiter about my application.",
+            "Can you send a follow-up to the recruiter?",
+            "Quiero dar seguimiento al reclutador.",
+            "Mándale un seguimiento al recruiter.",
+        ):
+            routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-27")
+            with self.subTest(request=request):
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
     def test_root_route_keeps_readiness_negation_after_completed_screen_in_next_stage_flow(self) -> None:
         routed = route_recruiter_request(
             "I had a recruiter screen but I am not yet ready for the next stage.",

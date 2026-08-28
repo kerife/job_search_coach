@@ -54,6 +54,15 @@ The preparation boundary also covers conversational non-attendance such as
 “I never went through the recruiter screen”, “I never spoke with a recruiter”,
 and “No hablé con el reclutador”; these remain artifact-free screen intake.
 
+Invitation and scheduling language is also normalized: `got invited`,
+`received an invitation`, `was asked`, `pending`, `booked`, `scheduled to
+speak`, and their Spanish equivalents route to the artifact-free screen-intake
+boundary. If the same invitation asks to reply, accept, confirm, email, or
+follow up, it enters the private `recruiter_reply_triage` intake first with an
+identity-free summary plus one verified fact; no response or calendar action is
+performed. Follow-up wording (`follow up`, `follow-up`, `dar seguimiento`) also
+keeps the authorization requirement on fallback routes.
+
 The same preparation boundary covers explicit non-attendance such as “I never
 went to the recruiter interview”, “I didn’t go to the recruiter screen”,
 “Nunca fui a la entrevista con el reclutador”, “No fui”, “No me presenté”, and

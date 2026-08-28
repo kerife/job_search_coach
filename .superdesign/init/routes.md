@@ -43,6 +43,13 @@ claim that other surfaces are complete. It is rendered by
 `scripts/recruiter_continuity_rail.py` and must remain identity-free and
 offline-safe in screen, print, responsive, and forced-colors modes.
 
+The natural recruiter intake boundary also recognizes invitation and scheduling
+variants (`got/received/asked`, `pending`, `booked`, `scheduled to speak`, and
+Spanish equivalents). Preparation-only events go to screen intake; an event
+that also asks to reply, accept, confirm, email, or follow up goes to the
+artifact-free `private_recruiter_reply_triage` intake, which requests only an
+identity-free summary and one verified fact and performs no external action.
+
 Practice and triage routes now share that state vocabulary for their private
 handoffs, so users can scan evidence already recorded and the one safe next
 step without losing the read-only boundary.

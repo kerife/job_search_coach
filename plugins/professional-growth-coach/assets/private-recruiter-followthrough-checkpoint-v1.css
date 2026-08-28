@@ -4,6 +4,7 @@ html { font: 100%/1.5 system-ui, sans-serif; background: #f4f6fa; color: var(--i
 body { margin: 0; }
 .skip-link { position: absolute; left: -10000px; top: auto; }
 .skip-link:focus { left: 1rem; top: 1rem; padding: .5rem; background: var(--surface); color: var(--ink); }
+.skip-link:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 main:focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
 .checkpoint-shell { max-width: 48rem; margin: 0 auto; padding: clamp(1rem, 4vw, 3rem); }
 .checkpoint-card { background: var(--surface); border: 1px solid var(--line); border-radius: 1rem; padding: clamp(1.25rem, 4vw, 2.5rem); box-shadow: 0 .5rem 2rem rgb(23 32 51 / .08); }

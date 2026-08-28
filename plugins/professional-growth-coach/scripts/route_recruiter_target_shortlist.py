@@ -111,6 +111,20 @@ FUTURE_SCREEN_DATE = re.compile(
     r"(?:lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo|ma[ñn]ana|pr[oó]xima?\s+semana|en\s+(?:\d+|dos|tres)\s+d[ií]as?)\b",
     re.I,
 )
+RECRUITER_INVITATION_INTENT = re.compile(
+    r"(?:\b(?:got|received|was)\s+(?:an?\s+)?(?:invited|invitation)\b[^.!?\n]{0,55}\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
+    r"\b(?:was\s+asked|asked)\s+to\s+(?:interview|speak|talk)\s+with\s+(?:(?:a|an?|the)\s+)?recruiters?\b|"
+    r"\b(?:the\s+)?recruiter\s+invited\s+me\s+to\s+(?:a\s+)?(?:screen|interview|call|conversation)\b|"
+    r"\b(?:pending|booked)\s+(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
+    r"\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\s+booked\b|"
+    r"\b(?:scheduled\s+to\s+(?:speak|talk)\s+with\s+(?:(?:a|an?|the)\s+)?recruiters?)\b|"
+    r"\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\s+(?:is\s+)?(?:scheduled|programmed)\b|"
+    r"\b(?:me\s+invitaron|recib[ií]\s+(?:una\s+)?invitaci[oó]n|me\s+pidieron)\b[^.!?\n]{0,55}\b(?:recruiter\s+|reclutador(?:a|es)?\s+)?(?:screen|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)\b|"
+    r"\b(?:filtro|entrevista|llamada|conversaci[oó]n)\s+(?:pendiente|agendada|programada|reservada)\b|"
+    r"\b(?:tengo|hay)\s+(?:un|una)\s+(?:filtro|entrevista|llamada|conversaci[oó]n)\s+(?:pendiente|agendada|programada)\b|"
+    r"\b(?:tengo|hay)\b[^.!?\n]{0,60}\b(?:entrevista|filtro|llamada|conversaci[oó]n)\b[^.!?\n]{0,40}\b(?:la\s+)?pr[oó]xima\s+semana\b)",
+    re.I,
+)
 NEXT_STAGE_INTENT = re.compile(
     r"\b(?:next\s+stage|what(?:'s|\s+is)\s+next|what\s+comes\s+next|what\s+(?:do|should)\s+i\s+do\s+next|"
     r"next\s+step|move\s+on\s+to|advance\s+to|"
@@ -128,9 +142,9 @@ INVITED_NEXT_STAGE = re.compile(r"\binvited\s+to\s+(?:the\s+)?next\s+stage\b", r
 TECHNICAL_INTENT = re.compile(r"\b(?:technical|t[eé]cnica|t[eé]cnico)\b", re.I)
 EXPLICIT_RECRUITER_INTENT = re.compile(r"\b(?:recruiter|recruiting|reclutador(?:a|es)?)\b", re.I)
 EXTERNAL_ACTION_INTENT = re.compile(
-    r"\b(?:send|message|messages|reply|repl(?:y|ies)|respond\w*|write\s+back|ping|dm|connect|contact|reach|talk|speak|apply|publish|schedule|scheduled|book|calendar|"
+    r"\b(?:send|message|messages|reply|repl(?:y|ies)|respond\w*|write\s+back|ping|dm|connect|contact|reach|talk|speak|follow[- ]?up|followup|nudge|check[- ]?in|apply|publish|schedule|scheduled|book|calendar|"
     r"confirm|accept|enviar|mensaje|mensajes|responder|respuesta|conectar|contactar|hablar|aplicar|publicar|agendar|"
-    r"reservar|calendario|confirmar|aceptar|programar|cont[eé]st\w*|resp[oó]nd\w*|escr[ií]b\w*|env[ií]\w*|m[aá]nd\w*)\b|"
+    r"reservar|calendario|confirmar|aceptar|programar|seguimiento|dar\s+seguimiento|cont[eé]st\w*|resp[oó]nd\w*|escr[ií]b\w*|env[ií]\w*|m[aá]nd\w*)\b|"
     r"\b(?:email|e-mail)\s+(?:(?:an?|the)\s+)?(?:recruiters?|reclutador(?:a|es)?)\b|"
     r"\bcorreo\s+(?:a(?:l| la)?|para)\s+(?:recruiters?|reclutador(?:a|es)?)\b",
     re.I,
@@ -139,6 +153,12 @@ INTAKE = {
     "es": "Comparte: 3–6 objetivos manuales con contexto visible o proporcionado por ti; la meta de red y sus segmentos; 3–5 consultas manuales; tu tiempo semanal; una condición de pausa o detención; y el tema de prueba que quieres revisar primero.",
     "en": "Share: 3–6 manually supplied targets with visible or candidate-provided context; the networking goal and segments; 3–5 manual queries; your weekly time budget; a pause or stop condition; and the proof theme you want reviewed first.",
 }
+REPLY_TRIAGE_ACTION_INTENT = re.compile(
+    r"\b(?:reply|respond\w*|write\s+back|ping|dm|email|confirm|accept|schedule|book|calendar|"
+    r"cont[eé]st\w*|resp[oó]nd\w*|escr[ií]b\w*|confirmar|aceptar|agendar|programar|seguimiento|"
+    r"dar\s+seguimiento|enviar|mandar)\b",
+    re.I,
+)
 HANDOFF_QUESTIONS = {
     "es": {
         "recruiter_target_decision_gate": "Comparte la shortlist validada de 3–6 objetivos y su contexto visible o proporcionado por ti para revisar la siguiente decisión manual.",
@@ -146,6 +166,7 @@ HANDOFF_QUESTIONS = {
         "private_recruiter_screen_debrief": "Comparte el checkpoint de pantalla atendida, su receipt, el intake del objetivo y un debrief estructurado de cobertura, temas desconocidos y decisión.",
         "private_recruiter_screen_debrief_intake": "Filtro atendido. Registra ahora cobertura de requisito, alcance y contexto del equipo.",
         "private_recruiter_interview_debrief_intake": "Entrevista registrada. Confirma la etapa y registra cobertura de requisito, alcance y contexto del equipo.",
+        "private_recruiter_reply_triage": "Comparte un resumen sin datos identificables de la invitación o respuesta recruiter y un hecho verificable para revisar el siguiente paso, sin responder ni agendar nada.",
         "private_recruiter_next_stage_review": "Comparte un debrief válido con su checkpoint y elige una etapa posterior permitida para la revisión manual.",
         "forward_stage_transition": "El debrief es válido; elige una etapa posterior permitida para continuar la revisión manual. No se envían mensajes ni se agendan eventos.",
         "terminal_stage": "La etapa de oferta es terminal en este flujo; no hay una etapa posterior permitida. Registra el cierre o inicia un caso nuevo si necesitas preparar otro proceso.",
@@ -156,6 +177,7 @@ HANDOFF_QUESTIONS = {
         "private_recruiter_screen_debrief": "Share the attended-screen checkpoint, its receipt, the target intake, and a structured debrief covering topics, unknowns, and decision.",
         "private_recruiter_screen_debrief_intake": "Screen attended. Capture requirement coverage, scope, and team context.",
         "private_recruiter_interview_debrief_intake": "Interview request recorded. Confirm the stage and capture requirement coverage, scope, and team context.",
+        "private_recruiter_reply_triage": "Share an identity-free summary of the recruiter invitation or reply and one verifiable candidate fact to review the next step; nothing is sent or scheduled.",
         "private_recruiter_next_stage_review": "Share a valid debrief with its checkpoint and choose an allowed forward stage for manual review.",
         "forward_stage_transition": "The debrief is valid; choose an allowed forward stage to continue manual review. No messages are sent and no events are scheduled.",
         "terminal_stage": "Offer stage is terminal in this flow; no later stage is allowed. Record the close or start a new case if you need to prepare another process.",
@@ -166,6 +188,7 @@ HANDOFF_GAPS = {
     "recruiter_target_screen_intake": ["target_specific_screen_context"],
     "private_recruiter_screen_debrief": ["valid_screen_checkpoint_receipt_intake_and_debrief"],
     "private_recruiter_next_stage_review": ["valid_debrief_checkpoint_and_forward_stage"],
+    "private_recruiter_reply_triage": ["identity_free_recruiter_reply_summary", "one_verified_candidate_fact"],
 }
 
 
@@ -183,7 +206,17 @@ def _has_recruiter_screen_context(request: str) -> bool:
 def _natural_recruiter_route(request: str) -> str | None:
     """Classify natural recruiter follow-up language before shortlist routing."""
     has_screen_context = _has_recruiter_screen_context(request)
-    if has_screen_context and (
+    has_recruiter_invitation = bool(
+        EXPLICIT_RECRUITER_INTENT.search(request) and RECRUITER_INVITATION_INTENT.search(request)
+    )
+    if (has_screen_context or has_recruiter_invitation) and (
+        RECRUITER_INVITATION_INTENT.search(request)
+        and REPLY_TRIAGE_ACTION_INTENT.search(request)
+    ):
+        return "reply_triage"
+    if (has_screen_context or has_recruiter_invitation) and (
+        RECRUITER_INVITATION_INTENT.search(request)
+        or
         SCREEN_NOT_COMPLETED.search(request) or FUTURE_SCREEN_DATE.search(request)
     ):
         return "pre_screen"
@@ -344,6 +377,15 @@ def route_recruiter_request(
             question_key="recruiter_target_screen_intake",
             evidence_gaps=["target_specific_screen_context"],
         ) | {"authorization_required": request_authorization_required}
+    if natural_route == "reply_triage":
+        return _artifact_free_intake(
+            "private_recruiter_reply_triage",
+            selected_module="optimize-professional-profile",
+            next_action="collect_recruiter_reply_triage_context",
+            locale=locale,
+            question_key="private_recruiter_reply_triage",
+            evidence_gaps=["identity_free_recruiter_reply_summary", "one_verified_candidate_fact"],
+        ) | {"authorization_required": True}
     if natural_route != "shortlist":
         return {
             "route_kind": "ordinary_professional_growth",

@@ -281,6 +281,7 @@ class PrivateRecruiterOutcomeExportTests(unittest.TestCase):
                         application_date="2026-08-01",
                         as_of="2026-08-08",
                         output=output,
+                        force=True,
                     )
             self.assertFalse((external / "output" / "outcomes.csv").exists())
 
@@ -314,6 +315,49 @@ class PrivateRecruiterOutcomeExportTests(unittest.TestCase):
                         output=output,
                     )
             self.assertFalse((external / "output" / "outcomes.csv").exists())
+
+    def test_existing_csv_read_fails_closed_when_target_changes_after_preflight(self) -> None:
+        receipt = _receipt("reply-received-en.json")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            parent = root / "output"
+            parent.mkdir()
+            output = parent / "outcomes.csv"
+            write_export(
+                receipt,
+                candidate_id="candidate-001",
+                application_id="app-001",
+                application_date="2026-08-01",
+                as_of="2026-08-08",
+                output=output,
+            )
+            external = root / "external.csv"
+            external.write_bytes(output.read_bytes())
+            original_lstat = exporter.os.lstat
+            safe_output = exporter._safe_absolute(output)
+            swapped = False
+
+            def swap_target(path: os.PathLike[str] | str) -> os.stat_result:
+                nonlocal swapped
+                result = original_lstat(path)
+                if Path(path) == safe_output and not swapped:
+                    swapped = True
+                    output.unlink()
+                    output.symlink_to(external)
+                return result
+
+            with mock.patch.object(exporter.os, "lstat", side_effect=swap_target):
+                with self.assertRaisesRegex(ExportError, "(?:existing CSV output is unavailable|output target is not a regular file)"):
+                    write_export(
+                        receipt,
+                        candidate_id="candidate-002",
+                        application_id="app-002",
+                        application_date="2026-08-01",
+                        as_of="2026-08-08",
+                        output=output,
+                        force=True,
+                    )
+            self.assertEqual(external.read_bytes(), output.resolve().read_bytes())
 
 
 if __name__ == "__main__":

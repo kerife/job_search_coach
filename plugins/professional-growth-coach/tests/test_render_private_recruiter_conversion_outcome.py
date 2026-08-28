@@ -202,6 +202,14 @@ class ConversionOutcomeRendererTests(unittest.TestCase):
             load_outcome(FIXTURES / "contact-received-en.json"), today=dt.date(2026, 8, 9)
         )
         self.assertIn("main:focus-visible", rendered)
+        self.assertRegex(
+            rendered,
+            r"\.skip-link:focus-visible\s*\{[^}]*outline:\s*3px solid var\(--accent\);[^}]*outline-offset:\s*3px;",
+        )
+        self.assertRegex(
+            rendered,
+            r"@media \(forced-colors: active\).*?\.skip-link:focus-visible\s*\{[^}]*outline:\s*2px solid Highlight;",
+        )
 
     def test_continuity_rail_makes_manual_route_explicit_without_private_values(self):
         rendered = render_outcome_html(

@@ -166,6 +166,39 @@ def _existing_rows(output: Path) -> list[dict[str, str]]:
         raise ExportError("existing CSV output is unavailable") from error
 
 
+def _existing_rows_at(parent_descriptor: int, filename: str) -> list[dict[str, str]]:
+    """Read an existing CSV through an already anchored parent descriptor."""
+    descriptor = None
+    try:
+        descriptor = os.open(
+            filename,
+            os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0),
+            dir_fd=parent_descriptor,
+        )
+        status = os.fstat(descriptor)
+        if not stat.S_ISREG(status.st_mode):
+            raise ExportError("existing CSV output is unavailable")
+        with os.fdopen(descriptor, "r", newline="", encoding="utf-8") as stream:
+            descriptor = None
+            reader = csv.DictReader(stream)
+            if reader.fieldnames != list(CSV_FIELDS):
+                raise ExportError("existing CSV output is unavailable")
+            rows = list(reader)
+            if any(set(row) != set(CSV_FIELDS) for row in rows):
+                raise ExportError("existing CSV output is unavailable")
+            if any(_FORMULA_PREFIX.match(value) for row in rows for value in row.values() if isinstance(value, str)):
+                raise ExportError("existing CSV output is unavailable")
+            return rows
+    except (OSError, UnicodeError, csv.Error) as error:
+        raise ExportError("existing CSV output is unavailable") from error
+    finally:
+        if descriptor is not None:
+            try:
+                os.close(descriptor)
+            except OSError:
+                pass
+
+
 def _parent_is_safe(parent: Path) -> None:
     current = Path(parent.anchor)
     for component in parent.parts[1:]:
@@ -194,16 +227,25 @@ def _open_safe_directory(parent: Path) -> int:
     return descriptor
 
 
-def _atomic_write(output: Path, content: bytes, *, force: bool) -> None:
+def _atomic_write(
+    output: Path,
+    content: bytes,
+    *,
+    force: bool,
+    parent_descriptor: int | None = None,
+) -> None:
     target = _safe_absolute(output)
     parent = target.parent
-    if not parent.is_absolute():
-        raise ExportError("output parent is unavailable")
-    _parent_is_safe(parent)
-    try:
-        parent_descriptor = _open_safe_directory(parent)
-    except OSError as error:
-        raise ExportError("output parent is unavailable") from error
+    owns_parent_descriptor = parent_descriptor is None
+    if owns_parent_descriptor:
+        if not parent.is_absolute():
+            raise ExportError("output parent is unavailable")
+        _parent_is_safe(parent)
+        try:
+            parent_descriptor = _open_safe_directory(parent)
+        except OSError as error:
+            raise ExportError("output parent is unavailable") from error
+    assert parent_descriptor is not None
     temporary = None
     descriptor = None
     try:
@@ -247,7 +289,8 @@ def _atomic_write(output: Path, content: bytes, *, force: bool) -> None:
                 os.unlink(temporary, dir_fd=parent_descriptor)
             except FileNotFoundError:
                 pass
-        os.close(parent_descriptor)
+        if owns_parent_descriptor:
+            os.close(parent_descriptor)
 
 
 def write_export(
@@ -277,13 +320,37 @@ def write_export(
         status = None
     if status is not None and (stat.S_ISLNK(status.st_mode) or not stat.S_ISREG(status.st_mode)):
         raise ExportError("output target is not a regular file")
-    rows = _existing_rows(target) if status is not None else []
-    if any(existing.get("intervention_id") == fingerprint for existing in rows):
-        return {"status": "already_present", "intervention_id": fingerprint}
-    if status is not None and force:
-        rows = [existing for existing in rows if existing.get("application_id") != application_id]
-    _atomic_write(target, _csv_bytes([*rows, row]), force=force)
-    return {"status": "written", "intervention_id": fingerprint}
+    parent = target.parent
+    if not parent.is_absolute():
+        raise ExportError("output parent is unavailable")
+    _parent_is_safe(parent)
+    try:
+        parent_descriptor = _open_safe_directory(parent)
+    except OSError as error:
+        raise ExportError("output parent is unavailable") from error
+    try:
+        try:
+            anchored_status = os.stat(target.name, dir_fd=parent_descriptor, follow_symlinks=False)
+        except FileNotFoundError:
+            anchored_status = None
+        if anchored_status is not None and (stat.S_ISLNK(anchored_status.st_mode) or not stat.S_ISREG(anchored_status.st_mode)):
+            raise ExportError("output target is not a regular file")
+        if status is not None and anchored_status is None:
+            raise ExportError("existing CSV output is unavailable")
+        rows = _existing_rows_at(parent_descriptor, target.name) if anchored_status is not None else []
+        if any(existing.get("intervention_id") == fingerprint for existing in rows):
+            return {"status": "already_present", "intervention_id": fingerprint}
+        if anchored_status is not None and force:
+            rows = [existing for existing in rows if existing.get("application_id") != application_id]
+        _atomic_write(
+            target,
+            _csv_bytes([*rows, row]),
+            force=force,
+            parent_descriptor=parent_descriptor,
+        )
+        return {"status": "written", "intervention_id": fingerprint}
+    finally:
+        os.close(parent_descriptor)
 
 
 class _ArgumentParser(argparse.ArgumentParser):

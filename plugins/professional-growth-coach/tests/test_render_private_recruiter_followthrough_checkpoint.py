@@ -255,6 +255,14 @@ class FollowthroughCheckpointRendererTests(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertIn('<main id="main-content" class="checkpoint-shell" tabindex="-1">', first)
         self.assertIn("main:focus-visible", first)
+        self.assertRegex(
+            first,
+            r"\.skip-link:focus-visible\s*\{[^}]*outline:\s*3px solid var\(--accent\);[^}]*outline-offset:\s*3px;",
+        )
+        self.assertRegex(
+            first,
+            r"@media \(forced-colors: active\).*?\.skip-link:focus-visible\s*\{[^}]*outline:\s*2px solid Highlight;",
+        )
         for hook in ("@media print", "prefers-reduced-motion", "forced-colors", "@media (min-width"):
             self.assertIn(hook, first)
 
