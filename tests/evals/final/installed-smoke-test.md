@@ -16,23 +16,23 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T05:36:43-06:00`
+release_timestamp: `2026-08-28T05:54:57-06:00`
 
-source_commit: `c89110478ace2c6bb036644c7546276524dba552`
+source_commit: `00fd414c8c413e2b8780664d3a066f4179b5d187`
 
-source_tree: `5b35c471557c88027b9370679a91acd55044234c`
+source_tree: `566f0325464da6580470605eefc4f23def1ddf20`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828060000`
+installed_cache_version: `0.2.0+codex.20260828090000`
 
 installed_enabled: `true`
 
-source_file_count: `175`
+source_file_count: `177`
 
-installed_file_count: `175`
+installed_file_count: `177`
 
-normalized_source_cache_sha256: `43f906458d2d901310090d93e7b13409b310dfbd4e4e118899f6d71c5435ae1c`
+normalized_source_cache_sha256: `155ab49e40f4ce93d53d0b905dd29abb5166e7f9ac3b018cd1d210d97c1b2d79`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -137,6 +137,10 @@ installed_action_aligned_rail_smoke: `11/11 installed EN/ES outcome/checkpoint r
 installed_continuity_rail_semantics_smoke: `2/2 installed EN/ES outcome/checkpoint rails expose recorded -> pending -> blocked states with one aria-current="step" pending safe step; terminal stop marks its recorded step current`
 
 installed_triage_handoff_version_compatibility_smoke: `2/2 installed v2 builder attestation and legacy v1 reader compatibility without projection snapshot`
+
+installed_private_outcome_export_smoke: `4/4 installed reply receipt export maps only response_date, rejects requested/terminal events, requires application context, and deduplicates replay`
+
+installed_practice_marker_contrast_smoke: `1/1 installed practice continuity and triage-route markers use 2px borders in prefers-contrast: more`
 
 installed_duplicate_vacancy_source_url_smoke: `1/1 installed market validator rejects duplicate normalized vacancy source URLs even when vacancy IDs and fingerprints differ`
 
