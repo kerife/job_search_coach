@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T14:45:06-06:00`
+release_timestamp: `2026-08-28T15:02:56-06:00`
 
-source_commit: `a862e4c7dc3a9c9ed04f33e09b67355be25ff321`
+source_commit: `7f53e2cde40237f040cc7c47b5baa4a6c19b6415`
 
-source_tree: `51c48122cc5644c0bd74d0c4e2d52ae09a36aa0d`
+source_tree: `42998bded71734904f36055c73357607ea511675`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828144038`
+installed_cache_version: `0.2.0+codex.20260828150047`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `7364d1fc1a489ae780c0a2deff070861288ca52068dfae4da85b4258ff82a7d3`
+normalized_source_cache_sha256: `db2fcff90b0a297fbfeb25067b4e297375f54d512c993f097b6fe2058ef0962c`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -193,6 +193,14 @@ installed_next_stage_schema_typed_closure_smoke: `2/2 installed next-stage schem
 installed_duplicate_employer_source_url_smoke: `1/1 installed market validator rejects duplicate normalized employer official_source_url values without echoing the URL`
 
 installed_screen_debrief_smoke: `4/4 installed EN/ES builder, validator, and renderer; target-fact ownership, requested-screen receipt, future-date, explicit-checkpoint, and 0600 boundaries remain fail-closed`
+
+installed_reply_triage_continuity_smoke: `6/6 installed EN/ES clarify, ready, and stop triage artifacts expose one state-bound aria-current step on the static three-step rail; handoff remains pending`
+
+installed_screen_intake_recursion_smoke: `1/1 deeply nested in-memory screen-intake context returns artifact-free needs_intake without traceback`
+
+installed_debrief_schema_decision_guard_smoke: `1/1 schema rejects continue_review artifacts with unclear/not-discussed coverage or unknown topics`
+
+installed_linkedin_scheme_obfuscation_smoke: `1/1 candidate-facing validator rejects control-obfuscated dangerous URL schemes`
 
 installed_feedback_sensitive_continuity_rail_smoke: `6/6 ES/EN feedback labels render one deterministic three-step rail with closed pending/blocked state copy`
 
