@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T08:32:47-06:00`
+release_timestamp: `2026-08-28T03:21:16-06:00`
 
-source_commit: `1a6482d8d2dd2d7d9257690f26972fa320a341b8`
+source_commit: `7d64b10d668c2c2435a05e8d64f9b12ddc37faac`
 
-source_tree: `98cf4ac0e21cc424fc2de0cb2fd6027cbc18ba06`
+source_tree: `58f71b2b39620368cee2d7f3a60042f6cebfbbb0`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828083247`
+installed_cache_version: `0.2.0+codex.20260828120000`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `173`
 
 installed_file_count: `173`
 
-normalized_source_cache_sha256: `60d11554d3a0820380d2ae4a58df71f5b581033e0e8fdae61948d5a9fe44b3b6`
+normalized_source_cache_sha256: `b007361e7ab12e9efbf8c7226206b30a1724e060db951790e015da3d6472fc71`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -239,3 +239,7 @@ installed_nfkc_identity_smoke: `1/1 compatibility-form identity is rejected with
 installed_python311_render_smoke: `4/4 affected renderers compile and load in the supported Python 3.11 environment`
 installed_root_discovery_smoke: `1/1 documented root unittest discovery completes without same-named module shadowing`
 installed_superdesign_page_map_smoke: `1/1 route/page dependency map covers all 10 private surfaces one-to-one`
+
+installed_recruiter_post_screen_natural_routing_smoke: `6/6 English/Spanish completed-screen, debrief, and next-stage requests route to artifact-free debrief or next-stage handoffs with debrief precedence`
+installed_recruiter_high_contrast_boundary_smoke: `2/2 screen-intake and debrief cards strengthen borders and state bands under prefers-contrast: more`
+installed_linkedin_canonical_date_runtime_smoke: `2/2 LinkedIn runtime and schema validators reject week-date spellings while accepting YYYY-MM-DD`
