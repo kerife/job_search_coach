@@ -442,6 +442,22 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual("collect_debrief_context", routed["next_action"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_root_route_keeps_future_or_negated_recruiter_screens_out_of_post_screen_debrief(self) -> None:
+        cases = (
+            "I have not had a recruiter interview yet; help me prepare.",
+            "I had a recruiter interview scheduled for next week; help me prepare.",
+            "I had not attended the recruiter screen; what should I do next?",
+            "No he tenido el filtro con el reclutador; ¿qué sigue?",
+        )
+        for request in cases:
+            routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-27")
+            with self.subTest(request=request):
+                self.assertEqual("recruiter_target_screen_intake", routed["route_kind"])
+                self.assertEqual("prepare-role-interviews", routed["selected_module"])
+                self.assertEqual("collect_screen_intake", routed["next_action"])
+                self.assertEqual("needs_intake", routed["case_state"])
+                self.assertIsNone(routed["artifact"])
+
     def test_root_route_keeps_recruiter_network_and_generic_technical_interview_precedence(self) -> None:
         shortlist = route_recruiter_request("How do I network with recruiters?", locale="en", as_of_date="2026-08-27")
         ordinary = route_recruiter_request("Help me prepare for a technical interview.", locale="en", as_of_date="2026-08-27")

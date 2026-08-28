@@ -61,6 +61,14 @@ SCREEN_COMPLETION = re.compile(
     r"termin[eé]|tuve|asist[ií]|atend[ií]|pas[eé]|habl[eé]\s+con|convers[eé]\s+con)\b",
     re.I,
 )
+SCREEN_NOT_COMPLETED = re.compile(
+    r"\b(?:not\s+(?:yet\s+)?(?:had|attended|completed|finished)|haven['’]?t\s+"
+    r"(?:had|attended|completed|finished)|have\s+not\s+(?:had|attended|completed|finished)|"
+    r"scheduled\s+for|upcoming|tomorrow|next\s+week|before\s+(?:the|my)|not\s+yet|"
+    r"no\s+he\s+tenido|a[uú]n\s+no\s+(?:he\s+)?(?:tenido|asistido|atendido)|"
+    r"programad[oa]\s+para|ma[ñn]ana|pr[oó]xima?\s+semana)\b",
+    re.I,
+)
 SCREEN_CONTEXT = re.compile(
     r"\b(?:screen|interview|entrevista|filtro|call|conversation|llamada|conversaci[oó]n|"
     r"spoke\s+with|talked\s+to|habl[eé]\s+con|convers[eé]\s+con)\b",
@@ -131,6 +139,8 @@ def _has_recruiter_screen_context(request: str) -> bool:
 def _natural_recruiter_route(request: str) -> str | None:
     """Classify natural recruiter follow-up language before shortlist routing."""
     has_screen_context = _has_recruiter_screen_context(request)
+    if has_screen_context and SCREEN_NOT_COMPLETED.search(request):
+        return "pre_screen"
     if has_screen_context and (
         DEBRIEF_INTENT.search(request)
         or SCREEN_COMPLETION.search(request)
@@ -275,6 +285,15 @@ def route_recruiter_request(
             locale=locale,
             question_key="private_recruiter_next_stage_review",
             evidence_gaps=["valid_debrief_checkpoint_and_forward_stage"],
+        ) | {"authorization_required": request_authorization_required}
+    if natural_route == "pre_screen":
+        return _artifact_free_intake(
+            "recruiter_target_screen_intake",
+            selected_module="prepare-role-interviews",
+            next_action="collect_screen_intake",
+            locale=locale,
+            question_key="recruiter_target_screen_intake",
+            evidence_gaps=["target_specific_screen_context"],
         ) | {"authorization_required": request_authorization_required}
     if natural_route != "shortlist":
         return {
