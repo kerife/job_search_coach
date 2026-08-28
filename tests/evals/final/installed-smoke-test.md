@@ -20,7 +20,7 @@ release_timestamp: `2026-08-28T13:58:08-06:00`
 
 source_commit: `68a58eebfec7be892aac56d08a7bd6332d6a4116`
 
-source_tree: `48e574232ec766b9826d8b647b24e8442ba22876`
+source_tree: `ee43f10dee91e7edea80740fa8521922c78f65e3`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
