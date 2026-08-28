@@ -717,6 +717,37 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertFalse(routed["authorization_required"])
         self.assertIsNone(routed["artifact"])
 
+    def test_root_route_recognizes_post_screen_progression_to_hiring_manager(self) -> None:
+        for request in (
+            "I passed the recruiter screen; prepare me for the hiring manager.",
+            "I moved forward to the hiring manager interview after the recruiter screen.",
+            "Ya pasé el filtro y ahora sigue la entrevista con el hiring manager.",
+        ):
+            routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-28")
+            with self.subTest(request=request):
+                self.assertEqual("private_recruiter_next_stage_review", routed["route_kind"])
+                self.assertEqual("prepare-role-interviews", routed["selected_module"])
+                self.assertEqual("collect_debrief_context", routed["next_action"])
+                self.assertFalse(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_post_screen_progression_requires_completed_context_and_rejects_negation(self) -> None:
+        for request in (
+            "I advanced to the next round after a recruiter screen.",
+            "The recruiter said I am progressing to the hiring manager stage.",
+        ):
+            routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-28")
+            with self.subTest(request=request):
+                self.assertEqual("private_recruiter_next_stage_review", routed["route_kind"])
+        for request, expected_route in (
+            ("I haven't passed the recruiter screen yet; help me prepare.", "recruiter_target_screen_intake"),
+            ("I did not clear the recruiter screen; help me prepare.", "recruiter_target_screen_intake"),
+            ("I advanced to the hiring manager stage.", "ordinary_professional_growth"),
+        ):
+            routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-28")
+            with self.subTest(request=request):
+                self.assertEqual(expected_route, routed["route_kind"])
+
     def test_root_route_keeps_recruiter_network_and_generic_technical_interview_precedence(self) -> None:
         shortlist = route_recruiter_request("How do I network with recruiters?", locale="en", as_of_date="2026-08-27")
         ordinary = route_recruiter_request("Help me prepare for a technical interview.", locale="en", as_of_date="2026-08-27")

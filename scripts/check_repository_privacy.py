@@ -8,6 +8,7 @@ import copy
 import importlib.util
 import json
 import re
+import stat
 import subprocess
 import sys
 import unicodedata
@@ -902,7 +903,22 @@ def tracked_eval_paths(repo_root: Path) -> tuple[Path, ...]:
         Path(line)
         for line in result.stdout.splitlines()
         if Path(line).suffix.lower() in TEXT_SUFFIXES
+        and _is_regular_non_symlink(repo_root / Path(line))
     )
+
+
+def _is_regular_non_symlink(path: Path) -> bool:
+    try:
+        status = path.lstat()
+    except OSError:
+        return False
+    return stat.S_ISREG(status.st_mode) and not stat.S_ISLNK(status.st_mode)
+
+
+def _read_regular_text(path: Path) -> str:
+    if not _is_regular_non_symlink(path):
+        raise OSError("scan input is not a regular file")
+    return path.read_text(encoding="utf-8")
 
 
 def staged_release_artifact_snapshot(repo_root: Path) -> tuple[StagedArtifact, ...]:
@@ -1024,7 +1040,7 @@ def required_marker_paths(repo_root: Path) -> tuple[Path, ...]:
         paths.extend(
             path.relative_to(repo_root)
             for path in sorted((repo_root / directory).iterdir())
-            if path.is_file() and path.suffix.lower() in {".json", ".md"}
+            if _is_regular_non_symlink(path) and path.suffix.lower() in {".json", ".md"}
         )
     return tuple(paths)
 
@@ -1047,7 +1063,7 @@ def main(argv: list[str] | None = None) -> int:
             text = (
                 read_staged_release_artifact_text(repo_root, staged_records[path])
                 if path in staged_paths
-                else (repo_root / path).read_text(encoding="utf-8")
+                else _read_regular_text(repo_root / path)
             )
         except (OSError, UnicodeError, subprocess.CalledProcessError, StagedArtifactReadError):
             failures[(path, "SCAN_INPUT_UNREADABLE")] += 1

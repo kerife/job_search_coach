@@ -43,6 +43,11 @@ only for an identity-free summary and one verified fact, keeps
 `authorization_required=true`, and never sends, schedules, or creates a calendar
 item.
 
+Post-screen progression wording such as “passed the recruiter screen”, “moved
+forward to the hiring manager”, and “ya pasé el filtro y ahora sigue” enters
+`private_recruiter_next_stage_review` with the same artifact-free debrief intake;
+it does not infer a successful outcome or start preparation automatically.
+
 ## Private recruiter-practice routing
 
 Before every other route, check for an explicit private recruiter-practice request. It takes precedence over recruiter-reply triage, every LinkedIn branch, and debug, eval, detail, raw, or internal-row requests. When it includes an identity-free vacancy summary and at least one supplied candidate fact, select `prepare-role-interviews` and create the separate private recruiter practice session. This is a private artifact branch for one recruiter-screen question, not a normal local LinkedIn artifact and not a client-report fallback.

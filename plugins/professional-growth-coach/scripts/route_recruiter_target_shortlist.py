@@ -64,7 +64,8 @@ SCREEN_COMPLETION = re.compile(
     re.I,
 )
 SCREEN_NOT_COMPLETED = re.compile(
-    r"\b(?:didn['’]?t\s+(?:attend|have|complete|finish)|did\s+not\s+(?:attend|have|complete|finish)|"
+    r"\b(?:didn['’]?t\s+(?:attend|have|complete|finish|pass|clear)|did\s+not\s+(?:attend|have|complete|finish|pass|clear)|"
+    r"haven['’]?t\s+(?:passed|cleared)|have\s+not\s+(?:passed|cleared)|"
     r"(?:didn['’]?t|did\s+not)\s+go\s+to\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
     r"never\s+went\s+to\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
     r"never\s+went\s+through\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
@@ -148,6 +149,13 @@ NEXT_STAGE_INTENT = re.compile(
     r"preparar(?:me)?\s+para\s+(?:la\s+)?siguiente\s+etapa)\b",
     re.I,
 )
+POST_SCREEN_PROGRESSION_INTENT = re.compile(
+    r"(?:\b(?:passed|cleared)\s+(?:the\s+)?recruiter\s+(?:screen|interview)\b|"
+    r"\b(?:moved\s+forward|advanced|progressed)\s+to\s+(?:the\s+)?(?:hiring\s+manager|next\s+round)\b|"
+    r"\b(?:recruiter)\b[^.!?\n]{0,70}\bprogress(?:ed|ing)\s+to\s+(?:the\s+)?hiring\s+manager\b|"
+    r"\b(?:ya\s+)?pas[eé]\s+(?:el\s+)?filtro\b[^.!?\n]{0,60}\b(?:sigue|hiring\s+manager|siguiente)\b)",
+    re.I,
+)
 READINESS_NEGATION = re.compile(
     r"\b(?:not\s+(?:yet\s+)?ready|not\s+prepared|a[uú]n\s+no\s+(?:estoy\s+)?list[oa]|todav[ií]a\s+no\s+(?:estoy\s+)?list[oa])\b",
     re.I,
@@ -229,6 +237,7 @@ def _natural_recruiter_route(request: str) -> str | None:
     has_recruiter_reply_request = bool(
         EXPLICIT_RECRUITER_INTENT.search(request) and RECRUITER_REPLY_REQUEST_INTENT.search(request)
     )
+    has_post_screen_progression = bool(POST_SCREEN_PROGRESSION_INTENT.search(request))
     if (has_screen_context or has_recruiter_invitation) and (
         RECRUITER_INVITATION_INTENT.search(request)
         and REPLY_TRIAGE_ACTION_INTENT.search(request)
@@ -236,6 +245,10 @@ def _natural_recruiter_route(request: str) -> str | None:
         return "reply_triage"
     if has_recruiter_inbound or has_recruiter_reply_request:
         return "reply_triage"
+    if has_post_screen_progression and not SCREEN_NOT_COMPLETED.search(request) and (
+        EXPLICIT_RECRUITER_INTENT.search(request) or SCREEN_CONTEXT.search(request)
+    ):
+        return "next_stage"
     if (has_screen_context or has_recruiter_invitation) and (
         RECRUITER_INVITATION_INTENT.search(request)
         or

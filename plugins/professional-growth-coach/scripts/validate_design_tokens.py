@@ -172,6 +172,7 @@ FAMILY_COLORS = {
             "#f5f7f8",
             "#f5f7fa",
             "#ff938a",
+            "#ff8f8f",
             "#ffc078",
             "#ffffff",
         }

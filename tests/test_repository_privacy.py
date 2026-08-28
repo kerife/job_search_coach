@@ -11,6 +11,8 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from types import SimpleNamespace
+from unittest import mock
 from pathlib import Path
 
 
@@ -596,6 +598,30 @@ class RepositoryPrivacyTests(unittest.TestCase):
             set(DOSSIER_SOURCE_INVENTORY_PATHS),
             set(scanner.DOSSIER_SOURCE_INVENTORY_PATHS),
         )
+
+    def test_privacy_scanner_does_not_follow_symlinked_eval_or_marker_inputs(self) -> None:
+        scanner = load_scanner()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            evals = root / "tests" / "evals"
+            evals.mkdir(parents=True)
+            marker_dir = root / "markers"
+            marker_dir.mkdir()
+            outside = root / "outside.md"
+            outside.write_text("OUTSIDE-MARKER", encoding="utf-8")
+            (evals / "link.md").symlink_to(outside)
+            (evals / "regular.md").write_text("safe", encoding="utf-8")
+            (marker_dir / "link.md").symlink_to(outside)
+            (marker_dir / "regular.md").write_text("true", encoding="utf-8")
+            result = SimpleNamespace(stdout="tests/evals/link.md\ntests/evals/regular.md\n")
+            with mock.patch.object(scanner.subprocess, "run", return_value=result):
+                self.assertEqual((Path("tests/evals/regular.md"),), scanner.tracked_eval_paths(root))
+            with mock.patch.object(scanner, "MARKER_PATHS", ()), mock.patch.object(
+                scanner, "MARKER_DIRECTORIES", (Path("markers"),)
+            ):
+                self.assertEqual((Path("markers/regular.md"),), scanner.required_marker_paths(root))
+            with self.assertRaises(OSError):
+                scanner._read_regular_text(evals / "link.md")
 
     def test_dossier_source_inventory_uses_non_overbroad_source_scanning(self) -> None:
         scanner = load_scanner()

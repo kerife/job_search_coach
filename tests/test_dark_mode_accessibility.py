@@ -254,6 +254,28 @@ class DarkModeAccessibilityTests(unittest.TestCase):
         dark = css[css.index("@media screen and (prefers-color-scheme: dark)"):css.index("@media print")]
         self.assertIn("--screen-blue: #8eb2ff;", dark)
 
+    def test_recruiter_dark_semantic_tokens_are_declared_and_contrasting(self) -> None:
+        cases = (
+            ("private-recruiter-screen-debrief-v1.css", "debrief", {
+                "--debrief-blue": "#8eb2ff",
+                "--debrief-green": "#69d39a",
+                "--debrief-amber": "#ffc078",
+            }),
+            ("recruiter-target-screen-intake-v1.css", "screen", {
+                "--screen-blue": "#8eb2ff",
+                "--screen-green": "#69d39a",
+                "--screen-amber": "#ffc078",
+                "--screen-red": "#ff8f8f",
+            }),
+        )
+        for filename, prefix, tokens in cases:
+            with self.subTest(filename=filename):
+                css = (ASSETS / filename).read_text(encoding="utf-8")
+                dark = css[css.index("@media screen and (prefers-color-scheme: dark)"):css.index("@media print")]
+                for token, value in tokens.items():
+                    self.assertRegex(dark, rf"{re.escape(token)}\s*:\s*{re.escape(value)};")
+                    self.assertGreaterEqual(_contrast(value, "#1c2738"), 3.0)
+
     def test_screen_and_debrief_dark_controls_keep_text_and_marker_contrast(self) -> None:
         cases = (
             ("recruiter-target-screen-intake-v1.css", "screen", "#1c2738", "#edf2fa", "#8eb2ff"),

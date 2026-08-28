@@ -73,6 +73,10 @@ time, a calendar invite, “reply to a recruiter”, and Spanish “me pidió
 disponibilidad” or “me llegó una invitación para agendar” use the same private
 triage boundary.
 
+Progression phrases such as “passed the recruiter screen”, “moved forward to
+the hiring manager”, and “ya pasé el filtro y ahora sigue” enter the same
+artifact-free next-stage review instead of ordinary coaching.
+
 The same preparation boundary covers explicit non-attendance such as “I never
 went to the recruiter interview”, “I didn’t go to the recruiter screen”,
 “Nunca fui a la entrevista con el reclutador”, “No fui”, “No me presenté”, and
@@ -163,6 +167,10 @@ collision-safe path: parent symlinks, leaf symlinks, and hardlinked targets are
 rejected; bytes are flushed before an atomic no-overwrite publication; and the
 result remains mode `0600`. A failed write removes its temporary file and does
 not alter an existing artifact.
+
+The shared private-input reader and the standalone case validator also reject
+hardlinked input leaves, so every private JSON boundary keeps the same
+single-link invariant.
 
 The recruiter shortlist renderer reads its HTML and CSS only through the same
 package-local regular-file boundary, and rejects future-dated artifacts even
@@ -436,6 +444,8 @@ instead of following a symlink. Use `--force` only after reviewing an existing
 output file: it preserves rows for distinct applications and replaces only the
 row for the same `application_id`. Each component of the absolute parent chain
 is opened with no-follow semantics before the final descriptor is retained.
+Existing CSV input is bounded to 256 KiB before rows are materialized, including
+when `--force` is used.
 
 After a completed `screen_attended` checkpoint, the rail uses the closed
 `debrief_after_screen` action. `route_recruiter_screen_debrief_intake` carries
