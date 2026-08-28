@@ -76,6 +76,7 @@
   .reading-path { align-items: stretch; flex-direction: column; }
   .reading-path ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); justify-content: stretch; }
   .reading-path a { justify-content: center; }
+  #section-coverage, #coach-priorities, #market-evidence, #screen-preparation { scroll-margin-top: 11rem; }
 }
 
 @media (max-width: 480px) {

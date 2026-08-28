@@ -72,6 +72,35 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
         tampered["decision_counts"]["advance"] = 2
         self.assertIn("decision_counts do not reconcile with decision rows", validate_decision_gate(tampered))
 
+    def test_validator_rejects_decision_rows_that_drift_from_source_target(self) -> None:
+        gate = build_decision_gate(self.shortlist())
+        mutations = {
+            "decision_reason": "Changed reason",
+            "contactability_status": "do_not_contact",
+            "missing_context": "Changed context",
+            "recommended_draft_type": "none",
+            "next_safe_action": "record_observation_only",
+        }
+        for field, value in mutations.items():
+            tampered = copy.deepcopy(gate)
+            tampered["decision_rows"][0][field] = value
+            with self.subTest(field=field):
+                self.assertIn(
+                    f"decision_rows[0].{field} must match source shortlist",
+                    validate_decision_gate(tampered),
+                )
+
+    def test_validator_rejects_derived_strategy_drift(self) -> None:
+        gate = build_decision_gate(self.shortlist())
+        for field in ("first_contact_strategy", "warm_intro_readiness"):
+            tampered = copy.deepcopy(gate)
+            tampered["decision_rows"][0][field] = "Different recommendation"
+            with self.subTest(field=field):
+                self.assertIn(
+                    f"decision_rows[0].{field} must match locale and decision",
+                    validate_decision_gate(tampered),
+                )
+
     def test_validator_rejects_restricted_decision_prose(self) -> None:
         gate = build_decision_gate(self.shortlist())
         for field, value in {

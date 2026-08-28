@@ -299,6 +299,17 @@ class ExecutiveCareerDossierV2Tests(unittest.TestCase):
                 self.validator.validate_dossier(invalid),
             )
 
+    def test_v2_validator_rejects_unicode_control_prose(self) -> None:
+        for character in ("\u202e", "\u200b", "\u0000"):
+            with self.subTest(code_point=f"U+{ord(character):04X}"):
+                dossier = make_v2_dossier("en")
+                dossier["focus"]["statement"] = (
+                    f"Target under review: roles with evidence{character} available."
+                )
+                errors = self.validator.validate_dossier(dossier)
+                self.assertTrue(errors)
+                self.assertTrue(all(character not in error for error in errors))
+
     def test_unavailable_sections_require_current_session_read_only_decisions(self) -> None:
         dossier = make_v2_dossier()
         dossier["section_coverage"][10] = {
@@ -642,6 +653,11 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         self.assertIn("position: static", css[css.index("@media print"):])
         self.assertIn(".reading-path a[aria-current=\"location\"]", css)
         self.assertIn("@media (prefers-reduced-motion: reduce)", css)
+
+    def test_tablet_reading_path_scroll_margin_clears_sticky_rail(self) -> None:
+        css = (ASSETS_ROOT / "executive-career-dossier-v2.css").read_text(encoding="utf-8")
+        tablet = css[css.index("@media screen and (max-width: 900px)"):css.index("@media screen and (max-width: 640px)")]
+        self.assertIn("scroll-margin-top: 11rem", tablet)
 
     def test_reading_path_follows_verdict_and_recruiter_scan(self) -> None:
         for locale in ("es", "en"):

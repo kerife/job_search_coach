@@ -26,7 +26,11 @@ The recruiter-networking flow includes a private `recruiter-target-shortlist-v1`
 
 The shortlist privacy boundary also rejects phone-like strings, credential or bearer-token markers, and generic local filesystem paths in every bounded text field. This keeps private contact or machine material out of both the JSON artifact and its in-memory HTML review surface, even when it is supplied as `context_source`.
 
+The same boundary rejects Unicode control and format characters (including zero-width, bidi, NUL, and newline controls) in diagnostic field names and dossier prose, preventing hidden or injected material from reaching validation output or local HTML.
+
 Explicit requests to expand a network or prepare for a first recruiter screen route through `scripts/route_recruiter_target_shortlist.py`, including natural English/Spanish phrasing such as “network with recruiters” and “primera entrevista con un reclutador”. With three to six supplied targets, the route runs builder → validator → renderer and returns the validated artifact plus private in-memory HTML with `next_action=review_recruiter_target_shortlist`; without enough context or with an invalid target container it asks one bounded intake question that names the minimum plan (goal/segments, 3–5 manual queries, weekly time, stop condition, and proof theme). It does not infer recipients. The rendered card localizes the next safe action and summarizes the four decision counts before the manual `recruiter_target_decision_gate` handoff.
+
+Decision-gate rows are replay-bound to the corresponding shortlist target for every copied decision, rationale, context, contactability, draft type, and next action; the localized strategy and warm-intro guidance are also deterministic for the source locale and decision.
 
 For a selected `advance` target, `route_recruiter_screen_intake` adds the target-specific `recruiter-target-screen-intake-v1` bridge. It requires a stated screen stage, `V-###` vacancy requirements, `F-###` candidate facts, non-unknown company evidence, a source date no older than 90 days from the gate snapshot, and four passing checks before returning only `manual_prepare_role_interviews_review`; stale context stays `clarify_first` with `clarify_context`, while `clarify` and `stop` targets remain blocked or in intake, with no message, calendar, or automatic preparation action.
 
@@ -115,6 +119,7 @@ value so action text remains above the contrast floor on dark surfaces.
 The executive dossier reading path also switches to a two-column tablet layout
 through 900px, then to one column at 640px, keeping all four destinations
 usable without horizontal scrolling.
+At the tablet breakpoint, section anchors reserve space for the sticky reading path so each destination opens below the rail; the compact mobile offset remains unchanged.
 The career-market matrix uses the same labelled stacked-row treatment in print
 as on narrow screens, keeping multi-vacancy comparisons readable on paper
 without changing table semantics.

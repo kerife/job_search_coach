@@ -51,6 +51,27 @@ HANDOFF_FIELDS = frozenset({
 DELIVERY_FIELDS = frozenset({"draft_only", "external_actions_authorized", "local_save_mode", "raw_contact_details_retained"})
 SAFE_ACTIONS = frozenset({"collect_screen_context", "prepare_role_interviews_review"})
 DECISIONS = frozenset({"advance", "clarify", "pause", "stop"})
+SOURCE_BOUND_ROW_FIELDS = (
+    "decision_reason",
+    "contactability_status",
+    "missing_context",
+    "recommended_draft_type",
+    "next_safe_action",
+)
+STRATEGY = {
+    "es": {
+        "advance": ("Revisar primero el ángulo de contacto de menor riesgo.", "Contexto y prueba suficientes para revisión manual."),
+        "clarify": ("Resolver el contexto del rol antes de pensar en un borrador.", "La conexión puede servir, pero falta una confirmación."),
+        "pause": ("Conservar el objetivo en investigación sin preparar contacto.", "La coincidencia temática no basta todavía."),
+        "stop": ("Registrar el motivo de detención y no continuar.", "La condición actual no permite un contacto seguro."),
+    },
+    "en": {
+        "advance": ("Review the lowest-risk contact angle first.", "Context and proof are sufficient for manual review."),
+        "clarify": ("Resolve role context before considering a draft.", "The path may help, but one confirmation is missing."),
+        "pause": ("Keep this target in research without preparing contact.", "Topic overlap is not enough yet."),
+        "stop": ("Record the stop reason and do not continue.", "The current condition does not support safe contact."),
+    },
+}
 
 
 def _sibling(name: str) -> Any:
@@ -173,6 +194,13 @@ def validate_decision_gate(value: object, *, as_of: dt.date | None = None) -> li
                 errors.append(f"decision_rows[{index}].recommended_draft_type has invalid value")
             for field, maximum in (("decision_reason", 300), ("missing_context", 300), ("first_contact_strategy", 300), ("warm_intro_readiness", 240)):
                 _text(row.get(field), f"decision_rows[{index}].{field}", errors, maximum)
+            strategy_locale = source.get("locale") if isinstance(source, Mapping) else locale
+            expected_strategy = STRATEGY.get(strategy_locale, {}).get(row.get("decision"))
+            if expected_strategy is not None:
+                if row.get("first_contact_strategy") != expected_strategy[0]:
+                    errors.append(f"decision_rows[{index}].first_contact_strategy must match locale and decision")
+                if row.get("warm_intro_readiness") != expected_strategy[1]:
+                    errors.append(f"decision_rows[{index}].warm_intro_readiness must match locale and decision")
             action = row.get("next_safe_action")
             if action not in {"draft_only_review", "collect_recipient_context", "record_observation_only"}:
                 errors.append(f"decision_rows[{index}].next_safe_action has invalid value")
@@ -192,8 +220,12 @@ def validate_decision_gate(value: object, *, as_of: dt.date | None = None) -> li
                 errors.append("decision_rows must preserve source target order")
             for index, row in enumerate(rows[: len(source_rows)]):
                 source_row = source_rows[index]
-                if isinstance(source_row, Mapping) and row.get("decision") != source_row.get("decision"):
-                    errors.append(f"decision_rows[{index}].decision must match source shortlist")
+                if isinstance(source_row, Mapping):
+                    if row.get("decision") != source_row.get("decision"):
+                        errors.append(f"decision_rows[{index}].decision must match source shortlist")
+                    for field in SOURCE_BOUND_ROW_FIELDS:
+                        if row.get(field) != source_row.get(field):
+                            errors.append(f"decision_rows[{index}].{field} must match source shortlist")
 
     if counts is not None:
         expected = {decision: sum(1 for row in rows if row.get("decision") == decision) for decision in COUNT_FIELDS}

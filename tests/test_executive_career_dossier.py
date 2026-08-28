@@ -1148,6 +1148,18 @@ class ExecutiveCareerDossierEvidenceModuleTests(unittest.TestCase):
                 )
                 self.assertTrue(all("Алексей Иванов" not in error for error in errors))
 
+    def test_unicode_control_prose_is_rejected_without_echoing_content(self) -> None:
+        for character in ("\u202e", "\u200b", "\u0000"):
+            with self.subTest(code_point=f"U+{ord(character):04X}"):
+                dossier = mutate_path(
+                    self.es_dossier,
+                    ("focus", "statement"),
+                    f"Objetivo bajo revisión: aclarar una propuesta profesional con evidencia{character} disponible.",
+                )
+                errors = self.validator.validate_dossier(dossier)
+                self.assertTrue(errors)
+                self.assertTrue(all(character not in error for error in errors))
+
     def test_dated_market_context_requires_vacancy_provenance(self) -> None:
         cases = (
             ("zero sample", ("market_context", "vacancy_sample_count"), 0, "market_context.vacancy_sample_count must be greater than zero"),
