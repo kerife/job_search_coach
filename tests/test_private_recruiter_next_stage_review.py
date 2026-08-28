@@ -67,6 +67,19 @@ class PrivateRecruiterNextStageReviewTests(unittest.TestCase):
         self.assertIsNone(routed["artifact"])
         self.assertFalse(routed["authorization_required"])
 
+    def test_nested_receipt_recovery_stays_artifact_free(self) -> None:
+        nested: object = {}
+        for _ in range(1000):
+            nested = {"nested": nested}
+        receipt = copy.deepcopy(RECEIPT)
+        receipt["unexpected"] = nested
+        routed = route_recruiter_next_stage_review(
+            self.debrief, receipt, self.intake, valid_checkpoint(), "first_interview"
+        )
+        self.assertEqual("needs_intake", routed["case_state"])
+        self.assertIsNone(routed["artifact"])
+        self.assertNotIn("Traceback", str(routed))
+
     def test_transition_recovery_requires_validated_source_inputs(self) -> None:
         routed = route_recruiter_next_stage_review(
             {

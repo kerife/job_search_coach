@@ -138,6 +138,18 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
         self.assertIsNone(routed["artifact"])
         self.assertNotIn("Traceback", str(routed))
 
+    def test_debrief_intake_fails_closed_for_deeply_nested_checkpoint(self) -> None:
+        nested: object = {}
+        for _ in range(1000):
+            nested = {"nested": nested}
+        checkpoint = valid_checkpoint()
+        checkpoint["unexpected"] = nested
+        routed = route_recruiter_screen_debrief_intake(checkpoint, RECEIPT, self.intake)
+        self.assertEqual("private_recruiter_screen_debrief", routed["route_kind"])
+        self.assertEqual("needs_intake", routed["case_state"])
+        self.assertIsNone(routed["artifact"])
+        self.assertNotIn("Traceback", str(routed))
+
     def test_debrief_intake_rejects_locale_or_stage_drift(self) -> None:
         mismatched_checkpoint = valid_checkpoint()
         mismatched_checkpoint["locale"] = "es"

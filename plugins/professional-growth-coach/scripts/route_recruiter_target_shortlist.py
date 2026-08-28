@@ -665,7 +665,7 @@ def route_recruiter_screen_debrief_intake(
             raise ValueError("debrief target binding is unavailable")
         if binding.get("target_id") != intake.get("target_id") or binding.get("source_gate_snapshot") != intake.get("source_gate_snapshot"):
             raise ValueError("debrief target binding is not reconciled")
-    except (TypeError, ValueError):
+    except (RecursionError, TypeError, ValueError):
         return _artifact_free_intake(
             "private_recruiter_screen_debrief",
             selected_module="track-career-outcomes",
@@ -737,7 +737,7 @@ def route_recruiter_next_stage_review(
         )
         if source_errors:
             raise ValueError("next-stage source inputs are invalid")
-    except (TypeError, ValueError):
+    except (RecursionError, TypeError, ValueError):
         return _artifact_free_intake(
             "private_recruiter_next_stage_review",
             selected_module="prepare-role-interviews",
@@ -754,7 +754,7 @@ def route_recruiter_next_stage_review(
         rendered_html = NEXT_STAGE_REVIEW_RENDERER.render_next_stage_review_html(
             artifact, debrief, receipt, intake, checkpoint
         )
-    except (TypeError, ValueError):
+    except (RecursionError, TypeError, ValueError):
         return _artifact_free_intake(
             "private_recruiter_next_stage_review",
             selected_module="prepare-role-interviews",
