@@ -16,23 +16,23 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T07:45:39-06:00`
+release_timestamp: `2026-08-28T07:59:12-06:00`
 
-source_commit: `7f1ebb849cd2aa1c230082d90674526912be5bb2`
+source_commit: `2b8f9d5354d14064f9c6ee3dc1cd3f7de23fde04`
 
-source_tree: `eeea5c9f3dff583aa0ecdcfc26f70083b2f873f7`
+source_tree: `1a0d9ddc71aaebca11c27be8e099286adb8a7d77`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828074539`
+installed_cache_version: `0.2.0+codex.20260828075912`
 
 installed_enabled: `true`
 
-source_file_count: `172`
+source_file_count: `173`
 
-installed_file_count: `172`
+installed_file_count: `173`
 
-normalized_source_cache_sha256: `7e910745e065ec90802cce02867fce82d62066744bb66605672f41c2c580409a`
+normalized_source_cache_sha256: `b33ad3c9c417ad4609993b72e720ce09e3975a47dfc63d203bd0833e5519b024`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -75,6 +75,8 @@ installed_release_digest_documentation_smoke: `1/1 release runner validator dige
 installed_release_validator_copy_smoke: `1/1 release runner re-hashes private validator copies before execution`
 installed_validator_support_hash_smoke: `1/1 release runner pins, copies, and re-hashes identifier_validation.py`
 installed_shortlist_next_step_smoke: `2/2 ES/EN localized review date and fixed batch next-step panel`
+installed_recruiter_date_canonicalization_smoke: `5/5 recruiter builders/validators reject alternate ISO date spellings and preserve YYYY-MM-DD`
+installed_recruiter_continuity_orientation_smoke: `5/5 recruiter review surfaces state that the rail is orientation only, not progress or contact tracking`
 
 installed_replay_fingerprint_smoke: `1/1 stable identity-free receipt/checkpoint replay key`
 installed_source_traceability_smoke: `2/2 EN/ES public-source links and research dates`
