@@ -36,7 +36,11 @@ SCREEN_DEBRIEF_RENDERER = _sibling("render_private_recruiter_screen_debrief.py")
 NEXT_STAGE_REVIEW_RENDERER = _sibling("render_private_recruiter_next_stage_review.py")
 STAGE_TAXONOMY = _sibling("recruiter_stage_taxonomy.py")
 INTENT = re.compile(
-    r"(?:\b(?:expand(?:ir|iendo)?|ampliar|crecer)\s+(?:mi\s+)?(?:red|network)\s+(?:de\s+)?(?:recruiters?|reclutadores?)\b|"
+    r"(?:\b(?:expand(?:ir|iendo)?|ampliar|crecer|grow)\s+(?:(?:my|mi)\s+)?(?:red|network)\s+(?:(?:de|of)\s+)?(?:recruiters?|reclutadores?)\b|"
+    r"\b(?:build|construir)\s+(?:relationships?|relaciones)\s+(?:with|con)\s+(?:recruiters?|reclutadores?)\b|"
+    r"\b(?:connect|conectar(?:me)?)\s+(?:with|con)\s+(?:more\s+)?(?:recruiters?|reclutadores?)\b|"
+    r"\bget\s+on\s+(?:recruiters?|reclutadores?)['’]?\s+radar\b|"
+    r"\baumentar\s+mi\s+visibilidad\s+ante\s+(?:recruiters?|reclutadores?)\b|"
     r"\b(?:find|buscar|encontrar|identificar)\s+(?:a\s+)?(?:recruiters?|reclutadores?)\b|"
     r"\b(?:recruiter|recruiting|reclutador(?:a|es)?)\s+(?:screen|filtro|entrevista)\b|"
     r"\b(?:first\s+(?:recruiter\s+)?screen|primer\s+filtro(?:\s+con\s+(?:un\s+)?reclutador)?|"
@@ -51,6 +55,18 @@ INTENT = re.compile(
     r"\b(?:network|networking)\s+(?:with|con)\s+(?:recruiters?|reclutadores?)\b|"
     r"\bred\s+profesional\s+con\s+reclutadores?\b|"
     r"\b(?:red|network)\s+de\s+(?:recruiters?|reclutadores?)\b)",
+    re.I,
+)
+PLAIN_SCREEN_PREP_INTENT = re.compile(
+    r"\b(?:have\s+an?\s+upcoming|my\s+(?:recruiter\s+)?(?:screen|interview|call|conversation)\s+is\s+(?:coming\s+up|upcoming)|"
+    r"(?:am\s+)?getting\s+ready\s+for\s+(?:a\s+)?recruiter\s+screen|"
+    r"need\s+to\s+prepare\s+to\s+(?:talk|speak)\s+to\s+(?:the\s+)?recruiter|"
+    r"(?:necesito\s+)?preparar\s+(?:una?\s+)?llamada\s+con\s+(?:un\s+)?reclutador(?:a|es)?|"
+    r"mi\s+llamada\s+con\s+(?:el\s+)?recruiter\s+es\s+la\s+pr[oó]xima\s+semana)\b",
+    re.I,
+)
+PLAIN_POST_SCREEN_NEXT_STAGE_INTENT = re.compile(
+    r"\b(?:next\s+steps?|what\s+should\s+i\s+do(?:\s+after)?|what\s+do\s+i\s+do(?:\s+after)?|qu[eé]\s+sigue|qu[eé]\s+hago\s+despu[eé]s)\b",
     re.I,
 )
 DEBRIEF_INTENT = re.compile(
@@ -90,6 +106,9 @@ SCREEN_NOT_COMPLETED = re.compile(
     r"declined\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\s+invitation|"
     r"get\s+ready\s+for\s+(?:(?:my|a|an|the)\s+)?recruiter\s+(?:phone\s+)?screen\b|"
     r"(?:prepare|preparing|prepared)\s+for\s+(?:(?:my|a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
+    r"(?:prepare|preparing|getting\s+ready)\s+(?:to\s+(?:talk|speak)\s+to\s+(?:a\s+)?recruiters?|(?:una?\s+)?llamada\s+con\s+(?:un\s+)?reclutador(?:a|es)?)\b|"
+    r"\b(?:my\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\s+(?:is\s+)?(?:upcoming|coming\s+up)\b|"
+    r"\b(?:preparar(?:me)?|preparando)\s+(?:para\s+)?(?:una?\s+)?llamada\s+con\s+(?:un\s+)?reclutador(?:a|es)?\b|"
     r"before\s+(?:the|my)\s+(?:recruiter\s+)?(?:screen|interview|call|conversation)\b)",
     re.I,
 )
@@ -105,7 +124,7 @@ FUTURE_SCREEN_DATE = re.compile(
     r"\b(?:have|has|will\s+have|am\s+having|will\s+attend|am\s+attending)\b[^.!?\n]{0,60}\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b[^.!?\n]{0,40}\bin\s+(?:\d+|two|three)\s+days?\b|"
     r"\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b[^.!?\n]{0,50}\b(?:is(?:\s+scheduled(?:\s+for)?)?|will\s+be|scheduled(?:\s+for)?|rescheduled(?:\s+for)?|upcoming)\s+(?:on\s+)?(?:(?:this|next)\s+)?"
     r"(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|january|february|march|april|may|june|july|august|september|october|november|december)(?:\s+\d{1,2})?\b|"
-    r"\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b[^.!?\n]{0,30}\b(?:tomorrow|next\s+week|next\s+(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)|in\s+(?:\d+|two|three)\s+days?)\b|"
+    r"\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b[^.!?\n]{0,30}\b(?:tomorrow|next\s+week|next\s+(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)|in\s+(?:\d+|two|three)\s+days?|coming\s+up|upcoming)\b|"
     r"\b(?:will\s+attend|am\s+attending)\b[^.!?\n]{0,60}\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b[^.!?\n]{0,40}\b(?:on\s+)?(?:(?:this|next)\s+)?"
     r"(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|january|february|march|april|may|june|july|august|september|october|november|december)(?:\s+\d{1,2})?\b|"
     r"\b(?:tengo|tiene|tendr[eé]|estoy\s+teniendo|asistir[eé]|estoy\s+asistiendo)\b[^.!?\n]{0,60}\b(?:entrevista|filtro|llamada|conversaci[oó]n)\b[^.!?\n]{0,40}\b(?:el|este|en\s+(?:\d+|dos|tres)\s+d[ií]as?)\s+"
@@ -129,14 +148,14 @@ RECRUITER_INVITATION_INTENT = re.compile(
     re.I,
 )
 RECRUITER_INBOUND_INTENT = re.compile(
-    r"(?:\b(?:a\s+|the\s+)?recruiters?\b[^.!?\n]{0,80}\b(?:messaged|emailed|reached\s+out|contacted|wrote\s+to|sent\s+(?:me\s+)?(?:a\s+)?(?:linkedin\s+)?(?:message|note|email)|asked[^.!?\n]{0,30}\b(?:about|for)\s+(?:my\s+)?availability)\b|"
+    r"(?:\b(?:a\s+|the\s+)?(?:recruiters?|recruiting|recruitment)\b[^.!?\n]{0,80}\b(?:messaged|emailed|reached\s+out|contacted|wrote\s+to|sent\s+(?:me\s+)?(?:a\s+)?(?:linkedin\s+)?(?:message|note|email)|asked[^.!?\n]{0,30}\b(?:about|for)\s+(?:my\s+)?availability)\b|"
     r"\b(?:i\s+)?(?:got|received)\s+(?:(?:a|an)\s+)?(?:linkedin\s+)?(?:message|note|email)\s+from\s+(?:a\s+|the\s+)?recruiters?\b|"
-    r"\b(?:me\s+(?:escribi[oó]|contact[oó]|mand[oó]\s+(?:un\s+)?mensaje|pregunt[oó]))\b[^.!?\n]{0,45}\b(?:recruiters?|reclutador(?:a|es)?)\b|"
-    r"\b(?:recruiters?|reclutador(?:a|es)?)\b[^.!?\n]{0,45}\bme\s+(?:escribi[oó]|contact[oó]|mand[oó]|pregunt[oó])\b|"
+    r"\b(?:me\s+(?:escribi[oó]|contact[oó]|mand[oó]\s+(?:un\s+)?mensaje|pregunt[oó]))\b[^.!?\n]{0,45}\b(?:recruiters?|recruiting|recruitment|reclutador(?:a|es)?|reclutamiento)\b|"
+    r"\b(?:recruiters?|recruiting|recruitment|reclutador(?:a|es)?|reclutamiento)\b[^.!?\n]{0,45}\bme\s+(?:escribi[oó]|contact[oó]|mand[oó]|pregunt[oó])\b|"
     r"\b(?:a\s+|the\s+)?recruiters?\b[^.!?\n]{0,90}\b(?:wants?\s+to\s+(?:schedule|book)|asked\s+(?:me\s+)?(?:to\s+)?(?:choose|pick)\s+(?:a\s+)?(?:time|slot)|asked\s+me\s+to\s+(?:book|schedule)\s+(?:a\s+)?slot|asked\s+to\s+set\s+up\s+(?:a\s+)?call|asked[^.!?\n]{0,30}\b(?:about|for)\s+(?:my\s+)?availability|asked\s+me\s+when\s+i\s+am\s+free|sent\s+(?:me\s+)?(?:a\s+)?(?:calendar\s+)?(?:invite|link)|sent\s+over\s+(?:some\s+)?times|shared\s+(?:a\s+few\s+)?times)\b|"
     r"\b(?:i\s+)?received\s+(?:a\s+)?(?:linkedin\s+)?(?:message|email|note)\s+from\s+(?:a\s+|the\s+)?recruiters?\b|"
     r"\b(?:i\s+)?received\s+(?:a\s+)?recruiters?\s+(?:email|message|note)\b|"
-    r"\b(?:recruiters?|reclutador(?:a|es)?)\b[^.!?\n]{0,90}\b(?:pidi[oó]\s+(?:mi\s+)?disponibilidad|me\s+pidi[oó]\s+(?:elegir|escoger)\s+(?:un\s+)?(?:horario|slot)|quiere\s+agendar|me\s+(?:envi[oó]|comparti[oó])\s+(?:los\s+)?horarios|me\s+envi[oó]\s+(?:un\s+)?(?:enlace|link)\s+de\s+calendario)\b|"
+    r"\b(?:recruiters?|recruiting|recruitment|reclutador(?:a|es)?|reclutamiento)\b[^.!?\n]{0,90}\b(?:pidi[oó]\s+(?:mi\s+)?disponibilidad|me\s+pidi[oó]\s+(?:elegir|escoger)\s+(?:un\s+)?(?:horario|slot)|quiere\s+agendar|me\s+(?:envi[oó]|comparti[oó])\s+(?:los\s+)?horarios|me\s+envi[oó]\s+(?:un\s+)?(?:enlace|link)\s+de\s+calendario)\b|"
     r"\b(?:me\s+lleg[oó]|recib[ií])\s+(?:un\s+)?(?:correo|email|mensaje)\b[^.!?\n]{0,80}\b(?:reclutador(?:a|es)?)\b|"
     r"\b(?:me\s+lleg[oó]|recib[ií])\s+(?:una\s+)?invitaci[oó]n\b[^.!?\n]{0,80}\b(?:reclutador(?:a|es)?)\b[^.!?\n]{0,50}\b(?:agendar|programar|llamada|entrevista)\b|"
     r"\b(?:tell|give)\s+(?:the\s+)?recruiters?\s+(?:my\s+)?availability\b)",
@@ -148,7 +167,7 @@ RECRUITER_REPLY_REQUEST_INTENT = re.compile(
     re.I,
 )
 NEXT_STAGE_INTENT = re.compile(
-    r"\b(?:next\s+stage|what(?:'s|\s+is)\s+next|what\s+comes\s+next|what\s+happens\s+after|what\s+(?:do|should)\s+i\s+do\s+next|"
+    r"\b(?:next\s+stage|next\s+steps?|what(?:'s|\s+is)\s+next|what\s+comes\s+next|what\s+happens\s+after|what\s+(?:do|should)\s+i\s+do(?:\s+next|\s+after)?|"
     r"next\s+step|move\s+on\s+to|advance\s+to|what\s+comes\s+after|"
     r"hiring\s+manager\s+stage|prepare\s+for\s+(?:the\s+)?(?:next|hiring\s+manager)|"
     r"siguiente\s+etapa|siguiente\s+paso|que\s+sigue|qué\s+sigue|que\s+viene\s+despu[eé]s|qué\s+viene\s+despu[eé]s|que\s+hago\s+despu[eé]s|"
@@ -169,7 +188,7 @@ POST_SCREEN_FOLLOWTHROUGH_INTENT = re.compile(
     r"(?:hasn['’]?t|has\s+not|have\s+not|never)\s+repl(?:ied|y)|stopped\s+replying|not\s+heard\s+back|ghosted|"
     r"wait\s+(?:or|and)\s+follow[- ]?up)\b|"
     r"\b(?:seguimiento|agradecimiento|dar\s+las\s+gracias|sin\s+respuesta|"
-    r"no\s+(?:responde|respondi[oó]|me\s+ha\s+respondido)|nunca\s+respondi[oó]|no\s+(?:he\s+)?recib(?:ido|[ií]|i[oó])\s+respuesta|"
+    r"no\s+(?:responde|respondi[oó]|me\s+(?:ha|han)\s+respondido)|nunca\s+respondi[oó]|no\s+(?:he\s+)?recib(?:ido|[ií]|i[oó])\s+respuesta|"
     r"me\s+dejaron\s+en\s+visto|insistir)\b)",
     re.I,
 )
@@ -179,7 +198,7 @@ READINESS_NEGATION = re.compile(
 )
 INVITED_NEXT_STAGE = re.compile(r"\binvited\s+to\s+(?:the\s+)?next\s+stage\b", re.I)
 TECHNICAL_INTENT = re.compile(r"\b(?:technical|t[eé]cnica|t[eé]cnico)\b", re.I)
-EXPLICIT_RECRUITER_INTENT = re.compile(r"\b(?:recruiter|recruiting|reclutador(?:a|es)?)\b", re.I)
+EXPLICIT_RECRUITER_INTENT = re.compile(r"\b(?:recruiter|recruiting|recruitment|reclutador(?:a|es)?|reclutamiento)\b", re.I)
 EXTERNAL_ACTION_INTENT = re.compile(
     r"\b(?:send|message|messages|reply|repl(?:y|ies)|respond(?:ed|s|ing|er)?\b|write\s+back|ping|dm|connect|contact|reach|talk|speak|follow[- ]?up|followup|nudge|check[- ]?in|apply|publish|schedule|scheduled|book|calendar|"
     r"confirm|accept|enviar|mensaje|mensajes|responder|conectar|contactar|hablar|aplicar|publicar|agendar|"
@@ -277,6 +296,15 @@ def _natural_recruiter_route(request: str) -> str | None:
         EXPLICIT_RECRUITER_INTENT.search(request) or SCREEN_CONTEXT.search(request)
     ):
         return "next_stage"
+    if (
+        has_screen_context
+        and SCREEN_COMPLETION.search(request)
+        and not SCREEN_NOT_COMPLETED.search(request)
+        and PLAIN_POST_SCREEN_NEXT_STAGE_INTENT.search(request)
+        and not DEBRIEF_INTENT.search(request)
+        and not POST_SCREEN_FOLLOWTHROUGH_INTENT.search(request)
+    ):
+        return "next_stage"
     if (has_screen_context or has_recruiter_invitation) and (
         RECRUITER_INVITATION_INTENT.search(request)
         or
@@ -295,6 +323,8 @@ def _natural_recruiter_route(request: str) -> str | None:
         return "debrief"
     if has_screen_context and NEXT_STAGE_INTENT.search(request):
         return "next_stage"
+    if PLAIN_SCREEN_PREP_INTENT.search(request) and EXPLICIT_RECRUITER_INTENT.search(request):
+        return "pre_screen"
     if INTENT.search(request):
         return "shortlist"
     return None

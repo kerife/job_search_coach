@@ -30,8 +30,22 @@ class RecruiterContinuityRailTests(unittest.TestCase):
             with self.subTest(locale=locale):
                 label, rail = render_continuity_rail(locale, "decision_gate")
                 self.assertIn(marker, label)
-                self.assertEqual(1, rail.count('aria-current="step"'))
+                self.assertEqual(1, rail.count('aria-current="location"'))
+                self.assertNotIn('aria-current="step"', rail)
                 self.assertEqual(5, rail.count('class="continuity-rail__marker"'))
+
+    def test_labels_are_candidate_facing_and_not_internal_jargon(self) -> None:
+        expected = {
+            "es": ("Elegir objetivos", "Revisar la decisión", "Preparar la pantalla", "Revisar la pantalla", "Preparar la siguiente etapa"),
+            "en": ("Choose targets", "Review decision", "Prepare the screen", "Review the screen", "Prepare the next stage"),
+        }
+        for locale, labels in expected.items():
+            with self.subTest(locale=locale):
+                _label, rail = render_continuity_rail(locale, "decision_gate")
+                for label in labels:
+                    self.assertIn(f"<strong>{label}</strong>", rail)
+                for jargon in ("Shortlist", "Intake", "Debrief", "Gate"):
+                    self.assertNotIn(jargon, rail)
 
     def test_all_recruiter_surfaces_keep_orientation_note_accessibility_css(self) -> None:
         for filename in (

@@ -271,7 +271,7 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertIn('aria-labelledby="targets-title"', rendered)
         self.assertIn('<h2 id="targets-title">Objetivos revisados</h2>', rendered)
         self.assertEqual(3, rendered.count('<li class="target-shortlist-item">'))
-        self.assertEqual(1, rendered.count('aria-current="step"'))
+        self.assertEqual(1, rendered.count('aria-current="location"'))
         self.assertIn("Ruta de revisión recruiter", rendered)
         self.assertIn("Superficie actual de revisión", rendered)
         css = (ROOT / "plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css").read_text(encoding="utf-8")
@@ -621,6 +621,68 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
             with self.subTest(request=request):
                 self.assertEqual("recruiter_target_screen_intake", routed["route_kind"])
                 self.assertEqual("collect_screen_intake", routed["next_action"])
+
+    def test_root_route_recognizes_plain_preparation_language_for_upcoming_recruiter_screens(self) -> None:
+        for request, locale in (
+            ("I have an upcoming recruiter call, help me prepare", "en"),
+            ("My recruiter call is coming up", "en"),
+            ("I am getting ready for a recruiter screen", "en"),
+            ("I need to prepare to talk to the recruiter", "en"),
+            ("Necesito preparar una llamada con un reclutador", "es"),
+            ("Mi llamada con el recruiter es la próxima semana", "es"),
+        ):
+            routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+            with self.subTest(request=request):
+                self.assertEqual("recruiter_target_screen_intake", routed["route_kind"])
+                self.assertEqual("prepare-role-interviews", routed["selected_module"])
+                self.assertEqual("collect_screen_intake", routed["next_action"])
+                self.assertEqual("needs_intake", routed["case_state"])
+
+    def test_root_route_recognizes_recruiting_aliases_for_post_screen_followthrough(self) -> None:
+        for request, locale, expected_route in (
+            ("I talked with the recruiter and want next steps", "en", "private_recruiter_next_stage_review"),
+            ("I interviewed with recruiting; next steps?", "en", "private_recruiter_next_stage_review"),
+            ("After the recruiter call, what should I do?", "en", "private_recruiter_next_stage_review"),
+            ("Después de hablar con reclutamiento, ¿qué sigue?", "es", "private_recruiter_next_stage_review"),
+            ("Tuve una llamada con reclutamiento, ¿qué sigue?", "es", "private_recruiter_next_stage_review"),
+            ("No me han respondido después de la llamada con reclutamiento", "es", "private_recruiter_screen_debrief"),
+        ):
+            routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+            with self.subTest(request=request):
+                self.assertEqual(expected_route, routed["route_kind"])
+                self.assertEqual("collect_debrief_context", routed["next_action"])
+                self.assertEqual("needs_intake", routed["case_state"])
+
+    def test_root_route_recognizes_relationship_and_visibility_network_language(self) -> None:
+        for request in (
+            "How can I build relationships with recruiters?",
+            "I want to grow my network of recruiters",
+            "I want to connect with more recruiters",
+            "I want to get on recruiters’ radar",
+            "Quiero conectar con reclutadores",
+            "Quiero construir relaciones con reclutadores",
+            "Quiero aumentar mi visibilidad ante reclutadores",
+        ):
+            locale = "es" if request.startswith("Quiero") else "en"
+            routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+            with self.subTest(request=request):
+                self.assertEqual("recruiter_target_shortlist", routed["route_kind"])
+                self.assertEqual("needs_intake", routed["case_state"])
+                self.assertEqual("ask_one_intake_question", routed["next_action"])
+
+    def test_root_route_recognizes_recruiting_inbound_contact_without_message_verb(self) -> None:
+        for request, locale in (
+            ("Recruiting reached out about a role", "en"),
+            ("Recruitment emailed me about a role", "en"),
+            ("Me contactó reclutamiento por una vacante", "es"),
+            ("Reclutamiento me pidió disponibilidad", "es"),
+        ):
+            routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+            with self.subTest(request=request):
+                self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
+                self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
 
     def test_fallback_recruiter_action_synonyms_preserve_authorization_requirement(self) -> None:
         for request in (

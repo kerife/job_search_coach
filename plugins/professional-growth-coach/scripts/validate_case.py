@@ -17,6 +17,8 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
+from private_prose_safety import normalize_prose_for_validation
+
 
 REQUIRED_CASE_KEYS = (
     "schema_version",
@@ -493,7 +495,7 @@ def _has_sensitive_key_segment(key: object) -> bool:
 
 
 def _is_credential_shaped_value(value: str) -> bool:
-    normalized = _normalized_classifier_text(value)
+    normalized = _normalized_classifier_text(normalize_prose_for_validation(value))
     value_patterns = [_SECRET_ASSIGNMENT]
     if "@" in normalized:
         value_patterns.append(_EMAIL_VALUE)

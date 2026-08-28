@@ -1063,6 +1063,17 @@ class ValidateCaseTests(unittest.TestCase):
 
         self.assertFalse(validator._is_credential_shaped_value("a" * 64_000 + "@x"))
 
+    def test_encoded_private_values_are_classified_as_credential_shaped(self) -> None:
+        validator = load_validator_module()
+        for value in (
+            "person&amp;#64;example.com",
+            "person%40example.com",
+            "password%3A%20supersecret",
+            "https%3A%2F%2Flinkedin.com%2Fin%2Fp",
+        ):
+            with self.subTest(value=value):
+                self.assertTrue(validator._is_credential_shaped_value(value))
+
     def test_rejects_duplicate_top_level_key_without_echoing_hidden_content(self) -> None:
         contents = json.dumps(valid_case(), separators=(",", ":"))
         needle = '"claims":[{"candidate_id":"candidate-001","claim_id":"claim-001","text":"Operates Kubernetes clusters.","evidence_label":"verified"}]'

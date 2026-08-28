@@ -35,9 +35,9 @@ then `pending` then `blocked`) and expose exactly one current step to assistive
 technology; terminal stop receipts remain recorded.
 
 The five recruiter target artifacts use a separate shared orientation rail with
-closed localized labels: shortlist, decision gate, screen intake, screen
-debrief, and next-stage review. Exactly one item, the rendered artifact's
-surface, carries `aria-current="step"`; the rail is non-interactive and makes no
+closed candidate-facing labels: choose targets, review the decision,
+prepare/review the screen, and prepare the next stage. Exactly one item, the
+rendered artifact's surface, carries `aria-current="location"`; the rail is non-interactive and makes no
 claim that other surfaces are complete. It is rendered by
 `scripts/recruiter_continuity_rail.py` and must remain identity-free and
 offline-safe in screen, print, responsive, and forced-colors modes.

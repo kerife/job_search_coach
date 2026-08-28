@@ -167,11 +167,15 @@ def _private_text(value: object, path: str, errors: list[str], maximum: int = 50
     if not isinstance(value, str) or not value or len(value) > maximum:
         errors.append(f"{path} must be bounded text")
         return
-    if _prose.contains_unicode_controls(value):
+    normalized = _prose.normalize_prose_for_validation(value)
+    if _prose.contains_unicode_controls(normalized):
         errors.append(f"{path} contains forbidden control characters")
-    if re.search(r"<\/?(?:script|iframe|object|style)\b", value, re.I):
+    if re.search(r"<\/?(?:script|iframe|object|style)\b", normalized, re.I):
         errors.append(f"{path} contains forbidden markup")
-    if re.search(r"(?:[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|(?<![A-Za-z0-9])/(?:Users|home|private|tmp|var|opt|etc)(?:/|$)|(?:^|[^A-Za-z0-9])[A-Za-z]:[\\/])", value):
+    if (
+        _prose.contains_restricted_private_material(normalized)
+        or re.search(r"(?:[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|https?://|www\.|linkedin\.com/|(?<![A-Za-z0-9])/(?:Users|home|private|tmp|var|opt|etc)(?:/|$)|(?:^|[^A-Za-z0-9])[A-Za-z]:[\\/])", normalized, re.I)
+    ):
         errors.append(f"{path} contains private value")
 
 

@@ -101,16 +101,17 @@ def _text(value: object, path: str, errors: list[str], *, maximum: int = 500) ->
     if not isinstance(value, str) or not value or len(value) > maximum:
         errors.append(f"{path} must be bounded text")
         return False
-    if _prose.contains_unicode_controls(value):
+    normalized = _prose.normalize_prose_for_validation(value)
+    if _prose.contains_unicode_controls(normalized):
         errors.append(f"{path} contains forbidden control characters")
         return False
-    if re.search(r"<\/?(?:script|iframe|object|style)\b", value, re.I):
+    if re.search(r"<\/?(?:script|iframe|object|style)\b", normalized, re.I):
         errors.append(f"{path} contains forbidden markup")
         return False
-    if re.search(r"(?:[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|(?<![A-Za-z0-9])/(?:Users|home|private|tmp|var|opt|etc)(?:/|$)|(?:^|[^A-Za-z0-9])[A-Za-z]:[\\/])", value):
+    if _prose.contains_restricted_private_material(normalized) or re.search(r"(?:[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|(?<![A-Za-z0-9])/(?:Users|home|private|tmp|var|opt|etc)(?:/|$)|(?:^|[^A-Za-z0-9])[A-Za-z]:[\\/])", normalized):
         errors.append(f"{path} contains private value")
         return False
-    if re.search(r"(?i)(?:https?://|www\.|linkedin\.com/|\b(?:session|cookie|bearer|api[_ -]?key|access[_ -]?token)\b|\b[a-f0-9]{32,}\b)", value):
+    if re.search(r"(?i)(?:https?://|www\.|linkedin\.com/|\b(?:session|cookie|bearer|api[_ -]?key|access[_ -]?token)\b|\b[a-f0-9]{32,}\b)", normalized):
         errors.append(f"{path} contains restricted material")
         return False
     return True

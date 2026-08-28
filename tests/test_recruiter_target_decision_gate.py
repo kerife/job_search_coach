@@ -189,7 +189,7 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
             1,
             english_rendered.count("Provide a vacancy summary and one verifiable fact before preparing the interview."),
         )
-        self.assertEqual(1, rendered.count('aria-current="step"'))
+        self.assertEqual(1, rendered.count('aria-current="location"'))
         self.assertIn("Ruta de revisión recruiter", rendered)
         self.assertIn("Recruiter review path", english_rendered)
 

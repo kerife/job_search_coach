@@ -42,7 +42,9 @@ def contains_unicode_controls(value: object) -> bool:
 
 def is_safe_prose_text(value: object) -> bool:
     """Return whether text is a string without Unicode controls or format characters."""
-    return isinstance(value, str) and not contains_unicode_controls(value)
+    return isinstance(value, str) and not contains_unicode_controls(
+        normalize_prose_for_validation(value)
+    )
 
 
 def normalize_prose_for_validation(value: str) -> str:
@@ -65,7 +67,8 @@ def contains_restricted_private_material(value: object) -> bool:
 
 def safe_diagnostic_field_name(value: str) -> str:
     """Redact contact-, path-, and credential-shaped keys in diagnostics."""
-    if contains_unicode_controls(value) or _SUSPICIOUS_DIAGNOSTIC_FIELD.search(value):
+    normalized = normalize_prose_for_validation(value)
+    if contains_unicode_controls(normalized) or _SUSPICIOUS_DIAGNOSTIC_FIELD.search(normalized):
         return "<redacted-field>"
     return value
 

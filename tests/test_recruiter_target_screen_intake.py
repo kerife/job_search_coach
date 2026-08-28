@@ -165,14 +165,16 @@ class RecruiterTargetScreenIntakeTests(unittest.TestCase):
         self.assertNotIn("T-001", rendered)
         self.assertNotIn("F-001", rendered)
         self.assertNotRegex(rendered, r"\bV-\d{3}\b")
+        self.assertIn('<h3 id="requirements-title">Requisitos de la vacante</h3>', rendered)
+        self.assertIn('<ul id="requirements-list" class="screen-requirements" aria-labelledby="requirements-title">', rendered)
         english_gate = build_decision_gate(build_shortlist("en", "2026-08-27", valid_plan(), valid_targets()))
         english = build_screen_intake(english_gate, "T-001", valid_screen_intake())
         english_rendered = render_screen_intake_html(english)
         self.assertIn("Prepare interview for review", english_rendered)
-        self.assertEqual(1, rendered.count('aria-current="step"'))
-        self.assertEqual(1, english_rendered.count('aria-current="step"'))
-        self.assertIn("Intake de pantalla", rendered)
-        self.assertIn("Screen intake", english_rendered)
+        self.assertEqual(1, rendered.count('aria-current="location"'))
+        self.assertEqual(1, english_rendered.count('aria-current="location"'))
+        self.assertIn("Preparar la pantalla", rendered)
+        self.assertIn("Prepare the screen", english_rendered)
 
     def test_renderer_localizes_internal_checks_company_state_and_stage(self) -> None:
         stages = {

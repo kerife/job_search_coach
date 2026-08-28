@@ -39,6 +39,11 @@ class PrivateProseSafetyTests(unittest.TestCase):
     def test_is_safe_prose_text_accepts_normal_visible_prose_and_whitespace(self):
         self.assertTrue(is_safe_prose_text("  Visible prose with whitespace  "))
 
+    def test_normalized_encoded_controls_are_not_treated_as_safe_prose(self):
+        for value in ("visible&#x0a;text", "visible&amp;#x0a;text", "visible%0atext"):
+            with self.subTest(value=value):
+                self.assertFalse(is_safe_prose_text(value))
+
     def test_safe_diagnostic_field_name_redacts_suspicious_names_only(self):
         cases = {
             "extra": "extra",
@@ -54,6 +59,8 @@ class PrivateProseSafetyTests(unittest.TestCase):
             "candidate\u200bpath": "<redacted-field>",
             "candidate\u202eprofile": "<redacted-field>",
             "candidate\nprofile": "<redacted-field>",
+            "person%40example.com": "<redacted-field>",
+            "person&amp;#64;example.com": "<redacted-field>",
         }
         for value, expected in cases.items():
             with self.subTest(value=value):

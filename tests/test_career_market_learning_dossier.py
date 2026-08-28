@@ -454,9 +454,15 @@ class CareerMarketLearningDossierTests(unittest.TestCase):
         self.assertIn("as_of_date must be an ISO date", validate_market_dossier(value))
 
     def test_private_paths_after_delimiters_are_rejected(self) -> None:
-        value = load_json(MARKET_FIXTURES / "complete-five-es.json")
-        value["vacancy_cards"][0]["title"] = "path=/Users/alice/secret"
-        self.assertTrue(any("vacancy_cards[0].title contains private value" in error for error in validate_market_dossier(value)))
+        for text in (
+            "path=/Users/alice/secret",
+            "person%40example.com",
+            "https%3A%2F%2Flinkedin.com%2Fin%2Fprivate",
+        ):
+            with self.subTest(text=text):
+                value = load_json(MARKET_FIXTURES / "complete-five-es.json")
+                value["vacancy_cards"][0]["title"] = text
+                self.assertTrue(any("vacancy_cards[0].title contains private value" in error for error in validate_market_dossier(value)))
 
     def test_search_summary_reason_matches_dossier_state_and_count(self) -> None:
         value = load_json(MARKET_FIXTURES / "limited-four-en.json")

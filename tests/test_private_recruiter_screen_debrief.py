@@ -298,10 +298,10 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
         english = build_screen_debrief(english_checkpoint, RECEIPT, english_intake, valid_debrief())
         english_rendered = render_screen_debrief_html(english, RECEIPT, english_intake)
         self.assertIn("Private screen debrief", english_rendered)
-        self.assertEqual(1, rendered.count('aria-current="step"'))
-        self.assertEqual(1, english_rendered.count('aria-current="step"'))
-        self.assertIn("Debrief de pantalla", rendered)
-        self.assertIn("Screen debrief", english_rendered)
+        self.assertEqual(1, rendered.count('aria-current="location"'))
+        self.assertEqual(1, english_rendered.count('aria-current="location"'))
+        self.assertIn("Revisar la pantalla", rendered)
+        self.assertIn("Review the screen", english_rendered)
 
     def test_renderer_covers_every_supported_stage_in_both_locales(self) -> None:
         stage_labels = {

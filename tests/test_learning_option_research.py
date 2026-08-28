@@ -64,12 +64,18 @@ class LearningOptionResearchTests(unittest.TestCase):
 
     def test_option_text_rejects_profile_and_session_material_without_echoing(self) -> None:
         for field in ("proof_artifact", "option", "source_title"):
-            with self.subTest(field=field):
-                value = load_fixture("complete-five-es.json")
-                value["options"][0][field] = "raw https://www.linkedin.com/in/private-person session " + "a" * 32
-                errors = validate_research(value)
-                self.assertTrue(any("restricted material" in error for error in errors), errors)
-                self.assertNotIn("private-person", " ".join(errors))
+            for text in (
+                "raw https://www.linkedin.com/in/private-person session " + "a" * 32,
+                "person%40example.com",
+                "https%3A%2F%2Flinkedin.com%2Fin%2Fprivate",
+                "password%3A%20supersecret",
+            ):
+                with self.subTest(field=field, text=text):
+                    value = load_fixture("complete-five-es.json")
+                    value["options"][0][field] = text
+                    errors = validate_research(value)
+                    self.assertTrue(any("restricted material" in error or "private value" in error for error in errors), errors)
+                    self.assertNotIn("private-person", " ".join(errors))
 
     def test_private_paths_after_delimiters_are_rejected(self) -> None:
         value = load_fixture("complete-five-es.json")
