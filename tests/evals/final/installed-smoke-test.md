@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T19:29:13-06:00`
+release_timestamp: `2026-08-27T19:46:07-06:00`
 
-source_commit: `7a3e441c870b8abf4feb3e8a4c17adaa0b093069`
+source_commit: `1a85b31fcb2ecfec2437fa12398b34422fba0a0f`
 
-source_tree: `5411f0d98edc0e71cfb6196398c7847d7d0baefe`
+source_tree: `0efba1589ef8bfd46deb90dd05c2f69c9f97ae19`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827192913`
+installed_cache_version: `0.2.0+codex.20260827194607`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `172`
 
 installed_file_count: `172`
 
-normalized_source_cache_sha256: `0bdfaea71bbfc4474dca80b821730669029489e8aaca4630f6df07b385f36ff6`
+normalized_source_cache_sha256: `8f12a05dceb1ca0f220927236b0ad60f2a31b6ea18b9d16462e8e1d185d33049`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -60,6 +60,7 @@ installed_market_cli_argument_privacy_smoke: `5/5 market validators and builder 
 installed_market_research_smoke: `2/2 complete/limited validator`
 
 installed_market_learning_smoke: `2/2 complete/limited builder and validator`
+installed_learning_decision_aggregation_smoke: `1/1 professional-gap apply_with_boundary/pause options require review_learning_options at the aggregate coach decision`
 installed_provider_freshness_smoke: `3/3 paid-learning decisions keep the inclusive 90-day boundary, demote 91-day active sources to consider with a refresh gate, and reject tampered recommended decisions`
 
 installed_market_renderer_smoke: `2/2 complete/limited market composition`
@@ -115,10 +116,12 @@ installed_triage_handoff_continuity_smoke: `2/2 installed EN/ES triage handoffs 
 
 installed_shortlist_artifact_smoke: `1/1 installed EN/ES shortlist builder, validator, and offline renderer; rows retain draft-only/no-message/no-calendar controls and HTML omits target/fact identifiers`
 installed_shortlist_boundary_smoke: `4/4 installed shortlist rejects asset symlinks, output-parent symlinks, non-HTTP URI prose, and future-dated direct renders`
+installed_shortlist_sensitive_material_smoke: `1/1 installed shortlist rejects phone-like strings, credential markers, and generic local paths in bounded text`
 
 installed_decision_gate_smoke: `3/3 installed EN/ES decision-gate builder, validator, and renderer; counts/snapshot reconcile, screen context remains manual-only, and HTML omits target/fact identifiers`
 
 installed_screen_intake_smoke: `3/3 installed EN/ES target-specific intake builder, validator, and renderer; advance-only manual handoff, snapshot/locale binding, private IDs hidden, and 0600 output`
+installed_screen_intake_dark_contrast_smoke: `1/1 dark-mode screen-blue token uses the accessible contrast value and stays synchronized with the Superdesign theme dump`
 
 installed_screen_debrief_intake_smoke: `4/4 installed artifact-free EN/ES attended-screen bridge; screen_requested and interview_requested receipts carry forward, target binding is enforced, structured coverage is the only next input, malformed recovery stays bounded`
 
