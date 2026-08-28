@@ -40,8 +40,6 @@ dd { margin: .2rem 0 0; }
 .gate-counts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .5rem; list-style: none; margin: 0; padding: 0; }
 .gate-count { display: flex; justify-content: space-between; gap: .5rem; border: 1px solid var(--line); border-top: .3rem solid var(--accent); padding: .55rem .65rem; }
 .gate-count span { font-variant-numeric: tabular-nums; font-weight: 800; }
-.gate-context { border-left: .5rem solid var(--accent-soft); }
-.gate-context p { margin-bottom: 0; max-width: 68ch; }
 .gate-section-title { margin: 1.75rem 0 .65rem; font-size: 1rem; letter-spacing: .08em; text-transform: uppercase; }
 .gate-rows { display: grid; gap: .85rem; margin: 0; padding: 0; list-style: none; counter-reset: gate-row; }
 .gate-row { counter-increment: gate-row; position: relative; margin: 0; padding: 1rem 1rem 1rem 3.2rem; background: var(--surface); border: 1px solid var(--line); border-left: .45rem solid var(--accent); border-radius: .85rem; }
@@ -68,11 +66,11 @@ dd { margin: .2rem 0 0; }
 }
 @media (prefers-contrast: more) {
   .gate-card, .gate-row { border-width: 2px; }
-  .gate-next, .gate-context, .gate-row { border-left-width: .65rem; }
+  .gate-next, .gate-row { border-left-width: .65rem; }
 }
 @media (forced-colors: active) {
   .gate-card, .gate-row { forced-color-adjust: none; border: 2px solid CanvasText; background: Canvas; color: CanvasText; box-shadow: none; }
-  .gate-next, .gate-context, .gate-row { border-left: .65rem solid CanvasText; }
+  .gate-next, .gate-row { border-left: .65rem solid CanvasText; }
   .skip-link { background: CanvasText; color: Canvas; }
   .skip-link:focus-visible, main:focus-visible { outline: 3px solid Highlight; outline-offset: 3px; }
 }

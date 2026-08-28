@@ -246,10 +246,6 @@ the print rendering stays tabular.
         <ul class="gate-counts">{{COUNTS}}</ul>
       </div>
     </section>
-    <section class="gate-card gate-context" aria-labelledby="missing-title">
-      <h2 id="missing-title">{{MISSING_LABEL}}</h2>
-      <p>{{MISSING}}</p>
-    </section>
     <section aria-labelledby="rows-title">
       <h2 id="rows-title" class="gate-section-title">{{ROWS_LABEL}}</h2>
       <ol class="gate-rows">{{ROWS}}</ol>

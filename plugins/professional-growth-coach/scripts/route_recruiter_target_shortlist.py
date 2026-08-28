@@ -49,6 +49,12 @@ INTENT = re.compile(
 )
 TECHNICAL_INTENT = re.compile(r"\b(?:technical|t[eé]cnica|t[eé]cnico)\b", re.I)
 EXPLICIT_RECRUITER_INTENT = re.compile(r"\b(?:recruiter|recruiting|reclutador(?:a|es)?)\b", re.I)
+EXTERNAL_ACTION_INTENT = re.compile(
+    r"\b(?:send|message|messages|reply|repl(?:y|ies)|connect|apply|publish|schedule|scheduled|book|calendar|"
+    r"confirm|accept|enviar|mensaje|mensajes|responder|respuesta|conectar|aplicar|publicar|agendar|"
+    r"reservar|calendario|confirmar|aceptar|programar)\b",
+    re.I,
+)
 INTAKE = {
     "es": "Comparte: 3–6 objetivos manuales con contexto visible o proporcionado por ti; la meta de red y sus segmentos; 3–5 consultas manuales; tu tiempo semanal; una condición de pausa o detención; y el tema de prueba que quieres revisar primero.",
     "en": "Share: 3–6 manually supplied targets with visible or candidate-provided context; the networking goal and segments; 3–5 manual queries; your weekly time budget; a pause or stop condition; and the proof theme you want reviewed first.",
@@ -204,6 +210,7 @@ def route_recruiter_request(
             "evidence_gaps": [],
             "artifact": None,
         }
+    authorization_required = bool(EXTERNAL_ACTION_INTENT.search(request))
     if (
         not isinstance(network_plan, Mapping)
         or not isinstance(targets, Sequence)
@@ -215,7 +222,7 @@ def route_recruiter_request(
             "case_state": "needs_intake",
             "selected_module": "optimize-professional-profile",
             "next_action": "ask_one_intake_question",
-            "authorization_required": False,
+            "authorization_required": authorization_required,
             "evidence_gaps": [
                 "three_to_six_manual_targets_with_context",
                 "network_goal_and_target_segments",
@@ -235,7 +242,7 @@ def route_recruiter_request(
             "case_state": "needs_intake",
             "selected_module": "optimize-professional-profile",
             "next_action": "ask_one_intake_question",
-            "authorization_required": False,
+            "authorization_required": authorization_required,
             "evidence_gaps": ["validated_target_context"],
             "intake_question": INTAKE[locale],
             "artifact": None,
@@ -245,7 +252,7 @@ def route_recruiter_request(
         "case_state": "ready",
         "selected_module": "optimize-professional-profile",
         "next_action": "review_recruiter_target_shortlist",
-        "authorization_required": False,
+        "authorization_required": authorization_required,
         "evidence_gaps": [],
         "artifact": artifact,
         "rendered_html": rendered_html,

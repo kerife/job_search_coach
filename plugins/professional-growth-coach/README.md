@@ -30,6 +30,7 @@ The same boundary rejects Unicode control and format characters (including zero-
 Identity checks also inspect the NFKC-normalized form of prose, so compatibility characters cannot disguise a bare person name while the original candidate text remains unchanged for rendering.
 
 Explicit requests to expand a network or prepare for a first recruiter screen route through `scripts/route_recruiter_target_shortlist.py`, including natural English/Spanish phrasing such as “network with recruiters” and “primera entrevista con un reclutador”. With three to six supplied targets, the route runs builder → validator → renderer and returns the validated artifact plus private in-memory HTML with `next_action=review_recruiter_target_shortlist`; without enough context or with an invalid target container it asks one bounded intake question that names the minimum plan (goal/segments, 3–5 manual queries, weekly time, stop condition, and proof theme). Recursively nested or otherwise malformed in-memory plans take the same artifact-free intake path instead of surfacing a traceback. It does not infer recipients. The rendered card localizes the next safe action and summarizes the four decision counts before the manual `recruiter_target_decision_gate` handoff.
+If the same request also asks to send, reply, connect, apply, publish, confirm, or schedule, the route receipt preserves `authorization_required=true` in both `ready` and `needs_intake` states; analysis-only networking remains `false`, and no external action is performed. The value is kept aligned with the artifact delivery gate.
 
 Decision-gate rows are replay-bound to the corresponding shortlist target for every copied decision, rationale, context, contactability, draft type, and next action; the localized strategy and warm-intro guidance are also deterministic for the source locale and decision.
 
@@ -135,6 +136,9 @@ through 900px, then to one column at 640px, keeping all four destinations
 usable without horizontal scrolling.
 Its methodology links retain a minimum 44x44px touch target, including when a
 link is rendered on a single line.
+The decision gate presents its missing-context guidance once, alongside the
+next-decision card, so the primary action is not repeated for sighted or screen
+reader users.
 At the tablet breakpoint, section anchors reserve space for the sticky reading path so each destination opens below the rail; the mobile breakpoint reserves `18rem` for its taller one-column rail.
 The career-market matrix uses the same labelled stacked-row treatment in print
 as on narrow screens, keeping multi-vacancy comparisons readable on paper

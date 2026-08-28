@@ -173,6 +173,10 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
         self.assertIn("Siguiente decisión", rendered)
         self.assertIn("Recopilar contexto de pantalla", rendered)
         self.assertIn("Avanzar", rendered)
+        self.assertEqual(
+            1,
+            rendered.count("Comparte un resumen de vacante y un hecho verificable antes de preparar la entrevista."),
+        )
         self.assertNotIn("T-001", rendered)
         self.assertNotIn("F-001", rendered)
         english = copy.deepcopy(gate)
@@ -180,6 +184,10 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
         english_rendered = render_decision_gate_html(english)
         self.assertIn("Next decision", english_rendered)
         self.assertIn("Collect screen context", english_rendered)
+        self.assertEqual(
+            1,
+            english_rendered.count("Provide a vacancy summary and one verifiable fact before preparing the interview."),
+        )
         self.assertEqual(1, rendered.count('aria-current="step"'))
         self.assertIn("Ruta de revisión recruiter", rendered)
         self.assertIn("Recruiter review path", english_rendered)

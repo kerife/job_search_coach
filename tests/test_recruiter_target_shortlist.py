@@ -242,6 +242,33 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertEqual("ask_one_intake_question", intake["next_action"])
         self.assertIsNone(intake["artifact"])
 
+    def test_root_route_preserves_external_action_authorization_in_ready_and_intake(self) -> None:
+        ready = route_recruiter_request(
+            "Quiero expandir mi red de recruiters y enviar mensajes a los objetivos.",
+            locale="es",
+            as_of_date="2026-08-27",
+            network_plan=valid_plan(),
+            targets=valid_targets(),
+        )
+        self.assertTrue(ready["authorization_required"])
+        self.assertTrue(ready["artifact"]["delivery"]["authorization_required"])
+
+        intake = route_recruiter_request(
+            "Quiero buscar recruiters y agendar una llamada.",
+            locale="es",
+            as_of_date="2026-08-27",
+        )
+        self.assertEqual("needs_intake", intake["case_state"])
+        self.assertTrue(intake["authorization_required"])
+
+    def test_root_route_keeps_analysis_only_networking_without_authorization(self) -> None:
+        routed = route_recruiter_request(
+            "How do I network with recruiters?",
+            locale="en",
+            as_of_date="2026-08-27",
+        )
+        self.assertFalse(routed["authorization_required"])
+
     def test_root_route_intake_question_is_actionable_and_bounded(self) -> None:
         for request, locale, markers in (
             (
