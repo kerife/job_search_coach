@@ -40,6 +40,13 @@ next stage” remains a next-stage review request rather than non-attendance.
 Requests to respond, email, contestar, enviar, or mandar a un recruiter retain
 `authorization_required=true` even on ordinary fallback routes.
 
+The same language boundary recognizes recruiter screens that are invited,
+missed, skipped, canceled, rescheduled, or still pending (`write back`, `ping`,
+`DM`, `contéstale`, `respóndele`, and `escríbele` included for action checks).
+Future dates are scoped to the recruiter event itself, including “is Monday”,
+“in two days”, “scheduled for next week”, and “en dos días”; an unrelated
+appointment date after a completed screen cannot reopen pre-screen intake.
+
 The preparation boundary also covers conversational non-attendance such as
 “I never went through the recruiter screen”, “I never spoke with a recruiter”,
 and “No hablé con el reclutador”; these remain artifact-free screen intake.
@@ -401,7 +408,9 @@ the same receipt/application pair is a no-op; no raw receipt prose, source ID,
 candidate aggregation, message, calendar action, or causal claim is added.
 The writer rejects symlink/non-regular outputs (including a symlinked immediate
 parent) and spreadsheet-formula prefixes in optional text fields and existing
-rows before any forced replay. Use `--force` only after reviewing an existing
+rows before any forced replay. Its temporary file creation and replacement stay
+anchored to the validated parent descriptor, so a local parent swap fails closed
+instead of following a symlink. Use `--force` only after reviewing an existing
 output file: it preserves rows for distinct applications and replaces only the
 row for the same `application_id`.
 

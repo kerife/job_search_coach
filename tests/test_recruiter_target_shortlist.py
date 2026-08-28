@@ -540,6 +540,48 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertEqual("collect_debrief_context", routed["next_action"])
         self.assertIsNone(routed["artifact"])
 
+    def test_root_route_scopes_future_dates_to_the_recruiter_event(self) -> None:
+        for request in (
+            "I completed a recruiter screen last week and I have a dentist appointment on Friday; help me debrief.",
+            "I completed a recruiter screen; I have a follow-up on Friday; help me debrief.",
+        ):
+            routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-27")
+            with self.subTest(request=request):
+                self.assertEqual("private_recruiter_screen_debrief", routed["route_kind"])
+                self.assertEqual("collect_debrief_context", routed["next_action"])
+
+    def test_root_route_recognizes_future_recruiter_invites_and_relative_dates(self) -> None:
+        for request in (
+            "My recruiter screen is Monday; help me prepare.",
+            "I have a recruiter screen in two days; help me prepare.",
+            "I was invited to a recruiter screen; help me prepare.",
+            "The recruiter screen was rescheduled; help me prepare.",
+            "I could not attend the recruiter screen; help me prepare.",
+            "I haven't done a recruiter screen; help me prepare.",
+            "No he hecho el filtro con el reclutador; ayúdame a prepararme.",
+        ):
+            locale = "es" if request.startswith("No he") else "en"
+            routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-27")
+            with self.subTest(request=request):
+                self.assertEqual("recruiter_target_screen_intake", routed["route_kind"])
+                self.assertEqual("collect_screen_intake", routed["next_action"])
+
+    def test_fallback_recruiter_action_synonyms_preserve_authorization_requirement(self) -> None:
+        for request in (
+            "Can you write back to the recruiter?",
+            "Ping the recruiter about my application.",
+            "DM the recruiter about the role.",
+            "Contéstale al reclutador.",
+            "Respóndele al recruiter.",
+            "Escríbele al recruiter.",
+            "Quiero escribirle al recruiter.",
+            "Envíale un correo al reclutador.",
+        ):
+            routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-27")
+            with self.subTest(request=request):
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
     def test_root_route_keeps_readiness_negation_after_completed_screen_in_next_stage_flow(self) -> None:
         routed = route_recruiter_request(
             "I had a recruiter screen but I am not yet ready for the next stage.",

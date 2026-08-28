@@ -5,10 +5,12 @@ from __future__ import annotations
 import copy
 import csv
 import json
+import os
 import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 
@@ -17,6 +19,7 @@ FIXTURES = ROOT / "tests" / "fixtures" / "private-recruiter-conversion-outcome"
 SCRIPTS = ROOT / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
+import export_private_recruiter_outcome as exporter  # noqa: E402
 from export_private_recruiter_outcome import ExportError, export_row, write_export  # noqa: E402
 
 
@@ -250,6 +253,35 @@ class PrivateRecruiterOutcomeExportTests(unittest.TestCase):
                     as_of="2026-08-08",
                     output=alias / "sub" / "outcomes.csv",
                 )
+
+    def test_atomic_write_fails_closed_when_parent_changes_after_validation(self) -> None:
+        receipt = _receipt("reply-received-en.json")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            parent = root / "output"
+            parent.mkdir()
+            external = root / "external"
+            external.mkdir()
+            output = parent / "outcomes.csv"
+            original_parent = exporter._parent_is_safe
+
+            def swap_parent(path: Path) -> None:
+                original_parent(path)
+                backup = root / "output-real"
+                path.rename(backup)
+                os.symlink(external, path, target_is_directory=True)
+
+            with mock.patch.object(exporter, "_parent_is_safe", side_effect=swap_parent):
+                with self.assertRaisesRegex(ExportError, "output parent is unavailable"):
+                    write_export(
+                        receipt,
+                        candidate_id="candidate-001",
+                        application_id="app-001",
+                        application_date="2026-08-01",
+                        as_of="2026-08-08",
+                        output=output,
+                    )
+            self.assertFalse((external / "outcomes.csv").exists())
 
 
 if __name__ == "__main__":

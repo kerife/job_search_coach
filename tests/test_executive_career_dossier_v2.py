@@ -1004,6 +1004,20 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         self.assertIn("color: var(--gold);", css)
         self.assertIn(".learning-decision-row .learning-option-type { color: CanvasText; border-color: CanvasText; }", css)
 
+    def test_learning_decision_cards_have_named_regions(self) -> None:
+        dossier = make_v2_dossier("es")
+        market = make_composable_learning_market_dossier("project-first-five-es.json", dossier, self.renderer)
+        rendered = self.renderer.render_dossier_html(dossier, market)
+        cards = re.findall(
+            r'<article class="learning-decision-row[^>]+aria-labelledby="([^"]+)"[^>]*>.*?'
+            r'<h4 id="([^"]+)">',
+            rendered,
+            re.S,
+        )
+        self.assertEqual(len(market["learning_decisions"]), len(cards))
+        for labelled_by, heading_id in cards:
+            self.assertEqual(labelled_by, heading_id)
+
     def test_learning_decision_cards_expose_decision_type_and_basis(self) -> None:
         dossier = make_v2_dossier("es")
         market = make_composable_learning_market_dossier("project-first-five-es.json", dossier, self.renderer)

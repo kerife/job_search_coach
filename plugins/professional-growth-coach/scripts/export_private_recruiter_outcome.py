@@ -13,7 +13,6 @@ import re
 import secrets
 import stat
 import sys
-import tempfile
 from collections.abc import Mapping
 from datetime import date
 from pathlib import Path
@@ -186,36 +185,55 @@ def _atomic_write(output: Path, content: bytes, *, force: bool) -> None:
     if not parent.is_absolute():
         raise ExportError("output parent is unavailable")
     _parent_is_safe(parent)
+    directory_flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
     try:
-        status = os.lstat(target)
-    except FileNotFoundError:
-        status = None
-    if status is not None:
-        if os.path.islink(target) or not os.path.isfile(target):
-            raise ExportError("output target is not a regular file")
-        if not force:
-            raise FileExistsError("output already exists")
+        parent_descriptor = os.open(parent, directory_flags)
+    except OSError as error:
+        raise ExportError("output parent is unavailable") from error
     temporary = None
     descriptor = None
     try:
-        descriptor, temporary = tempfile.mkstemp(prefix=f".{target.name}.tmp-{secrets.token_hex(8)}-", dir=parent)
+        try:
+            status = os.stat(target.name, dir_fd=parent_descriptor, follow_symlinks=False)
+        except FileNotFoundError:
+            status = None
+        if status is not None:
+            if stat.S_ISLNK(status.st_mode) or not stat.S_ISREG(status.st_mode):
+                raise ExportError("output target is not a regular file")
+            if not force:
+                raise FileExistsError("output already exists")
+        for _ in range(8):
+            temporary = f".{target.name}.tmp-{secrets.token_hex(8)}"
+            try:
+                descriptor = os.open(
+                    temporary,
+                    os.O_WRONLY | os.O_CREAT | os.O_EXCL,
+                    0o600,
+                    dir_fd=parent_descriptor,
+                )
+                break
+            except FileExistsError:
+                temporary = None
+        if descriptor is None or temporary is None:
+            raise ExportError("temporary output is unavailable")
         os.fchmod(descriptor, 0o600)
         with os.fdopen(descriptor, "wb") as stream:
             descriptor = None
             stream.write(content)
             stream.flush()
             os.fsync(stream.fileno())
-        os.replace(temporary, target)
+        os.replace(temporary, target.name, src_dir_fd=parent_descriptor, dst_dir_fd=parent_descriptor)
         temporary = None
-        os.chmod(target, 0o600)
+        os.chmod(target.name, 0o600, dir_fd=parent_descriptor, follow_symlinks=False)
     finally:
         if descriptor is not None:
             os.close(descriptor)
         if temporary is not None:
             try:
-                os.unlink(temporary)
+                os.unlink(temporary, dir_fd=parent_descriptor)
             except FileNotFoundError:
                 pass
+        os.close(parent_descriptor)
 
 
 def write_export(

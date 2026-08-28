@@ -596,8 +596,8 @@ def _render_learning_roi(market_dossier: Mapping[str, object], locale: str) -> s
             <h5 id="learning-provenance-title-{index}">{labels['learning_provenance']}</h5>
             <dl class="learning-provenance-facts">{provenance_rows}</dl>
           </section>'''
-        decision_rows.append(f'''<article class="learning-decision-row learning-decision-row--{decision_class}" data-decision="{_learning_text(row['decision'])}" data-option-type="{_learning_text(row['option_type'])}">
-          <header class="learning-decision-heading"><div><span class="learning-decision-kicker">{labels['learning_decision_label']}</span><h4>{copy_labels[str(row['decision'])]}</h4></div><span class="learning-option-type">{copy_labels[str(row['option_type'])]}</span></header>
+        decision_rows.append(f'''<article class="learning-decision-row learning-decision-row--{decision_class}" aria-labelledby="learning-decision-title-{index}" data-decision="{_learning_text(row['decision'])}" data-option-type="{_learning_text(row['option_type'])}">
+          <header class="learning-decision-heading"><div><span class="learning-decision-kicker">{labels['learning_decision_label']}</span><h4 id="learning-decision-title-{index}">{copy_labels[str(row['decision'])]}</h4></div><span class="learning-option-type">{copy_labels[str(row['option_type'])]}</span></header>
           {provenance}
           <dl class="learning-decision-facts">
             <dt>{labels['learning_frequency']}</dt><dd>{_learning_text(row['frequency_display'])}</dd>

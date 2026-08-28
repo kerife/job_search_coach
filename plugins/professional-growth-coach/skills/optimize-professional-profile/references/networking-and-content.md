@@ -48,7 +48,13 @@ same bounded-text safety policy rejects phone-like strings, generic local
 paths, and credential or bearer-token markers before shortlist or debrief notes
 are persisted.
 
-The builder and renderer are fail-closed at their private boundaries: output parents and package assets must be regular, descriptor-anchored files, URI-like prose is rejected, and a future-dated snapshot cannot render even when the renderer is invoked directly.
+The builder and renderer are fail-closed at their private boundaries: output parents and package assets must be regular, descriptor-anchored files, URI-like prose is rejected, and a future-dated snapshot cannot render even when the renderer is invoked directly. The CSV outcome bridge keeps temporary creation and replacement on the validated parent descriptor, so a local symlink swap cannot redirect an export.
+
+Natural recruiter routing keeps future-date cues attached to the recruiter event;
+unrelated calendar dates do not override a completed-screen debrief. Invitations,
+missed/skipped/canceled/rescheduled screens, and pending relative dates enter the
+artifact-free screen-intake boundary, while common reply verbs remain
+authorization-gated.
 
 When `recruiter_network_expansion_plan` exists, add one `recruiter_target_shortlist` row plus three to six `recruiter_target_row` rows before drafting any new outreach. The shortlist is the evidence-gated target ranking that decides who deserves manual review first; it is not a send queue, scraper, bulk campaign, or promise of recruiter response. Required shortlist fields are `candidate_id`, `recruiter_target_shortlist`, `shortlist_goal`, `source_batch_id`, `target_count`, `ranking_method=context_strength_plus_role_relevance_plus_relationship_warmth_plus_proof_fit_minus_safety_risk`, `batch_decision`, `top_priority_targets`, `required_context_before_draft`, `next_safe_action`, `outreach_funnel_link`, `draft_only=true`, `consent=not_granted`, `authorization_gate=exact_action_and_target_immediately_before_execution`, and `causality_boundary=descriptive_only_no_guaranteed_outcome`.
 
