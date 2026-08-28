@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T23:10:43-06:00`
+release_timestamp: `2026-08-27T23:40:17-06:00`
 
-source_commit: `802a666675539ccd64a46f423abba8cfdf484234`
+source_commit: `c5fe383ae84ff5642e45f5d180e2165599774e02`
 
-source_tree: `a8ebf34b57880ee53026dbf61e4a78fb31ed9fa4`
+source_tree: `f20556615c887f3d7b0f83113a7d53e847f633d8`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827231043`
+installed_cache_version: `0.2.0+codex.20260827234017`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `172`
 
 installed_file_count: `172`
 
-normalized_source_cache_sha256: `624a26e10196c37a623db3d655458a43f3bd8cbef6b53227c6665d8c207c5155`
+normalized_source_cache_sha256: `5b77e73569e00e66754bc07768dc1080559f9c1875361d3db348a51905b1a114`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -215,3 +215,8 @@ real profile mapping, recruiter identity, credential, or external action.
 installed_followthrough_receipt_gate_smoke: `3/3 installed completed checkpoints reject contact, reply, and referral receipts from preparation routing`
 installed_dark_high_contrast_border_smoke: `4/4 installed recruiter review surfaces keep dark + prefers-contrast: more borders at or above the 3:1 non-text contrast floor`
 installed_delimited_local_path_smoke: `4/4 installed validators and repository privacy scanner reject local paths after delimiters without echoing private values`
+
+installed_nfkc_identity_smoke: `1/1 compatibility-form identity is rejected without rendering or diagnostic echo`
+installed_python311_render_smoke: `4/4 affected renderers compile and load in the supported Python 3.11 environment`
+installed_root_discovery_smoke: `1/1 documented root unittest discovery completes without same-named module shadowing`
+installed_superdesign_page_map_smoke: `1/1 route/page dependency map covers all 10 private surfaces one-to-one`
