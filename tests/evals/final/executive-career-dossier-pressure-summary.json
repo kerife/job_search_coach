@@ -2,12 +2,12 @@
   "schema_version": "executive-career-dossier-pressure-summary-1",
   "phase": "GREEN",
   "corpus_sha256": "cc17319c2b3885a7348bd9f7be52bc23799464bfcbdbbbd1680f7ec210cb8744",
-  "source_commit": "10dddf2b1ca6149b54ca3cb3d914667797572706",
-  "source_tree_sha256": "7d03223764b2e9e4c0d2754900b2b842732f5bc0e0c8bd999bbf0dea174d483a",
+  "source_commit": "9e023f76f893b04a7fce504615c4e7429874dd0e",
+  "source_tree_sha256": "dea4224290fc54885b357bd9ea467ed80bae6b93f55b71357cecc88a0b68ff15",
   "source_bindings": [
     {
       "path": "plugins/professional-growth-coach/skills/professional-growth-coach/SKILL.md",
-      "sha256": "8378a284544147f9329f7e69b478cc5dd218de3de6e31f517ce4b1bd351612ec"
+      "sha256": "34d57aa54339cd462fbaf81a808ea2f922b00ace081d6f9fd94ff627843bb029"
     },
     {
       "path": "plugins/professional-growth-coach/skills/professional-growth-coach/references/evidence-and-safety.md",
