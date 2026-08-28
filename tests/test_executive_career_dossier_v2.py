@@ -868,6 +868,22 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         self.assertNotIn("snap-market-sha256", rendered)
         self.assertNotIn("E-001", visible_text(rendered))
 
+    def test_market_scan_summary_surfaces_sample_queries_and_bounded_state(self) -> None:
+        dossier = make_v2_dossier("es")
+        complete = make_composable_market_dossier("complete-five-es.json", dossier)
+        rendered = self.renderer.render_dossier_html(dossier, complete)
+        self.assertIn('class="market-scan-summary"', rendered)
+        self.assertIn("5/5", visible_text(rendered))
+        self.assertIn("12", visible_text(rendered))
+        self.assertIn("Completa", visible_text(rendered))
+        self.assertIn("no representa ajuste de contratación", visible_text(rendered))
+
+        english = make_v2_dossier("en")
+        limited = make_composable_market_dossier("limited-four-en.json", english)
+        limited_rendered = self.renderer.render_dossier_html(english, limited)
+        self.assertIn("4/5", visible_text(limited_rendered))
+        self.assertIn("Limited", visible_text(limited_rendered))
+
     def test_market_cards_render_per_vacancy_freshness_and_contextual_source_names(self) -> None:
         dossier = make_v2_dossier("es")
         market = make_composable_market_dossier("complete-five-es.json", dossier)

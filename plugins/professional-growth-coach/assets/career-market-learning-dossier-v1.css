@@ -1,5 +1,10 @@
 .market-summary { min-width: 0; padding: 1.25rem; border: 1px solid var(--line); border-top: 4px solid var(--gold); background: var(--surface); }
 .market-summary h2, .market-summary h3 { color: var(--forest); }
+.market-scan-summary { margin: .85rem 0 1rem; padding: .8rem 1rem; border-left: 4px solid var(--forest); background: var(--forest-soft); break-inside: avoid; page-break-inside: avoid; }
+.market-scan-summary h3 { margin: 0 0 .5rem; font-size: 1rem; }
+.market-scan-summary dl { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .6rem; margin: 0; }
+.market-scan-summary dt { color: var(--muted-text); font-size: .75rem; font-weight: 700; }
+.market-scan-summary dd { margin: .15rem 0 0; overflow-wrap: anywhere; }
 .vacancy-alignment-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: .75rem; }
 .vacancy-alignment-card { min-width: 0; padding: 1rem; border: 1px solid var(--forest-soft); background: var(--paper); break-inside: avoid; page-break-inside: avoid; }
 .vacancy-alignment-card h3 { margin: .25rem 0 .75rem; overflow-wrap: anywhere; }
@@ -70,7 +75,7 @@
   .market-matrix td { display: grid; grid-template-columns: minmax(7rem, .4fr) minmax(0, 1fr); gap: .75rem; border: 0; }
   .market-matrix td::before { content: attr(data-label); color: var(--muted-text); font-size: .8125rem; font-weight: 700; }
   .market-alignment-line { align-items: flex-start; flex-direction: column; gap: .2rem; }
-  .market-alignment-facts, .market-vacancy-context, .learning-provenance-facts { grid-template-columns: 1fr; gap: .2rem; }
+  .market-alignment-facts, .market-vacancy-context, .market-scan-summary dl, .learning-provenance-facts { grid-template-columns: 1fr; gap: .2rem; }
   .recurrence-row { grid-template-columns: 1fr; gap: .35rem; }
   .learning-decision-list { grid-template-columns: 1fr; }
   .learning-decision-facts { grid-template-columns: 1fr; gap: .2rem; }
@@ -81,7 +86,7 @@
 @media (prefers-reduced-motion: reduce) { .vacancy-alignment-card, .recurrence-row { animation: none !important; transition: none !important; transform: none !important; } }
 
 @media print {
-  .market-summary, .market-key, .market-matrix-wrap, .gap-closure-route, .market-learning-roi, .learning-decision-row, .vacancy-alignment-card, .recurrence-row, .market-source-meta { break-inside: avoid; page-break-inside: avoid; }
+  .market-summary, .market-scan-summary, .market-key, .market-matrix-wrap, .gap-closure-route, .market-learning-roi, .learning-decision-row, .vacancy-alignment-card, .recurrence-row, .market-source-meta { break-inside: avoid; page-break-inside: avoid; }
   .market-matrix, .market-matrix tbody, .market-matrix tr, .market-matrix th, .market-matrix td { display: block; width: 100%; }
   .market-matrix thead { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
   .market-matrix tr { padding: .75rem 0; border-bottom: 1px solid var(--muted); }
@@ -90,7 +95,7 @@
 }
 
 @media (forced-colors: active) {
-  .market-summary, .vacancy-alignment-card, .recurrence-row, .gap-closure-route, .market-learning-roi, .learning-coach-decision, .learning-proof-sprint, .learning-reuse, .learning-decision-row, .learning-provenance, .market-matrix th, .market-matrix td, .market-alignment-score, .market-recurrence-count, .market-vacancy-context, .market-source-meta { background: Canvas; color: CanvasText; border-color: CanvasText; }
+  .market-summary, .market-scan-summary, .vacancy-alignment-card, .recurrence-row, .gap-closure-route, .market-learning-roi, .learning-coach-decision, .learning-proof-sprint, .learning-reuse, .learning-decision-row, .learning-provenance, .market-matrix th, .market-matrix td, .market-alignment-score, .market-recurrence-count, .market-vacancy-context, .market-source-meta { background: Canvas; color: CanvasText; border-color: CanvasText; }
   .market-source-link { color: LinkText; }
   .market-boundary, .market-limitation, .gap-closure-route { border-left-color: Highlight; }
   .learning-decision-row .learning-option-type { color: CanvasText; border-color: CanvasText; }

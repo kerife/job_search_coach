@@ -30,6 +30,9 @@ freshness line (90-day window, or an explicit unknown publication date) and a
 title-contextual accessible source name. Directional evidence and
 non-inferred eligibility remain visible boundaries. Source labels are localized
 from the closed market enums.
+The market region also exposes a static scan summary with the reviewed sample,
+bounded query count, complete/limited state, and an explicit hiring-fit
+boundary; it is descriptive evidence only and creates no action affordance.
 At screen widths up to 680px, its signal cells stack with localized labels;
 print keeps the market matrix as stacked, labeled rows (the semantic header is
 visually clipped while `data-label` values remain readable), and no

@@ -208,6 +208,14 @@ COPY = {
         "market_next_date_value": "Registrar la fecha de acceso de cada publicación",
         "market_next_boundary": "Solo lectura: no aplicar, contactar, seguir, publicar ni inferir elegibilidad.",
         "market_summary": "Muestra de vacantes revisada",
+        "market_scan_summary": "Resumen de la revisión",
+        "market_scan_sample": "Muestra",
+        "market_scan_queries": "Consultas acotadas",
+        "market_scan_state": "Estado",
+        "market_scan_complete": "Completa",
+        "market_scan_limited": "Limitada",
+        "market_scan_limit": "Límite",
+        "market_scan_limit_value": "La muestra no representa ajuste de contratación.",
         "market_alignment": "Alineación documentada",
         "market_location": "Ubicación",
         "market_arrangement": "Arreglo",
@@ -283,6 +291,14 @@ COPY = {
         "market_next_date_value": "Record the access date for each posting",
         "market_next_boundary": "Read-only: do not apply, contact, follow, publish, or infer eligibility.",
         "market_summary": "Reviewed vacancy sample",
+        "market_scan_summary": "Review summary",
+        "market_scan_sample": "Sample",
+        "market_scan_queries": "Bounded queries",
+        "market_scan_state": "State",
+        "market_scan_complete": "Complete",
+        "market_scan_limited": "Limited",
+        "market_scan_limit": "Limit",
+        "market_scan_limit_value": "The sample does not represent hiring fit.",
         "market_alignment": "Documented alignment",
         "market_location": "Location",
         "market_arrangement": "Arrangement",
@@ -725,6 +741,14 @@ def _render_market_context(market_dossier: Mapping[str, object], locale: str) ->
     limitation = ""
     if market_dossier.get("state") == "limited_market_evidence":
         limitation = f'<p class="market-limitation"><strong>{labels["market_limited"]}:</strong> {html.escape(str(summary["limitation"]), quote=True)}</p>'
+    scan_state = labels["market_scan_complete"] if market_dossier.get("state") == "complete" else labels["market_scan_limited"]
+    scan_summary = f'''<section class="market-scan-summary" aria-labelledby="market-scan-summary-title">
+        <h3 id="market-scan-summary-title">{labels["market_scan_summary"]}</h3>
+        <dl><div><dt>{labels["market_scan_sample"]}</dt><dd>{int(summary["vacancy_sample_count"])}/5</dd></div>
+        <div><dt>{labels["market_scan_queries"]}</dt><dd>{int(summary["bounded_queries_run"])}</dd></div>
+        <div><dt>{labels["market_scan_state"]}</dt><dd>{scan_state}</dd></div>
+        <div><dt>{labels["market_scan_limit"]}</dt><dd>{labels["market_scan_limit_value"]}</dd></div></dl>
+      </section>'''
     synthetic_boundary = (
         f'<p class="market-synthetic-boundary market-boundary">{labels["market_synthetic"]}</p>'
         if market_dossier.get("evidence_mode") == "synthetic"
@@ -734,7 +758,7 @@ def _render_market_context(market_dossier: Mapping[str, object], locale: str) ->
     learning_surface = _render_learning_roi(market_dossier, locale)
     return f'''<section class="market-summary section-block" aria-labelledby="market-summary-title" id="market-evidence">
       <h2 id="market-summary-title">{labels['market_summary']}</h2>
-      <p>{len(cards)} {'vacantes' if locale == 'es' else 'vacancies'}</p><p class="market-directional-legend market-boundary">{labels['market_directional_legend']}</p><p class="market-eligibility-boundary market-boundary">{labels['market_eligibility_boundary']}</p>{synthetic_boundary}{limitation}
+      <p>{len(cards)} {'vacantes' if locale == 'es' else 'vacancies'}</p>{scan_summary}<p class="market-directional-legend market-boundary">{labels['market_directional_legend']}</p><p class="market-eligibility-boundary market-boundary">{labels['market_eligibility_boundary']}</p>{synthetic_boundary}{limitation}
       <div class="vacancy-alignment-list">{''.join(card_html)}</div>
       <section class="market-key" aria-labelledby="market-key-title"><h3 id="market-key-title">{labels['market_key']}</h3><ol>{''.join(key_rows)}</ol></section>
       <section class="market-matrix-wrap" aria-labelledby="market-matrix-title"><h3 id="market-matrix-title">{labels['market_matrix']}</h3>
