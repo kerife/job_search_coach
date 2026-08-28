@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T12:34:13-06:00`
+release_timestamp: `2026-08-28T12:59:48-06:00`
 
-source_commit: `66ff453730a2d813c3095599db6ef20cb5e1246b`
+source_commit: `a8e06f6d1fc4bd821c18e031c0a7fafe573140bf`
 
-source_tree: `2d7f0233bf97a75e92584a16dca172a84ed1f86b`
+source_tree: `4b5c2b95574be6ed080573ea4ea41eb7bc96fa68`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828123330`
+installed_cache_version: `0.2.0+codex.20260828125857`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `dc2edbafbe37bd3a2c6de45754764a79cf32e9a2fb1cb5bcbd99d849796adc04`
+normalized_source_cache_sha256: `b619a30aa80fb664d04383cd2b600853145248d4b57ce371f74f07f1836bb781`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -49,7 +49,7 @@ installed_reading_path_smoke: `6/6 localized fragment links; aria-current fallba
 
 installed_recruiter_pre_screen_boundary_smoke: `9/9 future and explicit EN/ES non-completion phrases return artifact-free recruiter_target_screen_intake`
 
-installed_recruiter_natural_language_smoke: `5/5 defined-article interviews, future dates, readiness negation, and authorization synonyms preserve bounded routing`
+installed_recruiter_natural_language_smoke: `9/9 defined-article, upcoming-preparation, recruiting-alias, network-relationship, and inbound-contact variants preserve bounded routing`
 
 installed_dossier_v2_smoke: `4/4 EN/ES validator and renderer`
 
@@ -81,6 +81,8 @@ installed_validator_support_hash_smoke: `1/1 release runner pins, copies, and re
 installed_shortlist_next_step_smoke: `2/2 ES/EN localized review date and fixed batch next-step panel`
 installed_recruiter_date_canonicalization_smoke: `5/5 recruiter builders/validators reject alternate ISO date spellings and preserve YYYY-MM-DD`
 installed_recruiter_continuity_orientation_smoke: `5/5 recruiter review surfaces state that the rail is orientation only, not progress or contact tracking`
+
+installed_recruiter_private_input_encoding_smoke: `focused regression suite passes for percent- and HTML-decoded email, URL, password-marker, diagnostic, and Unicode-control variants; rejected or opaque`
 
 installed_replay_fingerprint_smoke: `1/1 stable identity-free receipt/checkpoint replay key`
 installed_source_traceability_smoke: `2/2 EN/ES public-source links and research dates`
