@@ -54,6 +54,15 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
         gate = build_decision_gate(self.shortlist())
         self.assertIn("as_of cannot be in the future", validate_decision_gate(gate, as_of=date.today() + dt.timedelta(days=1)))
 
+    def test_validator_rejects_gate_date_drift_from_source_shortlist(self) -> None:
+        shortlist = build_shortlist("en", "2026-01-01", valid_plan(), valid_targets())
+        gate = build_decision_gate(shortlist)
+        gate["as_of_date"] = "2026-08-27"
+        self.assertIn(
+            "as_of_date must match source_shortlist.as_of_date",
+            validate_decision_gate(gate, as_of=date(2026, 8, 27)),
+        )
+
     def test_validator_rejects_tampered_source_snapshot_and_counts(self) -> None:
         gate = build_decision_gate(self.shortlist())
         tampered = copy.deepcopy(gate)

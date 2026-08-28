@@ -50,7 +50,7 @@ def contains_restricted_private_material(value: object) -> bool:
 
 def safe_diagnostic_field_name(value: str) -> str:
     """Redact contact-, path-, and credential-shaped keys in diagnostics."""
-    if _SUSPICIOUS_DIAGNOSTIC_FIELD.search(value):
+    if contains_unicode_controls(value) or _SUSPICIOUS_DIAGNOSTIC_FIELD.search(value):
         return "<redacted-field>"
     return value
 

@@ -947,7 +947,14 @@ dd { margin: .25rem 0 0; font-weight: 700; }
 
 @media (prefers-reduced-motion: reduce) { .vacancy-alignment-card, .recurrence-row { animation: none !important; transition: none !important; transform: none !important; } }
 
-@media print { .market-summary, .market-key, .market-matrix-wrap, .gap-closure-route, .market-learning-roi, .learning-decision-row, .vacancy-alignment-card, .recurrence-row, .market-source-meta { break-inside: avoid; page-break-inside: avoid; } .market-matrix thead { display: table-header-group; } }
+@media print {
+  .market-summary, .market-key, .market-matrix-wrap, .gap-closure-route, .market-learning-roi, .learning-decision-row, .vacancy-alignment-card, .recurrence-row, .market-source-meta { break-inside: avoid; page-break-inside: avoid; }
+  .market-matrix, .market-matrix tbody, .market-matrix tr, .market-matrix th, .market-matrix td { display: block; width: 100%; }
+  .market-matrix thead { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
+  .market-matrix tr { padding: .75rem 0; border-bottom: 1px solid var(--muted); }
+  .market-matrix td { display: grid; grid-template-columns: minmax(7rem, .4fr) minmax(0, 1fr); gap: .75rem; border: 0; }
+  .market-matrix td::before { content: attr(data-label); color: var(--muted-text); font-size: .8125rem; font-weight: 700; }
+}
 
 @media (forced-colors: active) {
   .market-summary, .vacancy-alignment-card, .recurrence-row, .gap-closure-route, .market-learning-roi, .learning-coach-decision, .learning-proof-sprint, .learning-reuse, .learning-decision-row, .learning-provenance, .market-matrix th, .market-matrix td, .market-alignment-score, .market-recurrence-count, .market-vacancy-context, .market-source-meta { background: Canvas; color: CanvasText; border-color: CanvasText; }

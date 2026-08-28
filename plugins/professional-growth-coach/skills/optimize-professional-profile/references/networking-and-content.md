@@ -71,6 +71,7 @@ Immediately after the first-contact strategy, add one `linkedin_warm_intro_readi
 After `recruiter_target_decision_gate` and before any outreach or interview-preparation prose, add one `recruiter_target_screen_intake` artifact per selected target. This private bridge must preserve the source shortlist snapshot, use exactly one target with `decision=advance`, and collect `stated_stage`, `V-###` vacancy requirements, `F-###` candidate fact IDs, `company_evidence_state`, and a dated `source_date`. It then records exactly four checks: `target_context`, `proof_packet`, `low_friction_ask`, and `screen_readiness`, each with `status=pass|clarify|stop` and a bounded evidence note.
 
 Set `readiness_decision=ready` only when the target is `advance`, all four checks pass, the stage and evidence are present, and company context is not unknown. A ready intake may hand off only to `manual_prepare_role_interviews_review`; otherwise use `clarify_first` with `collect_screen_intake` or `stop` with `stop_and_record`. Record `measurement_event=screen_context_submitted|clarify_context|stop_decision`. This bridge is not a preparation run, send queue, calendar action, or interview prediction; keep `draft_only=true`, `no_message_action=true`, `no_calendar_action=true`, and `external_actions_authorized=false`.
+The gate's `as_of_date` must equal the nested shortlist's `as_of_date`; reject the handoff when those snapshots drift, even if the outer evaluation date is current.
 
 ## Recruiter outreach lab
 

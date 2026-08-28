@@ -797,6 +797,13 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
                 for label in labels:
                     self.assertIn(f'<td data-label="{label}">', rendered)
 
+    def test_market_matrix_print_layout_stacks_rows_for_readability(self) -> None:
+        css = (ASSETS_ROOT / "career-market-learning-dossier-v1.css").read_text(encoding="utf-8")
+        print_css = css[css.index("@media print"):]
+        self.assertIn(".market-matrix tbody, .market-matrix tr, .market-matrix th, .market-matrix td { display: block;", print_css)
+        self.assertIn(".market-matrix td::before { content: attr(data-label);", print_css)
+        self.assertNotIn(".market-matrix thead { display: table-header-group; }", print_css)
+
     def test_optional_market_dossier_renders_complete_cards_matrix_and_recurrence(self) -> None:
         dossier = make_v2_dossier("es")
         market = make_composable_market_dossier("complete-five-es.json", dossier)

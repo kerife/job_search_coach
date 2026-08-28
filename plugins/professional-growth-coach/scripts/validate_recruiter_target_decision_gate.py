@@ -137,6 +137,12 @@ def validate_decision_gate(value: object, *, as_of: dt.date | None = None) -> li
         source = None
     else:
         errors.extend(SHORTLIST.validate_shortlist(source, as_of=as_of))
+        if (
+            isinstance(item.get("as_of_date"), str)
+            and isinstance(source.get("as_of_date"), str)
+            and item["as_of_date"] != source["as_of_date"]
+        ):
+            errors.append("as_of_date must match source_shortlist.as_of_date")
     snapshot = item.get("source_snapshot")
     if not isinstance(snapshot, str) or not snapshot.startswith(SNAPSHOT_PREFIX) or len(snapshot) != len(SNAPSHOT_PREFIX) + 64:
         errors.append("source_snapshot has invalid value")

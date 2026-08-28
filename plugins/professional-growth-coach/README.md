@@ -30,6 +30,8 @@ Explicit requests to expand a network or prepare for a first recruiter screen ro
 
 For a selected `advance` target, `route_recruiter_screen_intake` adds the target-specific `recruiter-target-screen-intake-v1` bridge. It requires a stated screen stage, `V-###` vacancy requirements, `F-###` candidate facts, non-unknown company evidence, a source date no older than 90 days from the gate snapshot, and four passing checks before returning only `manual_prepare_role_interviews_review`; stale context stays `clarify_first` with `clarify_context`, while `clarify` and `stop` targets remain blocked or in intake, with no message, calendar, or automatic preparation action.
 
+The decision gate also enforces temporal continuity: its `as_of_date` must match the nested shortlist snapshot date, so a stale shortlist cannot be relabeled as a current screen-intake source.
+
 The decision gate, screen-intake bridge, post-screen debrief, and next-stage review now return the same private in-memory `rendered_html` contract whenever a validated artifact exists. Intake failures remain artifact-free; stopped or blocked artifacts still render their localized review surface without IDs, snapshots, contacts, or action tokens.
 
 The five recruiter review surfaces also render the shared identity-free continuity rail from `scripts/recruiter_continuity_rail.py`: shortlist, decision gate, screen intake, screen debrief, and next-stage review. It uses localized closed labels inside a static `section` (not a navigation landmark), marks only the current surface with `aria-current="step"`, remains non-interactive, collapses to one column below 420px, and keeps the same offline, print, forced-colors, and responsive boundary without adding candidate data or external actions.
@@ -113,6 +115,9 @@ value so action text remains above the contrast floor on dark surfaces.
 The executive dossier reading path also switches to a two-column tablet layout
 through 900px, then to one column at 640px, keeping all four destinations
 usable without horizontal scrolling.
+The career-market matrix uses the same labelled stacked-row treatment in print
+as on narrow screens, keeping multi-vacancy comparisons readable on paper
+without changing table semantics.
 
 Rendering CLIs write the requested private artifact but omit its absolute local
 path from the success receipt by default. A trusted caller that already knows

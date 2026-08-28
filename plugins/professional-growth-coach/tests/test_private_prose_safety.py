@@ -51,6 +51,9 @@ class PrivateProseSafetyTests(unittest.TestCase):
             "+52 55 1234 5678": "<redacted-field>",
             "555-123-4567": "<redacted-field>",
             "token_sk_live_SYNTHETIC": "<redacted-field>",
+            "candidate\u200bpath": "<redacted-field>",
+            "candidate\u202eprofile": "<redacted-field>",
+            "candidate\nprofile": "<redacted-field>",
         }
         for value, expected in cases.items():
             with self.subTest(value=value):
