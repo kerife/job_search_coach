@@ -53,7 +53,22 @@
         "do_not_contact_reason": {"enum": ["none", "no_context", "missing_context", "no_consent", "confidentiality_risk", "unsupported_claim", "closed_role", "missing_authorization"]},
         "next_safe_action": {"enum": ["collect_recipient_context", "draft_only_review", "record_observation_only"]},
         "draft_only": {"const": true}, "consent": {"const": "not_granted"}, "authorization_required": {"const": true}, "no_message_action": {"const": true}, "no_calendar_action": {"const": true}
-      }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"decision": {"const": "advance"}}},
+          "then": {
+            "properties": {
+              "context_state": {"const": "named_context"},
+              "supported_fact_ids": {"minItems": 1},
+              "missing_context": {"const": "none"},
+              "contactability_status": {"const": "contactable"},
+              "do_not_contact_reason": {"const": "none"},
+              "next_safe_action": {"const": "draft_only_review"}
+            }
+          }
+        }
+      ]
     },
     "delivery": {
       "type": "object", "additionalProperties": false,

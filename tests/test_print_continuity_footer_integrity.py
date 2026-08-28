@@ -16,6 +16,8 @@ FOOTERS = {
     "private-recruiter-conversion-outcome-v1.css": ".outcome-footer",
     "private-recruiter-followthrough-checkpoint-v1.css": ".checkpoint-footer",
     "private-recruiter-next-stage-review-v1.css": ".next-stage-footer",
+    "recruiter-target-screen-intake-v1.css": ".screen-footer",
+    "private-recruiter-screen-debrief-v1.css": ".debrief-footer",
 }
 
 

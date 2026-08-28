@@ -694,7 +694,7 @@ def route_recruiter_screen_debrief(
         rendered_html = SCREEN_DEBRIEF_RENDERER.render_screen_debrief_html(
             artifact, receipt, intake, checkpoint=checkpoint
         )
-    except (TypeError, ValueError):
+    except (RecursionError, TypeError, ValueError):
         return _artifact_free_intake(
             "private_recruiter_screen_debrief",
             selected_module="track-career-outcomes",

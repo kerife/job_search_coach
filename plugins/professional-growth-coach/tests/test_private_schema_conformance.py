@@ -317,6 +317,19 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         invalid_terminal_source["next_stage"] = "first_interview"
         self.assertTrue(validate_schema_instance(invalid_terminal_source, review_schema))
 
+        shortlist = build_shortlist("es", "2026-08-27", valid_plan(), valid_targets())
+        shortlist_schema = self._schema("recruiter-target-shortlist-v1.schema.json")
+        invalid_advance = copy.deepcopy(shortlist)
+        invalid_advance["targets"][0].update(
+            context_state="context_needed",
+            supported_fact_ids=[],
+            missing_context="Need context",
+            contactability_status="context_needed",
+            do_not_contact_reason="missing_context",
+            next_safe_action="collect_recipient_context",
+        )
+        self.assertTrue(validate_schema_instance(invalid_advance, shortlist_schema))
+
     def test_dossier_methodology_categories_keep_schema_runtime_and_registry_in_lockstep(self):
         helper = _load_v2_dossier_helper()
         validator = helper.load_validator()

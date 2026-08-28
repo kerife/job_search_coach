@@ -200,7 +200,7 @@ Natural invitation and scheduling variants (`got invited`, `received an invitati
 
 The private recruiter reply triage renderer includes a static three-step continuity rail (`classify reply`, `clarify or prepare`, `manual re-entry`) in localized copy. Exactly one rail step is marked `aria-current="step"` according to `clarify_first`, `ready_for_private_prep`, or `stop`; the handoff detail remains pending without creating a second current marker. The rail is orientation only and preserves responsive, dark, high-contrast, forced-colors, reduced-motion, and print boundaries.
 
-The target-specific screen-intake router catches bounded deep-copy recursion failures and returns the same artifact-free `needs_intake` contract as other malformed inputs; it never leaks a traceback from an in-memory nested context.
+The target-specific screen-intake and post-screen debrief routers catch bounded deep-copy recursion failures and return the same artifact-free `needs_intake` contract as other malformed inputs; they never leak a traceback from an in-memory nested context.
 
 ## Ready module execution
 
