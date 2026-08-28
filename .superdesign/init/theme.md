@@ -891,7 +891,7 @@ dd { margin: .25rem 0 0; font-weight: 700; }
 .market-vacancy-context dd { margin: 0; overflow-wrap: anywhere; }
 .market-source-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem .75rem; margin: .75rem 0 0; padding-top: .65rem; border-top: 1px solid var(--line); color: var(--muted-text); font-size: .875rem; }
 .market-freshness { flex-basis: 100%; font-variant-numeric: tabular-nums; }
-.market-source-link { color: var(--forest); font-weight: 700; }
+.market-source-link { display: inline-flex; align-items: center; min-height: 44px; padding: .35rem .5rem; color: var(--forest); font-weight: 700; }
 .market-source-link:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
 .market-directional-legend { margin-top: .5rem; }
 .market-key, .market-matrix-wrap, .gap-closure-route { margin-top: 1.25rem; min-width: 0; }

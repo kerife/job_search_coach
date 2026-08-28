@@ -829,6 +829,13 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         self.assertIn(".market-matrix td::before { content: attr(data-label);", print_css)
         self.assertNotIn(".market-matrix thead { display: table-header-group; }", print_css)
 
+    def test_market_source_links_keep_a_minimum_touch_target(self) -> None:
+        css = (ASSETS_ROOT / "career-market-learning-dossier-v1.css").read_text(encoding="utf-8")
+        self.assertRegex(
+            css,
+            r"\.market-source-link\s*\{[^}]*display:\s*inline-flex;[^}]*align-items:\s*center;[^}]*min-height:\s*44px;[^}]*padding:",
+        )
+
     def test_optional_market_dossier_renders_complete_cards_matrix_and_recurrence(self) -> None:
         dossier = make_v2_dossier("es")
         market = make_composable_market_dossier("complete-five-es.json", dossier)

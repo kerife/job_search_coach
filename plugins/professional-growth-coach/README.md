@@ -56,6 +56,9 @@ valid but the selected non-terminal stage is not allowed, the route returns
 `next_action=record_terminal_stage` and no allowed stage. Recovery text never
 reflects malformed input, private identifiers, or raw conversation text, so a
 client can recover without guessing what to submit.
+Downstream handoff routes also fail closed when a structured payload carries a
+non-string or unknown locale: they return the same localized `needs_intake`
+surface without a traceback or artifact.
 
 The recruiter snapshot chain is closed at both contract layers: embedded
 `source_shortlist`, `source_gate`, `source_intake`, `source_receipt`,
@@ -317,6 +320,8 @@ publication date when known, a 90-day freshness window, and an explicit
 accessible name includes the vacancy title for auditability. The link is for
 auditability only: it does not open an application flow, send a message, or
 authorize any external action.
+Source links retain a minimum 44px touch target with centered text so the audit
+trail remains usable on narrow screens without changing the action boundary.
 Every vacancy card must carry the complete six-field freshness envelope. The
 validator rejects contradictory status, basis, reason, or date-window
 combinations: a dated posting is current only when its source status is current

@@ -90,8 +90,9 @@ HANDOFF_GAPS = {
 
 
 def _safe_locale(value: object) -> str:
-    if isinstance(value, Mapping) and value.get("locale") in INTAKE:
-        return str(value["locale"])
+    locale = value.get("locale") if isinstance(value, Mapping) else None
+    if isinstance(locale, str) and locale in INTAKE:
+        return locale
     return "es"
 
 

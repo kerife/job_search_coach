@@ -26,6 +26,7 @@ from route_recruiter_target_shortlist import (  # noqa: E402
     route_recruiter_decision_gate,
     route_recruiter_next_stage_review,
     route_recruiter_screen_debrief,
+    route_recruiter_screen_debrief_intake,
     route_recruiter_screen_intake,
 )
 _schema_spec = importlib.util.spec_from_file_location(
@@ -191,6 +192,20 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
         self.assertEqual(1, rendered.count('aria-current="step"'))
         self.assertIn("Ruta de revisión recruiter", rendered)
         self.assertIn("Recruiter review path", english_rendered)
+
+    def test_downstream_routes_recover_from_non_string_locale(self) -> None:
+        cases = (
+            lambda: route_recruiter_decision_gate({"locale": []}),
+            lambda: route_recruiter_screen_intake({"locale": []}, "T-001", {}),
+            lambda: route_recruiter_screen_debrief({}, {}, {"locale": []}, {}),
+            lambda: route_recruiter_screen_debrief_intake({}, {}, {"locale": []}),
+            lambda: route_recruiter_next_stage_review({"locale": []}, {}, {}, {}, "offer_stage"),
+        )
+        for route in cases:
+            result = route()
+            self.assertEqual("needs_intake", result["case_state"])
+            self.assertIsNone(result["artifact"])
+            self.assertIn("intake_question", result)
 
     def test_gate_rejects_external_action_authorization(self) -> None:
         gate = build_decision_gate(self.shortlist())
