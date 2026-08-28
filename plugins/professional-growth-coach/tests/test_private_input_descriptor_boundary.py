@@ -30,6 +30,7 @@ TRIAGE = _load("validate_private_recruiter_reply_triage")
 PRACTICE = _load("validate_recruiter_practice_session")
 DOSSIER = _load("validate_executive_career_dossier")
 PRIVATE_INPUT = _load("private_input_loader")
+CASE = _load("validate_case")
 
 
 LOAD_CASES = (
@@ -194,6 +195,20 @@ class PrivateInputDescriptorBoundaryTests(unittest.TestCase):
                 path = Path(directory) / "input.json"
                 path.write_bytes(fixture.read_bytes())
                 self.assertIsInstance(loader(path), dict)
+
+    def test_hardlinked_leaf_is_rejected_by_shared_and_independent_loaders(self):
+        for label, loader in (
+            ("shared", lambda path: PRIVATE_INPUT.read_bounded_bytes(path, 256 * 1024)),
+            ("case", CASE._read_case_input),
+        ):
+            with self.subTest(label=label), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                external = root / "external.json"
+                external.write_text("{}", encoding="utf-8")
+                linked = root / "input.json"
+                linked.hardlink_to(external)
+                with self.assertRaises((PRIVATE_INPUT.PrivateInputError, OSError)):
+                    loader(linked)
 
     def test_decoder_recursion_is_normalized_at_every_loader_boundary(self):
         for label, loader, error_type, messages in DIRECT_RECURSION_CASES:

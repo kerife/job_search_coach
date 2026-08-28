@@ -164,6 +164,31 @@ class PrivateRecruiterOutcomeExportTests(unittest.TestCase):
                     force=True,
                 )
 
+    def test_existing_csv_is_bounded_before_materializing_rows(self) -> None:
+        receipt = _receipt("reply-received-en.json")
+        row = export_row(
+            receipt,
+            candidate_id="candidate-001",
+            application_id="app-001",
+            application_date="2026-08-01",
+            as_of="2026-08-08",
+        )
+        payload = exporter._csv_bytes([row] * 5000)
+        self.assertGreater(len(payload), exporter._MAX_EXISTING_CSV_BYTES)
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "outcomes.csv"
+            output.write_bytes(payload)
+            with self.assertRaisesRegex(ExportError, "existing CSV output is unavailable"):
+                write_export(
+                    receipt,
+                    candidate_id="candidate-002",
+                    application_id="app-002",
+                    application_date="2026-08-01",
+                    as_of="2026-08-08",
+                    output=output,
+                    force=True,
+                )
+
     def test_cli_rejects_non_exportable_event_without_echoing_arguments(self) -> None:
         script = SCRIPTS / "export_private_recruiter_outcome.py"
         with tempfile.TemporaryDirectory() as directory:

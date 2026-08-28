@@ -150,6 +150,8 @@ def _read_case_input(path: str) -> str:
         metadata = os.fstat(descriptor)
         if not stat.S_ISREG(metadata.st_mode):
             raise OSError("case input is not a regular file")
+        if metadata.st_nlink != 1:
+            raise OSError("case input hardlink is unavailable")
         if metadata.st_size > MAX_CASE_BYTES:
             raise _CaseInputTooLarge
 

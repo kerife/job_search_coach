@@ -128,12 +128,15 @@ RECRUITER_INVITATION_INTENT = re.compile(
 RECRUITER_INBOUND_INTENT = re.compile(
     r"(?:\b(?:a\s+|the\s+)?recruiters?\b[^.!?\n]{0,80}\b(?:messaged|emailed|reached\s+out|contacted|wrote\s+to|sent\s+(?:me\s+)?(?:a\s+)?(?:message|note|email)|asked[^.!?\n]{0,30}\b(?:about|for)\s+(?:my\s+)?availability)\b|"
     r"\b(?:me\s+(?:escribi[oó]|contact[oó]|mand[oó]\s+(?:un\s+)?mensaje|pregunt[oó]))\b[^.!?\n]{0,45}\b(?:recruiters?|reclutador(?:a|es)?)\b|"
-    r"\b(?:recruiters?|reclutador(?:a|es)?)\b[^.!?\n]{0,45}\bme\s+(?:escribi[oó]|contact[oó]|mand[oó]|pregunt[oó])\b)",
+    r"\b(?:recruiters?|reclutador(?:a|es)?)\b[^.!?\n]{0,45}\bme\s+(?:escribi[oó]|contact[oó]|mand[oó]|pregunt[oó])\b|"
+    r"\b(?:a\s+|the\s+)?recruiters?\b[^.!?\n]{0,90}\b(?:wants?\s+to\s+(?:schedule|book)|asked\s+me\s+to\s+(?:choose|pick)\s+(?:a\s+)?time|asked[^.!?\n]{0,30}\b(?:about|for)\s+(?:my\s+)?availability|sent\s+(?:me\s+)?(?:a\s+)?calendar\s+invite)\b|"
+    r"\b(?:reclutador(?:a|es)?)\b[^.!?\n]{0,90}\b(?:pidi[oó]\s+(?:mi\s+)?disponibilidad|me\s+pidi[oó]\s+(?:elegir|escoger)\s+(?:un\s+)?horario)\b|"
+    r"\b(?:me\s+lleg[oó]|recib[ií])\s+(?:una\s+)?invitaci[oó]n\b[^.!?\n]{0,80}\b(?:reclutador(?:a|es)?)\b[^.!?\n]{0,50}\b(?:agendar|programar|llamada|entrevista)\b)",
     re.I,
 )
 RECRUITER_REPLY_REQUEST_INTENT = re.compile(
-    r"(?:\b(?:what\s+should\s+i\s+say(?:\s+back)?|say\s+back|help\s+me\s+(?:formulate|write|draft)\s+(?:a\s+)?response|formulate\s+(?:a\s+)?response|help\s+me\s+answer|get\s+back\s+to)\b|"
-    r"\b(?:qu[eé]\s+(?:le\s+)?digo|c[oó]mo\s+(?:le\s+)?respondo|ay[uú]dame\s+a\s+(?:contestar|responder)|formular\s+(?:una\s+)?respuesta)\b)",
+    r"(?:\b(?:what\s+should\s+i\s+(?:say|reply)(?:\s+back)?|say\s+back|reply\s+to\s+(?:a\s+|the\s+)?recruiters?|help\s+me\s+(?:formulate|write|draft)\s+(?:a\s+)?response|formulate\s+(?:a\s+)?response|help\s+me\s+answer|get\s+back\s+to)\b|"
+    r"\b(?:qu[eé]\s+(?:le\s+)?(?:digo|contesto)|c[oó]mo\s+(?:le\s+)?respondo|ay[uú]dame\s+a\s+(?:contestar|responder)|responderle|formular\s+(?:una\s+)?respuesta)\b)",
     re.I,
 )
 NEXT_STAGE_INTENT = re.compile(

@@ -51,8 +51,9 @@ artifact-free `private_recruiter_reply_triage` intake, which requests only an
 identity-free summary and one verified fact and performs no external action.
 
 It also recognizes inbound contact before an interview is named (`messaged`,
-`emailed`, `reached out`, “what should I say?”, “me escribió”, “me contactó”,
-“¿qué le digo?”). These requests use the same artifact-free private reply-triage
+`emailed`, `reached out`, schedule/choose-a-time wording, calendar invites,
+“reply to a recruiter”, “what should I say?”, “me escribió”, “me contactó”,
+“me pidió disponibilidad”, “¿qué le digo?”). These requests use the same artifact-free private reply-triage
 boundary, one verified fact, and an authorization gate; no message or calendar
 action is implied.
 

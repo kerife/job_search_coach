@@ -35,6 +35,7 @@ _SAFE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
 _SAFE_VERSION = re.compile(r"^[a-z0-9][a-z0-9.-]{0,31}$")
 _SAFE_CURRENCY = re.compile(r"^[A-Z]{3}$")
 _FORMULA_PREFIX = re.compile(r"^\s*[=+\-@]")
+_MAX_EXISTING_CSV_BYTES = 256 * 1024
 
 
 def _safe_absolute(path: Path) -> Path:
@@ -178,17 +179,26 @@ def _existing_rows_at(parent_descriptor: int, filename: str) -> list[dict[str, s
         status = os.fstat(descriptor)
         if not stat.S_ISREG(status.st_mode):
             raise ExportError("existing CSV output is unavailable")
-        with os.fdopen(descriptor, "r", newline="", encoding="utf-8") as stream:
-            descriptor = None
-            reader = csv.DictReader(stream)
-            if reader.fieldnames != list(CSV_FIELDS):
+        if status.st_nlink != 1:
+            raise ExportError("existing CSV output is unavailable")
+        contents = bytearray()
+        while True:
+            chunk = os.read(descriptor, min(8192, _MAX_EXISTING_CSV_BYTES + 1 - len(contents)))
+            if not chunk:
+                break
+            contents.extend(chunk)
+            if len(contents) > _MAX_EXISTING_CSV_BYTES:
                 raise ExportError("existing CSV output is unavailable")
-            rows = list(reader)
-            if any(set(row) != set(CSV_FIELDS) for row in rows):
-                raise ExportError("existing CSV output is unavailable")
-            if any(_FORMULA_PREFIX.match(value) for row in rows for value in row.values() if isinstance(value, str)):
-                raise ExportError("existing CSV output is unavailable")
-            return rows
+        stream = io.StringIO(bytes(contents).decode("utf-8"), newline="")
+        reader = csv.DictReader(stream)
+        if reader.fieldnames != list(CSV_FIELDS):
+            raise ExportError("existing CSV output is unavailable")
+        rows = list(reader)
+        if any(set(row) != set(CSV_FIELDS) for row in rows):
+            raise ExportError("existing CSV output is unavailable")
+        if any(_FORMULA_PREFIX.match(value) for row in rows for value in row.values() if isinstance(value, str)):
+            raise ExportError("existing CSV output is unavailable")
+        return rows
     except (OSError, UnicodeError, csv.Error) as error:
         raise ExportError("existing CSV output is unavailable") from error
     finally:

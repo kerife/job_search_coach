@@ -89,6 +89,8 @@ def read_bounded_bytes(path: Path, max_bytes: int) -> bytes:
         metadata = os.fstat(leaf_descriptor)
         if not stat.S_ISREG(metadata.st_mode):
             raise PrivateInputError("unavailable")
+        if metadata.st_nlink != 1:
+            raise PrivateInputError("hardlink")
         if metadata.st_size > max_bytes:
             raise PrivateInputError("too_large")
         contents = bytearray()

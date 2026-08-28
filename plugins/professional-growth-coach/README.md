@@ -68,7 +68,10 @@ Inbound recruiter contact is normalized before any reply drafting: `messaged`,
 and Spanish equivalents such as “me escribió”, “me contactó”, “me preguntó” and
 “¿qué le digo?” enter artifact-free `recruiter_reply_triage` with an identity-free
 summary plus one verified fact. The route remains authorization-gated and
-performs no message, calendar, or scheduling action.
+performs no message, calendar, or scheduling action. Scheduling or choosing a
+time, a calendar invite, “reply to a recruiter”, and Spanish “me pidió
+disponibilidad” or “me llegó una invitación para agendar” use the same private
+triage boundary.
 
 The same preparation boundary covers explicit non-attendance such as “I never
 went to the recruiter interview”, “I didn’t go to the recruiter screen”,

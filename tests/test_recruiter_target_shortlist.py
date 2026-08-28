@@ -262,6 +262,14 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         print_css = css.split("@media print", 1)[1]
         self.assertRegex(print_css, r"\.shortlist-next-step\s*\{[^}]*break-inside: avoid")
 
+    def test_shortlist_forced_colors_pin_system_surface_and_text(self) -> None:
+        css = (ROOT / "plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css").read_text(encoding="utf-8")
+        forced_colors = css.split("@media (forced-colors: active)", 1)[1]
+        block = re.search(r"\.shortlist-card, \.shortlist-next-step\s*\{([^}]*)\}", forced_colors, re.S)
+        self.assertIsNotNone(block)
+        self.assertIn("background: Canvas", block.group(1))
+        self.assertIn("color: CanvasText", block.group(1))
+
     def test_batch_next_step_has_legacy_background_fallback_before_color_mix(self) -> None:
         css = (ROOT / "plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css").read_text(encoding="utf-8")
         self.assertRegex(css, r"\.shortlist-next-step\s*\{[^}]*background:\s*var\(--surface\);[^}]*background:\s*color-mix\(")
@@ -680,6 +688,22 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         )
         self.assertEqual("recruiter_target_screen_intake", routed["route_kind"])
         self.assertFalse(routed["authorization_required"])
+
+    def test_recruiter_schedule_and_reply_language_enters_private_triage(self) -> None:
+        cases = (
+            ("The recruiter wants to schedule a phone screen; what should I reply?", "en"),
+            ("The recruiter asked me to choose a time for an interview.", "en"),
+            ("I need to reply to a recruiter about interview availability.", "en"),
+            ("El reclutador me pidió disponibilidad para una entrevista.", "es"),
+            ("Me llegó una invitación del reclutador para agendar una llamada.", "es"),
+        )
+        for request, locale in cases:
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+                self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
+                self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
 
     def test_root_route_keeps_readiness_negation_after_completed_screen_in_next_stage_flow(self) -> None:
         routed = route_recruiter_request(

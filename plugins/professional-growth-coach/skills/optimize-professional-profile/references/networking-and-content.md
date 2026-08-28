@@ -144,8 +144,9 @@ An explicit private recruiter-reply triage request is handled by the root privat
 When the candidate supplies an inbound recruiter reply, screen invitation, proof request, eligibility question, compensation question, decline, or ambiguous response, add one `recruiter_reply_triage` row in `networking_drafts` before drafting any reply. Required fields are `candidate_id`, `recruiter_reply_triage`, `reply_event_id`, `recruiter_context_source`, `reply_date`, `role_or_vacancy_id`, `vacancy_source_date`, `reply_classification`, `stated_stage`, `stated_constraints`, `candidate_fact_ids`, `unknowns`, `screen_readiness_decision`, `safe_draft_response`, `proposed_time_state`, `next_safe_action`, `handoff_module`, `stop_condition`, `draft_only=true`, `consent=not_granted`, `authorization_gate=exact_action_and_target_immediately_before_execution`, `no_calendar_action=true`, and `causality_boundary=descriptive_only_no_guaranteed_outcome`.
 
 The same triage row is required for inbound recruiter contact before an interview
-exists, including “messaged”, “emailed”, “reached out”, “what should I say?” and
-Spanish “me escribió”, “me contactó” or “¿qué le digo?”. Keep the response
+exists, including “messaged”, “emailed”, “reached out”, scheduling or choosing a
+time, a calendar invite, “reply to a recruiter”, “what should I say?” and Spanish
+“me escribió”, “me contactó”, “me pidió disponibilidad” or “¿qué le digo?”. Keep the response
 identity-free and draft-only; do not infer a recipient, send a message, or accept
 a time before the exact action and target are authorized.
 
