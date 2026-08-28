@@ -772,6 +772,31 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual("needs_intake", routed["case_state"])
                 self.assertEqual("ask_one_intake_question", routed["next_action"])
 
+    def test_root_route_recognizes_recruiter_network_word_order_variants(self) -> None:
+        for request, locale in (
+            ("How do I expand my recruiter network?", "en"),
+            ("I want to grow my recruiter network", "en"),
+            ("I want to build recruiter relationships", "en"),
+            ("Necesito referidos de reclutadores", "es"),
+            ("Quiero conocer reclutadores", "es"),
+        ):
+            routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+            with self.subTest(request=request):
+                self.assertEqual("recruiter_target_shortlist", routed["route_kind"])
+                self.assertEqual("needs_intake", routed["case_state"])
+                self.assertEqual("ask_one_intake_question", routed["next_action"])
+
+    def test_root_route_keeps_generic_network_growth_outside_recruiter_shortlist(self) -> None:
+        for request in (
+            "How do I expand my network?",
+            "I want to grow my network",
+            "I need to build relationships in a technical network",
+        ):
+            routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-28")
+            with self.subTest(request=request):
+                self.assertEqual("ordinary_professional_growth", routed["route_kind"])
+                self.assertEqual("not_applicable", routed["case_state"])
+
     def test_root_route_recognizes_recruiting_inbound_contact_without_message_verb(self) -> None:
         for request, locale in (
             ("Recruiting reached out about a role", "en"),

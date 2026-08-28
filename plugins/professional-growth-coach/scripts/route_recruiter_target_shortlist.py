@@ -37,7 +37,9 @@ NEXT_STAGE_REVIEW_RENDERER = _sibling("render_private_recruiter_next_stage_revie
 STAGE_TAXONOMY = _sibling("recruiter_stage_taxonomy.py")
 INTENT = re.compile(
     r"(?:\b(?:expand(?:ir|iendo)?|ampliar|crecer|grow)\s+(?:(?:my|mi)\s+)?(?:red|network)\s+(?:(?:de|of)\s+)?(?:recruiters?|reclutadores?)\b|"
+    r"\b(?:expand(?:ir|iendo)?|grow)\s+(?:(?:my|mi)\s+)?(?:recruiters?|reclutadores?)\s+(?:network|red)\b|"
     r"\b(?:build|construir)\s+(?:relationships?|relaciones)\s+(?:with|con)\s+(?:recruiters?|reclutadores?)\b|"
+    r"\b(?:build|construir)\s+(?:recruiters?|reclutadores?)\s+(?:relationships?|relaciones)\b|"
     r"\b(?:build|construir)\s+(?:relationships?|relaciones)\s+(?:with|con)\s+(?:talent\s+acquisition|talent\s+partners?|sourcers?|headhunters?)\b|"
     r"\b(?:connect|conectar(?:me)?)\s+(?:with|con)\s+(?:more\s+)?(?:recruiters?|reclutadores?)\b|"
     r"\b(?:connect|conectar(?:me)?)\s+(?:with|con)\s+(?:talent\s+acquisition|talent\s+partners?|sourcers?|headhunters?)\b|"
@@ -45,6 +47,7 @@ INTENT = re.compile(
     r"\bget\s+on\s+(?:recruiters?|reclutadores?)['’]?\s+radar\b|"
     r"\baumentar\s+mi\s+visibilidad\s+ante\s+(?:recruiters?|reclutadores?)\b|"
     r"\b(?:find|buscar|encontrar|identificar)\s+(?:a\s+)?(?:recruiters?|reclutadores?)\b|"
+    r"\b(?:meet|get\s+to\s+know|conocer)\s+(?:recruiters?|reclutadores?)\b|"
     r"\b(?:recruiter|recruiting|reclutador(?:a|es)?)\s+(?:screen|filtro|entrevista)\b|"
     r"\b(?:first\s+(?:recruiter\s+)?screen|primer\s+filtro(?:\s+con\s+(?:un\s+)?reclutador)?|"
     r"(?:first|initial)\s+interview\s+with\s+(?:(?:a|the)\s+)?recruiters?|"
@@ -57,6 +60,7 @@ INTENT = re.compile(
     r"\b(?:recruiters?|reclutador(?:a|es)?)\s+(?:[a-záéíóúñ-]+\s+){0,3}(?:interview|entrevista)\b|"
     r"\b(?:network|networking)\s+(?:with|con)\s+(?:recruiters?|reclutadores?)\b|"
     r"\b(?:recruiters?|reclutadores?)\s+(?:outreach|networking|connections?|pipeline|referrals?|contactos?|red)\b|"
+    r"\b(?:referrals?|referidos?)\s+(?:with|from|of|de)\s+(?:recruiters?|reclutadores?)\b|"
     r"\b(?:outreach|networking|connections?|pipeline|referrals?|contactos?|red)\s+(?:with|con|de)\s+(?:recruiters?|reclutadores?)\b|"
     r"\bred\s+profesional\s+con\s+reclutadores?\b|"
     r"\b(?:red|network)\s+de\s+(?:recruiters?|reclutadores?)\b)",
