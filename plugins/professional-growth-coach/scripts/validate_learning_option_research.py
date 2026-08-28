@@ -106,7 +106,7 @@ def _text(value: object, path: str, errors: list[str], *, maximum: int = 500) ->
     if re.search(r"<\/?(?:script|iframe|object|style)\b", value, re.I):
         errors.append(f"{path} contains forbidden markup")
         return False
-    if re.search(r"(?:[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|(?:^|\s)(?:/[A-Za-z]|[A-Za-z]:[\\/]))", value):
+    if re.search(r"(?:[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|(?<![A-Za-z0-9])/(?:Users|home|private|tmp|var|opt|etc)(?:/|$)|(?:^|[^A-Za-z0-9])[A-Za-z]:[\\/])", value):
         errors.append(f"{path} contains private value")
         return False
     if re.search(r"(?i)(?:https?://|www\.|linkedin\.com/|\b(?:session|cookie|bearer|api[_ -]?key|access[_ -]?token)\b|\b[a-f0-9]{32,}\b)", value):

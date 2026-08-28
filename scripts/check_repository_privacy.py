@@ -77,7 +77,7 @@ RULES = {
         r"linkedin\.com/(?:in|pub)/[^\s\]\[<>()]+"
     ),
     "LOCAL_USER_PATH": re.compile(
-        r"(?i)(?:/Users/[^/\s]+/|/home/[^/\s]+/|[A-Z]:\\Users\\[^\\\s]+\\)"
+        r"(?i)(?<![a-z0-9])/(?:Users|home|private|tmp|var|opt|etc)/[^/\s]+(?:/|$)|(?<![a-z0-9])[A-Z]:\\Users\\[^\\\s]+\\"
     ),
     "RAW_PROFILE_MATERIAL": re.compile(
         r"(?i)\b(?:raw[_ -]?profile|profile[_ -]?(?:dump|export|payload|transcript|text)|"

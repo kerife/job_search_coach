@@ -270,6 +270,8 @@ def validate_checkpoint(value: object, receipt: object, *, as_of: dt.date | None
         errors.append("non-completed action_state requires next_measurement_event=unknown")
     if event == "screen_attended" and source is not None and source.get("event_type") not in {"screen_requested", "interview_requested"}:
         errors.append("screen_attended requires a screen_requested or interview_requested receipt")
+    if state == "completed" and event in {"screen_prepared", "interview_requested"} and source is not None and source.get("event_type") not in {"screen_requested", "interview_requested"}:
+        errors.append("preparation route requires an interview-request receipt")
     receipt_date = None
     try:
         receipt_date = dt.date.fromisoformat(str(receipt.get("event_date", "")))

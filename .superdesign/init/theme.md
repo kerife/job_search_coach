@@ -726,6 +726,7 @@ h2 { margin-top: 0; font-size: 1.2rem; }
 @media (prefers-contrast: more) { .next-stage-card, .next-stage-guidance { border-width: 2px; box-shadow: none; } }
 @media print { html { color-scheme: light; } body { background: #fff; color: #000; } .next-stage-card { break-inside: avoid; page-break-inside: avoid; box-shadow: none; } .skip-link { display: none; } }
 @media screen and (prefers-color-scheme: dark) { :root { color-scheme: dark; --next-bg: #101820; --next-surface: #18232d; --next-text: #eef3f7; --next-muted: #b4c0ca; --next-accent: #76c7dc; --next-border: #40515e; --next-blocked: #ffc078; } }
+@media screen and (prefers-color-scheme: dark) and (prefers-contrast: more) { :root { --next-border: #b4c0ca; } }
 
 .continuity-rail { margin: 1rem 0 1.5rem; padding: .85rem 1rem 1rem; border: 1px solid currentColor; border-radius: .8rem; color: var(--next-text); }
 .continuity-rail__label { margin: 0 0 .65rem; color: var(--next-muted); font-size: .76rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
@@ -772,6 +773,7 @@ dt { color:var(--debrief-muted); font-size:.78rem; font-weight:800; letter-spaci
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition:none !important; } }
 @media (forced-colors:active) { .debrief-card,.debrief-coverage { border:2px solid CanvasText; box-shadow:none; } .debrief-summary,.debrief-coverage { border-left-color:CanvasText; } .skip-link { background:CanvasText; color:Canvas; } .skip-link:focus-visible, main:focus-visible { outline:3px solid Highlight; outline-offset:3px; } }
 @media screen and (prefers-color-scheme: dark) { :root { color-scheme: dark; --debrief-ink:#edf2fa; --debrief-muted:#b9c5d8; --debrief-surface:#1c2738; --debrief-soft:#111927; --debrief-border:#536176; --debrief-marker-ink:#101a35; } }
+@media screen and (prefers-color-scheme: dark) and (prefers-contrast: more) { :root { --debrief-border: #b9c5d8; } }
 @media print { html,body { color-scheme:light; background:#fff; } .debrief-shell { width:100%; padding:0; } .debrief-card { box-shadow:none; break-inside:avoid; page-break-inside:avoid; } .skip-link { display:none; } }
 
 .continuity-rail { margin: 1rem 0 1.5rem; padding: .85rem 1rem 1rem; border: 1px solid currentColor; border-radius: .8rem; color: var(--debrief-ink); }
@@ -844,6 +846,7 @@ dd { margin: .25rem 0 0; font-weight: 700; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
 @media (forced-colors: active) { .screen-card, .screen-check { border: 2px solid CanvasText; box-shadow: none; } .screen-decision, .screen-check { border-left-color: CanvasText; } .skip-link { background: CanvasText; color: Canvas; } .skip-link:focus-visible, main:focus-visible { outline: 3px solid Highlight; outline-offset: 3px; } }
 @media screen and (prefers-color-scheme: dark) { :root { color-scheme: dark; --screen-ink: #edf2fa; --screen-muted: #b9c5d8; --screen-blue: #8eb2ff; --screen-marker-ink: #101a35; --screen-surface: #1c2738; --screen-soft: #111927; --screen-border: #536176; } }
+@media screen and (prefers-color-scheme: dark) and (prefers-contrast: more) { :root { --screen-border: #b9c5d8; } }
 @media print { html, body { color-scheme: light; background: #fff; } .screen-shell { width: 100%; padding: 0; } .screen-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
 
 .continuity-rail { margin: 1rem 0 1.5rem; padding: .85rem 1rem 1rem; border: 1px solid currentColor; border-radius: .8rem; color: var(--screen-ink); }
@@ -1976,6 +1979,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
   .shortlist-card { box-shadow: none; }
   .shortlist-priority-card { background: #20313b; }
 }
+@media screen and (prefers-color-scheme: dark) and (prefers-contrast: more) { :root { --line: #adbac4; } }
 @media (forced-colors: active) {
   .skip-link { forced-color-adjust: none; color: Canvas; background: CanvasText; }
   .shortlist-card { forced-color-adjust: none; border: 2px solid CanvasText; box-shadow: none; }

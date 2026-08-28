@@ -97,6 +97,12 @@ class TargetVacancyResearchTests(unittest.TestCase):
                 self.assertIn(f"{path} contains restricted observation data", errors)
                 self.assertNotIn(restricted_text, " ".join(errors))
 
+    def test_private_paths_after_delimiters_are_rejected(self) -> None:
+        value = load_fixture("complete-five-es.json")
+        value["search_limit"]["limitation"] = "path=/Users/alice/secret"
+        errors = validate_research(value)
+        self.assertTrue(any("search_limit.limitation contains private value" in error for error in errors))
+
     def test_supported_states_have_exact_bounded_counts(self) -> None:
         expected = {
             "complete-five-es.json": ("complete", 5),

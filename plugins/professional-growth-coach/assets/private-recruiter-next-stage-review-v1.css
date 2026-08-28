@@ -33,6 +33,7 @@ h2 { margin-top: 0; font-size: 1.2rem; }
 @media (prefers-contrast: more) { .next-stage-card, .next-stage-guidance { border-width: 2px; box-shadow: none; } }
 @media print { html { color-scheme: light; } body { background: #fff; color: #000; } .next-stage-card { break-inside: avoid; page-break-inside: avoid; box-shadow: none; } .skip-link { display: none; } }
 @media screen and (prefers-color-scheme: dark) { :root { color-scheme: dark; --next-bg: #101820; --next-surface: #18232d; --next-text: #eef3f7; --next-muted: #b4c0ca; --next-accent: #76c7dc; --next-border: #40515e; --next-blocked: #ffc078; } }
+@media screen and (prefers-color-scheme: dark) and (prefers-contrast: more) { :root { --next-border: #b4c0ca; } }
 
 .continuity-rail { margin: 1rem 0 1.5rem; padding: .85rem 1rem 1rem; border: 1px solid currentColor; border-radius: .8rem; color: var(--next-text); }
 .continuity-rail__label { margin: 0 0 .65rem; color: var(--next-muted); font-size: .76rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }

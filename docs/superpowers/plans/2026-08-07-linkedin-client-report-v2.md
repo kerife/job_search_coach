@@ -863,7 +863,7 @@ python3 -B -m unittest tests.test_linkedin_report_fixtures tests.test_linkedin_c
 python3 -B plugins/job-search-coach/tests/run_static_checks.py
 python3 -B -m unittest discover -s tests -p 'test_*.py' -v
 python3 -B /path/to/workspace/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/job-search-coach/skills/optimize-linkedin-career
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/private/tmp/job-search-coach-validator-deps python3 -B /path/to/workspace/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py plugins/job-search-coach
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=TEMP_DIR/job-search-coach-validator-deps python3 -B /path/to/workspace/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py plugins/job-search-coach
 ```
 
 Expected: every command exits 0.

@@ -211,6 +211,20 @@ class DarkModeAccessibilityTests(unittest.TestCase):
                 self.assertRegex(forced, r"background\s*:\s*CanvasText")
                 self.assertRegex(forced, r"color\s*:\s*Canvas")
 
+    def test_recruiter_dark_high_contrast_borders_meet_non_text_floor(self) -> None:
+        cases = (
+            ("recruiter-target-shortlist-v1.css", "--line", "#adbac4", "#17212b"),
+            ("recruiter-target-screen-intake-v1.css", "--screen-border", "#b9c5d8", "#1c2738"),
+            ("private-recruiter-screen-debrief-v1.css", "--debrief-border", "#b9c5d8", "#1c2738"),
+            ("private-recruiter-next-stage-review-v1.css", "--next-border", "#b4c0ca", "#18232d"),
+        )
+        for filename, token, border, surface in cases:
+            with self.subTest(filename=filename):
+                css = (ASSETS / filename).read_text(encoding="utf-8")
+                combined = css[css.index("@media screen and (prefers-color-scheme: dark) and (prefers-contrast: more)"):]
+                self.assertIn(f"{token}: {border};", combined)
+                self.assertGreaterEqual(_contrast(border, surface), 3.0)
+
     def test_practice_readiness_grid_becomes_single_column_on_small_screens(self) -> None:
         css = (ASSETS / "recruiter-practice-session-v1.css").read_text(encoding="utf-8")
         self.assertIn("@media screen and (max-width: 420px)", css)

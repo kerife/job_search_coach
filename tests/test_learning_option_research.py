@@ -65,6 +65,11 @@ class LearningOptionResearchTests(unittest.TestCase):
                 self.assertTrue(any("restricted material" in error for error in errors), errors)
                 self.assertNotIn("private-person", " ".join(errors))
 
+    def test_private_paths_after_delimiters_are_rejected(self) -> None:
+        value = load_fixture("complete-five-es.json")
+        value["candidate_preferences"]["weekly_time_budget"] = "path=/Users/alice/secret"
+        self.assertTrue(any("candidate_preferences.weekly_time_budget contains private value" in error for error in validate_research(value)))
+
     def test_snapshot_is_typed_and_deterministic(self) -> None:
         value = load_fixture("complete-five-es.json")
         snapshot = snapshot_for_learning_research(value)

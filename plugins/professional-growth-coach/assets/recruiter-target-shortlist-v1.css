@@ -76,6 +76,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
   .shortlist-card { box-shadow: none; }
   .shortlist-priority-card { background: #20313b; }
 }
+@media screen and (prefers-color-scheme: dark) and (prefers-contrast: more) { :root { --line: #adbac4; } }
 @media (forced-colors: active) {
   .skip-link { forced-color-adjust: none; color: Canvas; background: CanvasText; }
   .shortlist-card { forced-color-adjust: none; border: 2px solid CanvasText; box-shadow: none; }

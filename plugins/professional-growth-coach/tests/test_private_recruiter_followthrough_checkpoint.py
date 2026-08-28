@@ -116,6 +116,25 @@ class FollowthroughCheckpointContractTests(unittest.TestCase):
         errors = checkpoint.validate_checkpoint(item, receipt, as_of=dt.date(2026, 8, 8))
         self.assertIn("locale does not match receipt", errors)
 
+    def test_completed_preparation_route_requires_interview_signal_receipt(self):
+        for filename in ("contact-received-en.json", "reply-received-en.json", "referral-received-es.json"):
+            with self.subTest(filename=filename):
+                receipt = json.loads((FIXTURES / filename).read_text())
+                item = copy.deepcopy(self.valid)
+                item.update(
+                    action_state="completed",
+                    next_measurement_event="interview_requested",
+                    next_safe_action="route_to_prepare-role-interviews",
+                    locale=receipt["locale"],
+                    source_receipt={
+                        "id": receipt["source_artifact_id"],
+                        "source_version": receipt["source_version"],
+                        "event_type": receipt["event_type"],
+                    },
+                )
+                errors = checkpoint.validate_checkpoint(item, receipt, as_of=dt.date(2026, 8, 8))
+                self.assertIn("preparation route requires an interview-request receipt", errors)
+
     def test_completed_screen_prepared_branch(self):
         item = copy.deepcopy(self.valid)
         item.update(action_state="completed", next_measurement_event="screen_prepared", next_safe_action="route_to_prepare-role-interviews")

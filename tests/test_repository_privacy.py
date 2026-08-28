@@ -651,6 +651,7 @@ class RepositoryPrivacyTests(unittest.TestCase):
             "email": ("contact: person@example.invalid", "EMAIL_ADDRESS"),
             "phone": ("contact: +1 (202) 555-0199", "PHONE_NUMBER"),
             "local-path": ("evidence: /Users/synthetic/private.txt", "LOCAL_USER_PATH"),
+            "delimited-local-path": ("path=/Users/synthetic/private.txt", "LOCAL_USER_PATH"),
             "secret": ("access_token = SYNTHETIC_SECRET_VALUE_123", "SECRET_ASSIGNMENT"),
             "analytics-forward": ("profile views\nvalue: 314", "PRIVATE_ANALYTICS_VALUE"),
             "analytics-reverse": ("314 observations\nsearch appearances", "PRIVATE_ANALYTICS_VALUE"),
