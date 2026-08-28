@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T22:03:26-06:00`
+release_timestamp: `2026-08-27T22:22:58-06:00`
 
-source_commit: `380e6093ea6c7e099cc72c0774a484a3628091b8`
+source_commit: `916cabe51dcb2f16e0d78391e7bb4867be1211f8`
 
-source_tree: `1d8fd6e077a5581207d753b644cff62ccdd4c28b`
+source_tree: `c6b0943d6c19b6147ba403fde3bfddc76df0b2ae`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827220326`
+installed_cache_version: `0.2.0+codex.20260827222258`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `172`
 
 installed_file_count: `172`
 
-normalized_source_cache_sha256: `05fa29aef9267de9e217e944a068c7611de5b3f9e542d5f144b83068cc1c0755`
+normalized_source_cache_sha256: `9522bf1000b0fd2e236bbe1928e1887e319ceaf76b563abf877c7c6c38c6a78e`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -61,6 +61,7 @@ installed_market_research_smoke: `2/2 complete/limited validator`
 
 installed_market_learning_smoke: `2/2 complete/limited builder and validator`
 installed_market_freshness_reconciliation_smoke: `2/2 v1/v2 publication-date freshness envelope rejects contradictory status/basis/reason combinations and preserves unknown-date fallback`
+installed_vacancy_research_freshness_smoke: `4/4 target-vacancy research rejects missing/old publication dates marked current and accepts the inclusive 90-day boundary`
 installed_readiness_muted_contrast_smoke: `2/2 light/dark readiness copy uses the themed muted token with accessible contrast`
 installed_learning_decision_aggregation_smoke: `1/1 professional-gap apply_with_boundary/pause options require review_learning_options at the aggregate coach decision`
 installed_provider_freshness_smoke: `3/3 paid-learning decisions keep the inclusive 90-day boundary, demote 91-day active sources to consider with a refresh gate, and reject tampered recommended decisions`
@@ -142,6 +143,7 @@ installed_decision_gate_smoke: `3/3 installed EN/ES decision-gate builder, valid
 
 installed_screen_intake_smoke: `3/3 installed EN/ES target-specific intake builder, validator, and renderer; advance-only manual handoff, snapshot/locale binding, private IDs hidden, and 0600 output`
 installed_screen_intake_dark_contrast_smoke: `1/1 dark-mode screen-blue token uses the accessible contrast value and stays synchronized with the Superdesign theme dump`
+installed_screen_debrief_control_contrast_smoke: `2/2 dark-mode skip links and continuity markers use accessible surface/marker tokens in screen intake and debrief`
 
 installed_screen_debrief_intake_smoke: `4/4 installed artifact-free EN/ES attended-screen bridge; screen_requested and interview_requested receipts carry forward, target binding is enforced, structured coverage is the only next input, malformed recovery stays bounded`
 
@@ -162,6 +164,7 @@ installed_screen_debrief_smoke: `4/4 installed EN/ES builder, validator, and ren
 installed_feedback_sensitive_continuity_rail_smoke: `6/6 ES/EN feedback labels render one deterministic three-step rail with closed pending/blocked state copy`
 
 installed_next_stage_review_smoke: `5/5 installed EN/ES-compatible next-stage review build, validator, and renderer; forward stage transitions, current-to-target copy, blocked guidance, private redaction, and manual-only boundary`
+installed_next_stage_renderer_cli_smoke: `1/1 installed next-stage renderer CLI writes validated private HTML and emits a fixed success receipt without traceback`
 
 installed_screen_context_safety_smoke: `1/1 installed builder and validator reject contact-shaped text, URI schemes, domains, and relative or absolute paths consistently`
 
