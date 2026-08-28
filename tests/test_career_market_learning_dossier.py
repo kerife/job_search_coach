@@ -206,6 +206,7 @@ class CareerMarketLearningDossierTests(unittest.TestCase):
     def test_builder_marks_publication_outside_window_unconfirmed(self) -> None:
         research = valid_research()
         research["vacancies"][0]["publication_date"] = "2026-04-15"
+        research["vacancies"][0]["freshness_status"] = "unknown"
         dossier = valid_dossier()
         built = build_market_dossier(research, dossier, bindings_for(research, dossier))
         first = next(card for card in built["vacancy_cards"] if card["vacancy_id"] == "V-001")
