@@ -15,6 +15,7 @@ FOOTERS = {
     "private-recruiter-reply-triage-v1.css": ".triage-footer",
     "private-recruiter-conversion-outcome-v1.css": ".outcome-footer",
     "private-recruiter-followthrough-checkpoint-v1.css": ".checkpoint-footer",
+    "private-recruiter-next-stage-review-v1.css": ".next-stage-footer",
 }
 
 

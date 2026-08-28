@@ -257,6 +257,12 @@ truncation marker, so malformed private fixtures cannot flood a terminal or
 log sink. Learning-option evidence deduplicates source URLs by a normalized
 HTTPS identity (host, default port, decoded path, and trailing slash), so
 equivalent public URLs cannot masquerade as independent options.
+The learning-option schemas now keep provider state aligned with the runtime:
+only `active` or `synthetic` rows are schema-valid, every row must match the
+artifact's `evidence_mode`/`learning_evidence_mode`, and URL strings must use
+HTTPS without userinfo, query, or fragment controls. Runtime validation still
+applies the stricter public-host and reserved-address policy, so schema validity
+never substitutes for the full safety check.
 Recruiter shortlist fact IDs are type-checked before uniqueness checks, so
 malformed nested values produce the same opaque invalid-artifact response
 without a traceback.
@@ -442,6 +448,10 @@ explanatory only: it does not store answers, expose private identifiers,
 auto-start preparation, or create a message, calendar, or other external
 action. Its surface token remains readable in dark mode and its borders/text
 remain explicit in print, forced-colors, and higher-contrast modes.
+The private next-stage review receipt applies the same print-continuity rule to
+its boundary footer: the action limit and manual-review notice stay together
+with `break-inside: avoid`/`page-break-inside: avoid`, including localized or
+long-content print output.
 
 An explicit CSV bridge is available only when the candidate supplies an
 application context: `export_private_recruiter_outcome.py` accepts a validated

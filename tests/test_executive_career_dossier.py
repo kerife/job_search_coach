@@ -2259,14 +2259,14 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
                     all(reference in dimension_headings for reference in progress_refs)
                 )
 
-    def test_renderer_escapes_dynamic_text(self) -> None:
+    def test_renderer_rejects_active_markup_before_rendering(self) -> None:
         mutated = copy.deepcopy(self.es_dossier)
         mutated["verdict"]["statement"] = '<img src=x onerror="alert(1)">'
 
-        rendered = self.renderer.render_dossier_html(mutated)
-
-        self.assertNotIn("<img", rendered)
-        self.assertIn("&lt;img", rendered)
+        with self.assertRaises(self.renderer.DossierValidationError) as context:
+            self.renderer.render_dossier_html(mutated)
+        self.assertTrue(context.exception.errors)
+        self.assertNotIn("alert(1)", " ".join(context.exception.errors))
 
     def test_renderer_rejects_zero_width_explicit_identity_cues(self) -> None:
         dossier = mutate_path(
@@ -2434,7 +2434,7 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
             with self.subTest(token=token):
                 self.assertNotIn(token, summary)
 
-    def test_chat_summary_keeps_html_shaped_values_inert(self) -> None:
+    def test_chat_summary_rejects_active_markup_before_rendering(self) -> None:
         mutations = (
             ("verdict", "statement"),
             ("priorities", 0, "action"),
@@ -2445,18 +2445,17 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
         for path in mutations:
             with self.subTest(path=path):
                 dossier = mutate_path(self.es_dossier, path, attack)
-                self.assertEqual(validator.validate_dossier(dossier), [])
-
-                summary = self.renderer.build_chat_summary(dossier)
-
-                self.assertNotIn("<img", summary)
-                self.assertIn("&lt;img", summary)
+                errors = validator.validate_dossier(dossier)
+                self.assertTrue(errors)
+                self.assertNotIn("alert(1)", " ".join(errors))
+                with self.assertRaises(self.renderer.DossierValidationError):
+                    self.renderer.build_chat_summary(dossier)
 
     def test_chat_summary_normalizes_markdown_controls_as_plain_text(self) -> None:
         dossier = copy.deepcopy(self.es_dossier)
         dossier["verdict"]["statement"] = "# Encabezado"
         dossier["priorities"][0]["action"] = (
-            "[texto](javascript:alert(1)) ![imagen](data:image/svg+xml;base64,AAAA)"
+            "[texto](referencia) ![imagen](referencia)"
         )
         dossier["questions"][0]["question"] = "```bloque``` > cita - lista"
         self.assertEqual(load_validator().validate_dossier(dossier), [])
@@ -2474,8 +2473,8 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
             with self.subTest(active_control=active_control):
                 self.assertNotIn(active_control, summary)
         self.assertIn(r"\# Encabezado", summary)
-        self.assertIn(r"\[texto\](javascript:alert(1))", summary)
-        self.assertIn(r"\!\[imagen\](data:image/svg+xml;base64,AAAA)", summary)
+        self.assertIn(r"\[texto\](referencia)", summary)
+        self.assertIn(r"\!\[imagen\](referencia)", summary)
         self.assertIn(r"\`\`\`bloque\`\`\`", summary)
 
     def test_maximum_valid_summary_input_is_deterministically_bounded(self) -> None:

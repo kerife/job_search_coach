@@ -489,6 +489,25 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         invalid["options"][0]["unexpected"] = True
         self.assertTrue(validate_schema_instance(invalid, schema))
 
+    def test_learning_option_schema_rejects_non_current_sources_and_unsafe_url_shape(self):
+        schema = self._schema("learning-option-research-v1.schema.json")
+        fixture = json.loads(
+            (ROOT.parent.parent / "tests/evals/with-skill/fixtures/learning-option-research/complete-five-es.json")
+            .read_text(encoding="utf-8")
+        )
+
+        stale = copy.deepcopy(fixture)
+        stale["options"][0]["source_state"] = "stale"
+        self.assertTrue(validate_schema_instance(stale, schema))
+
+        synthetic_active = copy.deepcopy(fixture)
+        synthetic_active["options"][0]["source_state"] = "active"
+        self.assertTrue(validate_schema_instance(synthetic_active, schema))
+
+        unsafe_url = copy.deepcopy(fixture)
+        unsafe_url["options"][0]["url"] = "https://provider.example/course?session=private"
+        self.assertTrue(validate_schema_instance(unsafe_url, schema))
+
     def test_market_learning_v2_fixtures_conform_to_closed_schema(self):
         schema = self._schema("career-market-learning-dossier-v2.schema.json")
         fixture_dir = ROOT.parent.parent / "tests/evals/with-skill/fixtures/career-market-learning-dossier-v2"
@@ -498,6 +517,18 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         invalid = json.loads((fixture_dir / "project-first-five-es.json").read_text(encoding="utf-8"))
         invalid["learning_decisions"][0]["unexpected"] = True
         self.assertTrue(validate_schema_instance(invalid, schema))
+
+        stale = json.loads((fixture_dir / "project-first-five-es.json").read_text(encoding="utf-8"))
+        stale["learning_options"][0]["source_state"] = "stale"
+        self.assertTrue(validate_schema_instance(stale, schema))
+
+        synthetic_active = json.loads((fixture_dir / "project-first-five-es.json").read_text(encoding="utf-8"))
+        synthetic_active["learning_options"][0]["source_state"] = "active"
+        self.assertTrue(validate_schema_instance(synthetic_active, schema))
+
+        unsafe_url = json.loads((fixture_dir / "project-first-five-es.json").read_text(encoding="utf-8"))
+        unsafe_url["learning_options"][0]["url"] = "https://provider.example/course?session=private"
+        self.assertTrue(validate_schema_instance(unsafe_url, schema))
 
     def test_market_learning_schemas_and_fixtures_conform(self):
         fixture_dir = ROOT.parent.parent / "tests/evals/with-skill/fixtures/career-market-learning-dossier"
