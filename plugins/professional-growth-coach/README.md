@@ -34,6 +34,9 @@ Explicit requests to expand a network, contact recruiters, or prepare for a recr
 Negated English forms such as “I had no recruiter screen yet” and “I have no
 recruiter interview yet” take the preparation intake route rather than a
 post-screen debrief.
+Conversely, “I had no trouble/questions during or after the recruiter screen”
+still counts as a completed screen; an explicit “what comes next” request uses
+the next-stage review route.
 
 The dossier v2 reading path keeps its nearest-section scrollspy responsive with a single guarded `requestAnimationFrame` update shared by scroll, resize, and `IntersectionObserver` callbacks; this limits layout reads and active-state mutations to at most one per frame without changing the initial hash or keyboard link behavior.
 If the same request also asks to send, reply, connect, apply, publish, confirm, or schedule, the route receipt preserves `authorization_required=true` in both `ready` and `needs_intake` states; analysis-only networking remains `false`, and no external action is performed. The value is kept aligned with the artifact delivery gate.

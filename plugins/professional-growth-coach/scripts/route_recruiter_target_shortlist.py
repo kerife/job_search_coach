@@ -57,13 +57,13 @@ DEBRIEF_INTENT = re.compile(
     re.I,
 )
 SCREEN_COMPLETION = re.compile(
-    r"\b(?:had|completed|attended|finished|went\s+through|spoke\s+with|talked\s+to|"
+    r"\b(?:had(?!\s+no\s+(?:trouble|questions)\b)|completed|attended|finished|went\s+through|spoke\s+with|talked\s+to|"
     r"termin[eé]|tuve|asist[ií]|atend[ií]|pas[eé]|habl[eé]\s+con|convers[eé]\s+con)\b",
     re.I,
 )
 SCREEN_NOT_COMPLETED = re.compile(
     r"\b(?:didn['’]?t\s+(?:attend|have|complete|finish)|did\s+not\s+(?:attend|have|complete|finish)|"
-    r"(?:had|have)\s+no|"
+    r"(?:had|have)\s+no\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
     r"not\s+(?:yet\s+)?(?:had|attended|completed|finished)|haven['’]?t\s+"
     r"(?:had|attended|completed|finished)|have\s+not\s+(?:had|attended|completed|finished)|"
     r"scheduled\s+for|upcoming|tomorrow|next\s+week|before\s+(?:the|my)|not\s+yet|"
@@ -143,10 +143,9 @@ def _natural_recruiter_route(request: str) -> str | None:
     has_screen_context = _has_recruiter_screen_context(request)
     if has_screen_context and SCREEN_NOT_COMPLETED.search(request):
         return "pre_screen"
-    if has_screen_context and (
-        DEBRIEF_INTENT.search(request)
-        or SCREEN_COMPLETION.search(request)
-    ):
+    if has_screen_context and DEBRIEF_INTENT.search(request):
+        return "debrief"
+    if has_screen_context and SCREEN_COMPLETION.search(request):
         return "debrief"
     if has_screen_context and NEXT_STAGE_INTENT.search(request):
         return "next_stage"
