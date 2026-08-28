@@ -138,6 +138,23 @@ class DarkModeAccessibilityTests(unittest.TestCase):
                 self.assertIn(".continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }", css[css.index("@media print"):])
                 self.assertIn(".continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; }", css[css.index("@media print"):])
 
+    def test_recruiter_continuity_rail_strengthens_borders_in_high_contrast(self) -> None:
+        surfaces = (
+            "recruiter-target-shortlist-v1.css",
+            "recruiter-target-decision-gate-v1.css",
+            "recruiter-target-screen-intake-v1.css",
+            "private-recruiter-screen-debrief-v1.css",
+            "private-recruiter-next-stage-review-v1.css",
+        )
+        for filename in surfaces:
+            with self.subTest(filename=filename):
+                css = (ASSETS / filename).read_text(encoding="utf-8")
+                start = css.index("@media (prefers-contrast: more)")
+                end = css.find("@media", start + 1)
+                contrast = css[start:] if end == -1 else css[start:end]
+                self.assertRegex(contrast, r"\.continuity-rail\s*\{[^}]*border-width:\s*2px;")
+                self.assertRegex(contrast, r"\.continuity-rail__marker\s*\{[^}]*border-width:\s*2px;")
+
     def test_recruiter_continuity_rail_is_a_static_section_not_navigation(self) -> None:
         surfaces = (
             "recruiter-target-shortlist-v1.html",

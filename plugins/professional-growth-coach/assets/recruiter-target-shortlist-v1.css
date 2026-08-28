@@ -78,6 +78,8 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
 @media (prefers-contrast: more) {
   :root { --line: #17212b; --muted: #17212b; }
   .shortlist-card, .shortlist-decision-count, .target-shortlist-card { box-shadow: none; border-width: 2px; }
+  .continuity-rail { border-width: 2px; }
+  .continuity-rail__marker { border-width: 2px; }
 }
 @media screen and (prefers-color-scheme: dark) {
   :root { --canvas: #10171d; --surface: #17212b; --ink: #ecf2f6; --muted: #adbac4; --line: #3b4a55; --accent: #75d2e4; --continuity-marker-ink: #10232a; --advance: #69d39a; --clarify: #e7bd65; --pause: #c5a7f4; --stop: #ff938a; }

@@ -57,14 +57,21 @@ DEBRIEF_INTENT = re.compile(
     re.I,
 )
 SCREEN_COMPLETION = re.compile(
-    r"\b(?:had|completed|attended|finished|went\s+through|termin[eé]|tuve|asist[ií]|atend[ií]|pas[eé])\b",
+    r"\b(?:had|completed|attended|finished|went\s+through|spoke\s+with|talked\s+to|"
+    r"termin[eé]|tuve|asist[ií]|atend[ií]|pas[eé]|habl[eé]\s+con|convers[eé]\s+con)\b",
     re.I,
 )
-SCREEN_CONTEXT = re.compile(r"\b(?:screen|interview|entrevista|filtro)\b", re.I)
+SCREEN_CONTEXT = re.compile(
+    r"\b(?:screen|interview|entrevista|filtro|call|conversation|llamada|conversaci[oó]n|"
+    r"spoke\s+with|talked\s+to|habl[eé]\s+con|convers[eé]\s+con)\b",
+    re.I,
+)
 NEXT_STAGE_INTENT = re.compile(
-    r"\b(?:next\s+stage|what(?:'s|\s+is)\s+next|move\s+on\s+to|advance\s+to|"
+    r"\b(?:next\s+stage|what(?:'s|\s+is)\s+next|what\s+comes\s+next|what\s+(?:do|should)\s+i\s+do\s+next|"
+    r"next\s+step|move\s+on\s+to|advance\s+to|"
     r"hiring\s+manager\s+stage|prepare\s+for\s+(?:the\s+)?(?:next|hiring\s+manager)|"
-    r"siguiente\s+etapa|que\s+sigue|qué\s+sigue|pasar\s+a\s+la\s+siguiente\s+etapa|"
+    r"siguiente\s+etapa|siguiente\s+paso|que\s+sigue|qué\s+sigue|que\s+hago\s+despu[eé]s|"
+    r"qué\s+hago\s+despu[eé]s|pasar\s+a\s+la\s+siguiente\s+etapa|"
     r"preparar(?:me)?\s+para\s+(?:la\s+)?siguiente\s+etapa)\b",
     re.I,
 )
@@ -226,13 +233,16 @@ def route_recruiter_request(
     targets: Sequence[Mapping[str, object]] | None = None,
 ) -> dict[str, object]:
     """Return an internal route receipt without echoing the request or executing actions."""
+    request_authorization_required = bool(
+        isinstance(request, str) and EXTERNAL_ACTION_INTENT.search(request)
+    )
     if not isinstance(locale, str) or locale not in INTAKE:
         return {
             "route_kind": "recruiter_target_shortlist",
             "case_state": "needs_intake",
             "selected_module": "optimize-professional-profile",
             "next_action": "ask_one_intake_question",
-            "authorization_required": bool(isinstance(request, str) and EXTERNAL_ACTION_INTENT.search(request)),
+            "authorization_required": request_authorization_required,
             "evidence_gaps": ["valid_locale"],
             "intake_question": INTAKE["es"],
             "artifact": None,
@@ -256,7 +266,7 @@ def route_recruiter_request(
             locale=locale,
             question_key="private_recruiter_screen_debrief",
             evidence_gaps=["structured_debrief_context"],
-        ) | {"authorization_required": bool(EXTERNAL_ACTION_INTENT.search(request))}
+        ) | {"authorization_required": request_authorization_required}
     if natural_route == "next_stage":
         return _artifact_free_intake(
             "private_recruiter_next_stage_review",
@@ -265,21 +275,21 @@ def route_recruiter_request(
             locale=locale,
             question_key="private_recruiter_next_stage_review",
             evidence_gaps=["valid_debrief_checkpoint_and_forward_stage"],
-        ) | {"authorization_required": bool(EXTERNAL_ACTION_INTENT.search(request))}
+        ) | {"authorization_required": request_authorization_required}
     if natural_route != "shortlist":
         return {
             "route_kind": "ordinary_professional_growth",
             "case_state": "not_applicable",
             "selected_module": None,
             "next_action": "continue_normal_routing",
-            "authorization_required": False,
+            "authorization_required": request_authorization_required,
             "evidence_gaps": [],
             "artifact": None,
         }
     recruiter_intent = True
     if recruiter_intent and TECHNICAL_INTENT.search(request) and not EXPLICIT_RECRUITER_INTENT.search(request):
         recruiter_intent = False
-    authorization_required = bool(EXTERNAL_ACTION_INTENT.search(request))
+    authorization_required = request_authorization_required
     if (
         not isinstance(network_plan, Mapping)
         or not isinstance(targets, Sequence)
