@@ -130,13 +130,15 @@ RECRUITER_INBOUND_INTENT = re.compile(
     r"(?:\b(?:a\s+|the\s+)?recruiters?\b[^.!?\n]{0,80}\b(?:messaged|emailed|reached\s+out|contacted|wrote\s+to|sent\s+(?:me\s+)?(?:a\s+)?(?:message|note|email)|asked[^.!?\n]{0,30}\b(?:about|for)\s+(?:my\s+)?availability)\b|"
     r"\b(?:me\s+(?:escribi[oó]|contact[oó]|mand[oó]\s+(?:un\s+)?mensaje|pregunt[oó]))\b[^.!?\n]{0,45}\b(?:recruiters?|reclutador(?:a|es)?)\b|"
     r"\b(?:recruiters?|reclutador(?:a|es)?)\b[^.!?\n]{0,45}\bme\s+(?:escribi[oó]|contact[oó]|mand[oó]|pregunt[oó])\b|"
-    r"\b(?:a\s+|the\s+)?recruiters?\b[^.!?\n]{0,90}\b(?:wants?\s+to\s+(?:schedule|book)|asked\s+me\s+to\s+(?:choose|pick)\s+(?:a\s+)?time|asked[^.!?\n]{0,30}\b(?:about|for)\s+(?:my\s+)?availability|sent\s+(?:me\s+)?(?:a\s+)?calendar\s+invite)\b|"
-    r"\b(?:reclutador(?:a|es)?)\b[^.!?\n]{0,90}\b(?:pidi[oó]\s+(?:mi\s+)?disponibilidad|me\s+pidi[oó]\s+(?:elegir|escoger)\s+(?:un\s+)?horario)\b|"
-    r"\b(?:me\s+lleg[oó]|recib[ií])\s+(?:una\s+)?invitaci[oó]n\b[^.!?\n]{0,80}\b(?:reclutador(?:a|es)?)\b[^.!?\n]{0,50}\b(?:agendar|programar|llamada|entrevista)\b)",
+    r"\b(?:a\s+|the\s+)?recruiters?\b[^.!?\n]{0,90}\b(?:wants?\s+to\s+(?:schedule|book)|asked\s+me\s+to\s+(?:choose|pick)\s+(?:a\s+)?time|asked[^.!?\n]{0,30}\b(?:about|for)\s+(?:my\s+)?availability|asked\s+me\s+when\s+i\s+am\s+free|sent\s+(?:me\s+)?(?:a\s+)?(?:calendar\s+)?(?:invite|link)|sent\s+over\s+(?:some\s+)?times)\b|"
+    r"\b(?:reclutador(?:a|es)?)\b[^.!?\n]{0,90}\b(?:pidi[oó]\s+(?:mi\s+)?disponibilidad|me\s+pidi[oó]\s+(?:elegir|escoger)\s+(?:un\s+)?horario|quiere\s+agendar|me\s+envi[oó]\s+(?:un\s+)?(?:enlace|link)\s+de\s+calendario)\b|"
+    r"\b(?:me\s+lleg[oó]|recib[ií])\s+(?:un\s+)?(?:correo|email|mensaje)\b[^.!?\n]{0,80}\b(?:reclutador(?:a|es)?)\b|"
+    r"\b(?:me\s+lleg[oó]|recib[ií])\s+(?:una\s+)?invitaci[oó]n\b[^.!?\n]{0,80}\b(?:reclutador(?:a|es)?)\b[^.!?\n]{0,50}\b(?:agendar|programar|llamada|entrevista)\b|"
+    r"\b(?:tell|give)\s+(?:the\s+)?recruiters?\s+(?:my\s+)?availability\b)",
     re.I,
 )
 RECRUITER_REPLY_REQUEST_INTENT = re.compile(
-    r"(?:\b(?:what\s+should\s+i\s+(?:say|reply)(?:\s+back)?|say\s+back|reply\s+to\s+(?:a\s+|the\s+)?recruiters?|help\s+me\s+(?:formulate|write|draft)\s+(?:a\s+)?response|formulate\s+(?:a\s+)?response|help\s+me\s+answer|get\s+back\s+to)\b|"
+    r"(?:\b(?:what\s+should\s+i\s+(?:say|reply)(?:\s+back)?|what\s+do\s+i\s+tell|say\s+back|reply\s+to\s+(?:a\s+|the\s+)?recruiters?|help\s+me\s+(?:formulate|write|draft)\s+(?:a\s+)?response|help\s+me\s+respond\s+to\s+(?:a\s+|the\s+)?recruiters?|formulate\s+(?:a\s+)?response|help\s+me\s+answer|get\s+back\s+to)\b|"
     r"\b(?:qu[eé]\s+(?:le\s+)?(?:digo|contesto)|c[oó]mo\s+(?:le\s+)?respondo|ay[uú]dame\s+a\s+(?:contestar|responder)|responderle|formular\s+(?:una\s+)?respuesta)\b)",
     re.I,
 )
@@ -153,6 +155,7 @@ POST_SCREEN_PROGRESSION_INTENT = re.compile(
     r"(?:\b(?:passed|cleared)\s+(?:the\s+)?recruiter\s+(?:screen|interview)\b|"
     r"\b(?:moved\s+forward|advanced|progressed)\s+to\s+(?:the\s+)?(?:hiring\s+manager|next\s+round)\b|"
     r"\b(?:recruiter)\b[^.!?\n]{0,70}\bprogress(?:ed|ing)\s+to\s+(?:the\s+)?hiring\s+manager\b|"
+    r"\b(?:avanc[eé]|avanz[oó])\s+(?:a\s+)?(?:la\s+)?siguiente\s+ronda\b[^.!?\n]{0,60}\b(?:filtro|reclutador|recruiter)\b|"
     r"\b(?:ya\s+)?pas[eé]\s+(?:el\s+)?filtro\b[^.!?\n]{0,60}\b(?:sigue|hiring\s+manager|siguiente)\b)",
     re.I,
 )

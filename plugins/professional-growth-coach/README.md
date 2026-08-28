@@ -69,9 +69,9 @@ and Spanish equivalents such as “me escribió”, “me contactó”, “me pr
 “¿qué le digo?” enter artifact-free `recruiter_reply_triage` with an identity-free
 summary plus one verified fact. The route remains authorization-gated and
 performs no message, calendar, or scheduling action. Scheduling or choosing a
-time, a calendar invite, “reply to a recruiter”, and Spanish “me pidió
-disponibilidad” or “me llegó una invitación para agendar” use the same private
-triage boundary.
+time, calendar links or proposed times, “reply to a recruiter”, and Spanish “me
+pidió disponibilidad”, “me envió un enlace de calendario” or “me llegó correo de
+un reclutador” use the same private triage boundary.
 
 Progression phrases such as “passed the recruiter screen”, “moved forward to
 the hiring manager”, and “ya pasé el filtro y ahora sigue” enter the same

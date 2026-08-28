@@ -1,7 +1,7 @@
 :root { color-scheme: light dark; --next-bg: #f5f7fa; --next-surface: #fff; --next-text: #16202a; --next-muted: #52606d; --next-accent: #126782; --next-border: #c8d2dc; --next-blocked: #8a4b08; }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--next-bg); color: var(--next-text); font: 16px/1.55 system-ui, -apple-system, sans-serif; overflow-wrap: anywhere; }
-.skip-link { position: absolute; left: 1rem; top: -4rem; background: var(--next-text); color: var(--next-surface); padding: .5rem .75rem; border-radius: .25rem; }
+.skip-link { position: absolute; left: 1rem; top: -4rem; z-index: 10; background: var(--next-text); color: var(--next-surface); padding: .5rem .75rem; border-radius: .25rem; }
 .skip-link:focus { top: 1rem; }
 .skip-link:focus-visible, main:focus-visible { outline: 3px solid var(--next-accent); outline-offset: 3px; }
 .next-stage-shell { max-width: 52rem; margin: 0 auto; padding: 2rem 1rem 3rem; }

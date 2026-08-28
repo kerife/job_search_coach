@@ -680,6 +680,26 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertTrue(routed["authorization_required"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_additional_calendar_and_availability_contact_language_enters_private_triage(self) -> None:
+        cases = (
+            ("The recruiter sent me a calendar link", "en"),
+            ("The recruiter sent over some times for a call", "en"),
+            ("The recruiter asked me when I am free", "en"),
+            ("I need to tell the recruiter my availability", "en"),
+            ("What do I tell the recruiter?", "en"),
+            ("Help me respond to recruiter about the role", "en"),
+            ("Me llegó correo de un reclutador", "es"),
+            ("El reclutador quiere agendar una llamada", "es"),
+            ("La reclutadora me envió un enlace de calendario", "es"),
+        )
+        for request, locale in cases:
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+                self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
+                self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
     def test_recruiter_preparation_without_inbound_contact_stays_preparation_only(self) -> None:
         routed = route_recruiter_request(
             "Help me prepare for a recruiter interview next week.",
@@ -735,8 +755,10 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         for request in (
             "I advanced to the next round after a recruiter screen.",
             "The recruiter said I am progressing to the hiring manager stage.",
+            "Avancé a la siguiente ronda después del filtro con el reclutador.",
         ):
-            routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-28")
+            locale = "es" if request.startswith("Avancé") else "en"
+            routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
             with self.subTest(request=request):
                 self.assertEqual("private_recruiter_next_stage_review", routed["route_kind"])
         for request, expected_route in (
