@@ -53,6 +53,9 @@ The composed session is private and unanswered: it is
 and scoring unknown. Preserve only the validated question, fixed scope-specific
 guidance, verified-fact summary, and exact snapshot provenance. Never copy raw
 reply material, identifiers, URLs, calendar or time details, or a prior answer.
+The wrapper also records a deterministic `snap-practice-sha256-...` projection
+snapshot over that session; the standalone validator and renderer reject any
+projected prose drift while the handoff snapshot remains unchanged.
 The handoff is `draft_only=true`, has no external actions, does not save locally,
 and never auto-starts practice. It is a manual re-entry cue for a later explicit
 private rehearsal request; it is not an execution control, authorization, or

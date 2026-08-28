@@ -43,7 +43,7 @@ All recruiter shortlist, gate, screen-intake, debrief, and next-stage date field
 Private recruiter conversion-outcome and follow-through checkpoint validators and renderers enforce the same canonical `--as-of` contract, so CLI replays cannot accept week-date spellings that the artifact schema rejects.
 The same canonical-date guard is enforced by the market-learning dossier, vacancy-research, learning-option research, and executive-dossier runtime validators, keeping the schema and Python validation boundary aligned.
 
-In `prefers-contrast: more`, screen-intake and screen-debrief cards and coverage rows use 2px borders and 0.5rem state bands, matching the stronger contrast treatment across the recruiter review family.
+In `prefers-contrast: more`, screen-intake and screen-debrief cards and coverage rows use 2px borders and 0.5rem state bands, matching the stronger contrast treatment across the recruiter review family. Compact conversion-outcome and follow-through checkpoint receipts also use 2px rail, step, and marker borders, preserving state legibility without relying on color alone.
 
 The decision gate, screen-intake bridge, post-screen debrief, and next-stage review now return the same private in-memory `rendered_html` contract whenever a validated artifact exists. Intake failures remain artifact-free; stopped or blocked artifacts still render their localized review surface without IDs, snapshots, contacts, or action tokens.
 
@@ -418,6 +418,10 @@ auto-start anything. Rehearsal begins only after the candidate manually re-enter
 the validated context in a later private practice request. Snapshot drift,
 candidate-reported facts, non-ready triage states, or mismatched handoff
 references are rejected rather than converted into practice material.
+The wrapper also carries a `snap-practice-sha256-...` projection snapshot over
+the complete unanswered practice session; standalone validation and rendering
+reject changed projected context, question, or verified-fact prose unless the
+handoff is rebuilt.
 
 For an explicit private file workflow, use two deliberate commands: first run
 `build_private_recruiter_triage_practice_handoff.py --input TRIAGE.json --output HANDOFF.json`,

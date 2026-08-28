@@ -64,6 +64,13 @@ class PrivateRecruiterTriagePracticeHandoffValidatorTests(unittest.TestCase):
         drifted["practice_session"]["handoff_context"]["question_id"] = "Q-999"
         self.assertTrue(validate_handoff(drifted))
 
+    def test_rejects_projected_prose_drift_when_source_snapshot_is_unchanged(self) -> None:
+        handoff = self._handoff()
+        self.assertRegex(handoff["projection_snapshot"], r"^snap-practice-sha256-[0-9a-f]{64}$")
+        handoff["practice_session"]["facts"][0]["summary"] = "Verified migration outcome invented after handoff generation."
+        errors = validate_handoff(handoff)
+        self.assertIn("handoff.projection_snapshot must match practice_session content", errors)
+
     def test_rejects_private_source_url_contact_and_path_prose_without_echoing_it(self) -> None:
         targets = {
             "safe_context.summary": ("safe_context", "summary"),

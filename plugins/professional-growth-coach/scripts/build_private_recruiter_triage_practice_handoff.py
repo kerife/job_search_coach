@@ -109,6 +109,10 @@ def validate_handoff(value: object) -> list[str]:
     return _load_sibling("validate_private_recruiter_triage_practice_handoff").validate_handoff(value)
 
 
+def projection_snapshot_for_session(session: Mapping[str, object]) -> str:
+    return _load_sibling("validate_private_recruiter_triage_practice_handoff").projection_snapshot_for_session(session)
+
+
 def validate_schema_instance(value: object, schema: Mapping[str, object]) -> list[str]:
     return _load_sibling("validate_json_schema_subset").validate_schema_instance(value, schema)
 
@@ -209,6 +213,7 @@ def build_handoff(triage: Mapping[str, object]) -> dict[str, object]:
         "schema_version": SCHEMA_VERSION,
         "source_artifact_kind": "private_recruiter_reply_triage",
         "source_snapshot": snapshot,
+        "projection_snapshot": projection_snapshot_for_session(practice_session),
         "prep_scope": prep_scope,
         "practice_session": practice_session,
         "delivery": dict(_DELIVERY),

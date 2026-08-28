@@ -4,11 +4,12 @@
   "title": "Private Recruiter Triage Practice Handoff v1",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "source_artifact_kind", "source_snapshot", "prep_scope", "practice_session", "delivery"],
+  "required": ["schema_version", "source_artifact_kind", "source_snapshot", "projection_snapshot", "prep_scope", "practice_session", "delivery"],
   "properties": {
     "schema_version": {"const": "private-recruiter-triage-practice-handoff-v1"},
     "source_artifact_kind": {"const": "private_recruiter_reply_triage"},
     "source_snapshot": {"type": "string", "pattern": "^snap-triage-sha256-[0-9a-f]{64}$"},
+    "projection_snapshot": {"type": "string", "pattern": "^snap-practice-sha256-[0-9a-f]{64}$"},
     "prep_scope": {"enum": ["screen_opening", "proof_example", "eligibility_boundary", "compensation_boundary", "missing_detail"]},
     "practice_session": {"$ref": "#/$defs/practice_session"},
     "delivery": {"$ref": "#/$defs/delivery"}

@@ -155,6 +155,20 @@ class DarkModeAccessibilityTests(unittest.TestCase):
                 self.assertRegex(contrast, r"\.continuity-rail\s*\{[^}]*border-width:\s*2px;")
                 self.assertRegex(contrast, r"\.continuity-rail__marker\s*\{[^}]*border-width:\s*2px;")
 
+    def test_compact_receipt_rails_strengthen_borders_in_high_contrast(self) -> None:
+        surfaces = (
+            "private-recruiter-conversion-outcome-v1.css",
+            "private-recruiter-followthrough-checkpoint-v1.css",
+        )
+        for filename in surfaces:
+            with self.subTest(filename=filename):
+                css = (ASSETS / filename).read_text(encoding="utf-8")
+                start = css.index("@media (prefers-contrast: more)")
+                contrast = css[start:]
+                self.assertRegex(contrast, r"\.continuity-rail\s*\{[^}]*border-width:\s*2px;")
+                self.assertRegex(contrast, r"\.continuity-step,\s*\.continuity-step--recorded\s*\{[^}]*border-width:\s*2px;")
+                self.assertRegex(contrast, r"\.continuity-step::before\s*\{[^}]*border-width:\s*2px;")
+
     def test_recruiter_continuity_rail_is_a_static_section_not_navigation(self) -> None:
         surfaces = (
             "recruiter-target-shortlist-v1.html",

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib.util
 import json
 import sys
@@ -14,6 +15,7 @@ from pathlib import Path
 
 SCHEMA_VERSION = "private-recruiter-triage-practice-handoff-v1"
 _SNAPSHOT_PREFIX = "snap-triage-sha256-"
+_PROJECTION_SNAPSHOT_PREFIX = "snap-practice-sha256-"
 _QUESTION_KINDS = frozenset({
     "screen_opening", "proof_example", "eligibility_boundary",
     "compensation_boundary", "missing_detail",
@@ -128,6 +130,12 @@ def _schema_errors(value: object) -> list[str]:
     return _load_sibling("validate_json_schema_subset").validate_schema_instance(value, schema)
 
 
+def projection_snapshot_for_session(session: Mapping[str, object]) -> str:
+    """Return a deterministic integrity digest for the projected practice session."""
+    encoded = json.dumps(session, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return _PROJECTION_SNAPSHOT_PREFIX + hashlib.sha256(encoded).hexdigest()
+
+
 def _projected_reference_errors(handoff: Mapping[str, object]) -> list[str]:
     errors: list[str] = []
     session = _mapping(handoff.get("practice_session"))
@@ -201,10 +209,19 @@ def validate_handoff(value: object) -> list[str]:
     snapshot = handoff.get("source_snapshot")
     if not isinstance(snapshot, str) or not snapshot.startswith(_SNAPSHOT_PREFIX) or len(snapshot) != len(_SNAPSHOT_PREFIX) + 64:
         errors.append("handoff.source_snapshot must use the triage snapshot format")
+    projection_snapshot = handoff.get("projection_snapshot")
+    if not isinstance(projection_snapshot, str) or not projection_snapshot.startswith(_PROJECTION_SNAPSHOT_PREFIX) or len(projection_snapshot) != len(_PROJECTION_SNAPSHOT_PREFIX) + 64:
+        errors.append("handoff.projection_snapshot must use the practice projection format")
     session = _mapping(handoff.get("practice_session"))
     if session is None:
         errors.append("practice_session must be an object")
         return sorted(set(errors))
+    if (
+        isinstance(projection_snapshot, str)
+        and projection_snapshot.startswith(_PROJECTION_SNAPSHOT_PREFIX)
+        and projection_snapshot != projection_snapshot_for_session(session)
+    ):
+        errors.append("handoff.projection_snapshot must match practice_session content")
     errors.extend(_load_sibling("validate_recruiter_practice_session").validate_session(session))
     errors.extend(_projected_reference_errors(handoff))
     errors.extend(_triage_prose_errors(handoff))
