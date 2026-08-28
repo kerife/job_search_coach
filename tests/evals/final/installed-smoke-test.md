@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T19:46:07-06:00`
+release_timestamp: `2026-08-27T19:59:39-06:00`
 
-source_commit: `1a85b31fcb2ecfec2437fa12398b34422fba0a0f`
+source_commit: `45589d1a427a500489878172736bb0eec5f08e25`
 
-source_tree: `0efba1589ef8bfd46deb90dd05c2f69c9f97ae19`
+source_tree: `ac76e9b16c214632d0471637d4b500d529bab5f9`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827194607`
+installed_cache_version: `0.2.0+codex.20260827195939`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `172`
 
 installed_file_count: `172`
 
-normalized_source_cache_sha256: `8f12a05dceb1ca0f220927236b0ad60f2a31b6ea18b9d16462e8e1d185d33049`
+normalized_source_cache_sha256: `1f9cfdbcf79ea83a55ef378673c8b9276d539a6b087a00764e7af3b64c991169`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -128,6 +128,8 @@ installed_screen_debrief_intake_smoke: `4/4 installed artifact-free EN/ES attend
 installed_debrief_locale_binding_smoke: `3/3 installed valid ES, mixed-locale recovery, interview_requested carry-forward`
 
 installed_debrief_lineage_smoke: `4/4 installed valid binding, interview carry-forward, target mismatch, legacy recovery`
+installed_debrief_sensitive_material_smoke: `1/1 installed screen debrief rejects generic local paths and credential markers before persistence`
+installed_reading_path_tablet_smoke: `1/1 installed dossier reading path switches to a two-column tablet layout through 900px and one column at 640px`
 
 installed_recruiter_rail_breakpoint_smoke: `5/5 installed recruiter rails expose three-column intermediate desktop and two-column print layouts with localized label wrapping`
 
