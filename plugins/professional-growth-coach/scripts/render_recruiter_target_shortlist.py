@@ -317,7 +317,7 @@ def _cli(argv: list[str] | None = None) -> int:
     except Exception:
         print('{"error":{"code":"invalid_arguments"}}', file=sys.stderr)
         return 3
-    print("rendered recruiter target shortlist")
+    print(json.dumps({"artifact_kind": raw["artifact_kind"], "schema_version": raw["schema_version"], "ui_locale": raw["locale"]}, separators=(",", ":")))
     return 0
 
 

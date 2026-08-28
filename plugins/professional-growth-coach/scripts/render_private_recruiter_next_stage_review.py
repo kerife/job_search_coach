@@ -92,7 +92,7 @@ def _cli(argv: list[str] | None = None) -> int:
         write_next_stage_review_html(read(args.input), read(args.debrief), read(args.receipt), read(args.intake), read(args.checkpoint), args.output)
     except Exception:
         print('{"error":{"code":"invalid_arguments"}}', file=sys.stderr); return 3
-    print("rendered private recruiter next-stage review"); return 0
+    print(json.dumps({"artifact_kind": value["artifact_kind"], "schema_version": value["schema_version"], "ui_locale": value["locale"]}, separators=(",", ":"))); return 0
 
 
 if __name__ == "__main__":

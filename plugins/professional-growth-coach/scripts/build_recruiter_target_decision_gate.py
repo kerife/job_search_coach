@@ -91,6 +91,8 @@ def build_decision_gate(
     if not isinstance(as_of_date, str):
         raise ValueError("source shortlist date is unavailable")
     reference_date = dt.date.fromisoformat(as_of_date)
+    if reference_date > dt.date.today():
+        raise ValueError("source shortlist date cannot be in the future")
     if screen_context is not None:
         if not isinstance(screen_context, Mapping):
             raise ValueError("screen context is unavailable")

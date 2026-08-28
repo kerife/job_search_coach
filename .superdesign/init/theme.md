@@ -598,6 +598,8 @@ details summary {
     scroll-behavior: auto !important;
     transition: none !important;
   }
+
+  .card:hover { transform: none !important; }
 }
 
 @page { size: auto; margin: 14mm; }

@@ -43,6 +43,12 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
         self.assertEqual(shortlist, gate["source_shortlist"])
         self.assertEqual("collect_screen_context", gate["handoff"]["next_safe_action"])
 
+    def test_builder_rejects_future_dated_shortlist(self) -> None:
+        shortlist = self.shortlist()
+        shortlist["as_of_date"] = "2999-01-01"
+        with self.assertRaises(ValueError):
+            build_decision_gate(shortlist)
+
     def test_validator_rejects_tampered_source_snapshot_and_counts(self) -> None:
         gate = build_decision_gate(self.shortlist())
         tampered = copy.deepcopy(gate)

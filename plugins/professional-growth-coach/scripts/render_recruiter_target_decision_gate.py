@@ -201,7 +201,7 @@ def _cli(argv: list[str] | None = None) -> int:
     except Exception:
         print('{"error":{"code":"invalid_arguments"}}', file=sys.stderr)
         return 3
-    print("rendered recruiter target decision gate")
+    print(json.dumps({"artifact_kind": value["artifact_kind"], "schema_version": value["schema_version"], "ui_locale": value["locale"]}, separators=(",", ":")))
     return 0
 
 

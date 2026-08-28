@@ -96,6 +96,11 @@ the output target may opt in with `--include-artifact-path`; in-process render
 APIs continue to return their richer receipt object without changing the
 artifact itself.
 
+Recruiter target builders, validators, and renderers use the same bounded
+success receipt: `{"artifact_kind":"…","schema_version":"…","ui_locale":"es|en"}`.
+They never print output paths, target identifiers, source snapshots, or free
+text on success; failures remain fixed opaque JSON diagnostics.
+
 Bounded JSON validators and market-dossier builders also reject duplicate
 keys, oversized integers, and excessive nesting before validation or output;
 their command-line failures stay opaque and never echo supplied content. All

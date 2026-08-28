@@ -2136,6 +2136,8 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
         assert reduced_motion is not None
         self.assertIn("animation: none !important", reduced_motion.group(1))
         self.assertIn("transition: none !important", reduced_motion.group(1))
+        self.assertIn(".card:hover { transform: none !important; }", reduced_motion.group(1))
+        self.assertIn(".card:hover { transform: none !important; }", reduced_motion.group(1))
 
     def test_print_button_forced_colors_uses_explicit_system_colors_in_both_locales(self) -> None:
         for dossier, label in (

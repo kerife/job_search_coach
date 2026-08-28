@@ -245,7 +245,7 @@ def _cli(argv: list[str] | None = None) -> int:
     if errors:
         print(json.dumps({"error": {"code": "invalid_shortlist"}}, separators=(",", ":")), file=sys.stderr)
         return 2
-    print("valid recruiter target shortlist")
+    print(json.dumps({"artifact_kind": value["artifact_kind"], "schema_version": value["schema_version"], "ui_locale": value["locale"]}, separators=(",", ":")))
     return 0
 
 

@@ -34,6 +34,23 @@ class CliReceiptPrivacyTests(unittest.TestCase):
         readme = (ROOT / "plugins/professional-growth-coach/README.md").read_text(encoding="utf-8")
         self.assertIn("omit its absolute local\npath", readme)
         self.assertIn("--include-artifact-path", readme)
+        self.assertIn("Recruiter target builders, validators, and renderers", readme)
+
+    def test_recruiter_target_clis_use_allowlisted_json_success_receipts(self) -> None:
+        scripts = (
+            "build_recruiter_target_shortlist.py",
+            "validate_recruiter_target_shortlist.py",
+            "render_recruiter_target_shortlist.py",
+            "render_recruiter_target_decision_gate.py",
+            "render_recruiter_target_screen_intake.py",
+            "render_private_recruiter_screen_debrief.py",
+            "render_private_recruiter_next_stage_review.py",
+        )
+        for name in scripts:
+            with self.subTest(script=name):
+                source = (SCRIPTS / name).read_text(encoding="utf-8")
+                self.assertIn("json.dumps({\"artifact_kind\"", source)
+                self.assertNotRegex(source, r'print\("(?:built|valid|rendered) recruiter')
 
     def _run(self, script: Path, arguments: list[str]) -> tuple[subprocess.CompletedProcess[str], Path]:
         directory = Path(tempfile.mkdtemp(prefix="pgc-receipt-"))
