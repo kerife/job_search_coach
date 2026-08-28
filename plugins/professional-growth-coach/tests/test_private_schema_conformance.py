@@ -460,6 +460,10 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         invalid = json.loads((fixture_dir / "complete-five-es.json").read_text(encoding="utf-8"))
         invalid["vacancies"].append(copy.deepcopy(invalid["vacancies"][-1]))
         self.assertTrue(validate_schema_instance(invalid, schema))
+        invalid_freshness = json.loads((fixture_dir / "complete-five-es.json").read_text(encoding="utf-8"))
+        invalid_freshness["vacancies"][0]["publication_date"] = None
+        invalid_freshness["vacancies"][0]["freshness_status"] = "current"
+        self.assertTrue(validate_schema_instance(invalid_freshness, schema))
 
     def test_learning_option_research_fixtures_conform_to_closed_schema(self):
         schema = self._schema("learning-option-research-v1.schema.json")

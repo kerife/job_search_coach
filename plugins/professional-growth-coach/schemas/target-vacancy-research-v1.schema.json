@@ -77,7 +77,11 @@
         "freshness_status": {"enum": ["current", "unknown"]},
         "eligibility_gates": {"type": "array", "minItems": 1, "maxItems": 7, "items": {"$ref": "#/$defs/gate"}},
         "requirements": {"type": "array", "minItems": 1, "maxItems": 30, "items": {"$ref": "#/$defs/requirement"}}
-      }
+      },
+      "oneOf": [
+        {"properties": {"publication_date": {"type": "null"}, "freshness_status": {"const": "unknown"}}},
+        {"properties": {"publication_date": {"type": "string"}, "freshness_status": {"enum": ["current", "unknown"]}}}
+      ]
     },
     "gate": {
       "type": "object", "additionalProperties": false,

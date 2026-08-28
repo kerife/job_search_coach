@@ -69,6 +69,11 @@ When composing a market dossier, carry `access_date` and `publication_date`
 onto every vacancy card. The builder derives a bounded 90-day freshness
 decision and reason; a missing publication date is rendered as
 `unknown:`/“publication date: unknown” and can never become `current`. The
+canonical vacancy validator reconciles this envelope before composition: a
+publication within the inclusive 90-day window must be `freshness_status=current`,
+an older publication must be `unknown`, and a missing publication must also be
+`unknown`. Contradictory status/date combinations are rejected rather than
+silently corrected. The
 rendered public-source link keeps the vacancy title in its accessible name so
 the evidence can be audited without exposing raw posting text or internal IDs.
 

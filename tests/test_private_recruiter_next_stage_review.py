@@ -229,6 +229,34 @@ class PrivateRecruiterNextStageReviewTests(unittest.TestCase):
             self.assertEqual(3, result)
             self.assertFalse(output.exists())
 
+    def test_renderer_cli_success_writes_complete_private_html(self) -> None:
+        artifact = build_next_stage_review(self.debrief, RECEIPT, self.intake, valid_checkpoint(), "first_interview")
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            paths = {}
+            for name, value in (
+                ("review", artifact),
+                ("debrief", self.debrief),
+                ("receipt", RECEIPT),
+                ("intake", self.intake),
+                ("checkpoint", valid_checkpoint()),
+            ):
+                path = root / f"{name}.json"
+                path.write_text(json.dumps(value, ensure_ascii=False), encoding="utf-8")
+                paths[name] = path
+            output = root / "review.html"
+            result = render_cli([
+                str(paths["review"]),
+                "--debrief", str(paths["debrief"]),
+                "--receipt", str(paths["receipt"]),
+                "--intake", str(paths["intake"]),
+                "--checkpoint", str(paths["checkpoint"]),
+                "--output", str(output),
+            ])
+            self.assertEqual(0, result)
+            self.assertTrue(output.exists())
+            self.assertIn("Revisión de la siguiente etapa", output.read_text(encoding="utf-8"))
+
     def test_route_exposes_only_manual_or_blocked_states(self) -> None:
         routed = route_recruiter_next_stage_review(self.debrief, RECEIPT, self.intake, valid_checkpoint(), "first_interview")
         self.assertEqual("ready", routed["case_state"])

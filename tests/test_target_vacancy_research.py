@@ -215,6 +215,34 @@ class TargetVacancyResearchTests(unittest.TestCase):
             with self.subTest(value=value):
                 self.assertTrue(validate_research(value))
 
+    def test_freshness_status_reconciles_with_publication_date_and_window(self) -> None:
+        source = load_fixture("complete-five-es.json")
+        as_of = date.fromisoformat(source["as_of_date"])
+
+        boundary = copy.deepcopy(source)
+        boundary["vacancies"][0]["publication_date"] = (as_of - timedelta(days=90)).isoformat()
+        self.assertEqual([], validate_research(boundary))
+
+        stale_current = copy.deepcopy(source)
+        stale_current["vacancies"][0]["publication_date"] = (as_of - timedelta(days=91)).isoformat()
+        self.assertIn(
+            "vacancies[0].freshness_status must be unknown for publication outside freshness window",
+            validate_research(stale_current),
+        )
+
+        stale_unknown = copy.deepcopy(stale_current)
+        stale_unknown["vacancies"][0]["freshness_status"] = "unknown"
+        self.assertEqual([], validate_research(stale_unknown))
+
+        missing_publication = copy.deepcopy(source)
+        missing_publication["vacancies"][0]["publication_date"] = None
+        self.assertIn(
+            "vacancies[0].freshness_status must be unknown without publication_date",
+            validate_research(missing_publication),
+        )
+        missing_publication["vacancies"][0]["freshness_status"] = "unknown"
+        self.assertEqual([], validate_research(missing_publication))
+
     def test_source_kind_hostname_and_scheme_rules_are_enforced(self) -> None:
         source = load_fixture("complete-five-es.json")
         cases = (

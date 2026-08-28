@@ -60,6 +60,7 @@ GATE_NAMES = frozenset({
 IMPORTANCES = frozenset({"must_have", "preferred", "responsibility_only"})
 GATE_STATES = frozenset({"pass", "blocked", "unknown"})
 FRESHNESS = frozenset({"current", "unknown"})
+FRESHNESS_WINDOW_DAYS = 90
 EVIDENCE_MODES = frozenset({"synthetic", "live"})
 TOP_FIELDS = frozenset({
     "schema_version", "research_kind", "evidence_mode", "locale", "as_of_date", "search_scope", "state",
@@ -117,6 +118,29 @@ def _date(value: object, path: str, errors: list[str], *, live: bool = False) ->
     if live and parsed > date.today():
         errors.append(f"{path} cannot be in the future for live evidence")
     return parsed
+
+
+def _validate_freshness_status(
+    publication_date: date | None,
+    as_of: date | None,
+    status: object,
+    path: str,
+    errors: list[str],
+) -> None:
+    """Keep the declared vacancy freshness consistent with dated evidence."""
+    if status not in FRESHNESS:
+        return
+    if publication_date is None:
+        if status != "unknown":
+            errors.append(f"{path}.freshness_status must be unknown without publication_date")
+        return
+    if as_of is None or publication_date > as_of:
+        return
+    age_days = (as_of - publication_date).days
+    if age_days > FRESHNESS_WINDOW_DAYS and status != "unknown":
+        errors.append(f"{path}.freshness_status must be unknown for publication outside freshness window")
+    elif age_days <= FRESHNESS_WINDOW_DAYS and status != "current":
+        errors.append(f"{path}.freshness_status must be current within freshness window")
 
 
 def _reserved_domain(host: str) -> bool:
@@ -359,6 +383,7 @@ def _validate_vacancies(
             errors.append(f"{path}.publication_date cannot be after as_of_date")
         if row.get("freshness_status") not in FRESHNESS:
             errors.append(f"{path}.freshness_status has invalid value")
+        _validate_freshness_status(publication_date, as_of, row.get("freshness_status"), path, errors)
         gates = row.get("eligibility_gates")
         if not isinstance(gates, list) or not 1 <= len(gates) <= len(GATE_NAMES):
             errors.append(f"{path}.eligibility_gates has invalid item count")

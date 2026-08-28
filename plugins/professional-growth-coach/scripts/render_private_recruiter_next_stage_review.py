@@ -89,7 +89,8 @@ def _cli(argv: list[str] | None = None) -> int:
     parser.add_argument("input", type=Path); parser.add_argument("--debrief", type=Path, required=True); parser.add_argument("--receipt", type=Path, required=True); parser.add_argument("--intake", type=Path, required=True); parser.add_argument("--checkpoint", type=Path, required=True); parser.add_argument("--output", type=Path, required=True)
     try:
         args = parser.parse_args(argv); read = lambda path: json.loads(INPUT_LOADER.read_bounded_bytes(path, 128_000), object_pairs_hook=_unique)
-        write_next_stage_review_html(read(args.input), read(args.debrief), read(args.receipt), read(args.intake), read(args.checkpoint), args.output)
+        value = read(args.input)
+        write_next_stage_review_html(value, read(args.debrief), read(args.receipt), read(args.intake), read(args.checkpoint), args.output)
     except Exception:
         print('{"error":{"code":"invalid_arguments"}}', file=sys.stderr); return 3
     print(json.dumps({"artifact_kind": value["artifact_kind"], "schema_version": value["schema_version"], "ui_locale": value["locale"]}, separators=(",", ":"))); return 0

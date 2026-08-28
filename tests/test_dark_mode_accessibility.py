@@ -193,6 +193,24 @@ class DarkModeAccessibilityTests(unittest.TestCase):
         dark = css[css.index("@media screen and (prefers-color-scheme: dark)"):css.index("@media print")]
         self.assertIn("--screen-blue: #8eb2ff;", dark)
 
+    def test_screen_and_debrief_dark_controls_keep_text_and_marker_contrast(self) -> None:
+        cases = (
+            ("recruiter-target-screen-intake-v1.css", "screen", "#1c2738", "#edf2fa", "#8eb2ff"),
+            ("private-recruiter-screen-debrief-v1.css", "debrief", "#1c2738", "#edf2fa", "#8eb2ff"),
+        )
+        for filename, prefix, surface, ink, accent in cases:
+            with self.subTest(filename=filename):
+                css = (ASSETS / filename).read_text(encoding="utf-8")
+                dark = css[css.index("@media screen and (prefers-color-scheme: dark)"):css.index("@media print")]
+                self.assertRegex(dark, rf"--{prefix}-marker-ink\s*:\s*#101a35;")
+                self.assertRegex(css, rf"color\s*:\s*var\(--{prefix}-surface\);")
+                self.assertRegex(css, rf"color\s*:\s*var\(--{prefix}-marker-ink\);")
+                self.assertGreaterEqual(_contrast(surface, ink), 4.5)
+                self.assertGreaterEqual(_contrast(accent, "#101a35"), 4.5)
+                forced = css[css.index("@media (forced-colors") : css.index("@media print")]
+                self.assertRegex(forced, r"background\s*:\s*CanvasText")
+                self.assertRegex(forced, r"color\s*:\s*Canvas")
+
     def test_practice_readiness_grid_becomes_single_column_on_small_screens(self) -> None:
         css = (ASSETS / "recruiter-practice-session-v1.css").read_text(encoding="utf-8")
         self.assertIn("@media screen and (max-width: 420px)", css)
