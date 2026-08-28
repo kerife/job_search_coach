@@ -402,7 +402,7 @@ saves a revision, starts another rehearsal, or performs an external action. The
 continuity rail remains the separate, non-interactive map of evidence,
 rehearsal, and the pending next version.
 
-`private-recruiter-triage-practice-handoff-v1` is the closed composition
+`private-recruiter-triage-practice-handoff-v2` is the closed composition
 boundary from a private recruiter-reply triage into one private rehearsal. It
 accepts only a validated `ready_for_private_prep` triage with
 `handoff_allowed=true` and exactly one verified fact. Before composition, it
@@ -441,9 +441,9 @@ It confirms only the local artifact kind and interface locale; it contains no
 path, source identifier, snapshot, raw reply, answer, score, or action result.
 The rendered status remains a private draft that requires manual re-entry. It
 does not start a rehearsal, send, schedule, save, upload, or authorize an
-external action. Legacy v1 triage remains readable only through its existing
-legacy routes and is not eligible for this wrapper, renderer, or manual re-entry
-path; manually recreate a validated v2 triage instead.
+external action. The validator remains backward-compatible with legacy v1
+handoff files that do not carry a projection snapshot; newly built wrappers
+are always v2 and carry that projection attestation.
 
 The direct practice-session commands use the same private terminal boundary:
 `render_recruiter_practice_session.py` returns only its fixed artifact-kind and

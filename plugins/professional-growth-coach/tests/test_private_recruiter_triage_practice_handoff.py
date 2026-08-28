@@ -57,7 +57,7 @@ class PrivateRecruiterTriagePracticeHandoffTests(unittest.TestCase):
                 result = build_handoff(triage)
 
                 self.assertEqual(
-                    "private-recruiter-triage-practice-handoff-v1",
+                    "private-recruiter-triage-practice-handoff-v2",
                     result["schema_version"],
                 )
                 self.assertEqual(

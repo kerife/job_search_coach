@@ -167,7 +167,7 @@ def _action_rail(locale: str, action: str, *, terminal: bool = False) -> str:
         f'<span class="continuity-step-state">{RAIL_STATES[locale][state]}</span>'
         f'<strong>{html.escape(title)}</strong><p>{html.escape(description)}</p></li>'
         for stage, state, title, description in labels["steps"]
-        for aria_current in (" aria-current=\"step\"" if state == "pending" else "",)
+        for aria_current in (" aria-current=\"step\"" if state == "pending" or (terminal and state == "recorded") else "",)
     )
     terminal_attribute = ' data-terminal="true"' if terminal else ''
     return (

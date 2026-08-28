@@ -29,7 +29,7 @@ expose internal references, raw answers, or external-action controls.
 
 ### Recruiter-reply triage composition
 
-`private-recruiter-triage-practice-handoff-v1` may compose exactly one private
+`private-recruiter-triage-practice-handoff-v2` may compose exactly one private
 rehearsal only from a validated `private-recruiter-reply-triage-v2` in
 `ready_for_private_prep` with `handoff_allowed=true` and one `verified` fact.
 Recalculate the triage snapshot first; the source, packet, and re-entry snapshot
@@ -70,7 +70,7 @@ action.
 ### Triage wrapper to private HTML
 
 File delivery is an explicit, two-stage manual action. First compose a validated
-v2 triage into `private-recruiter-triage-practice-handoff-v1` with
+v2 triage into `private-recruiter-triage-practice-handoff-v2` with
 `build_private_recruiter_triage_practice_handoff.py --input TRIAGE.json --output HANDOFF.json`.
 Then independently validate and render only that wrapper with
 `render_private_recruiter_triage_practice_handoff.py HANDOFF.json --output PRACTICE.html`.
@@ -83,9 +83,9 @@ only the minimal receipt `artifact_kind=private_recruiter_triage_practice_handof
 and `ui_locale`; it never reveals the output path, snapshot, source IDs, raw
 reply, answer, feedback, score, or an action outcome. The HTML remains a private
 draft with a visible manual re-entry boundary. It never starts practice, saves an
-answer, sends, schedules, uploads, or authorizes an external action. A legacy v1
-triage is readable only on its legacy route: recreate a validated v2 triage
-manually before composing or rendering this private wrapper.
+answer, sends, schedules, uploads, or authorizes an external action. The
+validator can still read legacy v1 handoffs without a projection snapshot,
+while new builder output is v2 and must include that attestation.
 
 ### Direct practice-session CLI boundary
 

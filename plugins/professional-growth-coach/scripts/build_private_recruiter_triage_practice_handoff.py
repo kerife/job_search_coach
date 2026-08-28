@@ -15,7 +15,7 @@ from functools import lru_cache
 from pathlib import Path
 
 
-SCHEMA_VERSION = "private-recruiter-triage-practice-handoff-v1"
+SCHEMA_VERSION = "private-recruiter-triage-practice-handoff-v2"
 _QUESTION_KINDS = frozenset({
     "screen_opening", "proof_example", "eligibility_boundary",
     "compensation_boundary", "missing_detail",

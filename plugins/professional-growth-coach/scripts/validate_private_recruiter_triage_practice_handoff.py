@@ -13,7 +13,8 @@ from functools import lru_cache
 from pathlib import Path
 
 
-SCHEMA_VERSION = "private-recruiter-triage-practice-handoff-v1"
+SCHEMA_VERSION = "private-recruiter-triage-practice-handoff-v2"
+LEGACY_SCHEMA_VERSION = "private-recruiter-triage-practice-handoff-v1"
 _SNAPSHOT_PREFIX = "snap-triage-sha256-"
 _PROJECTION_SNAPSHOT_PREFIX = "snap-practice-sha256-"
 _QUESTION_KINDS = frozenset({
@@ -122,7 +123,9 @@ def _mapping(value: object) -> Mapping[str, object] | None:
 
 
 def _schema_errors(value: object) -> list[str]:
-    schema_path = Path(__file__).resolve().parents[1] / "schemas" / f"{SCHEMA_VERSION}.schema.json"
+    schema_version = value.get("schema_version") if isinstance(value, Mapping) else None
+    selected_version = schema_version if schema_version in {SCHEMA_VERSION, LEGACY_SCHEMA_VERSION} else SCHEMA_VERSION
+    schema_path = Path(__file__).resolve().parents[1] / "schemas" / f"{selected_version}.schema.json"
     try:
         schema = json.loads(schema_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
@@ -204,20 +207,23 @@ def validate_handoff(value: object) -> list[str]:
     handoff = _mapping(value)
     if handoff is None:
         return sorted(set(errors))
-    if handoff.get("schema_version") != SCHEMA_VERSION:
+    schema_version = handoff.get("schema_version")
+    if schema_version not in {SCHEMA_VERSION, LEGACY_SCHEMA_VERSION}:
         errors.append("handoff.schema_version has invalid value")
     snapshot = handoff.get("source_snapshot")
     if not isinstance(snapshot, str) or not snapshot.startswith(_SNAPSHOT_PREFIX) or len(snapshot) != len(_SNAPSHOT_PREFIX) + 64:
         errors.append("handoff.source_snapshot must use the triage snapshot format")
     projection_snapshot = handoff.get("projection_snapshot")
-    if not isinstance(projection_snapshot, str) or not projection_snapshot.startswith(_PROJECTION_SNAPSHOT_PREFIX) or len(projection_snapshot) != len(_PROJECTION_SNAPSHOT_PREFIX) + 64:
-        errors.append("handoff.projection_snapshot must use the practice projection format")
+    if schema_version == SCHEMA_VERSION:
+        if not isinstance(projection_snapshot, str) or not projection_snapshot.startswith(_PROJECTION_SNAPSHOT_PREFIX) or len(projection_snapshot) != len(_PROJECTION_SNAPSHOT_PREFIX) + 64:
+            errors.append("handoff.projection_snapshot must use the practice projection format")
     session = _mapping(handoff.get("practice_session"))
     if session is None:
         errors.append("practice_session must be an object")
         return sorted(set(errors))
     if (
-        isinstance(projection_snapshot, str)
+        schema_version == SCHEMA_VERSION
+        and isinstance(projection_snapshot, str)
         and projection_snapshot.startswith(_PROJECTION_SNAPSHOT_PREFIX)
         and projection_snapshot != projection_snapshot_for_session(session)
     ):

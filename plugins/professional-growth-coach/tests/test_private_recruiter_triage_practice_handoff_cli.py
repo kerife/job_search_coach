@@ -62,7 +62,7 @@ class PrivateRecruiterTriagePracticeHandoffCliTests(unittest.TestCase):
                     self.assertEqual(0, result.returncode, result.stderr)
                     self.assertEqual("", result.stderr)
                     self.assertEqual(
-                        {"artifact_kind": "private_recruiter_triage_practice_handoff", "schema_version": "private-recruiter-triage-practice-handoff-v1"},
+                        {"artifact_kind": "private_recruiter_triage_practice_handoff", "schema_version": "private-recruiter-triage-practice-handoff-v2"},
                         json.loads(result.stdout),
                     )
                     encoded = output.read_bytes()
@@ -146,7 +146,7 @@ class PrivateRecruiterTriagePracticeHandoffCliTests(unittest.TestCase):
 
             allowed = self._run("--input", str(source), "--output", str(output), "--force")
             self.assertEqual(0, allowed.returncode, allowed.stderr)
-            self.assertEqual("private-recruiter-triage-practice-handoff-v1", json.loads(output.read_text(encoding="utf-8"))["schema_version"])
+            self.assertEqual("private-recruiter-triage-practice-handoff-v2", json.loads(output.read_text(encoding="utf-8"))["schema_version"])
 
     def test_rejects_unknown_arguments_without_reflecting_supplied_prose(self) -> None:
         result = self._run("--unknown", "RAW_REPLY_SENTINEL")
