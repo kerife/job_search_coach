@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T05:54:57-06:00`
+release_timestamp: `2026-08-28T06:05:26-06:00`
 
-source_commit: `00fd414c8c413e2b8780664d3a066f4179b5d187`
+source_commit: `c72396804565e1855559438004fa9347876ffb5f`
 
-source_tree: `566f0325464da6580470605eefc4f23def1ddf20`
+source_tree: `39c911eb311775e5c14071fbcf8977782fc98626`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828090000`
+installed_cache_version: `0.2.0+codex.20260828100000`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `155ab49e40f4ce93d53d0b905dd29abb5166e7f9ac3b018cd1d210d97c1b2d79`
+normalized_source_cache_sha256: `109c33e8d3a73055d5dd1a07111b131711d7ee18a09c1b1b04d9c0bc9cc1b672`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -138,7 +138,7 @@ installed_continuity_rail_semantics_smoke: `2/2 installed EN/ES outcome/checkpoi
 
 installed_triage_handoff_version_compatibility_smoke: `2/2 installed v2 builder attestation and legacy v1 reader compatibility without projection snapshot`
 
-installed_private_outcome_export_smoke: `4/4 installed reply receipt export maps only response_date, rejects requested/terminal events, requires application context, and deduplicates replay`
+installed_private_outcome_export_smoke: `7/7 installed reply receipt export maps only response_date, rejects requested/terminal events, requires application context, deduplicates replay, rejects symlink outputs, and blocks spreadsheet formulas`
 
 installed_practice_marker_contrast_smoke: `1/1 installed practice continuity and triage-route markers use 2px borders in prefers-contrast: more`
 
