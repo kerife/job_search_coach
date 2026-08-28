@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T07:23:22-06:00`
+release_timestamp: `2026-08-28T07:37:12-06:00`
 
-source_commit: `07d750d45756f7006418a544d9b3bd6741f1f22f`
+source_commit: `dd9eddb3fc1db8ec773b08954a72623e56e2f3cb`
 
-source_tree: `29b711e53c5092eeed2a20a197383ed62b5074cb`
+source_tree: `a873795e0ada5bd98c4852ad84c1268d91ed1fcb`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828140000`
+installed_cache_version: `0.2.0+codex.20260828150000`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `d0ac69bb20afd12d7bfd9f974986275c270f4bfcd391cc0f24efe96d2016f3b6`
+normalized_source_cache_sha256: `e7e76c1a09767f1747374fc3ae6dad5ff7fd537521c59b4db5e558852ed48fcb`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -107,6 +107,10 @@ installed_renderer_bounded_diagnostics_smoke: `2/2 v1/v2 renderer validation std
 installed_recruiter_intent_smoke: `2/2 singular Spanish first-recruiter-interview intent and recursively nested plans route to bounded, artifact-free intake`
 
 installed_recruiter_article_intent_smoke: `3/3 English/Spanish defined-article first-recruiter-interview variants route to bounded intake`
+
+installed_recruiter_first_conversation_smoke: `4/4 English/Spanish initial-interview and first-call variants route to bounded intake`
+
+installed_recruiter_never_negation_smoke: `4/4 English/Spanish never-attended or never-completed recruiter events route to preparation intake`
 
 installed_descriptor_boundary_smoke: `6/6`
 
