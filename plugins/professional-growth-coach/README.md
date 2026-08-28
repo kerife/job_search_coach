@@ -24,6 +24,8 @@ The plugin can prepare drafts, plans, rubrics, and analyses. It must ask again b
 
 The recruiter-networking flow includes a private `recruiter-target-shortlist-v1` artifact for manually supplied targets. It is a deterministic three-to-six-row review batch with `advance`, `clarify`, `pause`, or `stop` decisions. The builder and validator keep each row draft-only, consent-not-granted, authorization-required, and blocked from message or calendar actions; the bilingual offline renderer omits target identifiers, contact details, and URLs.
 
+The shortlist privacy boundary also rejects phone-like strings, credential or bearer-token markers, and generic local filesystem paths in every bounded text field. This keeps private contact or machine material out of both the JSON artifact and its in-memory HTML review surface, even when it is supplied as `context_source`.
+
 Explicit requests to expand a network or prepare for a first recruiter screen route through `scripts/route_recruiter_target_shortlist.py`, including natural English/Spanish phrasing such as “network with recruiters” and “primera entrevista con un reclutador”. With three to six supplied targets, the route runs builder → validator → renderer and returns the validated artifact plus private in-memory HTML with `next_action=review_recruiter_target_shortlist`; without enough context or with an invalid target container it asks one bounded intake question that names the minimum plan (goal/segments, 3–5 manual queries, weekly time, stop condition, and proof theme). It does not infer recipients. The rendered card localizes the next safe action and summarizes the four decision counts before the manual `recruiter_target_decision_gate` handoff.
 
 For a selected `advance` target, `route_recruiter_screen_intake` adds the target-specific `recruiter-target-screen-intake-v1` bridge. It requires a stated screen stage, `V-###` vacancy requirements, `F-###` candidate facts, non-unknown company evidence, a source date no older than 90 days from the gate snapshot, and four passing checks before returning only `manual_prepare_role_interviews_review`; stale context stays `clarify_first` with `clarify_context`, while `clarify` and `stop` targets remain blocked or in intake, with no message, calendar, or automatic preparation action.
@@ -94,7 +96,8 @@ five co-located stylesheets against their declared palette, while
 `.superdesign/init/theme.md` records the corresponding source surfaces and
 tokens, including the shared continuity rail treatment. A new recruiter
 surface, rail state, or color must update both records and its parity tests
-before release.
+before release. The screen-intake `screen-blue` token has a dedicated dark-mode
+value so action text remains above the contrast floor on dark surfaces.
 
 Rendering CLIs write the requested private artifact but omit its absolute local
 path from the success receipt by default. A trusted caller that already knows
@@ -207,6 +210,12 @@ Paid learning decisions also enforce a 90-day provider-source freshness window
 relative to the dossier snapshot. A source older than that remains a private
 `consider` decision with a refresh gate; it cannot authorize a current
 recommendation or enrollment.
+
+The v2 aggregate `coach_decision` reconciles individual professional-gap
+decisions. If any option requires `apply_with_boundary` or `pause` while no
+`project_first` or `consider` path exists, the aggregate is
+`review_learning_options`; it never reports `do_nothing_now` while an
+individual learning action still needs review.
 
 For a normal local profile dossier, the default route is bounded five-vacancy
 research: SRE, Platform Engineering, and DevOps in Mexico or stated remote

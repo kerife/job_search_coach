@@ -147,8 +147,9 @@ def build_learning_dossier(market: Mapping[str, object], learning_research: Mapp
         raise ValueError("three through five learning decisions are required")
     output["learning_decisions"] = decisions
     project_present = any(row["decision"] == "project_first" for row in decisions)
+    needs_review = any(row["decision"] in {"apply_with_boundary", "pause"} for row in decisions)
     output["coach_decision"] = {
-        "decision": "project_first" if project_present else "hold_until_preferences_confirmed" if any(row["decision"] == "consider" for row in decisions) else "do_nothing_now",
+        "decision": "project_first" if project_present else "hold_until_preferences_confirmed" if any(row["decision"] == "consider" for row in decisions) else "review_learning_options" if needs_review else "do_nothing_now",
         "rationale": "Prioritize candidate-owned proof before paid learning while preserving private review gates.",
         "review_gate": "No external action; review the exact option, candidate preferences, and publication boundary before proceeding.",
         "draft_only": True,

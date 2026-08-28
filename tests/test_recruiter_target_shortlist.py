@@ -132,6 +132,13 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertTrue(any("restricted material" in error for error in errors))
         self.assertIn("targets[0].next_safe_action has invalid value", errors)
 
+    def test_builder_rejects_phone_credential_marker_and_generic_local_path(self) -> None:
+        for value in ("Call me at +52 55 1234 5678", "bearer abcdefghijklmnopqrstuvwxyz123456", "/tmp/candidate.txt"):
+            targets = copy.deepcopy(valid_targets())
+            targets[0]["context_source"] = value
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                build_shortlist("en", "2026-08-27", valid_plan(), targets)
+
     def test_renderer_is_bilingual_compact_and_never_exposes_target_ids(self) -> None:
         value = build_shortlist("es", "2026-08-27", valid_plan(), valid_targets())
         rendered = render_shortlist_html(value)

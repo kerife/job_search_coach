@@ -119,6 +119,37 @@ class CareerMarketLearningDossierV2Tests(unittest.TestCase):
         self.assertEqual(3, len(dossier["reuse_map"]))
         self.assertEqual([], validate_learning_dossier(dossier))
 
+    def test_professional_apply_or_pause_decisions_require_review_coach_decision(self) -> None:
+        market = _recurring_market(5)
+        market["evidence_mode"] = "synthetic"
+        market["recurrence_rows"][0]["signal"] = "production_experience"
+        market["recurrence_rows"][1]["signal"] = "leadership_experience"
+        market["recurrence_rows"][2]["signal"] = "operational_experience"
+        for row, signal in zip(market["matrix_rows"], ("production_experience", "leadership_experience", "operational_experience")):
+            row["signal"] = signal
+        for card in market["vacancy_cards"]:
+            for requirement, signal in zip(card["requirements"], ("production_experience", "leadership_experience", "operational_experience")):
+                requirement["signal"] = signal
+        evidence_by_signal = {"production_experience": "E-001", "leadership_experience": "E-002", "operational_experience": "E-003"}
+        market["recurrence_rows"] = [
+            {**row, "evidence_ids": [evidence_by_signal[row["signal"]]]}
+            for row in sorted(market["recurrence_rows"], key=lambda item: item["signal"])
+        ]
+        research = _research(market, project=True, course=True)
+        remapped = ["production_experience", "leadership_experience", "operational_experience"]
+        option_types = ["free_resource", "course", "free_resource"]
+        for option, signal, option_type in zip(research["options"], remapped, option_types):
+            option["gap_signal"] = signal
+            option["option_type"] = option_type
+            if option_type == "free_resource":
+                option["current_cost"] = option["currency"] = option["tax"] = "not_applicable"
+                option["duration"] = "1 private hour"
+                option["duration_basis"] = "candidate_estimated"
+        dossier = build_learning_dossier(market, research)
+        self.assertEqual({"apply_with_boundary", "pause"}, {row["decision"] for row in dossier["learning_decisions"]})
+        self.assertEqual("review_learning_options", dossier["coach_decision"]["decision"])
+        self.assertEqual([], validate_learning_dossier(dossier))
+
     def test_builder_chooses_project_before_lab_when_research_order_changes(self) -> None:
         market = _recurring_market(5)
         market["evidence_mode"] = "synthetic"

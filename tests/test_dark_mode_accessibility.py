@@ -188,6 +188,11 @@ class DarkModeAccessibilityTests(unittest.TestCase):
                 forced = css[css.index("@media (forced-colors") :]
                 self.assertRegex(forced, r"\.skip-link:focus-visible,\s*main:focus-visible\s*\{[^}]*outline:\s*3px solid Highlight;[^}]*outline-offset:\s*3px;")
 
+    def test_screen_intake_dark_blue_meets_text_contrast_floor(self) -> None:
+        css = (ASSETS / "recruiter-target-screen-intake-v1.css").read_text(encoding="utf-8")
+        dark = css[css.index("@media screen and (prefers-color-scheme: dark)"):css.index("@media print")]
+        self.assertIn("--screen-blue: #8eb2ff;", dark)
+
     def test_practice_readiness_grid_becomes_single_column_on_small_screens(self) -> None:
         css = (ASSETS / "recruiter-practice-session-v1.css").read_text(encoding="utf-8")
         self.assertIn("@media screen and (max-width: 420px)", css)

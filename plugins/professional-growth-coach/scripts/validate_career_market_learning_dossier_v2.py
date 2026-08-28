@@ -296,6 +296,8 @@ def validate_learning_dossier(value: object) -> list[str]:
                 errors.append("coach_decision must prioritize project_first when present")
             if not project_present and any(isinstance(row, Mapping) and row.get("decision") == "consider" for row in decisions if isinstance(decisions, list)) and coach.get("decision") not in {"hold_until_preferences_confirmed", "review_learning_options"}:
                 errors.append("coach_decision must preserve a review gate for consider decisions")
+            if not project_present and any(isinstance(row, Mapping) and row.get("decision") in {"apply_with_boundary", "pause"} for row in decisions if isinstance(decisions, list)) and not any(isinstance(row, Mapping) and row.get("decision") == "consider" for row in decisions if isinstance(decisions, list)) and coach.get("decision") != "review_learning_options":
+                errors.append("coach_decision must preserve a review gate for apply_with_boundary or pause decisions")
             if coach.get("draft_only") is not True or coach.get("no_external_action") is not True:
                 errors.append("coach_decision must remain draft-only and no-external-action")
         sprint = value.get("proof_sprint")

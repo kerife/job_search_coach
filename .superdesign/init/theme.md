@@ -842,7 +842,7 @@ dd { margin: .25rem 0 0; font-weight: 700; }
 @media (prefers-contrast: more) { :root { --screen-border: #536176; } .screen-card, .screen-check { box-shadow: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
 @media (forced-colors: active) { .screen-card, .screen-check { border: 2px solid CanvasText; box-shadow: none; } .screen-decision, .screen-check { border-left-color: CanvasText; } .skip-link:focus-visible, main:focus-visible { outline: 3px solid Highlight; outline-offset: 3px; } }
-@media screen and (prefers-color-scheme: dark) { :root { color-scheme: dark; --screen-ink: #edf2fa; --screen-muted: #b9c5d8; --screen-surface: #1c2738; --screen-soft: #111927; --screen-border: #536176; } }
+@media screen and (prefers-color-scheme: dark) { :root { color-scheme: dark; --screen-ink: #edf2fa; --screen-muted: #b9c5d8; --screen-blue: #8eb2ff; --screen-surface: #1c2738; --screen-soft: #111927; --screen-border: #536176; } }
 @media print { html, body { color-scheme: light; background: #fff; } .screen-shell { width: 100%; padding: 0; } .screen-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
 
 .continuity-rail { margin: 1rem 0 1.5rem; padding: .85rem 1rem 1rem; border: 1px solid currentColor; border-radius: .8rem; color: var(--screen-ink); }
