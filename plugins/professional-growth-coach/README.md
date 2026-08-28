@@ -38,6 +38,7 @@ For a selected `advance` target, `route_recruiter_screen_intake` adds the target
 
 The decision gate also enforces temporal continuity: its `as_of_date` must match the nested shortlist snapshot date, so a stale shortlist cannot be relabeled as a current screen-intake source.
 All recruiter shortlist, gate, screen-intake, debrief, and next-stage date fields now require the canonical `YYYY-MM-DD` calendar form; the LinkedIn client-report runtime and dependency-free schema validator apply the same rule to evaluation and source access dates. Alternate ISO spellings are rejected before snapshots are chained.
+Private recruiter conversion-outcome and follow-through checkpoint validators and renderers enforce the same canonical `--as-of` contract, so CLI replays cannot accept week-date spellings that the artifact schema rejects.
 The same canonical-date guard is enforced by the market-learning dossier, vacancy-research, learning-option research, and executive-dossier runtime validators, keeping the schema and Python validation boundary aligned.
 
 In `prefers-contrast: more`, screen-intake and screen-debrief cards and coverage rows use 2px borders and 0.5rem state bands, matching the stronger contrast treatment across the recruiter review family.

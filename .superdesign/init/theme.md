@@ -1906,6 +1906,7 @@ dd { margin: .15rem 0 0; font-weight: 600; }
 
 @media (prefers-contrast: more) {
   .reading-path, .section-coverage-row article, .coach-priority-card, .coach-template, .market-unavailable-card, .market-next-investigation { border-width: 2px; }
+  .reading-path a { border-width: 2px; border-color: var(--forest); }
   .section-coverage-request, .coach-template, .market-next-investigation { border-left-width: 5px; }
   .coach-priority-card { border-top-width: 5px; }
 }

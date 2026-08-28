@@ -90,6 +90,34 @@ class CliReceiptPrivacyTests(unittest.TestCase):
         receipt = json.loads(result.stdout)
         self.assertEqual(str(output), receipt["artifact_path"])
 
+    def test_private_date_arguments_reject_week_date_spelling(self) -> None:
+        cases = (
+            (
+                SCRIPTS / "render_private_recruiter_conversion_outcome.py",
+                [str(OUTCOME), "--as-of", "2026-W34-1"],
+            ),
+            (
+                SCRIPTS / "render_private_recruiter_followthrough_checkpoint.py",
+                [str(CHECKPOINT), "--receipt", str(CHECKPOINT_RECEIPT), "--as-of", "2026-W34-1"],
+            ),
+            (
+                SCRIPTS / "validate_private_recruiter_conversion_outcome.py",
+                [str(OUTCOME), "--as-of", "2026-W34-1"],
+            ),
+            (
+                SCRIPTS / "validate_private_recruiter_followthrough_checkpoint.py",
+                [str(CHECKPOINT), "--receipt", str(CHECKPOINT_RECEIPT), "--as-of", "2026-W34-1"],
+            ),
+        )
+        for script, arguments in cases:
+            with self.subTest(script=script.name):
+                command = [sys.executable, "-B", str(script), *arguments]
+                if script.name.startswith("render_"):
+                    command.extend(["--output", str(Path(tempfile.mkdtemp()) / "artifact.html")])
+                result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, check=False)
+                self.assertEqual(3, result.returncode)
+                self.assertNotIn("2026-W34-1", result.stdout + result.stderr)
+
     def test_triage_missing_input_preserves_opaque_loader_failure_contract(self) -> None:
         directory = Path(tempfile.mkdtemp(prefix="pgc-triage-missing-"))
         missing = directory / "missing-private-triage.json"

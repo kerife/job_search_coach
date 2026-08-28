@@ -20,6 +20,16 @@ ASSET_ROOT = Path(__file__).resolve().parents[1] / "assets"
 TEMPLATE_PATH = ASSET_ROOT / "private-recruiter-followthrough-checkpoint-v1.html"
 CSS_PATH = ASSET_ROOT / "private-recruiter-followthrough-checkpoint-v1.css"
 
+try:
+    from canonical_date import date_arg
+except ModuleNotFoundError:
+    _date_spec = importlib.util.spec_from_file_location("_pgc_canonical_date", Path(__file__).with_name("canonical_date.py"))
+    if _date_spec is None or _date_spec.loader is None:
+        raise
+    _date_module = importlib.util.module_from_spec(_date_spec)
+    _date_spec.loader.exec_module(_date_module)
+    date_arg = _date_module.date_arg
+
 
 def _load_asset_loader() -> Any:
     path = Path(__file__).with_name("private_asset_loader.py")
@@ -255,7 +265,7 @@ def write_checkpoint_html(item: Mapping[str, object], receipt: Mapping[str, obje
     return type("RenderReceipt", (), {"artifact_path": target, "artifact_type": "text/html", "locale": item["locale"]})()
 
 def _date_arg(value: str) -> dt.date:
-    try: return dt.date.fromisoformat(value)
+    try: return date_arg(value)
     except ValueError as error: raise argparse.ArgumentTypeError("must use YYYY-MM-DD") from error
 
 def _cli(argv=None) -> int:

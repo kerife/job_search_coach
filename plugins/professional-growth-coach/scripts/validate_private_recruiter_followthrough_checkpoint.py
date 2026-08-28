@@ -32,6 +32,16 @@ except ModuleNotFoundError:
     _loader_spec.loader.exec_module(_loader_module)
     PrivateInputError = _loader_module.PrivateInputError
     read_bounded_bytes = _loader_module.read_bounded_bytes
+try:
+    from canonical_date import date_arg, parse_canonical_date
+except ModuleNotFoundError:
+    _date_spec = importlib.util.spec_from_file_location("_pgc_canonical_date", Path(__file__).with_name("canonical_date.py"))
+    if _date_spec is None or _date_spec.loader is None:
+        raise
+    _date_module = importlib.util.module_from_spec(_date_spec)
+    _date_spec.loader.exec_module(_date_module)
+    date_arg = _date_module.date_arg
+    parse_canonical_date = _date_module.parse_canonical_date
 
 SCHEMA_VERSION = "private-recruiter-followthrough-checkpoint-v1"
 TOP_LEVEL_FIELDS = frozenset({
@@ -156,7 +166,7 @@ def _date(value: object, path: str, as_of: dt.date, errors: list[str]) -> dt.dat
         errors.append(f"{path} must use YYYY-MM-DD")
         return None
     try:
-        parsed = dt.date.fromisoformat(value)
+        parsed = parse_canonical_date(value, field=path)
     except ValueError:
         errors.append(f"{path} is not a real calendar date")
         return None
@@ -274,7 +284,7 @@ def validate_checkpoint(value: object, receipt: object, *, as_of: dt.date | None
         errors.append("preparation route requires an interview-request receipt")
     receipt_date = None
     try:
-        receipt_date = dt.date.fromisoformat(str(receipt.get("event_date", "")))
+        receipt_date = parse_canonical_date(str(receipt.get("event_date", "")), field="event_date")
     except ValueError:
         pass
     observed = _date(item.get("observed_date"), "observed_date", as_of or dt.date.today(), errors)
@@ -305,7 +315,7 @@ def validate_checkpoint(value: object, receipt: object, *, as_of: dt.date | None
 
 def _date_arg(value: str) -> dt.date:
     try:
-        return dt.date.fromisoformat(value)
+        return date_arg(value)
     except ValueError as error:
         raise argparse.ArgumentTypeError("must use YYYY-MM-DD") from error
 

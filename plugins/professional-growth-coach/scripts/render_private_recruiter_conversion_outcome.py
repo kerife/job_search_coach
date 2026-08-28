@@ -11,6 +11,16 @@ ASSET_ROOT = Path(__file__).resolve().parents[1] / "assets"
 TEMPLATE_PATH = ASSET_ROOT / "private-recruiter-conversion-outcome-v1.html"
 CSS_PATH = ASSET_ROOT / "private-recruiter-conversion-outcome-v1.css"
 
+try:
+    from canonical_date import date_arg
+except ModuleNotFoundError:
+    _date_spec = importlib.util.spec_from_file_location("_pgc_canonical_date", Path(__file__).with_name("canonical_date.py"))
+    if _date_spec is None or _date_spec.loader is None:
+        raise
+    _date_module = importlib.util.module_from_spec(_date_spec)
+    _date_spec.loader.exec_module(_date_module)
+    date_arg = _date_module.date_arg
+
 
 def _load_asset_loader() -> Any:
     path = Path(__file__).with_name("private_asset_loader.py")
@@ -284,7 +294,7 @@ def write_outcome_html(item: Mapping[str, object], output: Path, *, today: dt.da
 
 
 def _cli(argv=None) -> int:
-    parser = _PrivateArgumentParser(); parser.add_argument("input", type=Path); parser.add_argument("--output", type=Path, required=True); parser.add_argument("--force", action="store_true"); parser.add_argument("--include-artifact-path", action="store_true", help="include the local output path in the CLI receipt"); parser.add_argument("--as-of", dest="as_of", type=lambda value: dt.date.fromisoformat(value), required=True, help="Reference date for deterministic validation (YYYY-MM-DD).")
+    parser = _PrivateArgumentParser(); parser.add_argument("input", type=Path); parser.add_argument("--output", type=Path, required=True); parser.add_argument("--force", action="store_true"); parser.add_argument("--include-artifact-path", action="store_true", help="include the local output path in the CLI receipt"); parser.add_argument("--as-of", dest="as_of", type=date_arg, required=True, help="Reference date for deterministic validation (YYYY-MM-DD).")
     try:
         args = parser.parse_args(argv)
     except _ArgumentError:

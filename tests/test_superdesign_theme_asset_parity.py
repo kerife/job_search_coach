@@ -117,6 +117,16 @@ class SuperdesignThemeAssetParityTests(unittest.TestCase):
             r"\.method-list a\s*\{[^}]*display:\s*inline-flex;[^}]*min-width:\s*44px;[^}]*min-height:\s*44px;",
         )
 
+    def test_executive_v2_reading_path_links_strengthen_in_high_contrast(self):
+        css = (ASSETS / "executive-career-dossier-v2.css").read_text(encoding="utf-8")
+        match = re.search(r"@media\s*\(prefers-contrast\s*:\s*more\s*\)", css)
+        self.assertIsNotNone(match)
+        block = css[match.end():].split("@media", 1)[0]
+        self.assertRegex(
+            block,
+            r"\.reading-path\s+a\s*\{[^}]*border-width:\s*2px;[^}]*border-color:\s*var\(--forest\);",
+        )
+
     def test_page_dependency_map_is_one_to_one_with_routes_and_assets(self):
         routes = {
             route.strip("`")

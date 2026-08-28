@@ -25,6 +25,16 @@ except ModuleNotFoundError:
     _loader_spec.loader.exec_module(_loader_module)
     PrivateInputError = _loader_module.PrivateInputError
     read_bounded_bytes = _loader_module.read_bounded_bytes
+try:
+    from canonical_date import date_arg, parse_canonical_date
+except ModuleNotFoundError:
+    _date_spec = importlib.util.spec_from_file_location("_pgc_canonical_date", Path(__file__).with_name("canonical_date.py"))
+    if _date_spec is None or _date_spec.loader is None:
+        raise
+    _date_module = importlib.util.module_from_spec(_date_spec)
+    _date_spec.loader.exec_module(_date_module)
+    date_arg = _date_module.date_arg
+    parse_canonical_date = _date_module.parse_canonical_date
 
 SCHEMA_VERSION = "private-recruiter-conversion-outcome-v1"
 TOP_LEVEL_FIELDS = frozenset({"schema_version", "artifact_kind", "locale", "event_date", "event_type", "source_artifact_id", "source_version", "fact_ids", "observation_state", "next_safe_action", "delivery"})
@@ -96,7 +106,7 @@ def validate_outcome(value: object, *, today: dt.date | None = None, as_of: dt.d
     parsed=None
     if not isinstance(date,str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date): errors.append("event_date must use YYYY-MM-DD")
     else:
-        try: parsed=dt.date.fromisoformat(date)
+        try: parsed=parse_canonical_date(date, field="event_date")
         except ValueError: errors.append("event_date is not a real calendar date")
         reference_date = as_of or today or dt.date.today()
         if parsed and parsed > reference_date: errors.append("event_date cannot be in the future")
@@ -123,7 +133,7 @@ def validate_outcome(value: object, *, today: dt.date | None = None, as_of: dt.d
     if FORBIDDEN.search(prose): errors.append("outcome contains forbidden raw, identity, action, outcome, score, or contact prose")
     return sorted(set(errors))
 def _cli(argv=None):
-    parser=_PrivateArgumentParser(description="Validate a private recruiter conversion outcome."); parser.add_argument("input",type=Path); parser.add_argument("--as-of",dest="as_of",type=lambda value: dt.date.fromisoformat(value), required=True, help="Reference date for deterministic future-date validation (YYYY-MM-DD).")
+    parser=_PrivateArgumentParser(description="Validate a private recruiter conversion outcome."); parser.add_argument("input",type=Path); parser.add_argument("--as-of",dest="as_of",type=date_arg, required=True, help="Reference date for deterministic future-date validation (YYYY-MM-DD).")
     try:
         args=parser.parse_args(argv)
     except _ArgumentError:
