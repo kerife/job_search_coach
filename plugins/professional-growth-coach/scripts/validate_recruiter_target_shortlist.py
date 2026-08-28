@@ -94,7 +94,7 @@ def _text(value: object, path: str, errors: list[str], maximum: int = 500) -> bo
     if not isinstance(value, str) or not value.strip() or len(value) > maximum:
         errors.append(f"{path} must be bounded text")
         return False
-    if PROSE.contains_unicode_controls(value) or RESTRICTED.search(value):
+    if PROSE.contains_unicode_controls(value) or RESTRICTED.search(value) or PROSE.contains_restricted_private_material(value):
         errors.append(f"{path} contains restricted material")
         return False
     return True
@@ -191,6 +191,17 @@ def validate_shortlist(value: object, *, as_of: dt.date | None = None) -> list[s
                 errors.append(f"{path}.do_not_contact_reason has invalid value")
             if target.get("next_safe_action") not in NEXT_ACTIONS:
                 errors.append(f"{path}.next_safe_action has invalid value")
+            contactability = target.get("contactability_status")
+            do_not_contact_reason = target.get("do_not_contact_reason")
+            if contactability == "contactable" and do_not_contact_reason != "none":
+                errors.append(f"{path}.contactability_status requires do_not_contact_reason=none")
+            if contactability == "do_not_contact" and do_not_contact_reason == "none":
+                errors.append(f"{path}.do_not_contact_reason must name a reason when contactability is do_not_contact")
+            if decision in {"clarify", "pause", "stop"} and contactability == "contactable":
+                errors.append(f"{path}.contactability_status cannot be contactable for {decision}")
+            expected_action = {"clarify": "collect_recipient_context", "pause": "record_observation_only", "stop": "record_observation_only"}.get(decision)
+            if expected_action is not None and target.get("next_safe_action") != expected_action:
+                errors.append(f"{path}.{decision} requires next_safe_action={expected_action}")
             for field, expected in (("draft_only", True), ("consent", "not_granted"), ("authorization_required", True), ("no_message_action", True), ("no_calendar_action", True)):
                 if target.get(field) != expected:
                     errors.append(f"{path}.{field} has immutable value")

@@ -83,6 +83,18 @@ The recruiter shortlist renderer reads its HTML and CSS only through the same
 package-local regular-file boundary, and rejects future-dated artifacts even
 when called directly instead of through the builder.
 
+Shortlist decisions are reconciled with contactability before any handoff:
+`contactable` requires `do_not_contact_reason=none`, `do_not_contact` requires
+a named reason, and `clarify`, `pause`, and `stop` cannot remain contactable.
+Those states also select their corresponding collection or observation action,
+so a review card cannot imply outreach is ready while its decision says to
+pause or clarify.
+
+The same restricted-material detector is shared by shortlist and screen-debrief
+validators. Bounded notes and context reject phone-like strings, generic local
+paths, and credential or bearer-token markers before they are persisted into a
+private artifact or carried into a later handoff.
+
 Recruiter validators also reject a future evaluation date supplied through
 `--as-of`; an explicit historical replay must use a date no later than today.
 The target-specific screen-intake bridge applies the same inclusive 90-day
@@ -98,6 +110,9 @@ tokens, including the shared continuity rail treatment. A new recruiter
 surface, rail state, or color must update both records and its parity tests
 before release. The screen-intake `screen-blue` token has a dedicated dark-mode
 value so action text remains above the contrast floor on dark surfaces.
+The executive dossier reading path also switches to a two-column tablet layout
+through 900px, then to one column at 640px, keeping all four destinations
+usable without horizontal scrolling.
 
 Rendering CLIs write the requested private artifact but omit its absolute local
 path from the success receipt by default. A trusted caller that already knows

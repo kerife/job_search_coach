@@ -158,6 +158,16 @@ class SuperdesignThemeAssetParityTests(unittest.TestCase):
             ),
         )
 
+    def test_dossier_reading_path_has_intermediate_tablet_layout(self):
+        css = (ASSETS / "executive-career-dossier-v2.css").read_text(encoding="utf-8")
+        self.assertRegex(
+            css,
+            re.compile(
+                r"@media screen and \(max-width: 900px\).*?\.reading-path\s*\{[^}]*flex-direction:\s*column;[^}]*\}.*?\.reading-path ol\s*\{[^}]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\);",
+                re.DOTALL,
+            ),
+        )
+
     def test_market_extension_declares_light_theme_tokens_for_borders_and_text(self):
         base = (ASSETS / "executive-career-dossier-v1.css").read_text(encoding="utf-8")
         market = (ASSETS / "career-market-learning-dossier-v1.css").read_text(encoding="utf-8")

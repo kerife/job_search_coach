@@ -94,7 +94,10 @@ def _closed(value: object, path: str, fields: frozenset[str], errors: list[str])
 
 
 def _safe_text(value: object, path: str, errors: list[str], maximum: int) -> None:
-    if not isinstance(value, str) or not value.strip() or len(value) > maximum or not PROSE.is_safe_prose_text(value) or RESTRICTED.search(value):
+    if (not isinstance(value, str) or not value.strip() or len(value) > maximum
+            or not PROSE.is_safe_prose_text(value)
+            or RESTRICTED.search(value)
+            or PROSE.contains_restricted_private_material(value)):
         errors.append(f"{path} must be bounded safe text")
 
 

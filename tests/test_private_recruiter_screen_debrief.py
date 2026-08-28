@@ -191,6 +191,13 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
         self.assertEqual("collect_debrief_context", artifact["handoff"]["next_safe_action"])
         self.assertEqual([], validate_screen_debrief(artifact, RECEIPT, self.intake, as_of=date(2026, 8, 27)))
 
+    def test_debrief_rejects_paths_and_credential_shaped_notes(self) -> None:
+        for value in ("/tmp/candidate.txt", "bearer abcdefghijklmnopqrstuvwxyz123456", "secret=abcdEFGH1234"):
+            debrief = valid_debrief()
+            debrief["coverage"][0]["note"] = value
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, debrief)
+
     def test_stop_is_terminal_and_blocks_next_stage(self) -> None:
         debrief = valid_debrief()
         debrief["decision"] = "stop"

@@ -21,6 +21,14 @@ _SUSPICIOUS_DIAGNOSTIC_FIELD = re.compile(
     re.IGNORECASE,
 )
 
+_RESTRICTED_PRIVATE_MATERIAL = re.compile(
+    r"(?:^|\s)/(?:Users|private|tmp|home|var|opt|Applications|Volumes|root|srv|usr)/|"
+    r"(?<!\w)\+?\d[\d .()_-]{6,}\d|"
+    r"\b(?:bearer|token|secret|password|passwd|credential|api[_-]?key|access[_-]?key|auth|cookie)\b"
+    r"(?:\s*[:=]\s*|\s+[A-Za-z0-9._-]{12,})",
+    re.IGNORECASE,
+)
+
 
 def contains_unicode_controls(value: object) -> bool:
     """Return whether string text contains a Unicode control or format character."""
@@ -33,6 +41,11 @@ def contains_unicode_controls(value: object) -> bool:
 def is_safe_prose_text(value: object) -> bool:
     """Return whether text is a string without Unicode controls or format characters."""
     return isinstance(value, str) and not contains_unicode_controls(value)
+
+
+def contains_restricted_private_material(value: object) -> bool:
+    """Return whether bounded prose contains a local path, phone, or credential marker."""
+    return isinstance(value, str) and _RESTRICTED_PRIVATE_MATERIAL.search(value) is not None
 
 
 def safe_diagnostic_field_name(value: str) -> str:

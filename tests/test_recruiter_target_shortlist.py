@@ -120,6 +120,17 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         errors = validate_shortlist(value, as_of=date(2026, 8, 27))
         self.assertIn("targets[0].advance requires named context, supported facts, and no missing context", errors)
 
+    def test_validator_reconciles_non_advance_contactability_and_reason(self) -> None:
+        value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
+        value["targets"][1]["contactability_status"] = "contactable"
+        value["targets"][1]["do_not_contact_reason"] = "missing_context"
+        value["targets"][2]["contactability_status"] = "do_not_contact"
+        value["targets"][2]["do_not_contact_reason"] = "none"
+        errors = validate_shortlist(value, as_of=date(2026, 8, 27))
+        self.assertIn("targets[1].contactability_status cannot be contactable for clarify", errors)
+        self.assertIn("targets[1].contactability_status requires do_not_contact_reason=none", errors)
+        self.assertIn("targets[2].do_not_contact_reason must name a reason when contactability is do_not_contact", errors)
+
     def test_validator_rejects_future_evaluation_date(self) -> None:
         value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
         self.assertIn("as_of cannot be in the future", validate_shortlist(value, as_of=date.today() + dt.timedelta(days=1)))

@@ -72,6 +72,12 @@
   .market-next-investigation { background: var(--gold-soft); color: var(--ink); }
 }
 
+@media screen and (max-width: 900px) {
+  .reading-path { align-items: stretch; flex-direction: column; }
+  .reading-path ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); justify-content: stretch; }
+  .reading-path a { justify-content: center; }
+}
+
 @media (max-width: 480px) {
   .section-coverage-facts { grid-template-columns: 1fr; }
   .section-coverage-ledger, .section-coverage-list, .section-coverage-row, .section-coverage-row article, .coach-priorities, .coach-priority-card, .coach-template, .reading-path { min-width: 0; }
