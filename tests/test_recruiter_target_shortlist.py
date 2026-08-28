@@ -412,6 +412,19 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual("needs_intake", routed["case_state"])
                 self.assertEqual("ask_one_intake_question", routed["next_action"])
 
+    def test_root_route_accepts_initial_recruiter_conversation_variants(self) -> None:
+        for request, locale in (
+            ("Prepare me for an initial interview with the recruiter.", "en"),
+            ("Help me prepare for my first call with a recruiter.", "en"),
+            ("Prepárame para una entrevista inicial con el reclutador.", "es"),
+            ("Necesito practicar mi primera llamada con la reclutadora.", "es"),
+        ):
+            routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-27")
+            with self.subTest(request=request):
+                self.assertEqual("recruiter_target_shortlist", routed["route_kind"])
+                self.assertEqual("needs_intake", routed["case_state"])
+                self.assertEqual("ask_one_intake_question", routed["next_action"])
+
     def test_root_route_sends_completed_recruiter_screens_to_the_correct_artifact_free_handoff(self) -> None:
         cases = (
             ("I had a recruiter screen today; help me debrief.", "private_recruiter_screen_debrief", "track-career-outcomes"),
@@ -471,9 +484,13 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
             "I had not attended the recruiter screen; what should I do next?",
             "I didn't attend the recruiter screen; what should I do next?",
             "I did not complete the recruiter interview; help me prepare.",
+            "I never had a recruiter screen; help me prepare.",
+            "I never completed the recruiter interview; help me prepare.",
             "No he tenido el filtro con el reclutador; ¿qué sigue?",
             "No asistí al filtro con el reclutador; ¿qué sigue?",
             "No tuve la entrevista con el reclutador; ayúdame a prepararme.",
+            "Nunca tuve la entrevista con el reclutador; ayúdame a prepararme.",
+            "Nunca asistí al filtro con el reclutador; ¿qué hago?",
             "Todavía no terminé la entrevista con el reclutador; ¿qué hago después?",
         )
         for request in cases:

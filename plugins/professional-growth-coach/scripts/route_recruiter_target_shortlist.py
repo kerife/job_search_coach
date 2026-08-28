@@ -40,8 +40,10 @@ INTENT = re.compile(
     r"\b(?:find|buscar|encontrar|identificar)\s+(?:a\s+)?(?:recruiters?|reclutadores?)\b|"
     r"\b(?:recruiter|recruiting|reclutador(?:a|es)?)\s+(?:screen|filtro|entrevista)\b|"
     r"\b(?:first\s+(?:recruiter\s+)?screen|primer\s+filtro(?:\s+con\s+(?:un\s+)?reclutador)?|"
-    r"first\s+interview\s+with\s+(?:(?:a|the)\s+)?recruiters?|"
-    r"primera\s+entrevista\s+con\s+(?:(?:un|una|el|la)\s+)?reclutador(?:a|es)?)\b|"
+    r"(?:first|initial)\s+interview\s+with\s+(?:(?:a|the)\s+)?recruiters?|"
+    r"first\s+call\s+with\s+(?:(?:a|the)\s+)?recruiters?|"
+    r"(?:(?:primera|inicial)\s+entrevista|entrevista\s+inicial)\s+con\s+(?:(?:un|una|el|la)\s+)?reclutador(?:a|es)?|"
+    r"primera\s+llamada\s+con\s+(?:(?:un|una|el|la)\s+)?reclutador(?:a|es)?)\b|"
     r"\b(?:contact|reach(?:\s+out\s+to)?|connect\s+with|talk\s+to|speak\s+with)\s+(?:(?:an?|the)\s+)?(?:(?:senior|technical|lead|principal|internal|executive|hiring|talent|agency|corporate|junior|experienced)\s+)?(?:recruiters?|reclutador(?:a|es)?)\b|"
     r"\b(?:contactar\s+(?:a\s+)?|conectar(?:me)?\s+con\s+|hablar\s+con\s+)(?:(?:un(?:a)?|el|la)\s+)?(?:recruiters?|reclutador(?:a|es)?)\b|"
     r"\b(?:interview|entrevista)\s+(?:[a-záéíóúñ-]+\s+){0,3}(?:with|con)\s+(?:(?:an?|un(?:a)?)\s+)?(?:recruiters?|reclutador(?:a|es)?)\b|"
@@ -63,11 +65,13 @@ SCREEN_COMPLETION = re.compile(
 )
 SCREEN_NOT_COMPLETED = re.compile(
     r"\b(?:didn['’]?t\s+(?:attend|have|complete|finish)|did\s+not\s+(?:attend|have|complete|finish)|"
+    r"never\s+(?:had|completed|attended|finished)\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
     r"(?:had|have)\s+no\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
     r"not\s+(?:yet\s+)?(?:had|attended|completed|finished)|haven['’]?t\s+"
     r"(?:had|attended|completed|finished)|have\s+not\s+(?:had|attended|completed|finished)|"
     r"scheduled\s+for|upcoming|tomorrow|next\s+week|before\s+(?:the|my)|not\s+yet|"
-    r"no\s+he\s+tenido|(?:todav[ií]a\s+)?no\s+(?:he\s+)?(?:tenido|asist[ií]|tuv[eé]|complet[eé]|termin[eé]|atend[ií])|"
+    r"no\s+he\s+tenido|nunca\s+(?:he\s+)?(?:tenido|tuv[eé]|asist[ií]|asistido|complet[eé]|completado|termin[eé]|terminado|atend[ií]|atendido)\s+(?:(?:a|al|a la|el|la|un|una)\s+)?(?:recruiter\s+|reclutador(?:a|es)?\s+)?(?:screen|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)|"
+    r"(?:todav[ií]a\s+)?no\s+(?:he\s+)?(?:tenido|asist[ií]|tuv[eé]|complet[eé]|termin[eé]|atend[ií])|"
     r"programad[oa]\s+para|ma[ñn]ana|pr[oó]xima?\s+semana)\b",
     re.I,
 )
