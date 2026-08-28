@@ -889,6 +889,13 @@ class ValidateCaseTests(unittest.TestCase):
         )
         self.assertNotIn("x" * 100, result.stderr)
 
+    def test_rejects_oversized_json_integer_without_traceback(self) -> None:
+        result = run_validator_bytes((b'{"x":' + (b"9" * 5000) + b"}"))
+        self.assertEqual(result.returncode, 2)
+        self.assertEqual(result.stderr, "invalid case file: malformed JSON input\n")
+        self.assertNotIn("Traceback", result.stderr)
+        self.assertNotIn(str(VALIDATOR), result.stderr)
+
     def test_accepts_case_input_at_safe_size_limit(self) -> None:
         validator = load_validator_module()
         boundary_case = valid_case()

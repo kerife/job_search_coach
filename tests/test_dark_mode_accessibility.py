@@ -174,6 +174,25 @@ class DarkModeAccessibilityTests(unittest.TestCase):
                 if filename in {"recruiter-target-shortlist-v1.css", "recruiter-target-decision-gate-v1.css"}:
                     self.assertIn("break-inside: avoid; page-break-inside: avoid", print_css)
 
+    def test_all_recruiter_templates_block_indexing_and_referrers(self) -> None:
+        templates = (
+            "recruiter-target-shortlist-v1.html",
+            "recruiter-target-decision-gate-v1.html",
+            "recruiter-target-screen-intake-v1.html",
+            "private-recruiter-screen-debrief-v1.html",
+            "private-recruiter-next-stage-review-v1.html",
+            "private-recruiter-followthrough-checkpoint-v1.html",
+            "private-recruiter-conversion-outcome-v1.html",
+            "private-recruiter-reply-triage-v1.html",
+            "recruiter-practice-session-v1.html",
+            "executive-career-dossier-v1.html",
+        )
+        for filename in templates:
+            with self.subTest(filename=filename):
+                html = (ASSETS / filename).read_text(encoding="utf-8")
+                self.assertIn('<meta name="robots" content="noindex,nofollow,noarchive">', html)
+                self.assertIn('<meta name="referrer" content="no-referrer">', html)
+
     def test_recruiter_intake_surfaces_share_keyboard_focus_contract(self) -> None:
         expected = {
             "recruiter-target-screen-intake-v1.css": "var(--screen-blue)",

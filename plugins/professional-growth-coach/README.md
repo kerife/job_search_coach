@@ -83,6 +83,10 @@ When a next stage is explicitly selected, `route_recruiter_next_stage_review` bu
 The next-stage renderer validates every linked snapshot before writing its
 private HTML and emits a fixed success receipt only after the write succeeds;
 invalid input returns an opaque error without leaving a partial artifact.
+All shipped private HTML templates also declare
+`noindex,nofollow,noarchive` and `no-referrer` alongside their restrictive CSP,
+and JSON entrypoints normalize oversized-integer parse failures to a fixed
+error without a traceback.
 
 ## Installation
 
@@ -307,6 +311,10 @@ combinations: a dated posting is current only when its source status is current
 and within 90 days; otherwise it is explicitly unknown. A missing publication
 date is always unknown with an explicit access-date basis, so hand-authored
 artifacts cannot present stale or unverified evidence as current.
+Search-limit metadata is reconciled with the evidence count: only a complete
+five-vacancy sample may use `target_reached` with `limitation=none`; limited and
+unavailable states require an explicit limiting reason before downstream
+dossier routing.
 Canonical source labels remain localized for `official_employer`,
 `employer_operated_ats`, and `linkedin_jobs_backup`.
 The follow-through checkpoint validator also exposes a pure `replay_fingerprint`

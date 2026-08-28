@@ -710,6 +710,9 @@ def main(argv: list[str] | None = None) -> int:
     except (UnicodeError, json.JSONDecodeError, RecursionError) as error:
         print(f"invalid case file: {error}", file=sys.stderr)
         return 2
+    except ValueError:
+        print("invalid case file: malformed JSON input", file=sys.stderr)
+        return 2
 
     errors = validate_case(case)
     if errors:

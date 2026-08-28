@@ -103,6 +103,15 @@ class TargetVacancyResearchTests(unittest.TestCase):
         errors = validate_research(value)
         self.assertTrue(any("search_limit.limitation contains private value" in error for error in errors))
 
+    def test_search_limit_reason_matches_research_state_and_count(self) -> None:
+        limited = load_fixture("limited-four-en.json")
+        limited["search_limit"]["limit_reason"] = "target_reached"
+        self.assertIn("limited research cannot use target_reached", validate_research(limited))
+
+        unavailable = load_fixture("unavailable-es.json")
+        unavailable["search_limit"]["limitation"] = "none"
+        self.assertIn("unavailable research requires a limiting reason", validate_research(unavailable))
+
     def test_supported_states_have_exact_bounded_counts(self) -> None:
         expected = {
             "complete-five-es.json": ("complete", 5),

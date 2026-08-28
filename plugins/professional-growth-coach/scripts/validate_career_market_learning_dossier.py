@@ -419,6 +419,18 @@ def validate_market_dossier(value: object) -> list[str]:
         expected_count = value.get("state") == "complete" and count == 5 or value.get("state") == "limited_market_evidence" and 1 <= count <= 4 or value.get("state") == "market_evidence_unavailable" and count == 0
         if not expected_count:
             errors.append("state/count coupling is invalid")
+        if value.get("state") == "complete" and summary is not None and summary.get("limit_reason") != "target_reached":
+            errors.append("complete research must use target_reached limit reason")
+        if value.get("state") == "complete" and summary is not None and summary.get("limitation") != "none":
+            errors.append("complete research requires limitation=none")
+        if value.get("state") == "limited_market_evidence" and summary is not None and summary.get("limit_reason") == "target_reached":
+            errors.append("limited research cannot use target_reached")
+        if value.get("state") == "limited_market_evidence" and summary is not None and summary.get("limit_reason") == "none":
+            errors.append("limited research requires a limit reason")
+        if value.get("state") == "limited_market_evidence" and summary is not None and summary.get("limitation") == "none":
+            errors.append("limited research requires a limitation")
+        if value.get("state") == "market_evidence_unavailable" and summary is not None and (summary.get("limit_reason") == "none" or summary.get("limitation") == "none"):
+            errors.append("unavailable research requires a limiting reason")
         if summary is not None and summary.get("vacancy_sample_count") != count:
             errors.append("search_summary.vacancy_sample_count must equal vacancy card count")
         bindings = _bindings_from_matrix(value.get("matrix_rows"), cards, errors)

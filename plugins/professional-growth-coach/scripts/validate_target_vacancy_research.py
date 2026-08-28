@@ -481,10 +481,18 @@ def validate_research(value: object) -> list[str]:
                 errors.append("repeated employer requires exhausted search")
         if state == "complete" and search_limit is not None and search_limit.get("limit_reason") != "target_reached":
             errors.append("complete research must use target_reached limit reason")
+        if state == "complete" and search_limit is not None and search_limit.get("limitation") != "none":
+            errors.append("complete research requires limitation=none")
         if state == "limited_market_evidence" and count < 5 and search_limit is not None and search_limit.get("limitation") == "none":
             errors.append("limited research requires a limitation")
+        if state == "limited_market_evidence" and search_limit is not None and search_limit.get("limit_reason") == "target_reached":
+            errors.append("limited research cannot use target_reached")
+        if state == "limited_market_evidence" and search_limit is not None and search_limit.get("limit_reason") == "none":
+            errors.append("limited research requires a limit reason")
         if state == "market_evidence_unavailable" and count != 0:
             errors.append("unavailable research must contain no vacancies")
+        if state == "market_evidence_unavailable" and search_limit is not None and (search_limit.get("limit_reason") == "none" or search_limit.get("limitation") == "none"):
+            errors.append("unavailable research requires a limiting reason")
         if value.get("privacy_boundary") != "public_vacancy_sources_and_identity_free_candidate_evidence_only":
             errors.append("privacy_boundary has invalid value")
         if value.get("no_external_action") is not True:

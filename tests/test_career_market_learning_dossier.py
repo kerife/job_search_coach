@@ -452,6 +452,11 @@ class CareerMarketLearningDossierTests(unittest.TestCase):
         value["vacancy_cards"][0]["title"] = "path=/Users/alice/secret"
         self.assertTrue(any("vacancy_cards[0].title contains private value" in error for error in validate_market_dossier(value)))
 
+    def test_search_summary_reason_matches_dossier_state_and_count(self) -> None:
+        value = load_json(MARKET_FIXTURES / "limited-four-en.json")
+        value["search_summary"]["limit_reason"] = "target_reached"
+        self.assertIn("limited research cannot use target_reached", validate_market_dossier(value))
+
     def test_fixture_outputs_are_reproducible_and_closed(self) -> None:
         fixtures = sorted(MARKET_FIXTURES.glob("*.json"))
         self.assertEqual(
