@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T20:31:10-06:00`
+release_timestamp: `2026-08-27T20:45:22-06:00`
 
-source_commit: `864fe64d5d1d1a620037adce8409b578919431e0`
+source_commit: `9adba4ff2c223f3fe093de8df49032cae532ad26`
 
-source_tree: `16636d9cb747e28a6877a43298efa248e825ffb5`
+source_tree: `df19ad6adfe9603512d1b67afac8ad19584a0cd5`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827203110`
+installed_cache_version: `0.2.0+codex.20260827204522`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `172`
 
 installed_file_count: `172`
 
-normalized_source_cache_sha256: `bbd58f7b19210d82e1d89fb9bd0ae2ae2780d11fbe4f328ab2d20b6b85fc782b`
+normalized_source_cache_sha256: `92db63f9672279c85eaae37ffec8575b35d2b3637ebaa338c45022e99037a2ea`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -45,7 +45,7 @@ source_cache_equivalence: `diff_qr_silent`
 
 installed_renderer_smokes: `6/6 triage validator/renderer fixtures`
 
-installed_reading_path_smoke: `5/5 localized fragment links; aria-current fallback; nearest-target IntersectionObserver enhancement; tablet sticky-rail offset; print/mobile offsets`
+installed_reading_path_smoke: `6/6 localized fragment links; aria-current fallback; nearest-target IntersectionObserver enhancement; tablet and mobile sticky-rail offsets; print/mobile offsets`
 
 installed_dossier_v2_smoke: `4/4 EN/ES validator and renderer`
 
@@ -85,6 +85,10 @@ installed_dossier_unicode_control_smoke: `6/6 v1/v2 dossier prose controls are r
 installed_recruiter_gate_date_binding_smoke: `1/1 outer gate dates must match nested shortlist snapshots`
 
 installed_recruiter_decision_row_binding_smoke: `7/7 copied and derived row fields remain bound to the shortlist and decision`
+
+installed_recruiter_unhashable_fact_id_smoke: `1/1 malformed nested fact IDs return opaque invalid_shortlist without traceback`
+
+installed_mobile_reading_path_smoke: `1/1 18rem anchor offset clears the one-column sticky rail`
 
 installed_market_print_matrix_smoke: `1/1 multi-vacancy matrix stacks labelled rows for paper readability`
 
