@@ -524,6 +524,18 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual("needs_intake", routed["case_state"])
                 self.assertEqual("ask_one_intake_question", routed["next_action"])
 
+    def test_root_route_accepts_explicit_recruiter_outreach_variants(self) -> None:
+        for request in (
+            "I want recruiter outreach",
+            "Help me with recruiter networking",
+            "I need recruiter connections",
+        ):
+            routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-27")
+            with self.subTest(request=request):
+                self.assertEqual("recruiter_target_shortlist", routed["route_kind"])
+                self.assertEqual("needs_intake", routed["case_state"])
+                self.assertEqual("ask_one_intake_question", routed["next_action"])
+
     def test_root_route_accepts_defined_recruiter_articles_in_english_and_spanish(self) -> None:
         for request, locale in (
             ("Prepare me for a first interview with the recruiter.", "en"),

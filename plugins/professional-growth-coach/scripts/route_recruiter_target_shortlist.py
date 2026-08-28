@@ -56,6 +56,8 @@ INTENT = re.compile(
     r"\b(?:interview|entrevista)\s+(?:[a-záéíóúñ-]+\s+){0,3}(?:with|con)\s+(?:(?:an?|the|un(?:a)?|el|la)\s+)?(?:recruiters?|reclutador(?:a|es)?)\b|"
     r"\b(?:recruiters?|reclutador(?:a|es)?)\s+(?:[a-záéíóúñ-]+\s+){0,3}(?:interview|entrevista)\b|"
     r"\b(?:network|networking)\s+(?:with|con)\s+(?:recruiters?|reclutadores?)\b|"
+    r"\b(?:recruiters?|reclutadores?)\s+(?:outreach|networking|connections?|pipeline|referrals?|contactos?|red)\b|"
+    r"\b(?:outreach|networking|connections?|pipeline|referrals?|contactos?|red)\s+(?:with|con|de)\s+(?:recruiters?|reclutadores?)\b|"
     r"\bred\s+profesional\s+con\s+reclutadores?\b|"
     r"\b(?:red|network)\s+de\s+(?:recruiters?|reclutadores?)\b)",
     re.I,

@@ -330,6 +330,28 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         )
         self.assertTrue(validate_schema_instance(invalid_advance, shortlist_schema))
 
+    def test_nested_recruiter_snapshots_share_advance_gate(self):
+        _, gate, _, _, _, debrief, _ = _build_recruiter_handoff_chain()
+        cases = (
+            (gate, "recruiter-target-decision-gate-v1.schema.json", ("source_shortlist", "targets", 0)),
+            (debrief, "private-recruiter-screen-debrief-v1.schema.json", ("source_intake", "source_gate", "source_shortlist", "targets", 0)),
+        )
+        for value, schema_name, path in cases:
+            invalid = copy.deepcopy(value)
+            target = invalid
+            for part in path[:-1]:
+                target = target[part]
+            target[path[-1]].update(
+                context_state="context_needed",
+                supported_fact_ids=[],
+                missing_context="Need context",
+                contactability_status="context_needed",
+                do_not_contact_reason="missing_context",
+                next_safe_action="collect_recipient_context",
+            )
+            with self.subTest(schema=schema_name):
+                self.assertTrue(validate_schema_instance(invalid, self._schema(schema_name)))
+
     def test_dossier_methodology_categories_keep_schema_runtime_and_registry_in_lockstep(self):
         helper = _load_v2_dossier_helper()
         validator = helper.load_validator()

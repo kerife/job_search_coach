@@ -18,6 +18,7 @@ FOOTERS = {
     "private-recruiter-next-stage-review-v1.css": ".next-stage-footer",
     "recruiter-target-screen-intake-v1.css": ".screen-footer",
     "private-recruiter-screen-debrief-v1.css": ".debrief-footer",
+    "recruiter-target-decision-gate-v1.css": ".gate-footer",
 }
 
 

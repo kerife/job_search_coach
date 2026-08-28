@@ -2193,7 +2193,7 @@ dd { margin: .2rem 0 0; }
   html { color-scheme: light; }
   body { background: #fff; color: #000; }
   .gate-shell { width: 100%; padding: 0; }
-  .gate-card, .gate-row { box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
+  .gate-card, .gate-row, .gate-footer { box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
   .skip-link { display: none; }
 }
 
