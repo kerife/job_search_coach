@@ -57,7 +57,7 @@ COPY = {
     "es": {
         "title": "Debrief privado del filtro", "skip": "Ir al debrief", "kicker": "Registro estructurado posterior al filtro",
         "heading": "¿Qué quedó claro después del filtro?", "date": "Fecha observada", "stage": "Etapa", "facts": "Hechos usados",
-        "unknown": "Temas aún desconocidos", "coverage": "Cobertura de la conversación", "discussed": "Discutido", "not_discussed": "No discutido", "unclear": "Ambiguo",
+        "unknown": "Temas aún desconocidos", "coverage": "Cobertura de la conversación", "discussed": "Discutido", "not_discussed": "No discutido", "unclear": "Ambiguo", "coverage_counts": "Resumen de estados de cobertura",
         "decision": {"continue_review": "Continuar a revisión", "pause": "Pausar y aclarar", "stop": "Detener y registrar"},
         "next": "Siguiente paso seguro", "next_action": {"manual_prepare_next_stage_review": "Preparar la siguiente etapa para revisión manual", "collect_debrief_context": "Recopilar contexto del debrief", "record_stop_decision": "Registrar la decisión de detenerse"},
         "boundary": "Este debrief registra sólo cobertura estructurada. No conserva texto crudo, no contacta, no agenda y no prepara automáticamente.",
@@ -72,7 +72,7 @@ COPY = {
     "en": {
         "title": "Private screen debrief", "skip": "Skip to debrief", "kicker": "Structured post-screen record",
         "heading": "What became clear after the screen?", "date": "Observed date", "stage": "Stage", "facts": "Facts used",
-        "unknown": "Topics still unknown", "coverage": "Conversation coverage", "discussed": "Discussed", "not_discussed": "Not discussed", "unclear": "Unclear",
+        "unknown": "Topics still unknown", "coverage": "Conversation coverage", "discussed": "Discussed", "not_discussed": "Not discussed", "unclear": "Unclear", "coverage_counts": "Coverage state summary",
         "decision": {"continue_review": "Continue to review", "pause": "Pause and clarify", "stop": "Stop and record"},
         "next": "Safe next step", "next_action": {"manual_prepare_next_stage_review": "Prepare the next stage for manual review", "collect_debrief_context": "Collect debrief context", "record_stop_decision": "Record the stop decision"},
         "boundary": "This debrief records structured coverage only. It keeps no raw text, contacts, calendars, or automatic preparation.",
@@ -117,7 +117,9 @@ def render_screen_debrief_html(
         "{{DATE}}": html.escape(str(value["observed_date"]), quote=True), "{{STAGE_LABEL}}": html.escape(labels["stage"]), "{{STAGE}}": html.escape(stage),
         "{{FACTS_LABEL}}": html.escape(labels["facts"]), "{{FACT_COUNT}}": str(len(value["facts_used"])), "{{UNKNOWN_LABEL}}": html.escape(labels["unknown"]),
         "{{UNKNOWN_COUNT}}": str(len(value["unknown_topics"])), "{{COVERAGE_LABEL}}": html.escape(labels["coverage"]), "{{COVERAGE}}": coverage_rows,
-        "{{DISCUSSED_COUNT}}": str(counts["discussed"]), "{{UNCLEAR_COUNT}}": str(counts["unclear"]), "{{DECISION}}": html.escape(labels["decision"][decision]),
+        "{{DISCUSSED_COUNT}}": str(counts["discussed"]), "{{NOT_DISCUSSED_COUNT}}": str(counts["not_discussed"]), "{{UNCLEAR_COUNT}}": str(counts["unclear"]),
+        "{{COVERAGE_COUNTS_LABEL}}": html.escape(labels["coverage_counts"]), "{{DISCUSSED_LABEL}}": html.escape(labels["discussed"]),
+        "{{NOT_DISCUSSED_LABEL}}": html.escape(labels["not_discussed"]), "{{UNCLEAR_LABEL}}": html.escape(labels["unclear"]), "{{DECISION}}": html.escape(labels["decision"][decision]),
         "{{NEXT_LABEL}}": html.escape(labels["next"]), "{{NEXT_ACTION}}": html.escape(labels["next_action"][action]), "{{BOUNDARY}}": html.escape(labels["boundary"]),
         "{{FOOTER}}": html.escape(labels["footer"]), "{{INLINE_CSS}}": css,
         "{{FLOW_RAIL_LABEL}}": html.escape(flow_label), "{{FLOW_RAIL}}": flow_rail,

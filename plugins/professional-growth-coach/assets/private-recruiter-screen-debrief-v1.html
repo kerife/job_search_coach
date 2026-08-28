@@ -37,7 +37,11 @@
     <section class="debrief-card" aria-labelledby="coverage-title">
       <h2 id="coverage-title">{{COVERAGE_LABEL}}</h2>
       <ol class="debrief-coverage-list">{{COVERAGE}}</ol>
-      <p class="debrief-counts">{{DISCUSSED_COUNT}} · {{UNCLEAR_COUNT}}</p>
+      <dl class="debrief-counts" aria-label="{{COVERAGE_COUNTS_LABEL}}">
+        <div><dt>{{DISCUSSED_LABEL}}</dt><dd>{{DISCUSSED_COUNT}}</dd></div>
+        <div><dt>{{NOT_DISCUSSED_LABEL}}</dt><dd>{{NOT_DISCUSSED_COUNT}}</dd></div>
+        <div><dt>{{UNCLEAR_LABEL}}</dt><dd>{{UNCLEAR_COUNT}}</dd></div>
+      </dl>
     </section>
     <footer class="debrief-footer">
       <p>{{BOUNDARY}}</p>

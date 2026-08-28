@@ -1904,6 +1904,12 @@ def validate_candidate_facing_text(text: str) -> list[str]:
     normalized_text = _normalized_guard_text(text)
     tokens = _guard_tokens(text)
     errors: list[str] = []
+    if re.search(r"<\s*/?\s*(?:script|svg|iframe|object|embed|style|form|link|base)\b", normalized_text, re.I):
+        errors.append("client report contains active HTML markup")
+    if re.search(r"\bon[a-z]+\s*=", normalized_text, re.I):
+        errors.append("client report contains active HTML event handler")
+    if re.search(r"\b(?:javascript|vbscript|data):", normalized_text, re.I):
+        errors.append("client report contains dangerous URL scheme")
     checks = (
         ("client report contains forbidden email-like value", _EMAIL),
         ("client report contains forbidden phone-like value", _PHONE),

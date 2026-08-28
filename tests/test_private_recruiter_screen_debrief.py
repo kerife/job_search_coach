@@ -198,6 +198,22 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
         self.assertEqual("manual_prepare_next_stage_review", artifact["handoff"]["next_safe_action"])
         self.assertEqual("continue_review", artifact["decision"])
 
+    def test_rendered_coverage_summary_labels_all_three_states(self) -> None:
+        debrief = valid_debrief()
+        debrief["coverage"][1]["status"] = "not_discussed"
+        debrief["coverage"][2]["status"] = "unclear"
+        debrief["unknown_topics"] = ["Decision criteria remain unknown."]
+        debrief["decision"] = "pause"
+        artifact = build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, debrief)
+        rendered = render_screen_debrief_html(artifact, RECEIPT, self.intake)
+        self.assertIn("Discutido", rendered)
+        self.assertIn("No discutido", rendered)
+        self.assertIn("Ambiguo", rendered)
+        self.assertNotIn('<p class="debrief-counts">1 · 1</p>', rendered)
+        self.assertIn("<dt>Discutido</dt><dd>1</dd>", rendered)
+        self.assertIn("<dt>No discutido</dt><dd>1</dd>", rendered)
+        self.assertIn("<dt>Ambiguo</dt><dd>1</dd>", rendered)
+
     def test_incomplete_debrief_never_prepares(self) -> None:
         debrief = valid_debrief()
         debrief["coverage"][1]["status"] = "unclear"

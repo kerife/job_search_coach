@@ -1824,6 +1824,18 @@ class LinkedInClientReportSafetyTests(unittest.TestCase):
                 self.assertTrue(errors)
                 self.assertNotIn(value, "\n".join(errors))
 
+    def test_candidate_facing_text_rejects_active_html_and_dangerous_url_schemes(self) -> None:
+        for value in (
+            "<script>alert(1)</script>",
+            '<svg onload="alert(1)"></svg>',
+            '<a href="javascript:alert(1)">open</a>',
+            "[open](data:text/html,<script>alert(1)</script>)",
+        ):
+            with self.subTest(value=value):
+                errors = validator.validate_candidate_facing_text(value)
+                self.assertTrue(errors)
+                self.assertNotIn(value, "\n".join(errors))
+
     def test_report_rejects_cross_candidate_identifiers_in_visible_and_normal_appendix_prose(self) -> None:
         foreign_bundle = self.bundle("scenario-b.json")
         tokens = (
