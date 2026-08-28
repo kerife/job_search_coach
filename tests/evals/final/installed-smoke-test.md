@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T14:23:27-06:00`
+release_timestamp: `2026-08-28T14:45:06-06:00`
 
-source_commit: `256ba5de0ce84741eff02a273e9de0f4abb38429`
+source_commit: `a862e4c7dc3a9c9ed04f33e09b67355be25ff321`
 
-source_tree: `68e9b084e75a882c5331a9ca3cdd7029ed12f5b3`
+source_tree: `51c48122cc5644c0bd74d0c4e2d52ae09a36aa0d`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828142221`
+installed_cache_version: `0.2.0+codex.20260828144038`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `3853c3302a28c8e5038007382ccd8b9dfeda57995f5971e505a4b12eba1dd1f0`
+normalized_source_cache_sha256: `7364d1fc1a489ae780c0a2deff070861288ca52068dfae4da85b4258ff82a7d3`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -147,6 +147,10 @@ installed_private_json_loader_hardening_smoke: `7/7 installed private loaders an
 installed_action_aligned_rail_smoke: `11/11 installed EN/ES outcome/checkpoint rails select closed action copy, stop renders a terminal recorded rail, dark surface and forced-colors hooks are present, and non-finite schema numbers are rejected`
 
 installed_continuity_rail_semantics_smoke: `2/2 installed EN/ES outcome/checkpoint rails expose current review surface wording, recorded -> pending -> blocked states, and one aria-current="step" pending safe step; terminal stop marks its recorded step current`
+
+installed_screen_debrief_coverage_summary_smoke: `1/1 installed EN/ES debrief renders expose Discussed/Not discussed/Unclear (or localized equivalents) with explicit counts; no unlabeled numeric pair`
+
+installed_linkedin_active_markup_smoke: `1/1 installed LinkedIn candidate-facing validator rejects active HTML, event-handler attributes, and javascript/data/vbscript URL schemes`
 
 installed_triage_handoff_version_compatibility_smoke: `2/2 installed v2 builder attestation and legacy v1 reader compatibility without projection snapshot`
 
