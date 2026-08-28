@@ -125,6 +125,17 @@ RECRUITER_INVITATION_INTENT = re.compile(
     r"\b(?:tengo|hay)\b[^.!?\n]{0,60}\b(?:entrevista|filtro|llamada|conversaci[oó]n)\b[^.!?\n]{0,40}\b(?:la\s+)?pr[oó]xima\s+semana\b)",
     re.I,
 )
+RECRUITER_INBOUND_INTENT = re.compile(
+    r"(?:\b(?:a\s+|the\s+)?recruiters?\b[^.!?\n]{0,80}\b(?:messaged|emailed|reached\s+out|contacted|wrote\s+to|sent\s+(?:me\s+)?(?:a\s+)?(?:message|note|email)|asked[^.!?\n]{0,30}\b(?:about|for)\s+(?:my\s+)?availability)\b|"
+    r"\b(?:me\s+(?:escribi[oó]|contact[oó]|mand[oó]\s+(?:un\s+)?mensaje|pregunt[oó]))\b[^.!?\n]{0,45}\b(?:recruiters?|reclutador(?:a|es)?)\b|"
+    r"\b(?:recruiters?|reclutador(?:a|es)?)\b[^.!?\n]{0,45}\bme\s+(?:escribi[oó]|contact[oó]|mand[oó]|pregunt[oó])\b)",
+    re.I,
+)
+RECRUITER_REPLY_REQUEST_INTENT = re.compile(
+    r"(?:\b(?:what\s+should\s+i\s+say(?:\s+back)?|say\s+back|help\s+me\s+(?:formulate|write|draft)\s+(?:a\s+)?response|formulate\s+(?:a\s+)?response|help\s+me\s+answer|get\s+back\s+to)\b|"
+    r"\b(?:qu[eé]\s+(?:le\s+)?digo|c[oó]mo\s+(?:le\s+)?respondo|ay[uú]dame\s+a\s+(?:contestar|responder)|formular\s+(?:una\s+)?respuesta)\b)",
+    re.I,
+)
 NEXT_STAGE_INTENT = re.compile(
     r"\b(?:next\s+stage|what(?:'s|\s+is)\s+next|what\s+comes\s+next|what\s+(?:do|should)\s+i\s+do\s+next|"
     r"next\s+step|move\s+on\s+to|advance\s+to|"
@@ -209,10 +220,18 @@ def _natural_recruiter_route(request: str) -> str | None:
     has_recruiter_invitation = bool(
         EXPLICIT_RECRUITER_INTENT.search(request) and RECRUITER_INVITATION_INTENT.search(request)
     )
+    has_recruiter_inbound = bool(
+        EXPLICIT_RECRUITER_INTENT.search(request) and RECRUITER_INBOUND_INTENT.search(request)
+    )
+    has_recruiter_reply_request = bool(
+        EXPLICIT_RECRUITER_INTENT.search(request) and RECRUITER_REPLY_REQUEST_INTENT.search(request)
+    )
     if (has_screen_context or has_recruiter_invitation) and (
         RECRUITER_INVITATION_INTENT.search(request)
         and REPLY_TRIAGE_ACTION_INTENT.search(request)
     ):
+        return "reply_triage"
+    if has_recruiter_inbound or has_recruiter_reply_request:
         return "reply_triage"
     if (has_screen_context or has_recruiter_invitation) and (
         RECRUITER_INVITATION_INTENT.search(request)

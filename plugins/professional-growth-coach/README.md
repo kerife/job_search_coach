@@ -63,6 +63,13 @@ identity-free summary plus one verified fact; no response or calendar action is
 performed. Follow-up wording (`follow up`, `follow-up`, `dar seguimiento`) also
 keeps the authorization requirement on fallback routes.
 
+Inbound recruiter contact is normalized before any reply drafting: `messaged`,
+`emailed`, `reached out`, “asked about my availability”, “what should I say?”,
+and Spanish equivalents such as “me escribió”, “me contactó”, “me preguntó” and
+“¿qué le digo?” enter artifact-free `recruiter_reply_triage` with an identity-free
+summary plus one verified fact. The route remains authorization-gated and
+performs no message, calendar, or scheduling action.
+
 The same preparation boundary covers explicit non-attendance such as “I never
 went to the recruiter interview”, “I didn’t go to the recruiter screen”,
 “Nunca fui a la entrevista con el reclutador”, “No fui”, “No me presenté”, and

@@ -50,6 +50,12 @@ that also asks to reply, accept, confirm, email, or follow up goes to the
 artifact-free `private_recruiter_reply_triage` intake, which requests only an
 identity-free summary and one verified fact and performs no external action.
 
+It also recognizes inbound contact before an interview is named (`messaged`,
+`emailed`, `reached out`, “what should I say?”, “me escribió”, “me contactó”,
+“¿qué le digo?”). These requests use the same artifact-free private reply-triage
+boundary, one verified fact, and an authorization gate; no message or calendar
+action is implied.
+
 Practice and triage routes now share that state vocabulary for their private
 handoffs, so users can scan evidence already recorded and the one safe next
 step without losing the read-only boundary.

@@ -74,8 +74,14 @@ def read_private_asset(
     """Read a UTF-8 asset after enforcing the package-local regular-file boundary."""
 
     del label
-    path = _regular_package_path(plugin_root, asset_path)
     root = Path(plugin_root)
+    try:
+        root_status = os.lstat(root)
+    except OSError as exc:
+        raise PrivateAssetError("renderer asset input must be a regular file") from exc
+    if not stat.S_ISDIR(root_status.st_mode):
+        raise PrivateAssetError("renderer asset input must be a regular file")
+    path = _regular_package_path(root, asset_path)
     try:
         relative = path.relative_to(root)
     except ValueError as exc:
@@ -97,6 +103,12 @@ def read_private_asset(
             os.fspath(root),
             os.O_RDONLY | directory_flag | no_follow,
         )
+        opened_root_status = os.fstat(current_fd)
+        if (opened_root_status.st_dev, opened_root_status.st_ino) != (
+            root_status.st_dev,
+            root_status.st_ino,
+        ):
+            raise PrivateAssetError("renderer asset input must be a regular file")
         for component in relative.parts[:-1]:
             next_fd = os.open(
                 component,

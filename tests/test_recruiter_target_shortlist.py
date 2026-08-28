@@ -653,6 +653,34 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertTrue(routed["authorization_required"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_inbound_recruiter_contact_without_interview_language_enters_private_triage(self) -> None:
+        cases = (
+            ("A recruiter messaged me about a role; help me reply.", "en"),
+            ("A recruiter emailed me about a role; help me answer.", "en"),
+            ("A recruiter reached out on LinkedIn; what should I say back?", "en"),
+            ("The recruiter asked about my availability; what should I say?", "en"),
+            ("Could you help me formulate a response to the recruiter?", "en"),
+            ("Me escribió un reclutador sobre una vacante; ayúdame a contestar.", "es"),
+            ("La reclutadora me contactó por LinkedIn; ¿qué le digo?", "es"),
+            ("Me preguntó el reclutador por mi disponibilidad.", "es"),
+        )
+        for request, locale in cases:
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+                self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
+                self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_recruiter_preparation_without_inbound_contact_stays_preparation_only(self) -> None:
+        routed = route_recruiter_request(
+            "Help me prepare for a recruiter interview next week.",
+            locale="en",
+            as_of_date="2026-08-28",
+        )
+        self.assertEqual("recruiter_target_screen_intake", routed["route_kind"])
+        self.assertFalse(routed["authorization_required"])
+
     def test_root_route_keeps_readiness_negation_after_completed_screen_in_next_stage_flow(self) -> None:
         routed = route_recruiter_request(
             "I had a recruiter screen but I am not yet ready for the next stage.",

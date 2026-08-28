@@ -35,6 +35,22 @@ class CompactReceiptAccessibilityTests(unittest.TestCase):
                     self.assertEqual(1, rail.count('aria-current="step"'))
                     self.assertIn('data-state="recorded" aria-current="step"', rail)
 
+    def test_pending_marker_is_visibly_distinct_in_normal_and_forced_colors(self) -> None:
+        for filename in (
+            "private-recruiter-conversion-outcome-v1.css",
+            "private-recruiter-followthrough-checkpoint-v1.css",
+        ):
+            with self.subTest(filename=filename):
+                css = (ROOT / "assets" / filename).read_text(encoding="utf-8")
+                self.assertRegex(
+                    css,
+                    r"\.continuity-step--pending::before\s*\{[^}]*background:\s*var\(--accent\);[^}]*border-color:\s*var\(--accent\);[^}]*color:\s*var\(--surface\);",
+                )
+                self.assertRegex(
+                    css,
+                    r"@media \(forced-colors: active\).*?\.continuity-step--pending::before\s*\{[^}]*background:\s*Highlight;[^}]*border-color:\s*CanvasText;[^}]*color:\s*HighlightText;",
+                )
+
 
 if __name__ == "__main__":
     unittest.main()

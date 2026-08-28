@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import sys
 import tempfile
 import unittest
@@ -125,6 +126,39 @@ class PrivateAssetBoundaryTests(unittest.TestCase):
                 renderer.TEMPLATE_PATH = original_template
 
         self.assertNotIn("EXTERNAL-ASSET-MARKER", str(context.exception))
+
+    def test_package_root_swap_after_preflight_fails_closed(self) -> None:
+        helper = load_helper()
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            root = base / "plugin"
+            root.mkdir()
+            (root / "assets").mkdir()
+            (root / "assets" / "asset.css").write_text("SAFE-ASSET", encoding="utf-8")
+            external = base / "external"
+            external.mkdir()
+            (external / "assets").mkdir()
+            (external / "assets" / "asset.css").write_text("EXTERNAL-ASSET-MARKER", encoding="utf-8")
+            original = helper._regular_package_path
+
+            def swap_root(plugin_root: Path, asset_path: Path) -> Path:
+                resolved = original(plugin_root, asset_path)
+                backup = base / "plugin-original"
+                os.rename(root, backup)
+                os.rename(external, root)
+                return resolved
+
+            helper._regular_package_path = swap_root
+            try:
+                with self.assertRaises(helper.PrivateAssetError):
+                    helper.read_private_asset(root, root / "assets" / "asset.css")
+            finally:
+                helper._regular_package_path = original
+
+            self.assertEqual(
+                "SAFE-ASSET",
+                (base / "plugin-original" / "assets" / "asset.css").read_text(encoding="utf-8"),
+            )
 
 
 if __name__ == "__main__":
