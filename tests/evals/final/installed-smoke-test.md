@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T21:20:53-06:00`
+release_timestamp: `2026-08-27T22:03:26-06:00`
 
-source_commit: `2cc25f7493cbc331ebabc0c8bc01f2706f65a3fe`
+source_commit: `380e6093ea6c7e099cc72c0774a484a3628091b8`
 
-source_tree: `3b3d2443515d9a56a7999124f2781229c6fa24fc`
+source_tree: `1d8fd6e077a5581207d753b644cff62ccdd4c28b`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827212053`
+installed_cache_version: `0.2.0+codex.20260827220326`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `172`
 
 installed_file_count: `172`
 
-normalized_source_cache_sha256: `34412b922cd7958f861aee7099d24a39fc7969a861fd6d92a6e77b89b2ee281d`
+normalized_source_cache_sha256: `05fa29aef9267de9e217e944a068c7611de5b3f9e542d5f144b83068cc1c0755`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -60,6 +60,8 @@ installed_market_cli_argument_privacy_smoke: `5/5 market validators and builder 
 installed_market_research_smoke: `2/2 complete/limited validator`
 
 installed_market_learning_smoke: `2/2 complete/limited builder and validator`
+installed_market_freshness_reconciliation_smoke: `2/2 v1/v2 publication-date freshness envelope rejects contradictory status/basis/reason combinations and preserves unknown-date fallback`
+installed_readiness_muted_contrast_smoke: `2/2 light/dark readiness copy uses the themed muted token with accessible contrast`
 installed_learning_decision_aggregation_smoke: `1/1 professional-gap apply_with_boundary/pause options require review_learning_options at the aggregate coach decision`
 installed_provider_freshness_smoke: `3/3 paid-learning decisions keep the inclusive 90-day boundary, demote 91-day active sources to consider with a refresh gate, and reject tampered recommended decisions`
 
