@@ -65,13 +65,21 @@ READING_PATH_SCRIPT = """
     }, { target: targets[0], distance: Number.POSITIVE_INFINITY }).target;
   };
   const updateActive = () => setActive(nearestTarget().id);
+  let frame = null;
+  const scheduleUpdate = () => {
+    if (frame !== null) return;
+    frame = window.requestAnimationFrame(() => {
+      frame = null;
+      updateActive();
+    });
+  };
   const initialHash = window.location.hash.slice(1);
   setActive(targets.some((target) => target.id === initialHash) ? initialHash : targets[0].id);
   links.forEach((link) => link.addEventListener('click', () => setActive(link.hash.slice(1))));
-  window.addEventListener('scroll', updateActive, { passive: true });
-  window.addEventListener('resize', updateActive);
+  window.addEventListener('scroll', scheduleUpdate, { passive: true });
+  window.addEventListener('resize', scheduleUpdate);
   if (!('IntersectionObserver' in window)) return;
-  const observer = new IntersectionObserver(updateActive, { rootMargin: '-10% 0px -55% 0px', threshold: [0, 1] });
+  const observer = new IntersectionObserver(scheduleUpdate, { rootMargin: '-10% 0px -55% 0px', threshold: [0, 1] });
   targets.forEach((target) => observer.observe(target));
 })();
 """.strip()

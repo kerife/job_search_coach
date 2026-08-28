@@ -447,7 +447,12 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
             "I have not had a recruiter interview yet; help me prepare.",
             "I had a recruiter interview scheduled for next week; help me prepare.",
             "I had not attended the recruiter screen; what should I do next?",
+            "I didn't attend the recruiter screen; what should I do next?",
+            "I did not complete the recruiter interview; help me prepare.",
             "No he tenido el filtro con el reclutador; ¿qué sigue?",
+            "No asistí al filtro con el reclutador; ¿qué sigue?",
+            "No tuve la entrevista con el reclutador; ayúdame a prepararme.",
+            "Todavía no terminé la entrevista con el reclutador; ¿qué hago después?",
         )
         for request in cases:
             routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-27")
