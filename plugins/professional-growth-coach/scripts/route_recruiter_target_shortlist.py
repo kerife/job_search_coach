@@ -41,7 +41,7 @@ INTENT = re.compile(
     r"\b(?:recruiter|recruiting|reclutador(?:a|es)?)\s+(?:screen|filtro|entrevista)\b|"
     r"\b(?:first\s+(?:recruiter\s+)?screen|primer\s+filtro(?:\s+con\s+(?:un\s+)?reclutador)?|"
     r"first\s+interview\s+with\s+(?:a\s+)?recruiters?|"
-    r"primera\s+entrevista\s+con\s+(?:un\s+)?reclutadores?)\b|"
+    r"primera\s+entrevista\s+con\s+(?:un\s+)?reclutador(?:a|es)?)\b|"
     r"\b(?:network|networking)\s+(?:with|con)\s+recruiters?\b|"
     r"\bred\s+profesional\s+con\s+reclutadores?\b|"
     r"\b(?:red|network)\s+de\s+(?:recruiters?|reclutadores?)\b)",
@@ -229,7 +229,7 @@ def route_recruiter_request(
     try:
         artifact = BUILDER.build_shortlist(locale, as_of_date, copy.deepcopy(dict(network_plan)), copy.deepcopy(list(targets)))
         rendered_html = RENDERER.render_shortlist_html(artifact)
-    except (TypeError, ValueError):
+    except (RecursionError, TypeError, ValueError):
         return {
             "route_kind": "recruiter_target_shortlist",
             "case_state": "needs_intake",

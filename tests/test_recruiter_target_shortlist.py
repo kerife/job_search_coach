@@ -289,6 +289,7 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         for request in (
             "How do I network with recruiters?",
             "Prepare me for a first interview with a recruiter.",
+            "Necesito prepararme para mi primera entrevista con un reclutador.",
             "Quiero hacer networking con recruiters.",
             "Quiero ampliar mi red profesional con reclutadores.",
         ):
@@ -313,6 +314,23 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual("needs_intake", routed["case_state"])
                 self.assertEqual("ask_one_intake_question", routed["next_action"])
                 self.assertIsNone(routed["artifact"])
+
+    def test_root_route_rejects_recursively_nested_plan_without_traceback(self) -> None:
+        nested: dict[str, object] = {}
+        for _ in range(500):
+            nested = {"nested": nested}
+        plan = valid_plan()
+        plan["nested"] = nested
+        routed = route_recruiter_request(
+            "Necesito prepararme para mi primera entrevista con un reclutador.",
+            locale="es",
+            as_of_date="2026-08-27",
+            network_plan=plan,
+            targets=valid_targets(),
+        )
+        self.assertEqual("recruiter_target_shortlist", routed["route_kind"])
+        self.assertEqual("needs_intake", routed["case_state"])
+        self.assertIsNone(routed["artifact"])
 
     def test_renderer_rejects_symlinked_output_parent(self) -> None:
         value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
