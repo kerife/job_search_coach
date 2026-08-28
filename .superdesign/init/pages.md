@@ -94,6 +94,17 @@ Dependencies:
 - `plugins/professional-growth-coach/scripts/validate_private_recruiter_conversion_outcome.py`
 - `plugins/professional-growth-coach/assets/private-recruiter-conversion-outcome-v1.html`
 - `plugins/professional-growth-coach/assets/private-recruiter-conversion-outcome-v1.css`
+
+The conversion outcome is a compact, candidate-supplied observed-event receipt. It validates the event and evidence count, replaces every template token, and writes an offline artifact; the default CLI receipt is path-free and `--include-artifact-path` is an explicit trusted-caller opt-in.
+
+## /recruiter-target-shortlist (offline artifact)
+
+Entry: `plugins/professional-growth-coach/scripts/render_recruiter_target_shortlist.py`
+
+Dependencies:
+
+- `plugins/professional-growth-coach/scripts/build_recruiter_target_shortlist.py`
+- `plugins/professional-growth-coach/scripts/validate_recruiter_target_shortlist.py`
 - `plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.html`
 - `plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css`
 
@@ -137,8 +148,6 @@ Dependencies:
 - `plugins/professional-growth-coach/assets/private-recruiter-screen-debrief-v1.css`
 
 The debrief is a private post-screen bridge bound to a completed `screen_attended` checkpoint and a ready target-specific intake. `route_recruiter_screen_debrief_intake` first returns an artifact-free prompt for requirement coverage, scope, and team context; once supplied, the debrief records exactly three coverage topics, bounded unknown counts, supported fact counts, and a manual decision. Complete coverage exposes `ready` with `manual_prepare_next_stage_review`; incomplete coverage exposes `needs_intake` for context collection; stop decisions expose terminal `stopped` with recording only. Every validated state returns the private in-memory HTML handoff, while the renderer hides all internal IDs and notes and performs no follow-up action.
-
-The renderer validates a candidate-supplied outcome, computes the localized evidence-count label, and writes a compact offline receipt. The default CLI receipt is path-free; `--include-artifact-path` is an explicit trusted-caller opt-in.
 
 ## /private-recruiter-next-stage-review (offline artifact)
 

@@ -27,6 +27,7 @@ The recruiter-networking flow includes a private `recruiter-target-shortlist-v1`
 The shortlist privacy boundary also rejects phone-like strings, credential or bearer-token markers, and generic local filesystem paths in every bounded text field. This keeps private contact or machine material out of both the JSON artifact and its in-memory HTML review surface, even when it is supplied as `context_source`.
 
 The same boundary rejects Unicode control and format characters (including zero-width, bidi, NUL, and newline controls) in diagnostic field names and dossier prose, preventing hidden or injected material from reaching validation output or local HTML.
+Identity checks also inspect the NFKC-normalized form of prose, so compatibility characters cannot disguise a bare person name while the original candidate text remains unchanged for rendering.
 
 Explicit requests to expand a network or prepare for a first recruiter screen route through `scripts/route_recruiter_target_shortlist.py`, including natural English/Spanish phrasing such as “network with recruiters” and “primera entrevista con un reclutador”. With three to six supplied targets, the route runs builder → validator → renderer and returns the validated artifact plus private in-memory HTML with `next_action=review_recruiter_target_shortlist`; without enough context or with an invalid target container it asks one bounded intake question that names the minimum plan (goal/segments, 3–5 manual queries, weekly time, stop condition, and proof theme). Recursively nested or otherwise malformed in-memory plans take the same artifact-free intake path instead of surfacing a traceback. It does not infer recipients. The rendered card localizes the next safe action and summarizes the four decision counts before the manual `recruiter_target_decision_gate` handoff.
 
@@ -166,6 +167,11 @@ without a traceback.
 Renderer modules can also be imported directly from an installed checkout;
 sibling safety helpers resolve relative to the module when no `PYTHONPATH` is
 configured.
+
+The repository-level discovery command is part of the release contract. The
+decision-gate tests load the schema helper by isolated module spec rather than
+mutating the test search path, so same-named root and plugin tests remain
+discoverable in one pass.
 
 ## Starter prompts
 

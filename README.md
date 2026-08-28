@@ -43,6 +43,10 @@ python3 -B -m unittest discover -s plugins/professional-growth-coach/tests -p 't
 python3 -B -m unittest discover -s tests -p 'test*.py' -q
 ```
 
+The root discovery pass is intentional: it exercises the repository's
+cross-plugin contracts without allowing a helper import to shadow a
+same-named root test.
+
 The official plugin validator additionally requires the `PyYAML` package in the
 active Python environment. Do not install dependencies implicitly in release
 automation; install them explicitly when setting up a development environment.

@@ -642,10 +642,11 @@ def _continuity_rail(
         steps = labels["steps"]
         rail_class = "continuity-rail"
     steps_html = "".join(
-        f'<li class="continuity-step continuity-step--{state}" data-stage="{stage}" data-state="{state}"{(" aria-current=\"step\"" if state in {"pending", "blocked"} else "")}>'
+        f'<li class="continuity-step continuity-step--{state}" data-stage="{stage}" data-state="{state}"{aria_current}>'
         f'<span class="continuity-step-state">{labels["states"][state]}</span>'
         f'<strong>{title}</strong><p>{description}</p></li>'
         for stage, state, title, description in steps
+        for aria_current in (" aria-current=\"step\"" if state in {"pending", "blocked"} else "",)
     )
     return (
         f'<section class="{rail_class}" aria-labelledby="continuity-rail-title">'

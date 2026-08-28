@@ -275,9 +275,10 @@ def _validate_prose_safety(value: Mapping[str, object], errors: list[str]) -> No
     strings = _walk_strings(value)
     if any(_contains_unsupported_script(text) for text in strings):
         errors.append("session contains forbidden unsupported_script prose")
-    if any(_is_bare_unlabelled_identity(text) for text in strings):
+    normalized_strings = tuple(unicodedata.normalize("NFKC", text) for text in strings)
+    if any(_is_bare_unlabelled_identity(text) for text in normalized_strings):
         errors.append("session contains forbidden unlabelled_identity prose")
-    text = "\n".join(strings)
+    text = "\n".join(normalized_strings)
     for category, pattern in FORBIDDEN_PROSE.items():
         if pattern.search(text):
             errors.append(f"session contains forbidden {category} prose")

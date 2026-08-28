@@ -154,10 +154,11 @@ def _evidence_count_copy(locale: str, count: int) -> str:
 def _action_rail(locale: str, action: str, *, terminal: bool = False) -> str:
     labels = ACTION_RAIL_COPY[locale][action]
     steps = "".join(
-        f'<li class="continuity-step continuity-step--{state}" data-stage="{stage}" data-state="{state}"{(" aria-current=\"step\"" if state == "pending" else "")}>'
+        f'<li class="continuity-step continuity-step--{state}" data-stage="{stage}" data-state="{state}"{aria_current}>'
         f'<span class="continuity-step-state">{RAIL_STATES[locale][state]}</span>'
         f'<strong>{html.escape(title)}</strong><p>{html.escape(description)}</p></li>'
         for stage, state, title, description in labels["steps"]
+        for aria_current in (" aria-current=\"step\"" if state == "pending" else "",)
     )
     terminal_attribute = ' data-terminal="true"' if terminal else ''
     return (

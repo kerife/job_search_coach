@@ -750,8 +750,9 @@ def _render_main(dossier: Mapping[str, object], locale: str, market_dossier: Map
     projected = COMPAT.project_v2_to_v1(BASE._mapping(_plain(dossier)))
     labels = COPY[locale]
     reading_links = "".join(
-        f'<li><a href="#{html.escape(target, quote=True)}"{(" aria-current=\"location\"" if index == 0 else "")}>{html.escape(label, quote=True)}</a></li>'
+        f'<li><a href="#{html.escape(target, quote=True)}"{aria_current}>{html.escape(label, quote=True)}</a></li>'
         for index, (target, label) in enumerate(labels["reading_path_items"])
+        for aria_current in (" aria-current=\"location\"" if index == 0 else "",)
     )
     reading_path = (
         f'<nav class="reading-path span-12" aria-label="{html.escape(labels["reading_path_aria"], quote=True)}">'

@@ -572,6 +572,11 @@ class PrivateRecruiterReplyTriageContractTests(unittest.TestCase):
                     )
                     self.assertNotIn(sentinel, result.stderr)
 
+    def test_rejects_nfkc_compatibility_identity_without_echoing_it(self) -> None:
+        triage = copy.deepcopy(self.fixtures["clarify-en.json"])
+        triage["safe_context"]["summary"] = "𝐀𝐥𝐢𝐜𝐞 𝐁𝐨𝐛"
+        self.assert_rejected(triage, "session contains forbidden unlabelled_identity prose")
+
     def test_rejects_bare_person_names_in_every_prose_field_without_echoing(self) -> None:
         cases = (
             ("clarify-en.json", "John Smith"),

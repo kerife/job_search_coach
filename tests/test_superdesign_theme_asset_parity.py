@@ -56,6 +56,18 @@ EXPECTED_LAYOUT_SOURCES = {
     f"plugins/professional-growth-coach/assets/{name}"
     for name in HTML_ASSET_NAMES
 }
+EXPECTED_PAGE_DEPENDENCIES = {
+    "/executive-career-dossier": ("render_executive_career_dossier.py", "executive-career-dossier-v1.html", "executive-career-dossier-v1.css"),
+    "/recruiter-practice-session": ("render_recruiter_practice_session.py", "recruiter-practice-session-v1.html", "recruiter-practice-session-v1.css"),
+    "/private-recruiter-reply-triage": ("render_private_recruiter_reply_triage.py", "private-recruiter-reply-triage-v1.html", "private-recruiter-reply-triage-v1.css"),
+    "/private-recruiter-followthrough-checkpoint": ("render_private_recruiter_followthrough_checkpoint.py", "private-recruiter-followthrough-checkpoint-v1.html", "private-recruiter-followthrough-checkpoint-v1.css"),
+    "/private-recruiter-conversion-outcome": ("render_private_recruiter_conversion_outcome.py", "private-recruiter-conversion-outcome-v1.html", "private-recruiter-conversion-outcome-v1.css"),
+    "/recruiter-target-shortlist": ("render_recruiter_target_shortlist.py", "recruiter-target-shortlist-v1.html", "recruiter-target-shortlist-v1.css"),
+    "/recruiter-target-decision-gate": ("render_recruiter_target_decision_gate.py", "recruiter-target-decision-gate-v1.html", "recruiter-target-decision-gate-v1.css"),
+    "/recruiter-target-screen-intake": ("render_recruiter_target_screen_intake.py", "recruiter-target-screen-intake-v1.html", "recruiter-target-screen-intake-v1.css"),
+    "/private-recruiter-screen-debrief": ("render_private_recruiter_screen_debrief.py", "private-recruiter-screen-debrief-v1.html", "private-recruiter-screen-debrief-v1.css"),
+    "/private-recruiter-next-stage-review": ("render_private_recruiter_next_stage_review.py", "private-recruiter-next-stage-review-v1.html", "private-recruiter-next-stage-review-v1.css"),
+}
 
 
 def _theme_asset_names() -> set[str]:
@@ -88,7 +100,36 @@ def _layout_sources() -> dict[str, bytes]:
     return {source: (dump + "\n").encode("utf-8") for source, dump in sources}
 
 
+def _page_sections() -> dict[str, str]:
+    text = (ROOT / ".superdesign" / "init" / "pages.md").read_text(encoding="utf-8")
+    matches = list(re.finditer(r"^## (/[a-z0-9-]+) \([^\n]+\)$", text, re.MULTILINE))
+    return {
+        match.group(1): text[match.end(): next_match.start() if next_match else len(text)]
+        for match, next_match in zip(matches, matches[1:] + [None])
+    }
+
+
 class SuperdesignThemeAssetParityTests(unittest.TestCase):
+    def test_page_dependency_map_is_one_to_one_with_routes_and_assets(self):
+        routes = {
+            route.strip("`")
+            for route in re.findall(
+                r"^\| (`?/[a-z0-9-]+`?) \|",
+                (ROOT / ".superdesign" / "init" / "routes.md").read_text(encoding="utf-8"),
+                re.MULTILINE,
+            )
+        }
+        sections = _page_sections()
+        self.assertEqual(set(EXPECTED_PAGE_DEPENDENCIES), routes)
+        self.assertEqual(set(EXPECTED_PAGE_DEPENDENCIES), set(sections))
+        owners: dict[str, str] = {}
+        for route, dependencies in EXPECTED_PAGE_DEPENDENCIES.items():
+            section = sections[route]
+            for dependency in dependencies:
+                self.assertIn(dependency, section, route)
+                self.assertEqual(route, owners.setdefault(dependency, route), dependency)
+        self.assertEqual(len(owners), len(EXPECTED_PAGE_DEPENDENCIES) * 3)
+
     def test_superdesign_docs_describe_current_asset_inventory_and_tokens(self):
         components = COMPONENTS.read_text(encoding="utf-8")
         theme = THEME.read_text(encoding="utf-8")

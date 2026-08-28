@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import copy
 import datetime as dt
+import importlib.util
 import json
+import os
+import subprocess
 import tempfile
 import sys
 import unittest
@@ -25,13 +28,38 @@ from route_recruiter_target_shortlist import (  # noqa: E402
     route_recruiter_screen_debrief,
     route_recruiter_screen_intake,
 )
-sys.path.insert(0, str(ROOT / "plugins" / "professional-growth-coach" / "tests"))
-from validate_private_schema_conformance import validate_schema_instance  # noqa: E402
+_schema_spec = importlib.util.spec_from_file_location(
+    "decision_gate_schema_conformance",
+    ROOT / "plugins" / "professional-growth-coach" / "tests" / "validate_private_schema_conformance.py",
+)
+if _schema_spec is None or _schema_spec.loader is None:
+    raise RuntimeError("private schema conformance helper unavailable")
+_schema_module = importlib.util.module_from_spec(_schema_spec)
+_schema_spec.loader.exec_module(_schema_module)
+validate_schema_instance = _schema_module.validate_schema_instance
 
 from tests.test_recruiter_target_shortlist import valid_plan, valid_targets  # noqa: E402
 
 
 class RecruiterTargetDecisionGateTests(unittest.TestCase):
+    def test_root_discovery_keeps_same_named_private_test_in_root_suite(self) -> None:
+        probe = (
+            "import importlib.util, sys; "
+            "sys.path.insert(0, 'tests'); "
+            "import test_recruiter_target_decision_gate; "
+            "spec = importlib.util.find_spec('test_private_recruiter_reply_triage'); "
+            "assert spec and spec.origin and spec.origin.endswith('/tests/test_private_recruiter_reply_triage.py'), spec"
+        )
+        result = subprocess.run(
+            [sys.executable, "-B", "-c", probe],
+            cwd=ROOT,
+            env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"},
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
+
     def shortlist(self) -> dict[str, object]:
         return build_shortlist("es", "2026-08-27", valid_plan(), valid_targets())
 
