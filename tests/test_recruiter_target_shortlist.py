@@ -782,6 +782,40 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertTrue(routed["authorization_required"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_common_recruiter_contact_and_schedule_variants_enter_private_triage(self) -> None:
+        for request, locale in (
+            ("I got a message from a recruiter", "en"),
+            ("A recruiter sent me a LinkedIn message", "en"),
+            ("I received an email from the recruiter", "en"),
+            ("Recruiter asked me to choose a slot", "en"),
+            ("Recruiter asked to set up a call", "en"),
+            ("Recruiter shared a few times", "en"),
+            ("La reclutadora me envió horarios", "es"),
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+                self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
+                self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_post_screen_conversation_and_interviewed_variants_preserve_precedence(self) -> None:
+        for request, locale, expected_route, authorization_required in (
+            ("Should I follow up after talking with the recruiter?", "en", "private_recruiter_screen_debrief", True),
+            ("I spoke to recruiter and want to send a thank-you", "en", "private_recruiter_screen_debrief", True),
+            ("Después de mi llamada con el recruiter no recibí respuesta", "es", "private_recruiter_screen_debrief", False),
+            ("I interviewed with the recruiter and have not heard back", "en", "private_recruiter_screen_debrief", False),
+            ("What comes after the recruiter call?", "en", "private_recruiter_next_stage_review", False),
+            ("I passed my recruiter interview, what next?", "en", "private_recruiter_next_stage_review", False),
+            ("I need to get ready for my recruiter phone screen", "en", "recruiter_target_screen_intake", False),
+            ("I haven't had the recruiter phone screen yet", "en", "recruiter_target_screen_intake", False),
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+                self.assertEqual(expected_route, routed["route_kind"])
+                self.assertEqual(authorization_required, routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
     def test_recruiter_preparation_without_inbound_contact_stays_preparation_only(self) -> None:
         routed = route_recruiter_request(
             "Help me prepare for a recruiter interview next week.",

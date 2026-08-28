@@ -75,11 +75,12 @@ Keep one `candidate_id` per case. Coach mode must split combined requests into s
 
 The plugin can prepare drafts, plans, rubrics, and analyses. It must ask again before editing LinkedIn, publishing content, sending messages, applying to jobs, uploading files, or sharing candidate work with a third party.
 
-Natural recruiter routing covers post-screen no-response and speaking variants,
-plus inbound slot requests, proposed times, and received recruiter email or
-LinkedIn messages. The repository privacy gate normalizes bounded URL/JSON
-encodings and HTML entities, and fails closed when a required marker is a
-symlink or otherwise unreadable.
+Natural recruiter routing covers post-screen no-response, talking/interviewed,
+and progression variants, plus inbound slot/setup requests, proposed times, and
+received recruiter email or LinkedIn messages. The repository privacy gate
+normalizes bounded URL/JSON encodings and HTML entities, marks deeply nested
+JSON malformed without crashing, and fails closed when a required marker or
+marker directory is a symlink or otherwise unreadable.
 
 ### Private JSON boundary
 

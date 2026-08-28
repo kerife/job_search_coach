@@ -731,19 +731,32 @@ def scan_text(path: Path, text: str) -> Counter[str]:
     parsed_json: object | None = None
     dossier_candidate: object | None = None
     has_duplicate_json_key = False
+    malformed_json = False
     market_artifact_safe = False
     if path.suffix.lower() == ".json":
         try:
             parsed_json = json.loads(text)
-        except (json.JSONDecodeError, ValueError):
+        except (json.JSONDecodeError, ValueError, RecursionError):
             parsed_json = None
+            malformed_json = True
         try:
             dossier_candidate = json.loads(text, object_pairs_hook=_unique_json_object)
         except _DuplicateJsonKeyError:
             has_duplicate_json_key = True
             dossier_candidate = None
-        except (json.JSONDecodeError, ValueError):
+        except (json.JSONDecodeError, ValueError, RecursionError):
             dossier_candidate = None
+            malformed_json = True
+        if malformed_json:
+            parsed_json = None
+        if parsed_json is not None:
+            try:
+                json_is_bounded = _json_depth_is_bounded(parsed_json, 12)
+            except RecursionError:
+                json_is_bounded = False
+            if not json_is_bounded:
+                parsed_json = None
+                malformed_json = True
         if parsed_json is not None:
             safe_scan_value = _safe_dossier_scan_value(text, dossier_candidate)
             if safe_scan_value is None:
@@ -781,6 +794,8 @@ def scan_text(path: Path, text: str) -> Counter[str]:
                 )
     corpus = "\n".join(corpus_parts)
     violations: Counter[str] = Counter()
+    if malformed_json:
+        violations["MALFORMED_JSON"] = 1
     if has_duplicate_json_key:
         violations["DUPLICATE_JSON_KEY"] = 1
     for rule_id, pattern in RULES.items():
@@ -1039,9 +1054,23 @@ def scan_paths(
 def required_marker_paths(repo_root: Path) -> tuple[Path, ...]:
     paths = list(MARKER_PATHS)
     for directory in MARKER_DIRECTORIES:
+        absolute = repo_root / directory
+        try:
+            status = absolute.lstat()
+        except OSError:
+            paths.append(directory)
+            continue
+        if not stat.S_ISDIR(status.st_mode) or stat.S_ISLNK(status.st_mode):
+            paths.append(directory)
+            continue
+        try:
+            entries = sorted(absolute.iterdir())
+        except OSError:
+            paths.append(directory)
+            continue
         paths.extend(
             path.relative_to(repo_root)
-            for path in sorted((repo_root / directory).iterdir())
+            for path in entries
             if _is_regular_non_symlink(path) and path.suffix.lower() in {".json", ".md"}
         )
     return tuple(paths)
@@ -1080,8 +1109,8 @@ def main(argv: list[str] | None = None) -> int:
         if path == Path("tests/evals/with-skill/linkedin.md"):
             schema_path = repo_root / "tests/fixtures/linkedin-closed-vocabulary.schema.json"
             try:
-                schema = json.loads(schema_path.read_text(encoding="utf-8"))
-            except (OSError, json.JSONDecodeError):
+                schema = json.loads(_read_regular_text(schema_path))
+            except (OSError, UnicodeError, json.JSONDecodeError, RecursionError):
                 failures[(path, "CLOSED_VOCABULARY_SCHEMA")] += 1
             else:
                 for rule_id in validate_closed_vocabulary_artifact(path, text, schema):

@@ -306,6 +306,20 @@ class SuperdesignThemeAssetParityTests(unittest.TestCase):
                     r"\.continuity-step--blocked\s*\{[^}]*border-left:\s*\.25rem dashed CanvasText;",
                 )
 
+    def test_target_shortlist_decision_rails_use_left_border_styles(self):
+        css = (ASSETS / "recruiter-target-shortlist-v1.css").read_text(encoding="utf-8")
+        expected = {
+            "clarify": "dashed",
+            "pause": "double",
+            "stop": "dotted",
+        }
+        for state, style in expected.items():
+            with self.subTest(state=state):
+                self.assertRegex(
+                    css,
+                    rf"\.target-shortlist-card--{state}\s*\{{[^}}]*border-left-style:\s*{style};",
+                )
+
     def test_theme_dump_set_covers_every_shipped_css_asset(self):
         self.assertEqual(
             _theme_asset_names(),

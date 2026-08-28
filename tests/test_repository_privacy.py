@@ -642,6 +642,26 @@ class RepositoryPrivacyTests(unittest.TestCase):
                 self.assertEqual(1, scanner.main(["--repo-root", str(root)]))
             self.assertIn("SCAN_INPUT_UNREADABLE", output.getvalue())
 
+    def test_scanner_marks_deeply_nested_json_as_malformed_without_crashing(self) -> None:
+        scanner = load_scanner()
+        payload = "[" * 1000 + "]" * 1000
+        violations = scanner.scan_text(Path("synthetic.json"), payload)
+        self.assertEqual(1, violations["MALFORMED_JSON"])
+
+    def test_required_marker_paths_rejects_symlinked_or_missing_directories(self) -> None:
+        scanner = load_scanner()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            outside = root / "outside"
+            outside.mkdir()
+            (outside / "marker.md").write_text("outside", encoding="utf-8")
+            marker_dir = root / "markers"
+            marker_dir.symlink_to(outside, target_is_directory=True)
+            with mock.patch.object(scanner, "MARKER_PATHS", ()), mock.patch.object(
+                scanner, "MARKER_DIRECTORIES", (Path("markers"), Path("missing"))
+            ):
+                self.assertEqual((Path("markers"), Path("missing")), scanner.required_marker_paths(root))
+
     def test_dossier_source_inventory_uses_non_overbroad_source_scanning(self) -> None:
         scanner = load_scanner()
         for path in DOSSIER_SOURCE_INVENTORY_PATHS:

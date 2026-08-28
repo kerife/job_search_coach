@@ -64,12 +64,13 @@ ahora sigue`) uses the same artifact-free next-stage review surface and remains
 manual-only.
 
 Post-screen follow-through (`follow up`, `thank-you`, `no response`, `has not
-replied`, `never replied`, `speaking to`, `ghosted`, `dar seguimiento`,
-`agradecimiento`, `no respondió`, `nunca respondió`, `hablar con`, `me dejaron
-en visto`) with recruiter/screen context uses the artifact-free debrief intake;
-response requests remain reply triage and future/not-attended screens remain
-preparation intake. Inbound triage also covers slot requests, shared times, and
-received recruiter email/LinkedIn messages. Screen-intake HTML shows
+replied`, `never replied`, `speaking to`, `talking with`, `interviewed`,
+`ghosted`, `dar seguimiento`, `agradecimiento`, `no respondió`, `nunca
+respondió`, `no recibí respuesta`, `hablar con`, `me dejaron en visto`) with
+recruiter/screen context uses the artifact-free debrief intake; response
+requests remain reply triage and future/not-attended screens remain preparation
+intake. Inbound triage also covers slot/setup requests, choose-a-slot wording,
+shared times, and received recruiter email/LinkedIn messages. Screen-intake HTML shows
 requirement prose without internal `V-###` keys, while validated source data
 retains those keys for traceability.
 

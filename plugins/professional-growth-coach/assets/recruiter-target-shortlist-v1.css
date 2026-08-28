@@ -57,9 +57,9 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
 .target-shortlist-item { margin: 0; padding: 0; }
 .target-shortlist-card { position: relative; border-left: .45rem solid var(--line); }
 .target-shortlist-card--advance { border-left-color: var(--advance); }
-.target-shortlist-card--clarify { border-left-color: var(--clarify); border-style: solid dashed solid solid; }
-.target-shortlist-card--pause { border-left-color: var(--pause); border-style: double solid solid solid; }
-.target-shortlist-card--stop { border-left-color: var(--stop); border-style: dotted solid solid solid; }
+.target-shortlist-card--clarify { border-left-color: var(--clarify); border-left-style: dashed; }
+.target-shortlist-card--pause { border-left-color: var(--pause); border-left-style: double; }
+.target-shortlist-card--stop { border-left-color: var(--stop); border-left-style: dotted; }
 .target-shortlist-index { margin-bottom: .2rem; color: var(--muted); font-size: .75rem; font-weight: 750; }
 .target-shortlist-card h2 { margin-bottom: .35rem; font-size: 1.35rem; }
 .target-shortlist-status { margin-bottom: 1rem; color: var(--muted); }
