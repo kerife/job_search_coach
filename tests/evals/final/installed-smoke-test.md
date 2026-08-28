@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T08:06:53-06:00`
+release_timestamp: `2026-08-28T08:38:14-06:00`
 
-source_commit: `eda07d37c186fcbb0db1efa5603f67703bb6bab1`
+source_commit: `4237563efec0264f87f49b76f1f08e391ea7b73a`
 
-source_tree: `4d2cccb404a156b04fa33a22c718db53fc2e987d`
+source_tree: `db2327a97b2681eb02c23b881f23135f0f6d3a27`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828180000`
+installed_cache_version: `0.2.0+codex.20260828143650`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `12caba3a2ed417bd4d9a05c42b41600516db10450dcc38a18a3e7df37f181f68`
+normalized_source_cache_sha256: `406275f65292f47525c63484401ba448dd7140cfc012c0cf4d9cc0829ca105c3`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -48,6 +48,8 @@ installed_renderer_smokes: `6/6 triage validator/renderer fixtures`
 installed_reading_path_smoke: `6/6 localized fragment links; aria-current fallback; nearest-target IntersectionObserver enhancement; rAF-guarded scroll/resize/observer updates; tablet and mobile sticky-rail offsets; print/mobile offsets`
 
 installed_recruiter_pre_screen_boundary_smoke: `9/9 future and explicit EN/ES non-completion phrases return artifact-free recruiter_target_screen_intake`
+
+installed_recruiter_natural_language_smoke: `5/5 defined-article interviews, future dates, readiness negation, and authorization synonyms preserve bounded routing`
 
 installed_dossier_v2_smoke: `4/4 EN/ES validator and renderer`
 
@@ -142,7 +144,7 @@ installed_private_json_loader_hardening_smoke: `7/7 installed private loaders an
 
 installed_action_aligned_rail_smoke: `11/11 installed EN/ES outcome/checkpoint rails select closed action copy, stop renders a terminal recorded rail, dark surface and forced-colors hooks are present, and non-finite schema numbers are rejected`
 
-installed_continuity_rail_semantics_smoke: `2/2 installed EN/ES outcome/checkpoint rails expose recorded -> pending -> blocked states with one aria-current="step" pending safe step; terminal stop marks its recorded step current`
+installed_continuity_rail_semantics_smoke: `2/2 installed EN/ES outcome/checkpoint rails expose current review surface wording, recorded -> pending -> blocked states, and one aria-current="step" pending safe step; terminal stop marks its recorded step current`
 
 installed_triage_handoff_version_compatibility_smoke: `2/2 installed v2 builder attestation and legacy v1 reader compatibility without projection snapshot`
 
