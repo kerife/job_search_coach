@@ -262,6 +262,7 @@ class PrivateRecruiterOutcomeExportTests(unittest.TestCase):
             parent.mkdir()
             external = root / "external"
             external.mkdir()
+            (external / "output").mkdir()
             output = parent / "outcomes.csv"
             original_parent = exporter._parent_is_safe
 
@@ -281,7 +282,38 @@ class PrivateRecruiterOutcomeExportTests(unittest.TestCase):
                         as_of="2026-08-08",
                         output=output,
                     )
-            self.assertFalse((external / "outcomes.csv").exists())
+            self.assertFalse((external / "output" / "outcomes.csv").exists())
+
+    def test_atomic_write_fails_closed_when_intermediate_parent_changes_after_validation(self) -> None:
+        receipt = _receipt("reply-received-en.json")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            intermediate = root / "nested"
+            parent = intermediate / "output"
+            parent.mkdir(parents=True)
+            external = root / "external"
+            external.mkdir()
+            (external / "output").mkdir()
+            output = parent / "outcomes.csv"
+            original_parent = exporter._parent_is_safe
+
+            def swap_intermediate(path: Path) -> None:
+                original_parent(path)
+                backup = root / "nested-real"
+                intermediate.rename(backup)
+                os.symlink(external, intermediate, target_is_directory=True)
+
+            with mock.patch.object(exporter, "_parent_is_safe", side_effect=swap_intermediate):
+                with self.assertRaisesRegex(ExportError, "output parent is unavailable"):
+                    write_export(
+                        receipt,
+                        candidate_id="candidate-001",
+                        application_id="app-001",
+                        application_date="2026-08-01",
+                        as_of="2026-08-08",
+                        output=output,
+                    )
+            self.assertFalse((external / "output" / "outcomes.csv").exists())
 
 
 if __name__ == "__main__":

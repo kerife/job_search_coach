@@ -179,15 +179,29 @@ def _parent_is_safe(parent: Path) -> None:
         current = candidate
 
 
+def _open_safe_directory(parent: Path) -> int:
+    """Open every absolute parent component without following symlinks."""
+    flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
+    descriptor = os.open(parent.anchor or os.sep, flags)
+    try:
+        for component in parent.parts[1:]:
+            next_descriptor = os.open(component, flags, dir_fd=descriptor)
+            os.close(descriptor)
+            descriptor = next_descriptor
+    except OSError:
+        os.close(descriptor)
+        raise
+    return descriptor
+
+
 def _atomic_write(output: Path, content: bytes, *, force: bool) -> None:
     target = _safe_absolute(output)
     parent = target.parent
     if not parent.is_absolute():
         raise ExportError("output parent is unavailable")
     _parent_is_safe(parent)
-    directory_flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
     try:
-        parent_descriptor = os.open(parent, directory_flags)
+        parent_descriptor = _open_safe_directory(parent)
     except OSError as error:
         raise ExportError("output parent is unavailable") from error
     temporary = None

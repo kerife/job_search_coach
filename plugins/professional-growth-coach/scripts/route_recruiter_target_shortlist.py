@@ -80,8 +80,13 @@ SCREEN_NOT_COMPLETED = re.compile(
     r"nunca\s+(?:he\s+)?(?:tenido|tuv[eé]|asist[ií]|asistido|complet[eé]|completado|termin[eé]|terminado|atend[ií]|atendido)\s+(?:(?:a|al|a la|el|la|un|una)\s+)?(?:recruiter\s+|reclutador(?:a|es)?\s+)?(?:screen|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)|"
     r"(?:todav[ií]a\s+)?no\s+(?:he\s+)?(?:tenido|asist[ií]|tuv[eé]|complet[eé]|termin[eé]|atend[ií]|hecho)\s+(?:(?:a|al|a la|el|la|un|una)\s+)?(?:recruiter\s+|reclutador(?:a|es)?\s+)?(?:screen|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)|"
     r"(?:haven['’]?t|have\s+not)\s+(?:done|taken)\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)|"
-    r"(?:was|were)\s+(?:invited|rescheduled)|(?:missed|skipped|canceled|cancelled)\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)|"
-    r"could\s+not\s+attend\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)|"
+    r"(?:was|were)\s+invited\s+to\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)|"
+    r"(?:have|has|had)\s+been\s+invited\s+to\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)|"
+    r"(?:recruiter\s+)?(?:screen|interview|call|conversation)\s+(?:was|got|were)\s+rescheduled|"
+    r"(?:missed|skipped|canceled|cancelled)\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)|"
+    r"could\s+not\s+(?:attend|make)\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)|"
+    r"was\s+not\s+able\s+to\s+attend\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)|"
+    r"declined\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\s+invitation|"
     r"before\s+(?:the|my)\s+(?:recruiter\s+)?(?:screen|interview|call|conversation)\b)",
     re.I,
 )
@@ -91,17 +96,19 @@ SCREEN_CONTEXT = re.compile(
     re.I,
 )
 FUTURE_SCREEN_DATE = re.compile(
-    r"\b(?:have|has|will\s+have|am\s+having)\b[^.!?\n]{0,50}\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b[^.!?\n]{0,50}\b(?:on|this|next|in\s+(?:\d+|two|three)\s+days?)\s+"
+    r"\b(?:have|has|will\s+have|am\s+having|will\s+attend|am\s+attending)\b[^.!?\n]{0,60}\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b[^.!?\n]{0,40}\b(?:on|this|next)\s+"
     r"(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|january|february|march|april|may|june|july|"
     r"august|september|october|november|december)(?:\s+\d{1,2})?\b|"
-    r"\b(?:have|has|will\s+have|am\s+having)\b[^.!?\n]{0,50}\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b[^.!?\n]{0,50}\bin\s+(?:\d+|two|three)\s+days?\b|"
-    r"\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b[^.!?\n]{0,50}\b(?:is|will\s+be|scheduled\s+for|rescheduled\s+for|upcoming)\s+"
-    r"(?:tomorrow|this\s+friday|next\s+week|in\s+(?:\d+|two|three)\s+days?|monday|tuesday|wednesday|thursday|friday|saturday|sunday|"
-    r"january|february|march|april|may|june|july|august|september|october|november|december)(?:\s+\d{1,2})?\b|"
-    r"\b(?:tengo|tiene|tendr[eé]|estoy\s+teniendo)\b[^.!?\n]{0,50}\b(?:entrevista|filtro|llamada|conversaci[oó]n)\b[^.!?\n]{0,50}\b(?:el|este|en\s+(?:\d+|dos|tres)\s+d[ií]as?)\s+"
+    r"\b(?:have|has|will\s+have|am\s+having|will\s+attend|am\s+attending)\b[^.!?\n]{0,60}\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b[^.!?\n]{0,40}\bin\s+(?:\d+|two|three)\s+days?\b|"
+    r"\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b[^.!?\n]{0,50}\b(?:is(?:\s+scheduled(?:\s+for)?)?|will\s+be|scheduled(?:\s+for)?|rescheduled(?:\s+for)?|upcoming)\s+(?:on\s+)?(?:(?:this|next)\s+)?"
+    r"(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|january|february|march|april|may|june|july|august|september|october|november|december)(?:\s+\d{1,2})?\b|"
+    r"\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b[^.!?\n]{0,30}\b(?:tomorrow|next\s+week|next\s+(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)|in\s+(?:\d+|two|three)\s+days?)\b|"
+    r"\b(?:will\s+attend|am\s+attending)\b[^.!?\n]{0,60}\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b[^.!?\n]{0,40}\b(?:on\s+)?(?:(?:this|next)\s+)?"
+    r"(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|january|february|march|april|may|june|july|august|september|october|november|december)(?:\s+\d{1,2})?\b|"
+    r"\b(?:tengo|tiene|tendr[eé]|estoy\s+teniendo|asistir[eé]|estoy\s+asistiendo)\b[^.!?\n]{0,60}\b(?:entrevista|filtro|llamada|conversaci[oó]n)\b[^.!?\n]{0,40}\b(?:el|este|en\s+(?:\d+|dos|tres)\s+d[ií]as?)\s+"
     r"(?:lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo|\d{1,2}\s+de\s+(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre))\b|"
-    r"\b(?:entrevista|filtro|llamada|conversaci[oó]n)\b[^.!?\n]{0,50}\b(?:es|ser[aá]|est[aá]|programad[oa]\s+para|reprogramad[oa])\s+"
-    r"(?:ma[ñn]ana|el\s+(?:lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo)|pr[oó]xima?\s+semana|en\s+(?:\d+|dos|tres)\s+d[ií]as?)\b",
+    r"\b(?:entrevista|filtro|llamada|conversaci[oó]n)\b[^.!?\n]{0,50}\b(?:es(?:\s+programad[oa])?|ser[aá]|est[aá]|programad[oa]\s+para|reprogramad[oa]\s+para)\s+(?:el\s+)?(?:pr[oó]xim[oa]\s+)?"
+    r"(?:lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo|ma[ñn]ana|pr[oó]xima?\s+semana|en\s+(?:\d+|dos|tres)\s+d[ií]as?)\b",
     re.I,
 )
 NEXT_STAGE_INTENT = re.compile(
@@ -117,6 +124,7 @@ READINESS_NEGATION = re.compile(
     r"\b(?:not\s+(?:yet\s+)?ready|not\s+prepared|a[uú]n\s+no\s+(?:estoy\s+)?list[oa]|todav[ií]a\s+no\s+(?:estoy\s+)?list[oa])\b",
     re.I,
 )
+INVITED_NEXT_STAGE = re.compile(r"\binvited\s+to\s+(?:the\s+)?next\s+stage\b", re.I)
 TECHNICAL_INTENT = re.compile(r"\b(?:technical|t[eé]cnica|t[eé]cnico)\b", re.I)
 EXPLICIT_RECRUITER_INTENT = re.compile(r"\b(?:recruiter|recruiting|reclutador(?:a|es)?)\b", re.I)
 EXTERNAL_ACTION_INTENT = re.compile(
@@ -179,6 +187,8 @@ def _natural_recruiter_route(request: str) -> str | None:
         SCREEN_NOT_COMPLETED.search(request) or FUTURE_SCREEN_DATE.search(request)
     ):
         return "pre_screen"
+    if has_screen_context and INVITED_NEXT_STAGE.search(request) and NEXT_STAGE_INTENT.search(request):
+        return "next_stage"
     if has_screen_context and READINESS_NEGATION.search(request) and NEXT_STAGE_INTENT.search(request):
         return "next_stage"
     if has_screen_context and DEBRIEF_INTENT.search(request):

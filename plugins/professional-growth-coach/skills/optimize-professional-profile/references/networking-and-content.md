@@ -48,7 +48,7 @@ same bounded-text safety policy rejects phone-like strings, generic local
 paths, and credential or bearer-token markers before shortlist or debrief notes
 are persisted.
 
-The builder and renderer are fail-closed at their private boundaries: output parents and package assets must be regular, descriptor-anchored files, URI-like prose is rejected, and a future-dated snapshot cannot render even when the renderer is invoked directly. The CSV outcome bridge keeps temporary creation and replacement on the validated parent descriptor, so a local symlink swap cannot redirect an export.
+The builder and renderer are fail-closed at their private boundaries: output parents and package assets must be regular, descriptor-anchored files, URI-like prose is rejected, and a future-dated snapshot cannot render even when the renderer is invoked directly. The CSV outcome bridge opens every absolute parent component with no-follow semantics and keeps temporary creation/replacement on the validated final descriptor, so a local symlink swap cannot redirect an export.
 
 Natural recruiter routing keeps future-date cues attached to the recruiter event;
 unrelated calendar dates do not override a completed-screen debrief. Invitations,

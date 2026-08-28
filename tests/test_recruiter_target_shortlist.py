@@ -550,13 +550,35 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual("private_recruiter_screen_debrief", routed["route_kind"])
                 self.assertEqual("collect_debrief_context", routed["next_action"])
 
+    def test_root_route_does_not_treat_unrelated_invitation_as_nonattendance(self) -> None:
+        cases = (
+            ("I completed a recruiter screen and was invited to a panel; help me debrief.", "private_recruiter_screen_debrief"),
+            ("I had a recruiter screen and was invited to the next stage; what comes next?", "private_recruiter_next_stage_review"),
+        )
+        for request, route_kind in cases:
+            routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-27")
+            with self.subTest(request=request):
+                self.assertEqual(route_kind, routed["route_kind"])
+                self.assertEqual("collect_debrief_context", routed["next_action"])
+
     def test_root_route_recognizes_future_recruiter_invites_and_relative_dates(self) -> None:
         for request in (
             "My recruiter screen is Monday; help me prepare.",
+            "My recruiter screen is next Monday; help me prepare.",
+            "My recruiter screen is on Monday; help me prepare.",
+            "My recruiter screen is scheduled Monday; help me prepare.",
+            "Recruiter screen tomorrow; help me prepare.",
             "I have a recruiter screen in two days; help me prepare.",
             "I was invited to a recruiter screen; help me prepare.",
+            "I have been invited to interview with a recruiter; help me prepare.",
             "The recruiter screen was rescheduled; help me prepare.",
+            "The recruiter screen got rescheduled; help me prepare.",
             "I could not attend the recruiter screen; help me prepare.",
+            "I could not make the recruiter screen; help me prepare.",
+            "I was not able to attend the recruiter screen; help me prepare.",
+            "I declined the recruiter screen invitation; help me prepare.",
+            "I will attend a recruiter screen on Monday; help me prepare.",
+            "I am attending a recruiter screen Monday; help me prepare.",
             "I haven't done a recruiter screen; help me prepare.",
             "No he hecho el filtro con el reclutador; ayúdame a prepararme.",
         ):

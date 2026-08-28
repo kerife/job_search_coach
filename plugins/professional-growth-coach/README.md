@@ -44,8 +44,11 @@ The same language boundary recognizes recruiter screens that are invited,
 missed, skipped, canceled, rescheduled, or still pending (`write back`, `ping`,
 `DM`, `contéstale`, `respóndele`, and `escríbele` included for action checks).
 Future dates are scoped to the recruiter event itself, including “is Monday”,
-“in two days”, “scheduled for next week”, and “en dos días”; an unrelated
-appointment date after a completed screen cannot reopen pre-screen intake.
+“is next Monday”, “is on Monday”, “in two days”, “scheduled for next week”,
+“tomorrow”, and “en dos días”; an unrelated appointment date or invitation
+after a completed screen cannot reopen pre-screen intake. An invitation to a
+later stage remains a next-stage review request when the screen is already
+complete.
 
 The preparation boundary also covers conversational non-attendance such as
 “I never went through the recruiter screen”, “I never spoke with a recruiter”,
@@ -412,7 +415,8 @@ rows before any forced replay. Its temporary file creation and replacement stay
 anchored to the validated parent descriptor, so a local parent swap fails closed
 instead of following a symlink. Use `--force` only after reviewing an existing
 output file: it preserves rows for distinct applications and replaces only the
-row for the same `application_id`.
+row for the same `application_id`. Each component of the absolute parent chain
+is opened with no-follow semantics before the final descriptor is retained.
 
 After a completed `screen_attended` checkpoint, the rail uses the closed
 `debrief_after_screen` action. `route_recruiter_screen_debrief_intake` carries
