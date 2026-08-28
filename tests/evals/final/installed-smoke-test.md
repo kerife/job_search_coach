@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T07:37:12-06:00`
+release_timestamp: `2026-08-28T07:52:21-06:00`
 
-source_commit: `dd9eddb3fc1db8ec773b08954a72623e56e2f3cb`
+source_commit: `5895ebe69c3ba48a1e0ba886cb2ac0e2c414fa7a`
 
-source_tree: `a873795e0ada5bd98c4852ad84c1268d91ed1fcb`
+source_tree: `c5220bbc7e6a7f96dd6b456acbc253eb839f393c`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828150000`
+installed_cache_version: `0.2.0+codex.20260828170000`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `e7e76c1a09767f1747374fc3ae6dad5ff7fd537521c59b4db5e558852ed48fcb`
+normalized_source_cache_sha256: `3dc2b115eb72cae222053cf02f362838f38f0536c4f53b3a01c499e66e718088`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -110,7 +110,9 @@ installed_recruiter_article_intent_smoke: `3/3 English/Spanish defined-article f
 
 installed_recruiter_first_conversation_smoke: `4/4 English/Spanish initial-interview and first-call variants route to bounded intake`
 
-installed_recruiter_never_negation_smoke: `4/4 English/Spanish never-attended or never-completed recruiter events route to preparation intake`
+installed_recruiter_never_negation_smoke: `10/10 English/Spanish never-attended or never-completed recruiter events route to preparation intake`
+
+installed_recruiter_nonattendance_smoke: `6/6 never-went, didn't-go, fui, presenté, and pasé recruiter variants remain artifact-free preparation intake`
 
 installed_descriptor_boundary_smoke: `6/6`
 
