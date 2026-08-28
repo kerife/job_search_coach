@@ -39,6 +39,26 @@ class PrivateRecruiterOutcomeExportTests(unittest.TestCase):
         self.assertNotIn("D-102", row["intervention_id"])
         self.assertEqual("recruiter_private_receipt", row["source"])
 
+    def test_source_artifact_id_contributes_to_replay_fingerprint(self) -> None:
+        first = _receipt("reply-received-en.json")
+        second = copy.deepcopy(first)
+        second["source_artifact_id"] = "D-999"
+        first_row = export_row(
+            first,
+            candidate_id="candidate-001",
+            application_id="app-001",
+            application_date="2026-08-01",
+            as_of="2026-08-08",
+        )
+        second_row = export_row(
+            second,
+            candidate_id="candidate-001",
+            application_id="app-001",
+            application_date="2026-08-01",
+            as_of="2026-08-08",
+        )
+        self.assertNotEqual(first_row["intervention_id"], second_row["intervention_id"])
+
     def test_screen_requested_is_rejected_instead_of_becoming_an_interview(self) -> None:
         with self.assertRaisesRegex(ExportError, "event_type is not exportable"):
             export_row(
@@ -85,6 +105,31 @@ class PrivateRecruiterOutcomeExportTests(unittest.TestCase):
             self.assertEqual(before, output.read_bytes())
             with output.open(newline="", encoding="utf-8") as handle:
                 self.assertEqual(1, sum(1 for _ in csv.DictReader(handle)))
+
+    def test_force_preserves_distinct_existing_application_rows(self) -> None:
+        receipt = _receipt("reply-received-en.json")
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "outcomes.csv"
+            write_export(
+                receipt,
+                candidate_id="candidate-001",
+                application_id="app-001",
+                application_date="2026-08-01",
+                as_of="2026-08-08",
+                output=output,
+            )
+            write_export(
+                receipt,
+                candidate_id="candidate-001",
+                application_id="app-002",
+                application_date="2026-08-02",
+                as_of="2026-08-08",
+                output=output,
+                force=True,
+            )
+            with output.open(newline="", encoding="utf-8") as handle:
+                rows = list(csv.DictReader(handle))
+            self.assertEqual({"app-001", "app-002"}, {row["application_id"] for row in rows})
 
     def test_cli_rejects_non_exportable_event_without_echoing_arguments(self) -> None:
         script = SCRIPTS / "export_private_recruiter_outcome.py"
@@ -141,6 +186,23 @@ class PrivateRecruiterOutcomeExportTests(unittest.TestCase):
                 as_of="2026-08-08",
                 role="=HYPERLINK(\"https://example.invalid\")",
             )
+
+    def test_rejects_symlink_output_parent(self) -> None:
+        receipt = _receipt("reply-received-en.json")
+        with tempfile.TemporaryDirectory() as directory:
+            real_parent = Path(directory) / "real"
+            real_parent.mkdir()
+            alias = Path(directory) / "alias"
+            alias.symlink_to(real_parent, target_is_directory=True)
+            with self.assertRaisesRegex(ExportError, "output parent is unavailable"):
+                write_export(
+                    receipt,
+                    candidate_id="candidate-001",
+                    application_id="app-001",
+                    application_date="2026-08-01",
+                    as_of="2026-08-08",
+                    output=alias / "outcomes.csv",
+                )
 
 
 if __name__ == "__main__":

@@ -138,7 +138,7 @@ installed_continuity_rail_semantics_smoke: `2/2 installed EN/ES outcome/checkpoi
 
 installed_triage_handoff_version_compatibility_smoke: `2/2 installed v2 builder attestation and legacy v1 reader compatibility without projection snapshot`
 
-installed_private_outcome_export_smoke: `7/7 installed reply receipt export maps only response_date, rejects requested/terminal events, requires application context, deduplicates replay, rejects symlink outputs, and blocks spreadsheet formulas`
+installed_private_outcome_export_smoke: `10/10 installed reply receipt export maps only response_date, rejects requested/terminal events, requires application context, deduplicates replay, preserves distinct rows under force, includes source-artifact identity in replay keys, rejects symlink outputs and parents, and blocks spreadsheet formulas`
 
 installed_practice_marker_contrast_smoke: `1/1 installed practice continuity and triage-route markers use 2px borders in prefers-contrast: more`
 

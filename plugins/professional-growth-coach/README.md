@@ -373,9 +373,10 @@ turning requests or terminal events into interviews or responses. The export
 uses a deterministic `recruiter-receipt-sha256-...` replay key, so repeating
 the same receipt/application pair is a no-op; no raw receipt prose, source ID,
 candidate aggregation, message, calendar action, or causal claim is added.
-The writer rejects symlink/non-regular outputs and spreadsheet-formula prefixes
-in optional text fields. Use `--force` only after reviewing a different
-existing output file.
+The writer rejects symlink/non-regular outputs (including a symlinked immediate
+parent) and spreadsheet-formula prefixes in optional text fields. Use `--force`
+only after reviewing an existing output file: it preserves rows for distinct
+applications and replaces only the row for the same `application_id`.
 
 After a completed `screen_attended` checkpoint, the rail uses the closed
 `debrief_after_screen` action. `route_recruiter_screen_debrief_intake` carries

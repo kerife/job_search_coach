@@ -45,7 +45,10 @@ role, geography, currency, asset-version, referral, confounder, and consent
 fields are copied only as bounded caller-supplied CSV values. The adapter uses
 the canonical header and a deterministic
 `recruiter-receipt-sha256-...` `intervention_id` derived from the receipt's
-structural fields and application ID. Repeating the same pair is a no-op.
+structural fields, source artifact ID, and application ID. Repeating the same
+pair is a no-op. When `--force` is used after review, existing rows for
+distinct applications are preserved and only the same application's row is
+replaced.
 
 The adapter rejects `contact_received`, `referral_received`,
 `screen_requested`, `interview_requested`, and `stop_decision`; none of those
@@ -54,8 +57,9 @@ events proves a response or interview. Do not map a requested screen to
 events remain in the follow-through/debrief artifacts until a separately
 reviewed adapter with explicit confirmation exists. The bridge never copies
 raw receipt prose or source IDs, combines candidates, changes the summarizer,
-or performs an external action. Symlinked/non-regular output targets and
-spreadsheet formula prefixes in optional text fields are rejected before write.
+or performs an external action. Symlinked/non-regular output targets (including
+a symlinked immediate parent) and spreadsheet formula prefixes in optional text
+fields are rejected before write.
 
 ## LinkedIn outreach diagnostics
 

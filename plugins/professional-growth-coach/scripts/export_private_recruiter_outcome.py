@@ -61,7 +61,7 @@ def _fingerprint(receipt: Mapping[str, object], application_id: str) -> str:
             for key in (
                 "schema_version", "artifact_kind", "locale", "event_date",
                 "event_type", "source_version", "fact_ids",
-                "observation_state", "next_safe_action",
+                "observation_state", "next_safe_action", "source_artifact_id",
             )
         },
         "application_id": application_id,
@@ -131,27 +131,43 @@ def export_row(
     return row
 
 
-def _csv_bytes(row: Mapping[str, str]) -> bytes:
+def _csv_bytes(rows: list[Mapping[str, str]]) -> bytes:
     buffer = io.StringIO(newline="")
     writer = csv.DictWriter(buffer, fieldnames=CSV_FIELDS, lineterminator="\n")
     writer.writeheader()
-    writer.writerow(row)
+    writer.writerows(rows)
     return buffer.getvalue().encode("utf-8")
 
 
-def _existing_has_fingerprint(output: Path, fingerprint: str) -> bool:
+def _existing_rows(output: Path) -> list[dict[str, str]]:
     try:
         with output.open(newline="", encoding="utf-8") as stream:
-            return any(row.get("intervention_id") == fingerprint for row in csv.DictReader(stream))
+            reader = csv.DictReader(stream)
+            if reader.fieldnames != list(CSV_FIELDS):
+                raise ExportError("existing CSV output is unavailable")
+            rows = list(reader)
+            if any(set(row) != set(CSV_FIELDS) for row in rows):
+                raise ExportError("existing CSV output is unavailable")
+            return rows
     except (OSError, UnicodeError, csv.Error) as error:
         raise ExportError("existing CSV output is unavailable") from error
+
+
+def _parent_is_safe(parent: Path) -> None:
+    try:
+        status = os.lstat(parent)
+    except FileNotFoundError as error:
+        raise ExportError("output parent is unavailable") from error
+    if stat.S_ISLNK(status.st_mode) or not stat.S_ISDIR(status.st_mode):
+        raise ExportError("output parent is unavailable")
 
 
 def _atomic_write(output: Path, content: bytes, *, force: bool) -> None:
     target = Path(os.path.abspath(os.fspath(output)))
     parent = target.parent
-    if not parent.is_absolute() or not parent.is_dir():
+    if not parent.is_absolute():
         raise ExportError("output parent is unavailable")
+    _parent_is_safe(parent)
     try:
         status = os.lstat(target)
     except FileNotFoundError:
@@ -211,9 +227,12 @@ def write_export(
         status = None
     if status is not None and (stat.S_ISLNK(status.st_mode) or not stat.S_ISREG(status.st_mode)):
         raise ExportError("output target is not a regular file")
-    if status is not None and _existing_has_fingerprint(target, fingerprint):
+    rows = _existing_rows(target) if status is not None else []
+    if any(existing.get("intervention_id") == fingerprint for existing in rows):
         return {"status": "already_present", "intervention_id": fingerprint}
-    _atomic_write(target, _csv_bytes(row), force=force)
+    if status is not None and force:
+        rows = [existing for existing in rows if existing.get("application_id") != application_id]
+    _atomic_write(target, _csv_bytes([*rows, row]), force=force)
     return {"status": "written", "intervention_id": fingerprint}
 
 
