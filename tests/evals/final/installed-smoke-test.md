@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T20:45:22-06:00`
+release_timestamp: `2026-08-27T21:00:33-06:00`
 
-source_commit: `9adba4ff2c223f3fe093de8df49032cae532ad26`
+source_commit: `8a2bd65284f323b4f1e2d3c141b374e90e326b74`
 
-source_tree: `df19ad6adfe9603512d1b67afac8ad19584a0cd5`
+source_tree: `a501573558d5149d026dfdacd9a33b3f8c152634`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827204522`
+installed_cache_version: `0.2.0+codex.20260827210033`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `172`
 
 installed_file_count: `172`
 
-normalized_source_cache_sha256: `92db63f9672279c85eaae37ffec8575b35d2b3637ebaa338c45022e99037a2ea`
+normalized_source_cache_sha256: `2df027197cc8d7d0f2069c386bc754ae5923bceb3e7e72d2be7d88763410a458`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -91,6 +91,8 @@ installed_recruiter_unhashable_fact_id_smoke: `1/1 malformed nested fact IDs ret
 installed_mobile_reading_path_smoke: `1/1 18rem anchor offset clears the one-column sticky rail`
 
 installed_market_print_matrix_smoke: `1/1 multi-vacancy matrix stacks labelled rows for paper readability`
+
+installed_renderer_bounded_diagnostics_smoke: `2/2 v1/v2 renderer validation stderr stays within the shared 16 KiB budget with a stable truncation marker`
 
 installed_descriptor_boundary_smoke: `6/6`
 
