@@ -588,6 +588,10 @@ class DossierRecruiterPracticeHandoffTests(unittest.TestCase):
             with self.subTest(code_point=f"U+{ord(character):04X}"):
                 self.assertFalse(is_safe_handoff_text(f"Visible{character} prose", 500))
 
+        for value in ("person&#64;example.com", "https&#58;&#47;&#47;linkedin.com&#47;in&#47;synthetic-profile"):
+            with self.subTest(value=value):
+                self.assertFalse(is_safe_handoff_text(value, 500))
+
     def test_builder_guards_dossier_text_before_copying_it_to_the_sidecar(self):
         cases = (
             ("question", "questions", "question"),

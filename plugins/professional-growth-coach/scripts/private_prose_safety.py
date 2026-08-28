@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import html
 import unicodedata
 from collections.abc import Sequence
 
@@ -41,6 +42,11 @@ def contains_unicode_controls(value: object) -> bool:
 def is_safe_prose_text(value: object) -> bool:
     """Return whether text is a string without Unicode controls or format characters."""
     return isinstance(value, str) and not contains_unicode_controls(value)
+
+
+def normalize_prose_for_validation(value: str) -> str:
+    """Decode markup entities before applying identity and action detectors."""
+    return html.unescape(unicodedata.normalize("NFKC", value))
 
 
 def contains_restricted_private_material(value: object) -> bool:

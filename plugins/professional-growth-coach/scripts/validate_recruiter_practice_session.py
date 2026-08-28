@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 try:
-    from private_prose_safety import format_bounded_diagnostics, is_safe_prose_text, safe_diagnostic_field_name
+    from private_prose_safety import format_bounded_diagnostics, is_safe_prose_text, normalize_prose_for_validation, safe_diagnostic_field_name
 except ModuleNotFoundError:
     _prose_spec = importlib.util.spec_from_file_location(
         "_pgc_private_prose_safety", Path(__file__).with_name("private_prose_safety.py")
@@ -25,6 +25,7 @@ except ModuleNotFoundError:
     _prose_spec.loader.exec_module(_prose_module)
     format_bounded_diagnostics = _prose_module.format_bounded_diagnostics
     is_safe_prose_text = _prose_module.is_safe_prose_text
+    normalize_prose_for_validation = _prose_module.normalize_prose_for_validation
     safe_diagnostic_field_name = _prose_module.safe_diagnostic_field_name
 try:
     from private_input_loader import PrivateInputError, read_bounded_bytes
@@ -258,7 +259,7 @@ def _validate_prose_safety(value: Mapping[str, object], errors: list[str]) -> No
     strings = _walk_strings(value)
     if any(_contains_unsupported_script(text) for text in strings):
         errors.append("session contains forbidden unsupported_script prose")
-    text = "\n".join(strings)
+    text = "\n".join(normalize_prose_for_validation(value) for value in strings)
     if IDENTITY_OR_RAW_CONTENT.search(text):
         errors.append("session contains forbidden identity or raw-content prose")
     if EXTERNAL_ACTION.search(text):

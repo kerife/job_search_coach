@@ -136,6 +136,16 @@ class PrivateRecruiterReplyTriageContractTests(unittest.TestCase):
         v1_with_v2_locales.update({"ui_locale": "en", "content_locale": "es"})
         self.assert_rejected(v1_with_v2_locales, "session has unsupported fields: content_locale, ui_locale")
 
+    def test_html_entities_cannot_hide_contact_or_profile_url_in_prose(self) -> None:
+        for value in (
+            "Contact person&#64;example.com",
+            "Review https&#58;&#47;&#47;linkedin.com&#47;in&#47;synthetic-profile",
+        ):
+            with self.subTest(value=value):
+                triage = copy.deepcopy(self.fixtures["clarify-en.json"])
+                triage["safe_context"]["summary"] = value
+                self.assert_rejected(triage, "session contains forbidden contact prose")
+
     def test_v2_ready_handoff_accepts_content_bound_snapshot(self) -> None:
         v2 = copy.deepcopy(self.fixtures["ready-en.json"])
         v2["schema_version"] = "private-recruiter-reply-triage-v2"

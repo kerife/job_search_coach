@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 import unicodedata
 
-from private_prose_safety import is_safe_prose_text
+from private_prose_safety import is_safe_prose_text, normalize_prose_for_validation
 
 
 _FORBIDDEN_TEXT = re.compile(
@@ -63,7 +63,7 @@ def is_safe_handoff_text(value: object, maximum: int) -> bool:
     """Return whether text is bounded, non-empty, and safe to project."""
     if not is_safe_prose_text(value) or _FORBIDDEN_CONTROL.search(value):
         return False
-    normalized = unicodedata.normalize("NFKC", value)
+    normalized = normalize_prose_for_validation(value)
     return (
         bool(normalized.strip())
         and len(normalized) <= maximum
@@ -75,7 +75,7 @@ def is_safe_handoff_text(value: object, maximum: int) -> bool:
 def has_unlabelled_person_intro(value: object) -> bool:
     """Return whether prose begins a sentence with an ordinary person name."""
     return isinstance(value, str) and _UNLABELLED_PERSON_INTRO.search(
-        unicodedata.normalize("NFKC", value)
+        normalize_prose_for_validation(value)
     ) is not None
 
 

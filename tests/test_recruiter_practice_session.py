@@ -408,6 +408,17 @@ class RecruiterPracticeSessionContractTests(unittest.TestCase):
         action["question"]["text"] = "Contacta al reclutador después de practicar."
         self.assert_rejected(action, "session contains external-action prose")
 
+    def test_html_entities_cannot_hide_identity_or_contact_in_prose(self) -> None:
+        for value in (
+            "Candidate: Example Person",
+            "person&#64;example.com",
+            "https&#58;&#47;&#47;linkedin.com&#47;in&#47;synthetic-profile",
+        ):
+            with self.subTest(value=value):
+                invalid = copy.deepcopy(self.awaiting_session)
+                invalid["question"]["text"] = value
+                self.assert_rejected(invalid, "session contains forbidden identity or raw-content prose")
+
     def test_unsupported_script_prose_is_rejected_without_echoing_content(self) -> None:
         invalid = copy.deepcopy(self.awaiting_session)
         invalid["facts"][0]["summary"] = "Алексей Иванов описал опыт."
