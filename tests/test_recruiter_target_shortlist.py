@@ -854,6 +854,30 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual("private_recruiter_screen_debrief", routed["route_kind"])
                 self.assertEqual("collect_debrief_context", routed["next_action"])
 
+    def test_root_route_recognizes_negative_post_screen_outcomes(self) -> None:
+        for request, locale in (
+            ("I got rejected after talking to the recruiter", "en"),
+            ("The recruiter rejected me after the interview", "en"),
+            ("I failed the recruiter screen; what should I learn?", "en"),
+            ("El reclutador me rechazó, ¿qué sigue?", "es"),
+        ):
+            routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+            with self.subTest(request=request):
+                self.assertEqual("private_recruiter_screen_debrief", routed["route_kind"])
+                self.assertEqual("track-career-outcomes", routed["selected_module"])
+                self.assertEqual("collect_debrief_context", routed["next_action"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_root_route_keeps_nonattendance_out_of_negative_outcome_debrief(self) -> None:
+        for request, locale in (
+            ("I did not attend the recruiter screen; help me prepare.", "en"),
+            ("Nunca pasé por un filtro con el reclutador; ayúdame a prepararme.", "es"),
+        ):
+            routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+            with self.subTest(request=request):
+                self.assertEqual("recruiter_target_screen_intake", routed["route_kind"])
+                self.assertEqual("collect_screen_intake", routed["next_action"])
+
     def test_fallback_recruiter_action_synonyms_preserve_authorization_requirement(self) -> None:
         for request in (
             "Can you write back to the recruiter?",

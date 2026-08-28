@@ -482,7 +482,11 @@ persist, or review raw notes. The later structured debrief remains
 manual-only and does not send, schedule, auto-start preparation, or retain the
 screen conversation. The shared rail uses three columns at intermediate
 desktop widths and two columns in print so long localized labels remain
-legible.
+legible. Natural negative results such as a recruiter rejection or failed
+screen now enter the same artifact-free debrief route, preserving the
+candidate-observation boundary and keeping explicit non-attendance in screen
+intake. Print styles retain `overflow-wrap: anywhere` for long target/company
+names in all five rail surfaces.
 
 When feedback is available, the practice rail remains the same three-step
 private map but reflects the validated governing label in its final state:

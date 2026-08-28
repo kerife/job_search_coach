@@ -60,3 +60,17 @@ class RecruiterContinuityRailTests(unittest.TestCase):
                 self.assertIn(".continuity-rail__label", css)
                 self.assertIn("@media print", css)
                 self.assertIn("@media (forced-colors: active)", css)
+
+    def test_print_rail_keeps_long_target_names_wrappable(self) -> None:
+        for filename in (
+            "recruiter-target-shortlist-v1.css",
+            "recruiter-target-decision-gate-v1.css",
+            "recruiter-target-screen-intake-v1.css",
+            "private-recruiter-screen-debrief-v1.css",
+            "private-recruiter-next-stage-review-v1.css",
+        ):
+            with self.subTest(filename=filename):
+                css = (ROOT / "plugins/professional-growth-coach/assets" / filename).read_text(encoding="utf-8")
+                print_block = css.split("@media print", 1)[-1]
+                self.assertIn(".continuity-rail__copy strong { overflow-wrap: anywhere;", print_block)
+                self.assertNotIn(".continuity-rail__copy strong { overflow-wrap: normal;", print_block)

@@ -199,6 +199,14 @@ POST_SCREEN_PROGRESSION_INTENT = re.compile(
     r"\b(?:ya\s+)?pas[eé]\s+(?:el\s+)?filtro\b[^.!?\n]{0,60}\b(?:sigue|hiring\s+manager|siguiente)\b)",
     re.I,
 )
+POST_SCREEN_NEGATIVE_OUTCOME_INTENT = re.compile(
+    r"(?:\b(?:got|was|were)\s+(?:rejected|declined|turned\s+down)\b|"
+    r"\b(?:rejected|declined|turned\s+down)\b[^.!?\n]{0,80}\b(?:after|following)\b|"
+    r"\bfailed\s+(?:(?:the|my|a)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
+    r"\b(?:recruiters?|recruiting|reclutador(?:a|es)?)\b[^.!?\n]{0,60}\b(?:rejected|declined|turned\s+down|me\s+rechaz[oó]|me\s+descart[oó])\b|"
+    r"\b(?:me\s+rechaz[oó]|me\s+descart[oó]|no\s+me\s+seleccionaron)\b)",
+    re.I,
+)
 POST_SCREEN_FOLLOWTHROUGH_INTENT = re.compile(
     r"(?:\b(?:follow[- ]?up|thank[- ]?you(?:\s+note)?|no\s+(?:response|reply)|"
     r"(?:hasn['’]?t|has\s+not|have\s+not|never)\s+repl(?:ied|y)|(?:didn['’]?t|did\s+not)\s+get\s+back|stopped\s+replying|not\s+heard\s+back|has\s+not\s+gotten\s+back|"
@@ -302,6 +310,10 @@ def _natural_recruiter_route(request: str) -> str | None:
         EXPLICIT_RECRUITER_INTENT.search(request) and RECRUITER_REPLY_REQUEST_INTENT.search(request)
     )
     has_post_screen_progression = bool(POST_SCREEN_PROGRESSION_INTENT.search(request))
+    has_negative_outcome = bool(
+        EXPLICIT_RECRUITER_INTENT.search(request)
+        and POST_SCREEN_NEGATIVE_OUTCOME_INTENT.search(request)
+    )
     if (has_screen_context or has_recruiter_invitation) and (
         RECRUITER_INVITATION_INTENT.search(request)
         and REPLY_TRIAGE_ACTION_INTENT.search(request)
@@ -309,6 +321,8 @@ def _natural_recruiter_route(request: str) -> str | None:
         return "reply_triage"
     if has_recruiter_inbound or has_recruiter_reply_request:
         return "reply_triage"
+    if has_negative_outcome and not SCREEN_NOT_COMPLETED.search(request):
+        return "debrief"
     if has_post_screen_progression and not SCREEN_NOT_COMPLETED.search(request) and (
         EXPLICIT_RECRUITER_INTENT.search(request) or SCREEN_CONTEXT.search(request)
     ):
