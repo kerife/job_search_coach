@@ -76,6 +76,7 @@ COPY = {
         "decision": "Decisión",
         "reason": "Razón",
         "context": "Contexto faltante",
+        "no_context": "Sin contexto adicional",
         "strategy": "Estrategia de primer contacto",
         "warmth": "Preparación de puente",
         "boundary": "Este gate decide qué merece revisión manual. No autoriza contacto, no transfiere contexto automáticamente y no predice una entrevista.",
@@ -108,6 +109,7 @@ COPY = {
         "decision": "Decision",
         "reason": "Reason",
         "context": "Missing context",
+        "no_context": "No additional context",
         "strategy": "First-contact strategy",
         "warmth": "Bridge readiness",
         "boundary": "This gate decides what deserves manual review. It does not authorize contact, transfer context automatically, or predict an interview.",
@@ -124,11 +126,14 @@ def _row(row: Mapping[str, object], target: Mapping[str, object], locale: str, i
     labels = COPY[locale]
     decision = str(row["decision"])
     target_label = html.escape(str(target["target_label"]), quote=True)
+    missing_context = str(row["missing_context"])
+    if missing_context == "none":
+        missing_context = labels["no_context"]
     return f'''<li class="gate-row gate-row--{html.escape(decision)}">
       <div class="gate-row-heading"><span class="gate-row-index">{index}</span><div class="gate-row-heading-copy"><span class="gate-row-kicker">{html.escape(labels["target"])}</span><h3 class="gate-row-target">{target_label}</h3></div><span class="gate-row-decision">{html.escape(labels["decision"])}: {html.escape(labels[decision])}</span></div>
       <p class="gate-row-reason">{html.escape(str(row["decision_reason"]), quote=True)}</p>
       <dl class="gate-row-facts">
-        <div><dt>{html.escape(labels["context"])}</dt><dd>{html.escape(str(row["missing_context"]), quote=True)}</dd></div>
+        <div><dt>{html.escape(labels["context"])}</dt><dd>{html.escape(missing_context, quote=True)}</dd></div>
         <div><dt>{html.escape(labels["strategy"])}</dt><dd>{html.escape(str(row["first_contact_strategy"]), quote=True)}</dd></div>
         <div><dt>{html.escape(labels["warmth"])}</dt><dd>{html.escape(str(row["warm_intro_readiness"]), quote=True)}</dd></div>
       </dl>

@@ -78,7 +78,8 @@ def _closed(value: object, path: str, fields: frozenset[str], errors: list[str])
 
 
 def _safe_text(value: object, path: str, errors: list[str], maximum: int) -> None:
-    if not isinstance(value, str) or not value.strip() or len(value) > maximum or not PROSE.is_safe_prose_text(value) or SHORTLIST.RESTRICTED.search(value):
+    normalized = PROSE.normalize_prose_for_validation(value) if isinstance(value, str) else value
+    if not isinstance(value, str) or not value.strip() or len(value) > maximum or not PROSE.is_safe_prose_text(value) or SHORTLIST.RESTRICTED.search(normalized):
         errors.append(f"{path} must be bounded safe text")
 
 
@@ -141,7 +142,8 @@ def validate_screen_intake(value: object, *, source_gate: Mapping[str, object] |
         else:
             requirements = raw_requirements
             for index, requirement in enumerate(raw_requirements):
-                if not isinstance(requirement, str) or not VACANCY_ID.fullmatch(requirement) or len(requirement) > 240 or not PROSE.is_safe_prose_text(requirement) or SHORTLIST.RESTRICTED.search(requirement):
+                normalized_requirement = PROSE.normalize_prose_for_validation(requirement) if isinstance(requirement, str) else requirement
+                if not isinstance(requirement, str) or not VACANCY_ID.fullmatch(requirement) or len(requirement) > 240 or not PROSE.is_safe_prose_text(requirement) or SHORTLIST.RESTRICTED.search(normalized_requirement):
                     errors.append(f"intake.vacancy_requirements[{index}] has invalid value")
         raw_facts = intake.get("candidate_fact_ids")
         if not isinstance(raw_facts, list) or not 1 <= len(raw_facts) <= 8 or any(not isinstance(fact, str) for fact in raw_facts) or len(set(raw_facts)) != len(raw_facts):

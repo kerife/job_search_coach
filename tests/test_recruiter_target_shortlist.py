@@ -160,7 +160,13 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertIn("targets[0].next_safe_action has invalid value", errors)
 
     def test_builder_rejects_phone_credential_marker_and_generic_local_path(self) -> None:
-        for value in ("Call me at +52 55 1234 5678", "bearer abcdefghijklmnopqrstuvwxyz123456", "/tmp/candidate.txt"):
+        for value in (
+            "Call me at +52 55 1234 5678",
+            "bearer abcdefghijklmnopqrstuvwxyz123456",
+            "/tmp/candidate.txt",
+            "person&amp;#64;example.com",
+            "https:&amp;#x2F;&amp;#x2F;linkedin.com&amp;#x2F;in&amp;#x2F;synthetic",
+        ):
             targets = copy.deepcopy(valid_targets())
             targets[0]["context_source"] = value
             with self.subTest(value=value), self.assertRaises(ValueError):
@@ -227,6 +233,26 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertNotIn("draft_only_review", rendered)
         self.assertNotIn("collect_recipient_context", rendered)
         self.assertIn("shortlist-decision-counts", rendered)
+
+    def test_renderer_hides_internal_segment_and_missing_context_enums(self) -> None:
+        value = build_shortlist("es", "2026-08-27", valid_plan(), valid_targets())
+        rendered = render_shortlist_html(value)
+        self.assertIn("Reclutador identificado", rendered)
+        self.assertIn("Referido o vínculo cálido", rendered)
+        self.assertIn("Par técnico o de comunidad", rendered)
+        self.assertIn("Sin contexto adicional", rendered)
+        for internal in ("named_recruiter", "warm_referral", "technical_peer", ">none<"):
+            self.assertNotIn(internal, rendered)
+
+        english = copy.deepcopy(value)
+        english["locale"] = "en"
+        english_rendered = render_shortlist_html(english)
+        self.assertIn("Named recruiter", english_rendered)
+        self.assertIn("Warm referral or connection", english_rendered)
+        self.assertIn("Technical or community peer", english_rendered)
+        self.assertIn("No additional context", english_rendered)
+        for internal in ("named_recruiter", "warm_referral", "technical_peer", ">none<"):
+            self.assertNotIn(internal, english_rendered)
 
     def test_print_layout_keeps_target_cards_and_privacy_boundary_together(self) -> None:
         css = (ROOT / "plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css").read_text(encoding="utf-8")
@@ -891,6 +917,21 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         ordinary = route_recruiter_request("Help me prepare for a technical interview.", locale="en", as_of_date="2026-08-27")
         self.assertEqual("recruiter_target_shortlist", shortlist["route_kind"])
         self.assertEqual("ordinary_professional_growth", ordinary["route_kind"])
+
+    def test_common_preparation_followthrough_and_spanish_networking_variants_keep_route_precedence(self) -> None:
+        cases = (
+            ("I need to get ready for a recruiter phone screen.", "recruiter_target_screen_intake"),
+            ("I am preparing for a recruiter interview.", "recruiter_target_screen_intake"),
+            ("I talked with the recruiter and have not heard back.", "private_recruiter_screen_debrief"),
+            ("What happens after talking to a recruiter?", "private_recruiter_next_stage_review"),
+            ("¿Qué viene después de hablar con un reclutador?", "private_recruiter_next_stage_review"),
+            ("Quiero hacer networking con reclutadores.", "recruiter_target_shortlist"),
+        )
+        for request, expected_route in cases:
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-28")
+                self.assertEqual(expected_route, routed["route_kind"])
+                self.assertIsNone(routed["artifact"])
 
     def test_natural_recruiter_debrief_action_request_preserves_authorization_boundary(self) -> None:
         routed = route_recruiter_request(

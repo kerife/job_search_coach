@@ -77,8 +77,11 @@ The plugin can prepare drafts, plans, rubrics, and analyses. It must ask again b
 
 Natural recruiter routing covers post-screen no-response, talking/interviewed,
 and progression variants, plus inbound slot/setup requests, proposed times, and
-received recruiter email or LinkedIn messages. The repository privacy gate
-normalizes bounded URL/JSON encodings and HTML entities, marks deeply nested
+received recruiter email or LinkedIn messages. Preparation, follow-through,
+"what happens after" and Spanish recruiter-networking variants keep their
+specific route precedence. The repository privacy gate normalizes bounded
+URL/JSON encodings, nested HTML entities, and percent-encoding before private
+prose checks, marks deeply nested
 JSON malformed without crashing, and fails closed when a required marker or
 marker directory is a symlink or otherwise unreadable.
 

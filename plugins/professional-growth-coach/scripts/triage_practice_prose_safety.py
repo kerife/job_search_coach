@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 
 from dossier_practice_safe_text import is_safe_handoff_text
+from private_prose_safety import normalize_prose_for_validation
 
 
 _LINKEDIN_PROFILE = re.compile(
@@ -23,10 +24,11 @@ _BEARER_CREDENTIAL = re.compile(
 
 def is_safe_triage_practice_prose(value: object, maximum: int) -> bool:
     """Return whether private triage prose is safe to project or render."""
+    normalized = normalize_prose_for_validation(value) if isinstance(value, str) else value
     return (
         is_safe_handoff_text(value, maximum)
         and isinstance(value, str)
-        and _LINKEDIN_PROFILE.search(value) is None
-        and _CREDENTIAL_SHAPED.search(value) is None
-        and _BEARER_CREDENTIAL.search(value) is None
+        and _LINKEDIN_PROFILE.search(normalized) is None
+        and _CREDENTIAL_SHAPED.search(normalized) is None
+        and _BEARER_CREDENTIAL.search(normalized) is None
     )

@@ -48,7 +48,7 @@ INTENT = re.compile(
     r"\b(?:contactar\s+(?:a\s+)?|conectar(?:me)?\s+con\s+|hablar\s+con\s+)(?:(?:un(?:a)?|el|la)\s+)?(?:recruiters?|reclutador(?:a|es)?)\b|"
     r"\b(?:interview|entrevista)\s+(?:[a-záéíóúñ-]+\s+){0,3}(?:with|con)\s+(?:(?:an?|the|un(?:a)?|el|la)\s+)?(?:recruiters?|reclutador(?:a|es)?)\b|"
     r"\b(?:recruiters?|reclutador(?:a|es)?)\s+(?:[a-záéíóúñ-]+\s+){0,3}(?:interview|entrevista)\b|"
-    r"\b(?:network|networking)\s+(?:with|con)\s+recruiters?\b|"
+    r"\b(?:network|networking)\s+(?:with|con)\s+(?:recruiters?|reclutadores?)\b|"
     r"\bred\s+profesional\s+con\s+reclutadores?\b|"
     r"\b(?:red|network)\s+de\s+(?:recruiters?|reclutadores?)\b)",
     re.I,
@@ -88,13 +88,14 @@ SCREEN_NOT_COMPLETED = re.compile(
     r"could\s+not\s+(?:attend|make)\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)|"
     r"was\s+not\s+able\s+to\s+attend\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)|"
     r"declined\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\s+invitation|"
-    r"get\s+ready\s+for\s+(?:my\s+)?recruiter\s+(?:phone\s+)?screen\b|"
+    r"get\s+ready\s+for\s+(?:(?:my|a|an|the)\s+)?recruiter\s+(?:phone\s+)?screen\b|"
+    r"(?:prepare|preparing|prepared)\s+for\s+(?:(?:my|a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
     r"before\s+(?:the|my)\s+(?:recruiter\s+)?(?:screen|interview|call|conversation)\b)",
     re.I,
 )
 SCREEN_CONTEXT = re.compile(
     r"\b(?:screen|interview|entrevista|filtro|call|conversation|llamada|conversaci[oó]n|"
-    r"spoke\s+(?:with|to)|talked\s+to|speaking\s+(?:with|to)|talking\s+(?:to|with)|interviewed|habl[eé]\s+con|hablar\s+con|convers[eé]\s+con)\b",
+    r"spoke\s+(?:with|to)|talked\s+(?:to|with)|speaking\s+(?:with|to)|talking\s+(?:to|with)|interviewed|habl[eé]\s+con|hablar\s+con|convers[eé]\s+con)\b",
     re.I,
 )
 FUTURE_SCREEN_DATE = re.compile(
@@ -147,10 +148,10 @@ RECRUITER_REPLY_REQUEST_INTENT = re.compile(
     re.I,
 )
 NEXT_STAGE_INTENT = re.compile(
-    r"\b(?:next\s+stage|what(?:'s|\s+is)\s+next|what\s+comes\s+next|what\s+(?:do|should)\s+i\s+do\s+next|"
+    r"\b(?:next\s+stage|what(?:'s|\s+is)\s+next|what\s+comes\s+next|what\s+happens\s+after|what\s+(?:do|should)\s+i\s+do\s+next|"
     r"next\s+step|move\s+on\s+to|advance\s+to|what\s+comes\s+after|"
     r"hiring\s+manager\s+stage|prepare\s+for\s+(?:the\s+)?(?:next|hiring\s+manager)|"
-    r"siguiente\s+etapa|siguiente\s+paso|que\s+sigue|qué\s+sigue|que\s+hago\s+despu[eé]s|"
+    r"siguiente\s+etapa|siguiente\s+paso|que\s+sigue|qué\s+sigue|que\s+viene\s+despu[eé]s|qué\s+viene\s+despu[eé]s|que\s+hago\s+despu[eé]s|"
     r"qué\s+hago\s+despu[eé]s|pasar\s+a\s+la\s+siguiente\s+etapa|"
     r"preparar(?:me)?\s+para\s+(?:la\s+)?siguiente\s+etapa)\b",
     re.I,

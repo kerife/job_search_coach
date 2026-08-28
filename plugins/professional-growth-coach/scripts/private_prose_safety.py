@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-import re
 import html
+import re
 import unicodedata
 from collections.abc import Sequence
+from urllib.parse import unquote
 
 
 MAX_DIAGNOSTIC_BYTES = 16_384
@@ -45,13 +46,21 @@ def is_safe_prose_text(value: object) -> bool:
 
 
 def normalize_prose_for_validation(value: str) -> str:
-    """Decode markup entities before applying identity and action detectors."""
-    return html.unescape(unicodedata.normalize("NFKC", value))
+    """Decode bounded nested markup and percent escapes before safety checks."""
+    normalized = unicodedata.normalize("NFKC", value)
+    for _ in range(5):
+        decoded = html.unescape(unquote(normalized))
+        if decoded == normalized:
+            break
+        normalized = decoded
+    return normalized
 
 
 def contains_restricted_private_material(value: object) -> bool:
     """Return whether bounded prose contains a local path, phone, or credential marker."""
-    return isinstance(value, str) and _RESTRICTED_PRIVATE_MATERIAL.search(value) is not None
+    return isinstance(value, str) and _RESTRICTED_PRIVATE_MATERIAL.search(
+        normalize_prose_for_validation(value)
+    ) is not None
 
 
 def safe_diagnostic_field_name(value: str) -> str:

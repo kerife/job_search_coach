@@ -204,6 +204,18 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
         self.assertNotIn("F-001", rendered)
         self.assertIn('class="gate-row-decision"', rendered)
 
+    def test_renderer_localizes_empty_context_without_internal_enum(self) -> None:
+        gate = build_decision_gate(self.shortlist())
+        rendered = render_decision_gate_html(gate)
+        self.assertIn("Sin contexto adicional", rendered)
+        self.assertNotIn(">none<", rendered)
+
+        english = copy.deepcopy(gate)
+        english["locale"] = "en"
+        english_rendered = render_decision_gate_html(english)
+        self.assertIn("No additional context", english_rendered)
+        self.assertNotIn(">none<", english_rendered)
+
     def test_downstream_routes_recover_from_non_string_locale(self) -> None:
         cases = (
             lambda: route_recruiter_decision_gate({"locale": []}),

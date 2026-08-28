@@ -208,7 +208,13 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
         self.assertEqual([], validate_screen_debrief(artifact, RECEIPT, self.intake, as_of=date(2026, 8, 27)))
 
     def test_debrief_rejects_paths_and_credential_shaped_notes(self) -> None:
-        for value in ("/tmp/candidate.txt", "bearer abcdefghijklmnopqrstuvwxyz123456", "secret=abcdEFGH1234"):
+        for value in (
+            "/tmp/candidate.txt",
+            "bearer abcdefghijklmnopqrstuvwxyz123456",
+            "secret=abcdEFGH1234",
+            "person&amp;#64;example.com",
+            "https:&amp;#x2F;&amp;#x2F;linkedin.com&amp;#x2F;in&amp;#x2F;synthetic",
+        ):
             debrief = valid_debrief()
             debrief["coverage"][0]["note"] = value
             with self.subTest(value=value), self.assertRaises(ValueError):

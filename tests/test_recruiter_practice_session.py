@@ -413,6 +413,8 @@ class RecruiterPracticeSessionContractTests(unittest.TestCase):
             "Candidate: Example Person",
             "person&#64;example.com",
             "https&#58;&#47;&#47;linkedin.com&#47;in&#47;synthetic-profile",
+            "person%40example.com",
+            "https%3A%2F%2Flinkedin.com%2Fin%2Fsynthetic-profile",
         ):
             with self.subTest(value=value):
                 invalid = copy.deepcopy(self.awaiting_session)

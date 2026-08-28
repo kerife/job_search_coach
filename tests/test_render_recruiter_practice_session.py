@@ -1023,6 +1023,12 @@ class RecruiterPracticeSessionRendererTests(unittest.TestCase):
             "color: var(--ink);",
             self._css_block(rendered, ".recruiter-practice-document .feedback-label"),
         )
+        feedback_list = self._css_block(
+            rendered, ".recruiter-practice-document .practice-feedback ul"
+        )
+        self.assertIn("display: grid;", feedback_list)
+        self.assertIn("grid-template-columns: repeat(3, minmax(0, 1fr));", feedback_list)
+        self.assertIn("gap: .65rem;", feedback_list)
         for suffix in ("solid", "confirm", "do_not_assert"):
             block = self._css_block(
                 rendered,
@@ -1048,6 +1054,10 @@ class RecruiterPracticeSessionRendererTests(unittest.TestCase):
         self.assertRegex(
             rendered,
             r"(?s)@media \(max-width: 640px\).*?\.practice-shell\s*\{[^}]*width: min\(100% - 1rem, 920px\);",
+        )
+        self.assertRegex(
+            rendered,
+            r"(?s)@media \(max-width: 640px\).*?\.practice-feedback ul\s*\{[^}]*grid-template-columns: 1fr;",
         )
         self.assertRegex(
             rendered,

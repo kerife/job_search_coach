@@ -94,6 +94,7 @@ COPY = {
         "targets_label": "Objetivos revisados",
         "goal": "Objetivo de red",
         "segments": "Segmentos prioritarios",
+        "other_context": "Otro contexto",
         "queries": "Hipótesis de búsqueda manual",
         "batch": "Decisión del lote",
         "count": "Conteo por decisión",
@@ -127,6 +128,7 @@ COPY = {
         "targets_label": "Reviewed targets",
         "goal": "Network goal",
         "segments": "Priority segments",
+        "other_context": "Other context",
         "queries": "Manual search hypotheses",
         "batch": "Batch decision",
         "count": "Decision counts",
@@ -158,6 +160,23 @@ DECISION_LABELS = {
     "en": {"advance": "Advance", "clarify": "Clarify", "pause": "Pause", "stop": "Stop"},
 }
 
+SEGMENT_LABELS = {
+    "es": {
+        "named_recruiter": "Reclutador identificado",
+        "warm_referral": "Referido o vínculo cálido",
+        "technical_peer": "Par técnico o de comunidad",
+        "alumni": "Contacto de exalumnos",
+        "community_contact": "Contacto de comunidad",
+    },
+    "en": {
+        "named_recruiter": "Named recruiter",
+        "warm_referral": "Warm referral or connection",
+        "technical_peer": "Technical or community peer",
+        "alumni": "Alumni contact",
+        "community_contact": "Community contact",
+    },
+}
+
 
 def _target_card(target: Mapping[str, object], locale: str, index: int) -> str:
     labels = COPY[locale]
@@ -165,7 +184,7 @@ def _target_card(target: Mapping[str, object], locale: str, index: int) -> str:
     status = DECISION_LABELS[locale][decision]
     missing = str(target["missing_context"])
     if missing == "none":
-        missing = labels["do_not_contact"] if decision != "advance" else "none"
+        missing = "Sin contexto adicional" if locale == "es" else "No additional context"
     action_labels = {"es": {"draft_only_review": "Revisar borrador", "collect_recipient_context": "Recopilar contexto", "record_observation_only": "Registrar observación"}, "en": {"draft_only_review": "Review draft", "collect_recipient_context": "Collect context", "record_observation_only": "Record observation"}}
     return f'''<li class="target-shortlist-item"><article class="target-shortlist-card target-shortlist-card--{html.escape(decision)}" aria-labelledby="target-title-{index}">
       <p class="target-shortlist-index">{index}</p>
@@ -198,7 +217,10 @@ def render_shortlist_html(value: Mapping[str, object]) -> str:
     flow_label, flow_rail = CONTINUITY_RAIL.render_continuity_rail(locale, "shortlist")
     priority = f'<p class="shortlist-priority-label">{html.escape(labels["priority"])}</p><p class="shortlist-priority-value">{html.escape(str(top_target["target_label"]), quote=True)}</p>'
     queries = "".join(f"<li>{html.escape(str(query), quote=True)}</li>" for query in plan["source_queries"])
-    segments = ", ".join(html.escape(str(segment), quote=True) for segment in plan["target_segments"])
+    segments = ", ".join(
+        html.escape(SEGMENT_LABELS[locale].get(str(segment), labels["other_context"]), quote=True)
+        for segment in plan["target_segments"]
+    )
     template = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, TEMPLATE_PATH)
     css = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, CSS_PATH)
     replacements = {

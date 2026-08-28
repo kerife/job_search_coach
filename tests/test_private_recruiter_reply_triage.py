@@ -140,6 +140,8 @@ class PrivateRecruiterReplyTriageContractTests(unittest.TestCase):
         for value in (
             "Contact person&#64;example.com",
             "Review https&#58;&#47;&#47;linkedin.com&#47;in&#47;synthetic-profile",
+            "Contact person%40example.com",
+            "Review https%3A%2F%2Flinkedin.com%2Fin%2Fsynthetic-profile",
         ):
             with self.subTest(value=value):
                 triage = copy.deepcopy(self.fixtures["clarify-en.json"])

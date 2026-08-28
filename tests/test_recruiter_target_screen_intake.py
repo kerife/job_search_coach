@@ -141,6 +141,18 @@ class RecruiterTargetScreenIntakeTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_screen_intake(self.gate(), "T-001", unsafe)
 
+    def test_percent_encoded_private_material_is_rejected(self) -> None:
+        for value in (
+            "V-001: person%40example.com",
+            "V-001: https%3A%2F%2Flinkedin.com%2Fin%2Fsynthetic",
+            "V-001: /private/candidate",
+        ):
+            with self.subTest(value=value):
+                context = valid_screen_intake()
+                context["vacancy_requirements"][0] = value
+                with self.assertRaises(ValueError):
+                    build_screen_intake(self.gate(), "T-001", context)
+
     def test_cli_unknown_arguments_return_opaque_error(self) -> None:
         from validate_recruiter_target_screen_intake import _cli
 

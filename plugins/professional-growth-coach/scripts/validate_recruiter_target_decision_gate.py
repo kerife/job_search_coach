@@ -109,19 +109,21 @@ def _closed(value: object, path: str, fields: frozenset[str], errors: list[str])
 
 
 def _text(value: object, path: str, errors: list[str], maximum: int) -> bool:
-    if not isinstance(value, str) or not value.strip() or len(value) > maximum or not PROSE.is_safe_prose_text(value) or SHORTLIST.RESTRICTED.search(value):
+    normalized = PROSE.normalize_prose_for_validation(value) if isinstance(value, str) else value
+    if not isinstance(value, str) or not value.strip() or len(value) > maximum or not PROSE.is_safe_prose_text(value) or SHORTLIST.RESTRICTED.search(normalized):
         errors.append(f"{path} must be bounded safe text")
         return False
     return True
 
 
 def screen_context_is_safe(value: object) -> bool:
+    normalized = PROSE.normalize_prose_for_validation(value) if isinstance(value, str) else value
     return (
         isinstance(value, str)
         and bool(value.strip())
         and len(value) <= 280
         and PROSE.is_safe_prose_text(value)
-        and not _SCREEN_CONTEXT_SUSPICIOUS.search(value)
+        and not _SCREEN_CONTEXT_SUSPICIOUS.search(normalized)
     )
 
 
