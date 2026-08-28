@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T18:40:22-06:00`
+release_timestamp: `2026-08-27T18:57:43-06:00`
 
-source_commit: `2ad1359e61be00b3a0aa7edc71d96104dec16ad1`
+source_commit: `78fc52bfa5e28bede952175a40fccc6a5e4d9f02`
 
-source_tree: `684593e420294f5093d24b0583e5db0c9721acfb`
+source_tree: `11d628cd0313458df6b69397247bfcb365476510`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827184022`
+installed_cache_version: `0.2.0+codex.20260827185743`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `172`
 
 installed_file_count: `172`
 
-normalized_source_cache_sha256: `05511ac7beedbb20c75f9a863ee12189527cd235fca187e47d43e2d0c063ff71`
+normalized_source_cache_sha256: `f5af09cebcb2f9f592daabc091065948f0745fbcd79bd250c79fad2fb201cef3`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -60,6 +60,7 @@ installed_market_cli_argument_privacy_smoke: `5/5 market validators and builder 
 installed_market_research_smoke: `2/2 complete/limited validator`
 
 installed_market_learning_smoke: `2/2 complete/limited builder and validator`
+installed_provider_freshness_smoke: `3/3 paid-learning decisions keep the inclusive 90-day boundary, demote 91-day active sources to consider with a refresh gate, and reject tampered recommended decisions`
 
 installed_market_renderer_smoke: `2/2 complete/limited market composition`
 
@@ -158,6 +159,7 @@ installed_recruiter_recovery_smoke: `5/5 installed valid recruiter chain, route-
 installed_recruiter_schema_contract_smoke: `22/22 installed valid recruiter handoff chain accepted; unknown nested snapshot fields and impossible decision/state/forward-transition combinations rejected`
 
 installed_recruiter_continuity_rail_smoke: `5/5 installed recruiter surfaces render the shared ES/EN five-step rail with exactly one aria-current="step", identity-free labels, responsive/print/forced-colors hooks, and no interactive controls`
+installed_recruiter_focus_smoke: `5/5 recruiter surfaces expose consistent keyboard focus-visible and forced-colors focus contracts, including the compact readiness grid at 420px`
 
 fresh_agent_smoke: `not_run`
 
