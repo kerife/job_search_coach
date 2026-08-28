@@ -2022,6 +2022,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
 @media (forced-colors: active) {
   .skip-link { forced-color-adjust: none; color: Canvas; background: CanvasText; }
   .shortlist-card, .shortlist-next-step { forced-color-adjust: none; border: 2px solid CanvasText; box-shadow: none; }
+  .shortlist-priority-card { background: Canvas; color: CanvasText; border-color: CanvasText; }
   .target-shortlist-card--advance, .target-shortlist-card--clarify, .target-shortlist-card--pause, .target-shortlist-card--stop { border-left: .6rem solid CanvasText; }
 }
 @media print {

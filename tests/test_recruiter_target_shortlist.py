@@ -266,6 +266,14 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         css = (ROOT / "plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css").read_text(encoding="utf-8")
         self.assertRegex(css, r"\.shortlist-next-step\s*\{[^}]*background:\s*var\(--surface\);[^}]*background:\s*color-mix\(")
 
+    def test_priority_card_has_explicit_forced_colors_tokens(self) -> None:
+        css = (ROOT / "plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css").read_text(encoding="utf-8")
+        forced_colors = css.split("@media (forced-colors: active)", 1)[1]
+        self.assertRegex(
+            forced_colors,
+            r"\.shortlist-priority-card\s*\{[^}]*background:\s*Canvas;[^}]*color:\s*CanvasText;[^}]*border-color:\s*CanvasText;",
+        )
+
     def test_root_route_builds_ready_artifact_or_one_intake_question(self) -> None:
         ready = route_recruiter_request(
             "Quiero expandir mi red de recruiters para conseguir un primer filtro.",
@@ -386,6 +394,18 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
             "Quiero ampliar mi red profesional con reclutadores.",
         ):
             locale = "es" if request.startswith("Quiero") else "en"
+            routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-27")
+            with self.subTest(request=request):
+                self.assertEqual("recruiter_target_shortlist", routed["route_kind"])
+                self.assertEqual("needs_intake", routed["case_state"])
+                self.assertEqual("ask_one_intake_question", routed["next_action"])
+
+    def test_root_route_accepts_defined_recruiter_articles_in_english_and_spanish(self) -> None:
+        for request, locale in (
+            ("Prepare me for a first interview with the recruiter.", "en"),
+            ("Prepárame para mi primera entrevista con el reclutador.", "es"),
+            ("Prepárame para mi primera entrevista con la reclutadora.", "es"),
+        ):
             routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-27")
             with self.subTest(request=request):
                 self.assertEqual("recruiter_target_shortlist", routed["route_kind"])
