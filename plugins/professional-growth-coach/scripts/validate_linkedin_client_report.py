@@ -61,6 +61,18 @@ except ModuleNotFoundError:
     _prose_spec.loader.exec_module(_prose_module)
     format_bounded_diagnostics = _prose_module.format_bounded_diagnostics
 
+try:
+    from canonical_date import parse_canonical_date
+except ModuleNotFoundError:
+    _date_spec = importlib.util.spec_from_file_location(
+        "_pgc_canonical_date", Path(__file__).with_name("canonical_date.py")
+    )
+    if _date_spec is None or _date_spec.loader is None:
+        raise
+    _date_module = importlib.util.module_from_spec(_date_spec)
+    _date_spec.loader.exec_module(_date_module)
+    parse_canonical_date = _date_module.parse_canonical_date
+
 
 REQUIRED_BUNDLE_FIELDS = frozenset({
     "schema_version", "fixture_id", "origin_class", "derivation",
@@ -2856,9 +2868,7 @@ def _validate_priority_value(
 
 def _validate_date(value: object, label: str, field: str, errors: list[str]) -> None:
     try:
-        if not isinstance(value, str):
-            raise ValueError
-        date.fromisoformat(value)
+        parse_canonical_date(value, field=field)
     except ValueError:
         errors.append(f"{label} has invalid {field}")
 
@@ -3112,7 +3122,7 @@ def resolve_source_state(source: Mapping[str, object], evaluation_date: date) ->
     if source.get("reachability") == "unreachable":
         return "unreachable"
     try:
-        access_date = date.fromisoformat(source["access_date"])
+        access_date = parse_canonical_date(source["access_date"], field="access_date")
     except (KeyError, TypeError, ValueError):
         return "stale"
     age = (evaluation_date - access_date).days
@@ -3420,8 +3430,8 @@ def _validate_sources(
     if SOURCE_REGISTRY_ERROR is not None:
         errors.append(SOURCE_REGISTRY_ERROR)
     try:
-        fixture_date = date.fromisoformat(evaluation_date) if isinstance(evaluation_date, str) else None
-    except ValueError:
+        fixture_date = parse_canonical_date(evaluation_date, field="evaluation_date") if isinstance(evaluation_date, str) else None
+    except (TypeError, ValueError):
         fixture_date = None
     for index, raw in enumerate(_object_list(value, "source_catalog", errors)):
         label = f"source_catalog[{index}]"

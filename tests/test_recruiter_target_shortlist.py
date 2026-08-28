@@ -392,6 +392,43 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual("needs_intake", routed["case_state"])
                 self.assertEqual("ask_one_intake_question", routed["next_action"])
 
+    def test_root_route_sends_completed_recruiter_screens_to_the_correct_artifact_free_handoff(self) -> None:
+        cases = (
+            ("I had a recruiter screen today; help me debrief.", "private_recruiter_screen_debrief", "track-career-outcomes"),
+            ("How do I debrief my recruiter interview and prepare for the next stage?", "private_recruiter_screen_debrief", "track-career-outcomes"),
+            ("I completed the recruiter screen and want to prepare for the hiring manager stage.", "private_recruiter_screen_debrief", "track-career-outcomes"),
+            ("I completed a recruiter interview and need a debrief.", "private_recruiter_screen_debrief", "track-career-outcomes"),
+            ("I completed a recruiter interview today.", "private_recruiter_screen_debrief", "track-career-outcomes"),
+            ("Ayúdame a hacer el debrief de mi entrevista con el reclutador.", "private_recruiter_screen_debrief", "track-career-outcomes"),
+            ("Quiero revisar mi entrevista con el reclutador y saber cuál es la siguiente etapa.", "private_recruiter_screen_debrief", "track-career-outcomes"),
+            ("I need to prepare for the next stage after a recruiter screen.", "private_recruiter_next_stage_review", "prepare-role-interviews"),
+        )
+        for request, route_kind, selected_module in cases:
+            routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-27")
+            with self.subTest(request=request):
+                self.assertEqual(route_kind, routed["route_kind"])
+                self.assertEqual("needs_intake", routed["case_state"])
+                self.assertEqual(selected_module, routed["selected_module"])
+                self.assertEqual("collect_debrief_context", routed["next_action"])
+                self.assertIsNone(routed["artifact"])
+                self.assertNotRegex(routed["intake_question"], r"(?:T-\d{3}|D-\d{3}|F-\d{3}|https?://)")
+
+    def test_root_route_keeps_recruiter_network_and_generic_technical_interview_precedence(self) -> None:
+        shortlist = route_recruiter_request("How do I network with recruiters?", locale="en", as_of_date="2026-08-27")
+        ordinary = route_recruiter_request("Help me prepare for a technical interview.", locale="en", as_of_date="2026-08-27")
+        self.assertEqual("recruiter_target_shortlist", shortlist["route_kind"])
+        self.assertEqual("ordinary_professional_growth", ordinary["route_kind"])
+
+    def test_natural_recruiter_debrief_action_request_preserves_authorization_boundary(self) -> None:
+        routed = route_recruiter_request(
+            "I completed a recruiter screen; send a follow-up and help me debrief.",
+            locale="en",
+            as_of_date="2026-08-27",
+        )
+        self.assertEqual("private_recruiter_screen_debrief", routed["route_kind"])
+        self.assertTrue(routed["authorization_required"])
+        self.assertIsNone(routed["artifact"])
+
     def test_natural_recruiter_contact_requests_preserve_authorization_boundary(self) -> None:
         for request in (
             "Help me reach out to recruiters",

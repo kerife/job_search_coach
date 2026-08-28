@@ -51,6 +51,23 @@ INTENT = re.compile(
     r"\b(?:red|network)\s+de\s+(?:recruiters?|reclutadores?)\b)",
     re.I,
 )
+DEBRIEF_INTENT = re.compile(
+    r"\b(?:debrief|debriefing|post[- ]?(?:screen|interview)|review|revisit|reflect|"
+    r"revisar|revisi[oó]n|analizar|reflexionar)\b",
+    re.I,
+)
+SCREEN_COMPLETION = re.compile(
+    r"\b(?:had|completed|attended|finished|went\s+through|termin[eé]|tuve|asist[ií]|atend[ií]|pas[eé])\b",
+    re.I,
+)
+SCREEN_CONTEXT = re.compile(r"\b(?:screen|interview|entrevista|filtro)\b", re.I)
+NEXT_STAGE_INTENT = re.compile(
+    r"\b(?:next\s+stage|what(?:'s|\s+is)\s+next|move\s+on\s+to|advance\s+to|"
+    r"hiring\s+manager\s+stage|prepare\s+for\s+(?:the\s+)?(?:next|hiring\s+manager)|"
+    r"siguiente\s+etapa|que\s+sigue|qué\s+sigue|pasar\s+a\s+la\s+siguiente\s+etapa|"
+    r"preparar(?:me)?\s+para\s+(?:la\s+)?siguiente\s+etapa)\b",
+    re.I,
+)
 TECHNICAL_INTENT = re.compile(r"\b(?:technical|t[eé]cnica|t[eé]cnico)\b", re.I)
 EXPLICIT_RECRUITER_INTENT = re.compile(r"\b(?:recruiter|recruiting|reclutador(?:a|es)?)\b", re.I)
 EXTERNAL_ACTION_INTENT = re.compile(
@@ -98,6 +115,25 @@ def _safe_locale(value: object) -> str:
     if isinstance(locale, str) and locale in INTAKE:
         return locale
     return "es"
+
+
+def _has_recruiter_screen_context(request: str) -> bool:
+    return bool(EXPLICIT_RECRUITER_INTENT.search(request) and SCREEN_CONTEXT.search(request))
+
+
+def _natural_recruiter_route(request: str) -> str | None:
+    """Classify natural recruiter follow-up language before shortlist routing."""
+    has_screen_context = _has_recruiter_screen_context(request)
+    if has_screen_context and (
+        DEBRIEF_INTENT.search(request)
+        or SCREEN_COMPLETION.search(request)
+    ):
+        return "debrief"
+    if has_screen_context and NEXT_STAGE_INTENT.search(request):
+        return "next_stage"
+    if INTENT.search(request):
+        return "shortlist"
+    return None
 
 
 def _artifact_free_intake(
@@ -201,7 +237,7 @@ def route_recruiter_request(
             "intake_question": INTAKE["es"],
             "artifact": None,
         }
-    if not isinstance(request, str) or not request.strip() or not INTENT.search(request):
+    if not isinstance(request, str) or not request.strip():
         return {
             "route_kind": "ordinary_professional_growth",
             "case_state": "not_applicable",
@@ -211,19 +247,38 @@ def route_recruiter_request(
             "evidence_gaps": [],
             "artifact": None,
         }
-    recruiter_intent = INTENT.search(request) is not None
+    natural_route = _natural_recruiter_route(request)
+    if natural_route == "debrief":
+        return _artifact_free_intake(
+            "private_recruiter_screen_debrief",
+            selected_module="track-career-outcomes",
+            next_action="collect_debrief_context",
+            locale=locale,
+            question_key="private_recruiter_screen_debrief",
+            evidence_gaps=["structured_debrief_context"],
+        ) | {"authorization_required": bool(EXTERNAL_ACTION_INTENT.search(request))}
+    if natural_route == "next_stage":
+        return _artifact_free_intake(
+            "private_recruiter_next_stage_review",
+            selected_module="prepare-role-interviews",
+            next_action="collect_debrief_context",
+            locale=locale,
+            question_key="private_recruiter_next_stage_review",
+            evidence_gaps=["valid_debrief_checkpoint_and_forward_stage"],
+        ) | {"authorization_required": bool(EXTERNAL_ACTION_INTENT.search(request))}
+    if natural_route != "shortlist":
+        return {
+            "route_kind": "ordinary_professional_growth",
+            "case_state": "not_applicable",
+            "selected_module": None,
+            "next_action": "continue_normal_routing",
+            "authorization_required": False,
+            "evidence_gaps": [],
+            "artifact": None,
+        }
+    recruiter_intent = True
     if recruiter_intent and TECHNICAL_INTENT.search(request) and not EXPLICIT_RECRUITER_INTENT.search(request):
         recruiter_intent = False
-    if not recruiter_intent:
-        return {
-            "route_kind": "ordinary_professional_growth",
-            "case_state": "not_applicable",
-            "selected_module": None,
-            "next_action": "continue_normal_routing",
-            "authorization_required": False,
-            "evidence_gaps": [],
-            "artifact": None,
-        }
     authorization_required = bool(EXTERNAL_ACTION_INTENT.search(request))
     if (
         not isinstance(network_plan, Mapping)

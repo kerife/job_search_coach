@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 import sys
 import unittest
 from datetime import date, timedelta
@@ -75,6 +76,21 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
         shortlist = RecruiterTargetDecisionGateTests().shortlist()
         self.gate = build_decision_gate(shortlist)
         self.intake = build_screen_intake(self.gate, "T-001", valid_screen_intake())
+
+    def test_high_contrast_styles_reinforce_cards_and_coverage_boundaries(self) -> None:
+        for filename, selectors in (
+            ("recruiter-target-screen-intake-v1.css", (".screen-card", ".screen-check")),
+            ("private-recruiter-screen-debrief-v1.css", (".debrief-card", ".debrief-coverage")),
+        ):
+            css = (ROOT / "plugins/professional-growth-coach/assets" / filename).read_text(encoding="utf-8")
+            match = re.search(r"@media\s*\(prefers-contrast\s*:\s*more\s*\)", css)
+            self.assertIsNotNone(match)
+            block = css[match.end():].split("@media", 1)[0]
+            with self.subTest(filename=filename):
+                for selector in selectors:
+                    self.assertIn(selector, block)
+                self.assertRegex(block, r"border-width\s*:\s*2px")
+                self.assertRegex(block, r"border-left-width\s*:\s*\.5rem")
 
     def test_attended_screen_starts_artifact_free_debrief_intake(self) -> None:
         receipt = copy.deepcopy(RECEIPT)

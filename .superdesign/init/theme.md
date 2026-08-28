@@ -775,7 +775,7 @@ dt { color:var(--debrief-muted); font-size:.78rem; font-weight:800; letter-spaci
 .debrief-counts { color:var(--debrief-muted); font-size:.9rem; }
 .debrief-footer { margin-top:1.5rem; color:var(--debrief-muted); font-size:.92rem; }
 @media (max-width:640px) { .debrief-shell { width:min(100% - 1rem,960px); padding-top:2rem; } .debrief-context-grid { grid-template-columns:1fr; } }
-@media (prefers-contrast:more) { :root { --debrief-border:#536176; } .debrief-card { box-shadow:none; } }
+@media (prefers-contrast:more) { :root { --debrief-border:#536176; } .debrief-card,.debrief-coverage { border-width:2px; box-shadow:none; } .debrief-summary,.debrief-coverage { border-left-width:.5rem; } }
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition:none !important; } }
 @media (forced-colors:active) { .debrief-card,.debrief-coverage { border:2px solid CanvasText; box-shadow:none; } .debrief-summary,.debrief-coverage { border-left-color:CanvasText; } .skip-link { background:CanvasText; color:Canvas; } .skip-link:focus-visible, main:focus-visible { outline:3px solid Highlight; outline-offset:3px; } }
 @media screen and (prefers-color-scheme: dark) { :root { color-scheme: dark; --debrief-ink:#edf2fa; --debrief-muted:#b9c5d8; --debrief-surface:#1c2738; --debrief-soft:#111927; --debrief-border:#536176; --debrief-marker-ink:#101a35; } }
@@ -848,7 +848,7 @@ dd { margin: .25rem 0 0; font-weight: 700; }
 .screen-check p { margin: .25rem 0 0; }
 .screen-footer { margin-top: 1.5rem; color: var(--screen-muted); font-size: .92rem; }
 @media (max-width: 640px) { .screen-shell { width: min(100% - 1rem, 960px); padding-top: 2rem; } .screen-context-grid { grid-template-columns: 1fr; } }
-@media (prefers-contrast: more) { :root { --screen-border: #536176; } .screen-card, .screen-check { box-shadow: none; } }
+@media (prefers-contrast: more) { :root { --screen-border: #536176; } .screen-card, .screen-check { border-width: 2px; box-shadow: none; } .screen-decision, .screen-check { border-left-width: .5rem; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
 @media (forced-colors: active) { .screen-card, .screen-check { border: 2px solid CanvasText; box-shadow: none; } .screen-decision, .screen-check { border-left-color: CanvasText; } .skip-link { background: CanvasText; color: Canvas; } .skip-link:focus-visible, main:focus-visible { outline: 3px solid Highlight; outline-offset: 3px; } }
 @media screen and (prefers-color-scheme: dark) { :root { color-scheme: dark; --screen-ink: #edf2fa; --screen-muted: #b9c5d8; --screen-blue: #8eb2ff; --screen-marker-ink: #101a35; --screen-surface: #1c2738; --screen-soft: #111927; --screen-border: #536176; } }

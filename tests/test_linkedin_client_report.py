@@ -3562,6 +3562,14 @@ class LinkedInClientReportSafetyTests(unittest.TestCase):
         source["reachability"] = "unreachable"
         self.assertEqual("unreachable", validator.resolve_source_state(source, evaluation_date))
 
+    def test_evaluation_and_access_dates_require_canonical_calendar_form(self) -> None:
+        bundle = self.bundle("scenario-a.json")
+        bundle["evaluation_date"] = "2026-W33-4"
+        self.assertIn("fixture has invalid evaluation_date", validator.validate_fixture_bundle(bundle))
+        bundle = self.bundle("scenario-a.json")
+        bundle["source_catalog"][0]["access_date"] = "2026-W33-4"
+        self.assertIn("source_catalog[0] has invalid access_date", validator.validate_fixture_bundle(bundle))
+
     def test_stale_or_unreachable_source_requires_blocking_fallback(self) -> None:
         for reachability, age in (("reachable", 91), ("unreachable", 1)):
             with self.subTest(reachability=reachability):

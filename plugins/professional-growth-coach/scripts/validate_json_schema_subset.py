@@ -2,12 +2,26 @@
 
 from __future__ import annotations
 
-import datetime as dt
 import math
 import re
 from collections.abc import Mapping
 
 from private_prose_safety import safe_diagnostic_field_name
+
+try:
+    from canonical_date import parse_canonical_date
+except ModuleNotFoundError:
+    import importlib.util
+    from pathlib import Path
+
+    _date_spec = importlib.util.spec_from_file_location(
+        "_pgc_canonical_date", Path(__file__).with_name("canonical_date.py")
+    )
+    if _date_spec is None or _date_spec.loader is None:
+        raise
+    _date_module = importlib.util.module_from_spec(_date_spec)
+    _date_spec.loader.exec_module(_date_module)
+    parse_canonical_date = _date_module.parse_canonical_date
 
 
 MAX_SCHEMA_EVALUATIONS = 4_096
@@ -194,7 +208,7 @@ def _validate(
             errors.append(f"{path}: string too long")
         if schema.get("format") == "date":
             try:
-                dt.date.fromisoformat(value)
+                parse_canonical_date(value)
             except ValueError:
                 errors.append(f"{path}: invalid date format")
     if isinstance(value, Mapping):

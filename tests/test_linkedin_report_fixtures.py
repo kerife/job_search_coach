@@ -23,6 +23,14 @@ assert specification is not None and specification.loader is not None
 validator = importlib.util.module_from_spec(specification)
 specification.loader.exec_module(validator)
 
+schema_specification = importlib.util.spec_from_file_location(
+    "validate_json_schema_subset",
+    REPO_ROOT / "plugins" / "professional-growth-coach" / "scripts" / "validate_json_schema_subset.py",
+)
+assert schema_specification is not None and schema_specification.loader is not None
+schema_validator = importlib.util.module_from_spec(schema_specification)
+schema_specification.loader.exec_module(schema_validator)
+
 
 class LinkedInReportFixtureTests(unittest.TestCase):
     def fixture(self, name: str) -> dict[str, object]:
@@ -43,6 +51,12 @@ class LinkedInReportFixtureTests(unittest.TestCase):
         for path in paths:
             with self.subTest(path=path.name):
                 self.assertEqual([], validator.validate_fixture_bundle(json.loads(path.read_text())))
+
+    def test_schema_date_format_rejects_week_date_spelling(self) -> None:
+        self.assertIn(
+            "$: invalid date format",
+            schema_validator.validate_schema_instance("2026-W33-4", {"type": "string", "format": "date"}),
+        )
 
     def test_banner_only_variant_is_valid_and_has_its_own_ids(self) -> None:
         primary = [self.fixture(path.name) for path in FIXTURE_ROOT.glob("scenario-[abcd].json")]
