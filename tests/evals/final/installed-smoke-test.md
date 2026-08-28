@@ -16,23 +16,23 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T05:13:12-06:00`
+release_timestamp: `2026-08-28T05:36:43-06:00`
 
-source_commit: `3b62b8cc4c22ef32a7346ba44668852474451ea2`
+source_commit: `c89110478ace2c6bb036644c7546276524dba552`
 
-source_tree: `228aec836bc2fee6a216ae9ef36a3010b08cf4db`
+source_tree: `5b35c471557c88027b9370679a91acd55044234c`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828230000`
+installed_cache_version: `0.2.0+codex.20260828060000`
 
 installed_enabled: `true`
 
-source_file_count: `173`
+source_file_count: `175`
 
-installed_file_count: `173`
+installed_file_count: `175`
 
-normalized_source_cache_sha256: `5dce5fd5c8c7796d70cb1a016641b407d99c94f3311edf3422b645da4ec8c9f3`
+normalized_source_cache_sha256: `43f906458d2d901310090d93e7b13409b310dfbd4e4e118899f6d71c5435ae1c`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -134,7 +134,9 @@ installed_private_json_loader_hardening_smoke: `7/7 installed private loaders an
 
 installed_action_aligned_rail_smoke: `11/11 installed EN/ES outcome/checkpoint rails select closed action copy, stop renders a terminal recorded rail, dark surface and forced-colors hooks are present, and non-finite schema numbers are rejected`
 
-installed_continuity_rail_semantics_smoke: `2/2 installed EN/ES outcome/checkpoint rails expose recorded -> pending -> blocked states with exactly one aria-current="step" pending safe step; terminal stop remains recorded`
+installed_continuity_rail_semantics_smoke: `2/2 installed EN/ES outcome/checkpoint rails expose recorded -> pending -> blocked states with one aria-current="step" pending safe step; terminal stop marks its recorded step current`
+
+installed_triage_handoff_version_compatibility_smoke: `2/2 installed v2 builder attestation and legacy v1 reader compatibility without projection snapshot`
 
 installed_duplicate_vacancy_source_url_smoke: `1/1 installed market validator rejects duplicate normalized vacancy source URLs even when vacancy IDs and fingerprints differ`
 
