@@ -26,8 +26,9 @@ location, arrangement, source type, alignment, evidence coverage, and a
 qualitative band, plus a passive public-source link and the sample research
 date; learning decision cards expose provider/source provenance and recorded
 unknowns. Each new vacancy card also renders a textual access/publication
-freshness line (90-day window, or an explicit unknown publication date) and a
-title-contextual accessible source name. Directional evidence and
+freshness line (90-day window, or an explicit unknown publication date) and an
+accessible source name containing the `Vn` vacancy key, escaped employer, and
+escaped title. Directional evidence and
 non-inferred eligibility remain visible boundaries. Source labels are localized
 from the closed market enums.
 The market region also exposes a static scan summary with the reviewed sample,
@@ -166,6 +167,8 @@ Dependencies:
 The review requires a manually selected forward stage transition and a validated source debrief. It renders localized current-stage → target-stage labels in the header plus a three-topic checklist with ready/blocked state; when blocked, a structured “clarify before continuing” list names only the pending topics. The route returns the same private in-memory HTML contract for ready, blocked, and terminal stop artifacts. It preserves the source snapshot and replay binding, and exposes no raw answers or external controls.
 
 The five recruiter target surfaces share a localized, non-interactive continuity rail rendered by `scripts/recruiter_continuity_rail.py`. It lists shortlist, decision gate, screen intake, screen debrief, and next-stage review, marks only the current surface with `aria-current="step"`, and remains identity-free, responsive, print-safe, forced-colors-safe, and offline. Its visible label now states that the rail is orientation only and does not indicate progress or contact; it does not infer completed stages or expose links or actions.
+
+The market scan summary keeps sample, query count, and state in a three-column first row, then places the long hiring-fit limitation across the full width; its responsive and print variants preserve that warning as a readable block.
 
 Outcome and follow-through receipts share a non-interactive continuity rail:
 the supplied observation/receipt is `recorded`, one manual safe step is

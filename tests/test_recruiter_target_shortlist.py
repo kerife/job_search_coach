@@ -262,6 +262,10 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         print_css = css.split("@media print", 1)[1]
         self.assertRegex(print_css, r"\.shortlist-next-step\s*\{[^}]*break-inside: avoid")
 
+    def test_batch_next_step_has_legacy_background_fallback_before_color_mix(self) -> None:
+        css = (ROOT / "plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css").read_text(encoding="utf-8")
+        self.assertRegex(css, r"\.shortlist-next-step\s*\{[^}]*background:\s*var\(--surface\);[^}]*background:\s*color-mix\(")
+
     def test_root_route_builds_ready_artifact_or_one_intake_question(self) -> None:
         ready = route_recruiter_request(
             "Quiero expandir mi red de recruiters para conseguir un primer filtro.",
@@ -365,7 +369,19 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         for request in (
             "How do I network with recruiters?",
             "Prepare me for a first interview with a recruiter.",
+            "I want to contact recruiters",
+            "I want to contact a technical recruiter",
+            "Help me reach out to recruiters",
+            "Help me reach out to a senior recruiter",
+            "How do I reach a recruiter?",
+            "How do I connect with recruiters?",
             "Necesito prepararme para mi primera entrevista con un reclutador.",
+            "Quiero contactar a reclutadores",
+            "Necesito prepararme para una entrevista con un reclutador",
+            "Necesito una entrevista técnica con un reclutador",
+            "Prepare me for a recruiter technical interview",
+            "Quiero una entrevista con un recruiter",
+            "Quiero contactar a un recruiter para hablar de oportunidades",
             "Quiero hacer networking con recruiters.",
             "Quiero ampliar mi red profesional con reclutadores.",
         ):
@@ -375,6 +391,18 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual("recruiter_target_shortlist", routed["route_kind"])
                 self.assertEqual("needs_intake", routed["case_state"])
                 self.assertEqual("ask_one_intake_question", routed["next_action"])
+
+    def test_natural_recruiter_contact_requests_preserve_authorization_boundary(self) -> None:
+        for request in (
+            "Help me reach out to recruiters",
+            "Quiero contactar a un recruiter para hablar de oportunidades",
+        ):
+            routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-27")
+            with self.subTest(request=request):
+                self.assertEqual("recruiter_target_shortlist", routed["route_kind"])
+                self.assertEqual("needs_intake", routed["case_state"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
 
     def test_root_route_rejects_non_sequence_targets_without_uncaught_errors(self) -> None:
         for invalid in (1, object(), iter(()), "abc"):

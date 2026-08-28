@@ -879,7 +879,8 @@ dd { margin: .25rem 0 0; font-weight: 700; }
 .market-summary h2, .market-summary h3 { color: var(--forest); }
 .market-scan-summary { margin: .85rem 0 1rem; padding: .8rem 1rem; border-left: 4px solid var(--forest); background: var(--forest-soft); break-inside: avoid; page-break-inside: avoid; }
 .market-scan-summary h3 { margin: 0 0 .5rem; font-size: 1rem; }
-.market-scan-summary dl { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .6rem; margin: 0; }
+.market-scan-summary dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6rem; margin: 0; }
+.market-scan-summary dl > div:last-child { grid-column: 1 / -1; padding-top: .6rem; border-top: 1px solid var(--line); }
 .market-scan-summary dt { color: var(--muted-text); font-size: .75rem; font-weight: 700; }
 .market-scan-summary dd { margin: .15rem 0 0; overflow-wrap: anywhere; }
 .vacancy-alignment-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: .75rem; }
@@ -969,12 +970,14 @@ dd { margin: .25rem 0 0; font-weight: 700; }
   .market-matrix tr { padding: .75rem 0; border-bottom: 1px solid var(--muted); }
   .market-matrix td { display: grid; grid-template-columns: minmax(7rem, .4fr) minmax(0, 1fr); gap: .75rem; border: 0; }
   .market-matrix td::before { content: attr(data-label); color: var(--muted-text); font-size: .8125rem; font-weight: 700; }
+  .market-scan-summary dl > div:last-child { grid-column: 1 / -1; }
 }
 
 @media (forced-colors: active) {
   .market-summary, .market-scan-summary, .vacancy-alignment-card, .recurrence-row, .gap-closure-route, .market-learning-roi, .learning-coach-decision, .learning-proof-sprint, .learning-reuse, .learning-decision-row, .learning-provenance, .market-matrix th, .market-matrix td, .market-alignment-score, .market-recurrence-count, .market-vacancy-context, .market-source-meta { background: Canvas; color: CanvasText; border-color: CanvasText; }
   .market-source-link { color: LinkText; }
   .market-boundary, .market-limitation, .gap-closure-route { border-left-color: Highlight; }
+  .market-scan-summary dl > div:last-child { border-top-color: CanvasText; }
   .learning-decision-row .learning-option-type { color: CanvasText; border-color: CanvasText; }
 }
 
@@ -1955,7 +1958,7 @@ h1 { margin-bottom: 0; font-size: clamp(2rem, 5vw, 3.25rem); letter-spacing: -.0
 .shortlist-decision-count--clarify { border-top-color: var(--clarify); }
 .shortlist-decision-count--pause { border-top-color: var(--pause); }
 .shortlist-decision-count--stop { border-top-color: var(--stop); }
-.shortlist-next-step { margin: 1rem 0 1.5rem; padding: 1rem 1.2rem; border-left: .45rem solid var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+.shortlist-next-step { margin: 1rem 0 1.5rem; padding: 1rem 1.2rem; border-left: .45rem solid var(--accent); background: var(--surface); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
 .shortlist-next-step--advance { border-left-color: var(--advance); }
 .shortlist-next-step--clarify { border-left-color: var(--clarify); }
 .shortlist-next-step--pause { border-left-color: var(--pause); }

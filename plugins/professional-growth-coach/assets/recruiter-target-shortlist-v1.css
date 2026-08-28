@@ -41,7 +41,7 @@ h1 { margin-bottom: 0; font-size: clamp(2rem, 5vw, 3.25rem); letter-spacing: -.0
 .shortlist-decision-count--clarify { border-top-color: var(--clarify); }
 .shortlist-decision-count--pause { border-top-color: var(--pause); }
 .shortlist-decision-count--stop { border-top-color: var(--stop); }
-.shortlist-next-step { margin: 1rem 0 1.5rem; padding: 1rem 1.2rem; border-left: .45rem solid var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+.shortlist-next-step { margin: 1rem 0 1.5rem; padding: 1rem 1.2rem; border-left: .45rem solid var(--accent); background: var(--surface); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
 .shortlist-next-step--advance { border-left-color: var(--advance); }
 .shortlist-next-step--clarify { border-left-color: var(--clarify); }
 .shortlist-next-step--pause { border-left-color: var(--pause); }

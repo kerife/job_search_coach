@@ -42,6 +42,10 @@ INTENT = re.compile(
     r"\b(?:first\s+(?:recruiter\s+)?screen|primer\s+filtro(?:\s+con\s+(?:un\s+)?reclutador)?|"
     r"first\s+interview\s+with\s+(?:a\s+)?recruiters?|"
     r"primera\s+entrevista\s+con\s+(?:un\s+)?reclutador(?:a|es)?)\b|"
+    r"\b(?:contact|reach(?:\s+out\s+to)?|connect\s+with|talk\s+to|speak\s+with)\s+(?:(?:an?|the)\s+)?(?:(?:senior|technical|lead|principal|internal|executive|hiring|talent|agency|corporate|junior|experienced)\s+)?(?:recruiters?|reclutador(?:a|es)?)\b|"
+    r"\b(?:contactar\s+(?:a\s+)?|conectar(?:me)?\s+con\s+|hablar\s+con\s+)(?:(?:un(?:a)?|el|la)\s+)?(?:recruiters?|reclutador(?:a|es)?)\b|"
+    r"\b(?:interview|entrevista)\s+(?:[a-záéíóúñ-]+\s+){0,3}(?:with|con)\s+(?:(?:an?|un(?:a)?)\s+)?(?:recruiters?|reclutador(?:a|es)?)\b|"
+    r"\b(?:recruiters?|reclutador(?:a|es)?)\s+(?:[a-záéíóúñ-]+\s+){0,3}(?:interview|entrevista)\b|"
     r"\b(?:network|networking)\s+(?:with|con)\s+recruiters?\b|"
     r"\bred\s+profesional\s+con\s+reclutadores?\b|"
     r"\b(?:red|network)\s+de\s+(?:recruiters?|reclutadores?)\b)",
@@ -50,8 +54,8 @@ INTENT = re.compile(
 TECHNICAL_INTENT = re.compile(r"\b(?:technical|t[eé]cnica|t[eé]cnico)\b", re.I)
 EXPLICIT_RECRUITER_INTENT = re.compile(r"\b(?:recruiter|recruiting|reclutador(?:a|es)?)\b", re.I)
 EXTERNAL_ACTION_INTENT = re.compile(
-    r"\b(?:send|message|messages|reply|repl(?:y|ies)|connect|apply|publish|schedule|scheduled|book|calendar|"
-    r"confirm|accept|enviar|mensaje|mensajes|responder|respuesta|conectar|aplicar|publicar|agendar|"
+    r"\b(?:send|message|messages|reply|repl(?:y|ies)|connect|contact|reach|talk|speak|apply|publish|schedule|scheduled|book|calendar|"
+    r"confirm|accept|enviar|mensaje|mensajes|responder|respuesta|conectar|contactar|hablar|aplicar|publicar|agendar|"
     r"reservar|calendario|confirmar|aceptar|programar)\b",
     re.I,
 )

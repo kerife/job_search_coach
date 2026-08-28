@@ -447,6 +447,12 @@ class CareerMarketLearningDossierTests(unittest.TestCase):
 
         self.assertIn("as_of_date must be an ISO date", validate_market_dossier(value))
 
+    def test_validator_rejects_noncanonical_calendar_evidence_date(self) -> None:
+        value = load_json(MARKET_FIXTURES / "complete-five-es.json")
+        value["as_of_date"] = "2026-W33-4"
+
+        self.assertIn("as_of_date must be an ISO date", validate_market_dossier(value))
+
     def test_private_paths_after_delimiters_are_rejected(self) -> None:
         value = load_json(MARKET_FIXTURES / "complete-five-es.json")
         value["vacancy_cards"][0]["title"] = "path=/Users/alice/secret"

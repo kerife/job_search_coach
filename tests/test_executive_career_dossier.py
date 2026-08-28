@@ -174,6 +174,12 @@ class ExecutiveCareerDossierSchemaTests(unittest.TestCase):
         self.assertEqual(self.validate_dossier(self.es_dossier), [])
         self.assertEqual(self.validate_dossier(self.en_dossier), [])
 
+    def test_runtime_dossier_rejects_noncanonical_evidence_date(self) -> None:
+        dossier = copy.deepcopy(self.es_dossier)
+        dossier["evidence_as_of"] = "2026-W33-4"
+
+        self.assertIn("evidence_as_of must be an ISO date", self.validate_dossier(dossier))
+
     def test_contract_is_closed_identity_free_and_single_candidate(self) -> None:
         forbidden_mutations = {
             "candidate identity": ("candidate_id", "candidate-synthetic"),

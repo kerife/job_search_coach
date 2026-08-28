@@ -56,6 +56,12 @@ class LearningOptionResearchTests(unittest.TestCase):
         live["evidence_mode"] = "live"
         self.assertIn("live evidence requires active provider sources", " ".join(validate_research(live)))
 
+    def test_research_rejects_noncanonical_calendar_as_of_date(self) -> None:
+        value = load_fixture("complete-five-es.json")
+        value["as_of_date"] = "2026-W33-4"
+
+        self.assertTrue(any("as_of_date must be an ISO date" in error for error in validate_research(value)))
+
     def test_option_text_rejects_profile_and_session_material_without_echoing(self) -> None:
         for field in ("proof_artifact", "option", "source_title"):
             with self.subTest(field=field):

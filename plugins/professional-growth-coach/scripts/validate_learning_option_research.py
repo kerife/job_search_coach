@@ -39,6 +39,7 @@ def _sibling(name: str) -> Any:
 
 _loader = _sibling("private_input_loader.py")
 _prose = _sibling("private_prose_safety.py")
+_canonical = _sibling("canonical_date.py")
 
 SCHEMA_VERSION = "learning-option-research-v1"
 EVIDENCE_MODES = frozenset({"synthetic", "live"})
@@ -120,7 +121,7 @@ def _date(value: object, path: str, errors: list[str]) -> date | None:
         errors.append(f"{path} must be an ISO date")
         return None
     try:
-        return date.fromisoformat(value)
+        return _canonical.parse_canonical_date(value, field=path)
     except ValueError:
         errors.append(f"{path} must be an ISO date")
         return None
@@ -131,8 +132,8 @@ def provider_source_is_fresh(source_date: object, as_of_date: object) -> bool:
     if not isinstance(source_date, str) or not isinstance(as_of_date, str):
         return False
     try:
-        published = date.fromisoformat(source_date)
-        as_of = date.fromisoformat(as_of_date)
+        published = _canonical.parse_canonical_date(source_date, field="source_date")
+        as_of = _canonical.parse_canonical_date(as_of_date, field="as_of_date")
     except ValueError:
         return False
     age = (as_of - published).days

@@ -58,6 +58,12 @@ class TargetVacancyResearchTests(unittest.TestCase):
         self.assertIn("as_of_date cannot be in the future for live evidence", errors)
         self.assertNotIn(future, " ".join(errors))
 
+    def test_research_rejects_noncanonical_calendar_as_of_date(self) -> None:
+        value = load_fixture("complete-five-es.json")
+        value["as_of_date"] = "2026-W33-4"
+
+        self.assertIn("as_of_date must be an ISO date", validate_research(value))
+
     def test_synthetic_source_urls_reject_public_domains_and_session_path_material(self) -> None:
         source = load_fixture("complete-five-es.json")
         for url in (

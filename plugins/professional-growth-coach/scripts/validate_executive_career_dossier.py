@@ -67,6 +67,16 @@ except ModuleNotFoundError:
     _loader_spec.loader.exec_module(_loader_module)
     PrivateInputError = _loader_module.PrivateInputError
     read_bounded_bytes = _loader_module.read_bounded_bytes
+try:
+    from canonical_date import parse_canonical_date
+except ModuleNotFoundError:
+    _canonical_path = Path(__file__).with_name("canonical_date.py")
+    _canonical_spec = importlib.util.spec_from_file_location("_pgc_canonical_date", _canonical_path)
+    if _canonical_spec is None or _canonical_spec.loader is None:
+        raise
+    _canonical_module = importlib.util.module_from_spec(_canonical_spec)
+    _canonical_spec.loader.exec_module(_canonical_module)
+    parse_canonical_date = _canonical_module.parse_canonical_date
 from typing import Any
 
 
@@ -521,7 +531,7 @@ def _date(value: object, path: str, errors: list[str]) -> date | None:
         errors.append(f"{path} must be an ISO date")
         return None
     try:
-        return date.fromisoformat(value)
+        return parse_canonical_date(value, field=path)
     except ValueError:
         errors.append(f"{path} must be an ISO date")
         return None
@@ -2316,7 +2326,7 @@ def validate_dossier(value: object) -> list[str]:
     evidence_as_of = date.max
     if isinstance(root.get("evidence_as_of"), str):
         try:
-            evidence_as_of = date.fromisoformat(root["evidence_as_of"])
+            evidence_as_of = parse_canonical_date(root["evidence_as_of"], field="evidence_as_of")
         except ValueError:
             pass
     errors.extend(validate_analytics(root.get("analytics"), evidence_ids))
@@ -2349,7 +2359,7 @@ def validate_dossier(value: object) -> list[str]:
         observed_as_of = analytics.get("observed_as_of")
         if isinstance(observed_as_of, str):
             try:
-                if date.fromisoformat(observed_as_of) > evidence_as_of:
+                if parse_canonical_date(observed_as_of, field="analytics.observed_as_of") > evidence_as_of:
                     errors.append("analytics.observed_as_of cannot be after evidence_as_of")
             except ValueError:
                 pass

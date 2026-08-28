@@ -39,6 +39,7 @@ def _sibling(name: str) -> Any:
 _report = _sibling("validate_linkedin_client_report.py")
 _loader = _sibling("private_input_loader.py")
 _prose = _sibling("private_prose_safety.py")
+_canonical = _sibling("canonical_date.py")
 
 SCHEMA_VERSION = "target-vacancy-research-v1"
 RESEARCH_KIND = "sre_platform_devops_current_vacancies"
@@ -111,7 +112,7 @@ def _date(value: object, path: str, errors: list[str], *, live: bool = False) ->
         errors.append(f"{path} must be an ISO date")
         return None
     try:
-        parsed = date.fromisoformat(value)
+        parsed = _canonical.parse_canonical_date(value, field=path)
     except ValueError:
         errors.append(f"{path} must be an ISO date")
         return None

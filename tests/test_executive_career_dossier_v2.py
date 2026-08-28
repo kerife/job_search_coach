@@ -836,6 +836,27 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
             r"\.market-source-link\s*\{[^}]*display:\s*inline-flex;[^}]*align-items:\s*center;[^}]*min-height:\s*44px;[^}]*padding:",
         )
 
+    def test_market_scan_warning_spans_full_summary_width_with_print_and_forced_color_contract(self) -> None:
+        css = (ASSETS_ROOT / "career-market-learning-dossier-v1.css").read_text(encoding="utf-8")
+        self.assertRegex(css, r"\.market-scan-summary dl\s*\{[^}]*grid-template-columns:\s*repeat\(3,")
+        self.assertRegex(css, r"\.market-scan-summary dl\s*>\s*div:last-child\s*\{[^}]*grid-column:\s*1\s*/\s*-1;[^}]*border-top:")
+        self.assertIn(".market-scan-summary dl, .learning-provenance-facts { grid-template-columns: 1fr;", css)
+        self.assertIn(".market-scan-summary dl > div:last-child", css.split("@media (forced-colors: active)", 1)[1])
+        self.assertIn(".market-scan-summary dl > div:last-child", css.split("@media print", 1)[1])
+
+    def test_market_source_accessible_names_include_vacancy_key_employer_and_title(self) -> None:
+        dossier = make_v2_dossier("es")
+        market = make_composable_market_dossier("complete-five-es.json", dossier)
+        market["vacancy_cards"][1]["title"] = market["vacancy_cards"][0]["title"]
+        rendered = self.renderer.render_dossier_html(dossier, market)
+        labels = re.findall(r'class="market-source-link"[^>]*aria-label="([^"]+)"', rendered)
+        self.assertEqual(5, len(labels))
+        self.assertEqual(5, len(set(labels)))
+        for index, card in enumerate(market["vacancy_cards"], start=1):
+            self.assertIn(f"V{index}", labels[index - 1])
+            self.assertIn(str(card["employer_name"]), labels[index - 1])
+            self.assertIn(str(card["title"]), labels[index - 1])
+
     def test_optional_market_dossier_renders_complete_cards_matrix_and_recurrence(self) -> None:
         dossier = make_v2_dossier("es")
         market = make_composable_market_dossier("complete-five-es.json", dossier)
@@ -901,7 +922,7 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         self.assertEqual(5, visible.count("Verificada abierta al"))
         self.assertEqual(5, visible.count("Publicada"))
         self.assertEqual(5, visible.count("Vigencia"))
-        self.assertIn('aria-label="Ver fuente pública: Reliability Engineer"', rendered)
+        self.assertIn('aria-label="Ver fuente pública: V1 — Fixture Employer A — Reliability Engineer"', rendered)
 
         english = make_v2_dossier("en")
         english_market = make_composable_market_dossier("limited-four-en.json", english)
@@ -917,7 +938,7 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         english_visible = visible_text(english_rendered)
         self.assertIn("Publication date: unknown", english_visible)
         self.assertIn("Freshness: unconfirmed", english_visible)
-        self.assertIn('aria-label="View public source: Reliability Engineer"', english_rendered)
+        self.assertIn('aria-label="View public source: V1 — Fixture Employer A — Reliability Engineer"', english_rendered)
 
     def test_market_source_kind_enums_are_localized_and_not_exposed_raw(self) -> None:
         dossier = make_v2_dossier("en")

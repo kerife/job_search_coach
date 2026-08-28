@@ -697,7 +697,7 @@ def _render_market_context(market_dossier: Mapping[str, object], locale: str) ->
                     age_text = ""
             freshness_text = f'<span class="market-freshness">{labels["market_access_checked"]} {access_display} · {publication_text} · {labels["market_freshness"]}: {status_label}{age_text}</span>'
         source_meta = (
-            f'<p class="market-source-meta"><a class="market-source-link" href="{source_url}" rel="noreferrer" aria-label="{labels["market_source"]}: {title}">'
+            f'<p class="market-source-meta"><a class="market-source-link" href="{source_url}" rel="noreferrer" aria-label="{labels["market_source"]}: {short_key} — {employer} — {title}">'
             f'{labels["market_source"]}</a><span>{labels["market_researched"]}: '
             f'<time datetime="{researched_date}">{researched_date}</time></span>{freshness_text}</p>'
         )

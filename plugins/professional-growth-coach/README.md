@@ -29,7 +29,7 @@ The shortlist privacy boundary also rejects phone-like strings, credential or be
 The same boundary rejects Unicode control and format characters (including zero-width, bidi, NUL, and newline controls) in diagnostic field names and dossier prose, preventing hidden or injected material from reaching validation output or local HTML.
 Identity checks also inspect the NFKC-normalized form of prose, so compatibility characters cannot disguise a bare person name while the original candidate text remains unchanged for rendering.
 
-Explicit requests to expand a network or prepare for a first recruiter screen route through `scripts/route_recruiter_target_shortlist.py`, including natural English/Spanish phrasing such as “network with recruiters” and “primera entrevista con un reclutador”. With three to six supplied targets, the route runs builder → validator → renderer and returns the validated artifact plus private in-memory HTML with `next_action=review_recruiter_target_shortlist`; without enough context or with an invalid target container it asks one bounded intake question that names the minimum plan (goal/segments, 3–5 manual queries, weekly time, stop condition, and proof theme). Recursively nested or otherwise malformed in-memory plans take the same artifact-free intake path instead of surfacing a traceback. It does not infer recipients. The rendered card localizes the next safe action and summarizes the four decision counts before the manual `recruiter_target_decision_gate` handoff.
+Explicit requests to expand a network, contact recruiters, or prepare for a recruiter interview route through `scripts/route_recruiter_target_shortlist.py`, including natural English/Spanish phrasing such as “network with recruiters”, “reach out to recruiters”, “entrevista con un recruiter” and “primera entrevista con un reclutador”. The router requires the recruiter term, keeps technical interviews without that term in ordinary coaching, and preserves `authorization_required` for contact-shaped wording. With three to six supplied targets, the route runs builder → validator → renderer and returns the validated artifact plus private in-memory HTML with `next_action=review_recruiter_target_shortlist`; without enough context or with an invalid target container it asks one bounded intake question that names the minimum plan (goal/segments, 3–5 manual queries, weekly time, stop condition, and proof theme). Recursively nested or otherwise malformed in-memory plans take the same artifact-free intake path instead of surfacing a traceback. It does not infer recipients. The rendered card localizes the next safe action and summarizes the four decision counts before the manual `recruiter_target_decision_gate` handoff.
 If the same request also asks to send, reply, connect, apply, publish, confirm, or schedule, the route receipt preserves `authorization_required=true` in both `ready` and `needs_intake` states; analysis-only networking remains `false`, and no external action is performed. The value is kept aligned with the artifact delivery gate.
 
 Decision-gate rows are replay-bound to the corresponding shortlist target for every copied decision, rationale, context, contactability, draft type, and next action; the localized strategy and warm-intro guidance are also deterministic for the source locale and decision.
@@ -38,6 +38,7 @@ For a selected `advance` target, `route_recruiter_screen_intake` adds the target
 
 The decision gate also enforces temporal continuity: its `as_of_date` must match the nested shortlist snapshot date, so a stale shortlist cannot be relabeled as a current screen-intake source.
 All recruiter shortlist, gate, screen-intake, debrief, and next-stage date fields now require the canonical `YYYY-MM-DD` calendar form; alternate ISO spellings are rejected before snapshots are chained.
+The same canonical-date guard is enforced by the market-learning dossier, vacancy-research, learning-option research, and executive-dossier runtime validators, keeping the schema and Python validation boundary aligned.
 
 The decision gate, screen-intake bridge, post-screen debrief, and next-stage review now return the same private in-memory `rendered_html` contract whenever a validated artifact exists. Intake failures remain artifact-free; stopped or blocked artifacts still render their localized review surface without IDs, snapshots, contacts, or action tokens.
 
@@ -302,7 +303,10 @@ option preserves the existing no-market render byte-for-byte. Evaluated v2
 cards expose a static coach decision, proof-first rationale, and a semantic
 border treatment for project-first, consider, not-needed, and other states;
 the state is always textual as well as visual and remains readable in print,
-forced-colors, and narrow layouts.
+forced-colors, and narrow layouts. The market scan summary uses three compact
+columns for sample, query count, and state, then gives its long hiring-fit
+limitation a full-width row; the shortlist next-step panel keeps a solid-surface
+fallback before its optional `color-mix()` tint for older browsers.
 Each learning card also leads with the decision and option type, then exposes
 its decision basis and opportunity cost. Synthetic provider research receives
 an explicit non-current-provider boundary in the rendered dossier.
@@ -314,11 +318,14 @@ vacancy card also retains its location, arrangement, and source type, while a
 separate boundary states that eligibility and work authorization are not
 inferred.
 Each card also exposes a passive, accessible link to its validated public source
-and the sample's research date. New builder output preserves the access date,
+and the sample's research date. The link's accessible name includes its `Vn`
+vacancy key, escaped employer, and escaped title so repeated titles remain
+distinguishable without exposing internal IDs. New builder output preserves the access date,
 publication date when known, a 90-day freshness window, and an explicit
 `current`/`unknown` reason. Unknown publication dates are rendered as
 “publication date: unknown” and never presented as current; the source link's
-accessible name includes the vacancy title for auditability. The link is for
+accessible name also includes the `Vn` vacancy key and escaped employer for
+auditability. The link is for
 auditability only: it does not open an application flow, send a message, or
 authorize any external action.
 Source links retain a minimum 44px touch target with centered text so the audit
