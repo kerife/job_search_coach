@@ -6,7 +6,7 @@ import copy
 import json
 import sys
 import unittest
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -71,6 +71,22 @@ class RecruiterTargetScreenIntakeTests(unittest.TestCase):
         self.assertEqual("clarify_first", intake["readiness_decision"])
         self.assertEqual("collect_screen_intake", intake["handoff"]["next_safe_action"])
         self.assertEqual("clarify_context", intake["measurement_event"])
+
+    def test_stale_source_context_cannot_prepare_interview(self) -> None:
+        context = valid_screen_intake()
+        context["source_date"] = (date(2026, 8, 27) - timedelta(days=91)).isoformat()
+        intake = build_screen_intake(self.gate(), "T-001", context)
+        self.assertEqual("clarify_first", intake["readiness_decision"])
+        self.assertEqual("clarify_context", intake["measurement_event"])
+        self.assertEqual("collect_screen_intake", intake["handoff"]["next_safe_action"])
+        self.assertEqual([], validate_screen_intake(intake, as_of=date(2026, 8, 27)))
+
+    def test_source_context_is_fresh_at_the_ninety_day_boundary(self) -> None:
+        context = valid_screen_intake()
+        context["source_date"] = (date(2026, 8, 27) - timedelta(days=90)).isoformat()
+        intake = build_screen_intake(self.gate(), "T-001", context)
+        self.assertEqual("ready", intake["readiness_decision"])
+        self.assertEqual("screen_context_submitted", intake["measurement_event"])
 
     def test_snapshot_and_target_mutation_are_rejected(self) -> None:
         intake = build_screen_intake(self.gate(), "T-001", valid_screen_intake())

@@ -86,7 +86,7 @@ def _closed(value: object, path: str, fields: frozenset[str], errors: list[str])
 
 
 def _text(value: object, path: str, errors: list[str], maximum: int) -> bool:
-    if not isinstance(value, str) or not value.strip() or len(value) > maximum or not PROSE.is_safe_prose_text(value):
+    if not isinstance(value, str) or not value.strip() or len(value) > maximum or not PROSE.is_safe_prose_text(value) or SHORTLIST.RESTRICTED.search(value):
         errors.append(f"{path} must be bounded safe text")
         return False
     return True
@@ -175,12 +175,14 @@ def validate_decision_gate(value: object, *, as_of: dt.date | None = None) -> li
 
     if source is not None:
         source_rows = source.get("targets")
-        if isinstance(source_rows, list) and len(rows) == len(source_rows):
+        if isinstance(source_rows, list):
+            if len(rows) != len(source_rows):
+                errors.append("decision_rows must preserve source target count")
             source_ids = [row.get("target_id") for row in source_rows if isinstance(row, Mapping)]
             row_ids = [row.get("target_id") for row in rows]
             if row_ids != source_ids:
                 errors.append("decision_rows must preserve source target order")
-            for index, row in enumerate(rows):
+            for index, row in enumerate(rows[: len(source_rows)]):
                 source_row = source_rows[index]
                 if isinstance(source_row, Mapping) and row.get("decision") != source_row.get("decision"):
                     errors.append(f"decision_rows[{index}].decision must match source shortlist")

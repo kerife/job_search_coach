@@ -62,7 +62,8 @@ def build_screen_intake(gate: Mapping[str, object], target_id: str, context: Map
     source_date = intake_context.get("source_date")
     try:
         reference_date = dt.date.fromisoformat(str(gate["as_of_date"]))
-        if dt.date.fromisoformat(str(source_date)) > reference_date:
+        parsed_source_date = dt.date.fromisoformat(str(source_date))
+        if parsed_source_date > reference_date:
             raise ValueError("screen intake date is in the future")
     except ValueError as error:
         raise ValueError("screen intake date is unavailable") from error
@@ -103,7 +104,7 @@ def build_screen_intake(gate: Mapping[str, object], target_id: str, context: Map
         readiness = "stop"
         event = "stop_decision"
         action = "stop_and_record"
-    elif target["decision"] == "advance" and len(statuses) == 4 and all(status == "pass" for status in statuses):
+    elif target["decision"] == "advance" and len(statuses) == 4 and all(status == "pass" for status in statuses) and 0 <= (reference_date - parsed_source_date).days <= VALIDATOR.SOURCE_FRESHNESS_DAYS:
         readiness = "ready"
         event = "screen_context_submitted"
         action = "manual_prepare_role_interviews_review"

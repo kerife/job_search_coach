@@ -58,10 +58,10 @@ the print rendering stays tabular.
       <p class="next-stage-transition"><span>{{CURRENT_STAGE_LABEL}}</span> <strong>{{CURRENT_STAGE}}</strong> <span class="next-stage-arrow" aria-hidden="true">→</span> <span>{{STAGE_LABEL}}</span> <strong>{{STAGE}}</strong></p>
       <p class="next-stage-date"><span>{{DATE_LABEL}}</span> <time datetime="{{DATE}}">{{DATE}}</time></p>
     </header>
-    <nav class="continuity-rail" aria-labelledby="continuity-rail-title">
+    <section class="continuity-rail" aria-labelledby="continuity-rail-title">
       <p id="continuity-rail-title" class="continuity-rail__label">{{FLOW_RAIL_LABEL}}</p>
       <ol>{{FLOW_RAIL}}</ol>
-    </nav>
+    </section>
     <section class="next-stage-card {{SUMMARY_CLASS}}" aria-labelledby="summary-title">
       <p class="next-stage-state">{{STATE}}</p>
       <h2 id="summary-title">{{NEXT_LABEL}}</h2>
@@ -108,10 +108,10 @@ the print rendering stays tabular.
       <h1>{{HEADING}}</h1>
       <p class="debrief-date"><span>{{DATE_LABEL}}</span> <time datetime="{{DATE}}">{{DATE}}</time></p>
     </header>
-    <nav class="continuity-rail" aria-labelledby="continuity-rail-title">
+    <section class="continuity-rail" aria-labelledby="continuity-rail-title">
       <p id="continuity-rail-title" class="continuity-rail__label">{{FLOW_RAIL_LABEL}}</p>
       <ol>{{FLOW_RAIL}}</ol>
-    </nav>
+    </section>
     <section class="debrief-card debrief-summary" aria-labelledby="summary-title">
       <p class="debrief-summary__label">{{DECISION}}</p>
       <h2 id="summary-title">{{NEXT_LABEL}}</h2>
@@ -162,10 +162,10 @@ the print rendering stays tabular.
       <h1>{{HEADING}}</h1>
       <p class="screen-date"><span>{{DATE_LABEL}}</span> <time datetime="{{AS_OF_DATE}}">{{AS_OF_DATE}}</time></p>
     </header>
-    <nav class="continuity-rail" aria-labelledby="continuity-rail-title">
+    <section class="continuity-rail" aria-labelledby="continuity-rail-title">
       <p id="continuity-rail-title" class="continuity-rail__label">{{FLOW_RAIL_LABEL}}</p>
       <ol>{{FLOW_RAIL}}</ol>
-    </nav>
+    </section>
     <section class="screen-card screen-decision" aria-labelledby="decision-title">
       <p class="screen-state">{{STATUS}}</p>
       <h2 id="decision-title">{{NEXT_HEADING}}</h2>
@@ -217,10 +217,10 @@ the print rendering stays tabular.
       <h1>{{HEADING}}</h1>
       <p class="gate-date"><span>{{DATE_LABEL}}</span> <time datetime="{{AS_OF_DATE}}">{{AS_OF_DATE}}</time></p>
     </header>
-    <nav class="continuity-rail" aria-labelledby="continuity-rail-title">
+    <section class="continuity-rail" aria-labelledby="continuity-rail-title">
       <p id="continuity-rail-title" class="continuity-rail__label">{{FLOW_RAIL_LABEL}}</p>
       <ol>{{FLOW_RAIL}}</ol>
-    </nav>
+    </section>
     <section class="gate-card gate-next" aria-labelledby="next-title">
       <p class="gate-state">{{NEXT_STATE}}</p>
       <h2 id="next-title">{{NEXT_ACTION}}</h2>
@@ -397,10 +397,10 @@ the print rendering stays tabular.
       <h1>{{HEADING}}</h1>
       <p class="shortlist-date">{{AS_OF_DATE}}</p>
     </header>
-    <nav class="continuity-rail" aria-labelledby="continuity-rail-title">
+    <section class="continuity-rail" aria-labelledby="continuity-rail-title">
       <p id="continuity-rail-title" class="continuity-rail__label">{{FLOW_RAIL_LABEL}}</p>
       <ol>{{FLOW_RAIL}}</ol>
-    </nav>
+    </section>
     <section class="shortlist-card shortlist-overview" aria-labelledby="overview-title">
       <h2 id="overview-title">{{GOAL_LABEL}}</h2>
       <p class="shortlist-goal">{{GOAL}}</p>

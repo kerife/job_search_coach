@@ -36,6 +36,7 @@ TARGET_ID = re.compile(r"^T-[0-9]{3}$")
 FACT_ID = re.compile(r"^F-[0-9]{3}$")
 VACANCY_ID = re.compile(r"^V-[0-9]{3}:\s+.+$")
 SNAPSHOT = re.compile(r"^snap-shortlist-sha256-[0-9a-f]{64}$")
+SOURCE_FRESHNESS_DAYS = 90
 
 
 class _PrivateArgumentParser(argparse.ArgumentParser):
@@ -104,7 +105,7 @@ def validate_screen_intake(value: object, *, source_gate: Mapping[str, object] |
         errors.append("artifact_kind has invalid value")
     if not isinstance(item.get("locale"), str) or item.get("locale") not in {"es", "en"}:
         errors.append("locale has invalid value")
-    _date(item.get("as_of_date"), "as_of_date", errors, as_of)
+    intake_as_of = _date(item.get("as_of_date"), "as_of_date", errors, as_of)
     embedded_gate = item.get("source_gate")
     if not isinstance(embedded_gate, Mapping):
         errors.append("source_gate must be an object")
@@ -182,7 +183,12 @@ def validate_screen_intake(value: object, *, source_gate: Mapping[str, object] |
     }
     has_stop = any(status == "stop" for status in status_by_check.values())
     all_pass = len(status_by_check) == 4 and all(status == "pass" for status in status_by_check.values())
-    expected_readiness = "stop" if target_decision == "stop" or has_stop else ("ready" if target_decision == "advance" and all_pass and stage in STAGES and requirements and facts and company_state in {"verified", "candidate_reported"} else "clarify_first")
+    source_is_fresh = (
+        source_date is not None
+        and intake_as_of is not None
+        and 0 <= (intake_as_of - source_date).days <= SOURCE_FRESHNESS_DAYS
+    )
+    expected_readiness = "stop" if target_decision == "stop" or has_stop else ("ready" if target_decision == "advance" and all_pass and stage in STAGES and requirements and facts and company_state in {"verified", "candidate_reported"} and source_is_fresh else "clarify_first")
     if readiness != expected_readiness:
         errors.append("readiness_decision does not reconcile with target decision and checks")
     event = item.get("measurement_event")

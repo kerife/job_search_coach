@@ -52,6 +52,31 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
         tampered["decision_counts"]["advance"] = 2
         self.assertIn("decision_counts do not reconcile with decision rows", validate_decision_gate(tampered))
 
+    def test_validator_rejects_restricted_decision_prose(self) -> None:
+        gate = build_decision_gate(self.shortlist())
+        for field, value in {
+            "decision_reason": "jane.doe@example.com",
+            "missing_context": "/Users/example/private.txt",
+            "first_contact_strategy": "https://example.invalid/role",
+            "warm_intro_readiness": "javascript:alert(1)",
+        }.items():
+            tampered = copy.deepcopy(gate)
+            tampered["decision_rows"][0][field] = value
+            with self.subTest(field=field):
+                self.assertIn(
+                    f"decision_rows[0].{field} must be bounded safe text",
+                    validate_decision_gate(tampered),
+                )
+
+    def test_validator_rejects_unbound_decision_rows(self) -> None:
+        gate = build_decision_gate(self.shortlist())
+        tampered = copy.deepcopy(gate)
+        extra = copy.deepcopy(tampered["decision_rows"][0])
+        extra["target_id"] = "T-999"
+        tampered["decision_rows"].append(extra)
+        tampered["decision_counts"]["advance"] += 1
+        self.assertIn("decision_rows must preserve source target count", validate_decision_gate(tampered))
+
     def test_confirmed_screen_context_enables_manual_interview_handoff_only(self) -> None:
         gate = build_decision_gate(
             self.shortlist(),

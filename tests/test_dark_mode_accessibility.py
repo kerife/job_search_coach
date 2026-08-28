@@ -133,8 +133,27 @@ class DarkModeAccessibilityTests(unittest.TestCase):
                 css = (ASSETS / filename).read_text(encoding="utf-8")
                 self.assertIn("@media (min-width: 721px) and (max-width: 900px)", css)
                 self.assertIn(".continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); }", css)
+                self.assertIn("@media screen and (max-width: 420px)", css)
+                self.assertIn(".continuity-rail ol { grid-template-columns: 1fr; }", css)
                 self.assertIn(".continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }", css[css.index("@media print"):])
                 self.assertIn(".continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; }", css[css.index("@media print"):])
+
+    def test_recruiter_continuity_rail_is_a_static_section_not_navigation(self) -> None:
+        surfaces = (
+            "recruiter-target-shortlist-v1.html",
+            "recruiter-target-decision-gate-v1.html",
+            "recruiter-target-screen-intake-v1.html",
+            "private-recruiter-screen-debrief-v1.html",
+            "private-recruiter-next-stage-review-v1.html",
+        )
+        for filename in surfaces:
+            with self.subTest(filename=filename):
+                html = (ASSETS / filename).read_text(encoding="utf-8")
+                self.assertIn('<section class="continuity-rail"', html)
+                self.assertNotIn('<nav class="continuity-rail"', html)
+        css = (ASSETS / "private-recruiter-next-stage-review-v1.css").read_text(encoding="utf-8")
+        self.assertIn("@media (prefers-contrast: more)", css)
+        self.assertIn(".next-stage-card, .next-stage-guidance", css)
 
     def test_recruiter_dark_tokens_are_screen_only_and_print_resets_to_light(self) -> None:
         surfaces = (
@@ -152,6 +171,8 @@ class DarkModeAccessibilityTests(unittest.TestCase):
                 self.assertRegex(print_css, r"color-scheme\s*:\s*light")
                 self.assertRegex(print_css, r"background\s*:\s*#fff(?:fff)?")
                 self.assertIn("page-break-inside: avoid", print_css)
+                if filename in {"recruiter-target-shortlist-v1.css", "recruiter-target-decision-gate-v1.css"}:
+                    self.assertIn("break-inside: avoid; page-break-inside: avoid", print_css)
 
     def test_forced_colors_keeps_footer_boundary_readable(self) -> None:
         selectors = {

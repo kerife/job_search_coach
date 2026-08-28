@@ -86,7 +86,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
   @page { margin: 1.4cm; }
   body { background: #fff; color: #000; }
   .shortlist-shell { width: 100%; padding: 0; }
-  .shortlist-card { box-shadow: none; break-inside: avoid; }
+  .shortlist-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
   .target-shortlist-card { break-inside: avoid; page-break-inside: avoid; }
   .shortlist-footer { break-inside: avoid; page-break-inside: avoid; }
   .skip-link { display: none; }
@@ -103,6 +103,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
 .continuity-rail__copy strong { overflow-wrap: anywhere; }
 .continuity-rail__status { color: var(--accent); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
 @media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media screen and (max-width: 420px) { .continuity-rail ol { grid-template-columns: 1fr; } }
 @media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
 @media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }

@@ -33,7 +33,7 @@ This plugin has **no shared Tailwind config, CSS module system, theme provider, 
 - **Radius:** dossier/practice/triage remain square; compact receipt cards use `1rem`.
 - **Shadows:** dossier none; practice/triage `0 1px 0 rgb(23 62 48 / 10%)`; compact cards `0 .5rem 2rem rgb(23 32 51 / .08)`.
 - Learning cards lead with readable decision and option-type labels; decision basis and opportunity cost remain visible without new shadows or decorative effects.
-- Private recruiter receipts and practice sessions use static continuity rails with textual states; compact outcome/checkpoint rails select closed copy from `next_safe_action`, use the semantic sequence Recorded/Registrado -> Pending/Pendiente -> Blocked/Bloqueada, and mark only the pending safe step with `aria-current="step"`. The five recruiter target artifacts additionally share a localized five-surface orientation rail rendered by `recruiter_continuity_rail.py`; it marks only the current artifact with `aria-current="step"`, never infers completed stages, and remains non-interactive, identity-free, responsive, print-safe, forced-colors-safe, and offline. `record_stop_decision` renders a terminal Recorded/Registrado state with no continuation language. Rails reuse each family’s accent tokens, use surface tokens in dark mode, and preserve higher-contrast readability.
+- Private recruiter receipts and practice sessions use static continuity rails with textual states; compact outcome/checkpoint rails select closed copy from `next_safe_action`, use the semantic sequence Recorded/Registrado -> Pending/Pendiente -> Blocked/Bloqueada, and mark only the pending safe step with `aria-current="step"`. The five recruiter target artifacts additionally share a localized five-surface orientation rail rendered by `recruiter_continuity_rail.py`; it is a static `section` rather than a navigation landmark, marks only the current artifact with `aria-current="step"`, collapses to one column below 420px, never infers completed stages, and remains non-interactive, identity-free, responsive, print-safe, forced-colors-safe, and offline. `record_stop_decision` renders a terminal Recorded/Registrado state with no continuation language. Rails reuse each family’s accent tokens, use surface tokens in dark mode, and preserve higher-contrast readability.
 - Practice and triage handoff sequences reuse the same visual state language: recorded evidence/focus, one pending or blocked private next step, and a single `aria-current="step"` marker. State remains textual and non-interactive so color is never the only signal.
 - Practice sessions also use a four-cell first-conversation readiness card with textual current/pending states; it is derived from validated state, remains private, and never becomes an action control.
 - **Breakpoints:** dossier: 900px, 680px, 480px; practice/triage: 640px; compact receipts: `min-width: 641px` (one column through 640px). All families include print, reduced-motion, forced-color, and high-contrast handling.
@@ -720,6 +720,7 @@ h2 { margin-top: 0; font-size: 1.2rem; }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
 @media (forced-colors: active) { .next-stage-card { border: 2px solid CanvasText; } .next-stage-summary { border-left: .35rem solid Highlight; } .next-stage-summary--blocked { border-left-style: dashed; border-left-color: CanvasText; } .next-stage-guidance { border-color: CanvasText; } .next-stage-guidance strong { color: CanvasText; } }
 @media (max-width: 640px) { .next-stage-shell { padding: 1.25rem .75rem 2rem; } .next-stage-check { align-items: flex-start; flex-direction: column; gap: .1rem; } }
+@media (prefers-contrast: more) { .next-stage-card, .next-stage-guidance { border-width: 2px; box-shadow: none; } }
 @media print { html { color-scheme: light; } body { background: #fff; color: #000; } .next-stage-card { break-inside: avoid; page-break-inside: avoid; box-shadow: none; } .skip-link { display: none; } }
 @media screen and (prefers-color-scheme: dark) { :root { color-scheme: dark; --next-bg: #101820; --next-surface: #18232d; --next-text: #eef3f7; --next-muted: #b4c0ca; --next-accent: #76c7dc; --next-border: #40515e; --next-blocked: #ffc078; } }
 
@@ -734,6 +735,7 @@ h2 { margin-top: 0; font-size: 1.2rem; }
 .continuity-rail__copy strong { overflow-wrap: anywhere; }
 .continuity-rail__status { color: var(--next-accent); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
 @media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media screen and (max-width: 420px) { .continuity-rail ol { grid-template-columns: 1fr; } }
 @media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
 @media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
@@ -779,6 +781,7 @@ dt { color:var(--debrief-muted); font-size:.78rem; font-weight:800; letter-spaci
 .continuity-rail__copy strong { overflow-wrap: anywhere; }
 .continuity-rail__status { color: var(--debrief-blue); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
 @media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media screen and (max-width: 420px) { .continuity-rail ol { grid-template-columns: 1fr; } }
 @media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
 @media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
@@ -848,6 +851,7 @@ dd { margin: .25rem 0 0; font-weight: 700; }
 .continuity-rail__copy strong { overflow-wrap: anywhere; }
 .continuity-rail__status { color: var(--screen-blue); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
 @media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media screen and (max-width: 420px) { .continuity-rail ol { grid-template-columns: 1fr; } }
 @media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
 @media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
@@ -1957,7 +1961,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
   @page { margin: 1.4cm; }
   body { background: #fff; color: #000; }
   .shortlist-shell { width: 100%; padding: 0; }
-  .shortlist-card { box-shadow: none; break-inside: avoid; }
+  .shortlist-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
   .target-shortlist-card { break-inside: avoid; page-break-inside: avoid; }
   .shortlist-footer { break-inside: avoid; page-break-inside: avoid; }
   .skip-link { display: none; }
@@ -1974,6 +1978,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
 .continuity-rail__copy strong { overflow-wrap: anywhere; }
 .continuity-rail__status { color: var(--accent); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
 @media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media screen and (max-width: 420px) { .continuity-rail ol { grid-template-columns: 1fr; } }
 @media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
 @media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
@@ -2063,7 +2068,7 @@ dd { margin: .2rem 0 0; }
   html { color-scheme: light; }
   body { background: #fff; color: #000; }
   .gate-shell { width: 100%; padding: 0; }
-  .gate-card, .gate-row { box-shadow: none; break-inside: avoid; }
+  .gate-card, .gate-row { box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
   .skip-link { display: none; }
 }
 
@@ -2078,6 +2083,7 @@ dd { margin: .2rem 0 0; }
 .continuity-rail__copy strong { overflow-wrap: anywhere; }
 .continuity-rail__status { color: var(--accent); font-size: .7rem; font-weight: 800; text-transform: uppercase; }
 @media (max-width: 720px) { .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media screen and (max-width: 420px) { .continuity-rail ol { grid-template-columns: 1fr; } }
 @media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
 @media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
