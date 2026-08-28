@@ -488,6 +488,8 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
             "I never completed the recruiter interview; help me prepare.",
             "I never went to the recruiter interview; help me prepare.",
             "I didn't go to the recruiter screen; help me prepare.",
+            "I never went through the recruiter screen; help me prepare.",
+            "I never spoke with a recruiter; help me prepare.",
             "No he tenido el filtro con el reclutador; ¿qué sigue?",
             "No asistí al filtro con el reclutador; ¿qué sigue?",
             "No tuve la entrevista con el reclutador; ayúdame a prepararme.",
@@ -497,6 +499,7 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
             "No fui a la entrevista con el reclutador; ¿qué hago?",
             "No me presenté al filtro con el reclutador; ¿qué hago?",
             "Nunca pasé por un filtro con el reclutador; ayúdame a prepararme.",
+            "No hablé con el reclutador; ayúdame a preparar.",
             "Todavía no terminé la entrevista con el reclutador; ¿qué hago después?",
         )
         for request in cases:

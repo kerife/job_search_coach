@@ -131,6 +131,36 @@ class PrivateRecruiterOutcomeExportTests(unittest.TestCase):
                 rows = list(csv.DictReader(handle))
             self.assertEqual({"app-001", "app-002"}, {row["application_id"] for row in rows})
 
+    def test_force_rejects_formula_in_existing_csv_rows(self) -> None:
+        receipt = _receipt("reply-received-en.json")
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "outcomes.csv"
+            write_export(
+                receipt,
+                candidate_id="candidate-001",
+                application_id="app-001",
+                application_date="2026-08-01",
+                as_of="2026-08-08",
+                output=output,
+            )
+            with output.open(newline="", encoding="utf-8") as handle:
+                rows = list(csv.DictReader(handle))
+            rows[0]["role"] = "=HYPERLINK(\"https://example.invalid\")"
+            with output.open("w", newline="", encoding="utf-8") as handle:
+                writer = csv.DictWriter(handle, fieldnames=rows[0].keys(), lineterminator="\n")
+                writer.writeheader()
+                writer.writerows(rows)
+            with self.assertRaisesRegex(ExportError, "existing CSV output is unavailable"):
+                write_export(
+                    receipt,
+                    candidate_id="candidate-001",
+                    application_id="app-001",
+                    application_date="2026-08-01",
+                    as_of="2026-08-08",
+                    output=output,
+                    force=True,
+                )
+
     def test_cli_rejects_non_exportable_event_without_echoing_arguments(self) -> None:
         script = SCRIPTS / "export_private_recruiter_outcome.py"
         with tempfile.TemporaryDirectory() as directory:

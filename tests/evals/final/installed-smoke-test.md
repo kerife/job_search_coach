@@ -146,7 +146,7 @@ installed_continuity_rail_semantics_smoke: `2/2 installed EN/ES outcome/checkpoi
 
 installed_triage_handoff_version_compatibility_smoke: `2/2 installed v2 builder attestation and legacy v1 reader compatibility without projection snapshot`
 
-installed_private_outcome_export_smoke: `10/10 installed reply receipt export maps only response_date, rejects requested/terminal events, requires application context, deduplicates replay, preserves distinct rows under force, includes source-artifact identity in replay keys, rejects symlink outputs and parents, and blocks spreadsheet formulas`
+installed_private_outcome_export_smoke: `11/11 installed reply receipt export maps only response_date, rejects requested/terminal events, requires application context, deduplicates replay, preserves distinct rows under force, rejects formula-bearing existing rows before forced replay, includes source-artifact identity in replay keys, rejects symlink outputs and parents, and blocks spreadsheet formulas`
 
 installed_recruiter_negation_routing_smoke: `2/2 installed had-no/have-no recruiter screen or interview wording routes to preparation intake while no-trouble/no-questions post-screen wording remains eligible for debrief or next-stage review`
 

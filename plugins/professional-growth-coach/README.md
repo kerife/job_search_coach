@@ -31,6 +31,10 @@ Identity checks also inspect the NFKC-normalized form of prose, so compatibility
 
 Explicit requests to expand a network, contact recruiters, or prepare for a recruiter interview route through `scripts/route_recruiter_target_shortlist.py`, including natural English/Spanish phrasing such as “network with recruiters”, “reach out to recruiters”, “entrevista con un recruiter”, “primera entrevista con un reclutador”, defined-article variants such as “first interview with the recruiter” or “primera entrevista con la reclutadora”, and first-conversation variants such as “initial interview with the recruiter”, “first call with a recruiter”, “entrevista inicial con el reclutador”, or “primera llamada con la reclutadora”. Completed recruiter-screen language now has precedence over shortlist routing: “I had a recruiter screen; help me debrief”, “qué sigue después de mi entrevista con el reclutador”, and equivalent wording return an artifact-free `private_recruiter_screen_debrief` or `private_recruiter_next_stage_review` handoff with the correct module and one bounded context question. The same post-screen classifier recognizes recruiter calls and conversations in English and Spanish (`recruiter call`, `conversation`, `llamada`, `conversación`, `hablé con`) plus common “what comes next / siguiente paso” wording. Negated or future screen language (`have not had`, `didn't attend`, `did not complete`, `never had`, `never completed`, `scheduled for next week`, `aún no`, `no asistí`, `no tuve`, `todavía no`, `nunca tuve`, `nunca asistí`, `mañana`) is kept out of post-screen debrief and returns the artifact-free `recruiter_target_screen_intake` preparation boundary instead. The router requires recruiter/screen context, keeps technical interviews without that context in ordinary coaching, and preserves `authorization_required` for every action-shaped request even when the request does not match a recruiter route. With three to six supplied targets, the route runs builder → validator → renderer and returns the validated artifact plus private in-memory HTML with `next_action=review_recruiter_target_shortlist`; without enough context or with an invalid target container it asks one bounded intake question that names the minimum plan (goal/segments, 3–5 manual queries, weekly time, stop condition, and proof theme). Recursively nested or otherwise malformed in-memory plans take the same artifact-free intake path instead of surfacing a traceback. It does not infer recipients. The rendered card localizes the next safe action and summarizes the four decision counts before the manual `recruiter_target_decision_gate` handoff.
 
+The preparation boundary also covers conversational non-attendance such as
+“I never went through the recruiter screen”, “I never spoke with a recruiter”,
+and “No hablé con el reclutador”; these remain artifact-free screen intake.
+
 The same preparation boundary covers explicit non-attendance such as “I never
 went to the recruiter interview”, “I didn’t go to the recruiter screen”,
 “Nunca fui a la entrevista con el reclutador”, “No fui”, “No me presenté”, and
@@ -387,9 +391,10 @@ uses a deterministic `recruiter-receipt-sha256-...` replay key, so repeating
 the same receipt/application pair is a no-op; no raw receipt prose, source ID,
 candidate aggregation, message, calendar action, or causal claim is added.
 The writer rejects symlink/non-regular outputs (including a symlinked immediate
-parent) and spreadsheet-formula prefixes in optional text fields. Use `--force`
-only after reviewing an existing output file: it preserves rows for distinct
-applications and replaces only the row for the same `application_id`.
+parent) and spreadsheet-formula prefixes in optional text fields and existing
+rows before any forced replay. Use `--force` only after reviewing an existing
+output file: it preserves rows for distinct applications and replaces only the
+row for the same `application_id`.
 
 After a completed `screen_attended` checkpoint, the rail uses the closed
 `debrief_after_screen` action. `route_recruiter_screen_debrief_intake` carries

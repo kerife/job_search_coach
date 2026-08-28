@@ -160,6 +160,8 @@ def _existing_rows(output: Path) -> list[dict[str, str]]:
             rows = list(reader)
             if any(set(row) != set(CSV_FIELDS) for row in rows):
                 raise ExportError("existing CSV output is unavailable")
+            if any(_FORMULA_PREFIX.match(value) for row in rows for value in row.values() if isinstance(value, str)):
+                raise ExportError("existing CSV output is unavailable")
             return rows
     except (OSError, UnicodeError, csv.Error) as error:
         raise ExportError("existing CSV output is unavailable") from error
