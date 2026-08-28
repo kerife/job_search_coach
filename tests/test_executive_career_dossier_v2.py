@@ -833,6 +833,11 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         self.assertIn(".market-matrix td::before { content: attr(data-label);", print_css)
         self.assertNotIn(".market-matrix thead { display: table-header-group; }", print_css)
 
+    def test_market_matrix_mobile_labels_keep_forced_color_contrast(self) -> None:
+        css = (ASSETS_ROOT / "career-market-learning-dossier-v1.css").read_text(encoding="utf-8")
+        forced_css = css.split("@media (forced-colors: active)", 1)[1]
+        self.assertIn(".market-matrix td::before { color: CanvasText; }", forced_css)
+
     def test_market_source_links_keep_a_minimum_touch_target(self) -> None:
         css = (ASSETS_ROOT / "career-market-learning-dossier-v1.css").read_text(encoding="utf-8")
         self.assertRegex(

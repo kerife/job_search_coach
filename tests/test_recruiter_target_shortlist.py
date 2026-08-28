@@ -445,6 +445,8 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
     def test_root_route_keeps_future_or_negated_recruiter_screens_out_of_post_screen_debrief(self) -> None:
         cases = (
             "I have not had a recruiter interview yet; help me prepare.",
+            "I had no recruiter screen yet; what should I prepare?",
+            "I have no recruiter interview yet; help me prepare.",
             "I had a recruiter interview scheduled for next week; help me prepare.",
             "I had not attended the recruiter screen; what should I do next?",
             "I didn't attend the recruiter screen; what should I do next?",

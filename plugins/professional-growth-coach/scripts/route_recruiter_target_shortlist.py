@@ -63,6 +63,7 @@ SCREEN_COMPLETION = re.compile(
 )
 SCREEN_NOT_COMPLETED = re.compile(
     r"\b(?:didn['’]?t\s+(?:attend|have|complete|finish)|did\s+not\s+(?:attend|have|complete|finish)|"
+    r"(?:had|have)\s+no|"
     r"not\s+(?:yet\s+)?(?:had|attended|completed|finished)|haven['’]?t\s+"
     r"(?:had|attended|completed|finished)|have\s+not\s+(?:had|attended|completed|finished)|"
     r"scheduled\s+for|upcoming|tomorrow|next\s+week|before\s+(?:the|my)|not\s+yet|"

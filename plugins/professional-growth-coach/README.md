@@ -31,6 +31,10 @@ Identity checks also inspect the NFKC-normalized form of prose, so compatibility
 
 Explicit requests to expand a network, contact recruiters, or prepare for a recruiter interview route through `scripts/route_recruiter_target_shortlist.py`, including natural English/Spanish phrasing such as “network with recruiters”, “reach out to recruiters”, “entrevista con un recruiter” and “primera entrevista con un reclutador”. Completed recruiter-screen language now has precedence over shortlist routing: “I had a recruiter screen; help me debrief”, “qué sigue después de mi entrevista con el reclutador”, and equivalent wording return an artifact-free `private_recruiter_screen_debrief` or `private_recruiter_next_stage_review` handoff with the correct module and one bounded context question. The same post-screen classifier recognizes recruiter calls and conversations in English and Spanish (`recruiter call`, `conversation`, `llamada`, `conversación`, `hablé con`) plus common “what comes next / siguiente paso” wording. Negated or future screen language (`have not had`, `didn't attend`, `did not complete`, `scheduled for next week`, `aún no`, `no asistí`, `no tuve`, `todavía no`, `mañana`) is kept out of post-screen debrief and returns the artifact-free `recruiter_target_screen_intake` preparation boundary instead. The router requires recruiter/screen context, keeps technical interviews without that context in ordinary coaching, and preserves `authorization_required` for every action-shaped request even when the request does not match a recruiter route. With three to six supplied targets, the route runs builder → validator → renderer and returns the validated artifact plus private in-memory HTML with `next_action=review_recruiter_target_shortlist`; without enough context or with an invalid target container it asks one bounded intake question that names the minimum plan (goal/segments, 3–5 manual queries, weekly time, stop condition, and proof theme). Recursively nested or otherwise malformed in-memory plans take the same artifact-free intake path instead of surfacing a traceback. It does not infer recipients. The rendered card localizes the next safe action and summarizes the four decision counts before the manual `recruiter_target_decision_gate` handoff.
 
+Negated English forms such as “I had no recruiter screen yet” and “I have no
+recruiter interview yet” take the preparation intake route rather than a
+post-screen debrief.
+
 The dossier v2 reading path keeps its nearest-section scrollspy responsive with a single guarded `requestAnimationFrame` update shared by scroll, resize, and `IntersectionObserver` callbacks; this limits layout reads and active-state mutations to at most one per frame without changing the initial hash or keyboard link behavior.
 If the same request also asks to send, reply, connect, apply, publish, confirm, or schedule, the route receipt preserves `authorization_required=true` in both `ready` and `needs_intake` states; analysis-only networking remains `false`, and no external action is performed. The value is kept aligned with the artifact delivery gate.
 
@@ -152,7 +156,8 @@ reader users.
 At the tablet breakpoint, section anchors reserve space for the sticky reading path so each destination opens below the rail; the mobile breakpoint reserves `18rem` for its taller one-column rail.
 The career-market matrix uses the same labelled stacked-row treatment in print
 as on narrow screens, keeping multi-vacancy comparisons readable on paper
-without changing table semantics.
+without changing table semantics; its generated mobile/print labels explicitly
+use `CanvasText` in forced-colors mode.
 
 Rendering CLIs write the requested private artifact but omit its absolute local
 path from the success receipt by default. A trusted caller that already knows

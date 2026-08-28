@@ -101,6 +101,7 @@
   .market-source-link { color: LinkText; }
   .market-boundary, .market-limitation, .gap-closure-route { border-left-color: Highlight; }
   .market-scan-summary dl > div:last-child { border-top-color: CanvasText; }
+  .market-matrix td::before { color: CanvasText; }
   .learning-decision-row .learning-option-type { color: CanvasText; border-color: CanvasText; }
 }
 

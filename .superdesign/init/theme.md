@@ -4,6 +4,10 @@
 
 Receipt surfaces are intentionally path-minimal: successful CLI output carries only opaque artifact metadata unless the trusted caller explicitly opts into `--include-artifact-path`. This is a delivery/privacy contract, not a visual control; offline HTML layout and the in-process rich receipt remain unchanged.
 
+The career-market matrix stacks rows on narrow and print surfaces; its generated
+`td::before` labels use `CanvasText` in forced-colors mode so the only visible
+column context remains explicit and readable.
+
 Triage-to-practice wrappers carry a deterministic projection snapshot over the
 unanswered session; it is a structural integrity signal, not visible candidate
 content. Compact outcome/checkpoint rails use 2px rail, step, and marker borders
@@ -985,6 +989,7 @@ dd { margin: .25rem 0 0; font-weight: 700; }
   .market-source-link { color: LinkText; }
   .market-boundary, .market-limitation, .gap-closure-route { border-left-color: Highlight; }
   .market-scan-summary dl > div:last-child { border-top-color: CanvasText; }
+  .market-matrix td::before { color: CanvasText; }
   .learning-decision-row .learning-option-type { color: CanvasText; border-color: CanvasText; }
 }
 

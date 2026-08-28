@@ -204,6 +204,23 @@ class PrivateRecruiterOutcomeExportTests(unittest.TestCase):
                     output=alias / "outcomes.csv",
                 )
 
+    def test_rejects_symlink_in_output_parent_chain(self) -> None:
+        receipt = _receipt("reply-received-en.json")
+        with tempfile.TemporaryDirectory() as directory:
+            real_parent = Path(directory) / "real"
+            (real_parent / "sub").mkdir(parents=True)
+            alias = Path(directory) / "alias"
+            alias.symlink_to(real_parent, target_is_directory=True)
+            with self.assertRaisesRegex(ExportError, "output parent is unavailable"):
+                write_export(
+                    receipt,
+                    candidate_id="candidate-001",
+                    application_id="app-001",
+                    application_date="2026-08-01",
+                    as_of="2026-08-08",
+                    output=alias / "sub" / "outcomes.csv",
+                )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -38,6 +38,18 @@ _SAFE_CURRENCY = re.compile(r"^[A-Z]{3}$")
 _FORMULA_PREFIX = re.compile(r"^\s*[=+\-@]")
 
 
+def _safe_absolute(path: Path) -> Path:
+    absolute = os.path.abspath(os.fspath(path))
+    parts = Path(absolute).parts
+    if len(parts) > 1 and parts[1] in {"tmp", "var"}:
+        component = parts[1]
+        alias = os.path.join(os.sep, component)
+        if os.path.islink(alias) and os.path.realpath(alias) == os.path.join(os.sep, "private", component):
+            suffix = os.path.join(*parts[2:]) if len(parts) > 2 else ""
+            absolute = os.path.join(os.sep, "private", component, suffix)
+    return Path(absolute)
+
+
 def _required_id(value: str, label: str) -> str:
     if not isinstance(value, str) or not _SAFE_ID.fullmatch(value):
         raise ExportError(f"{label} is required")
@@ -154,16 +166,20 @@ def _existing_rows(output: Path) -> list[dict[str, str]]:
 
 
 def _parent_is_safe(parent: Path) -> None:
-    try:
-        status = os.lstat(parent)
-    except FileNotFoundError as error:
-        raise ExportError("output parent is unavailable") from error
-    if stat.S_ISLNK(status.st_mode) or not stat.S_ISDIR(status.st_mode):
-        raise ExportError("output parent is unavailable")
+    current = Path(parent.anchor)
+    for component in parent.parts[1:]:
+        candidate = current / component
+        try:
+            status = os.lstat(candidate)
+        except FileNotFoundError as error:
+            raise ExportError("output parent is unavailable") from error
+        if stat.S_ISLNK(status.st_mode) or not stat.S_ISDIR(status.st_mode):
+            raise ExportError("output parent is unavailable")
+        current = candidate
 
 
 def _atomic_write(output: Path, content: bytes, *, force: bool) -> None:
-    target = Path(os.path.abspath(os.fspath(output)))
+    target = _safe_absolute(output)
     parent = target.parent
     if not parent.is_absolute():
         raise ExportError("output parent is unavailable")
@@ -219,7 +235,7 @@ def write_export(
         as_of=as_of,
         **kwargs,
     )
-    target = Path(os.path.abspath(os.fspath(output)))
+    target = _safe_absolute(output)
     fingerprint = row["intervention_id"]
     try:
         status = os.lstat(target)
