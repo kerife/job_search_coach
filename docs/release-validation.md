@@ -18,6 +18,11 @@ validator can execute:
 - `quick_validate.py`: `1fd66498c219616fd9249eacdf16c458412ea9065a9d887fd716aeef03907762`
 - `validate_plugin.py`: `6ff4bc1cc8ca94827c30c8299951efdac900ff38a5069c03e9a6554fc194a723`
 
+After the initial checks, the runner copies both validators into a private
+temporary directory, re-hashes those copies, and executes only the verified
+copies. This keeps the release gate stable if an input path changes while the
+remaining checks are running.
+
 With `CODEX_SYSTEM_SKILLS_ROOT` set to the system skills directory, run:
 
 ```bash

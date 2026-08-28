@@ -946,6 +946,39 @@ raise SystemExit(64)
             runner,
         )
 
+    def test_release_runner_executes_rehashed_private_validator_copies(self) -> None:
+        runner = RELEASE_RUNNER_PATH.read_text(encoding="utf-8")
+        self.assertIn(
+            'VALIDATOR_TMPDIR="$(mktemp -d "${TMPDIR:-/tmp}/pgc-release-XXXXXX")"',
+            runner,
+        )
+        self.assertIn(
+            'cp -p "$SKILL_VALIDATOR_PATH" "$SKILL_VALIDATOR_COPY"',
+            runner,
+        )
+        self.assertIn(
+            'cp -p "$PLUGIN_VALIDATOR_PATH" "$PLUGIN_VALIDATOR_COPY"',
+            runner,
+        )
+        self.assertIn('copied_skill_sha=', runner)
+        self.assertIn('copied_plugin_sha=', runner)
+        self.assertIn(
+            '"$VALIDATION_PYTHON" -B "$SKILL_VALIDATOR_COPY" "$LINKEDIN_SKILL_ROOT"',
+            runner,
+        )
+        self.assertIn(
+            '"$VALIDATION_PYTHON" -B "$PLUGIN_VALIDATOR_COPY" "$SOURCE_PLUGIN_ROOT"',
+            runner,
+        )
+        self.assertNotIn(
+            '"$VALIDATION_PYTHON" -B "$SKILL_VALIDATOR_PATH" "$LINKEDIN_SKILL_ROOT"',
+            runner,
+        )
+        self.assertNotIn(
+            '"$VALIDATION_PYTHON" -B "$PLUGIN_VALIDATOR_PATH" "$SOURCE_PLUGIN_ROOT"',
+            runner,
+        )
+
     def test_bootstrap_replaces_stale_final_environment_and_is_repeatable(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)

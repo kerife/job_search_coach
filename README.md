@@ -48,6 +48,8 @@ cross-plugin contracts without allowing a helper import to shadow a
 same-named root test.
 The release runner also invokes `scripts/check_repository_privacy.py` before
 the official validators and the full root discovery pass.
+It executes checksum-verified private copies of those validators so the gate
+cannot be affected by a later change to their source paths.
 
 The official plugin validator additionally requires the `PyYAML` package in the
 active Python environment. Do not install dependencies implicitly in release

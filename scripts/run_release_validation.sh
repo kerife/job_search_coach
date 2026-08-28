@@ -30,11 +30,29 @@ if [[ "$actual_plugin_sha" != "$EXPECTED_PLUGIN_SHA256" ]]; then
   exit 1
 fi
 
+VALIDATOR_TMPDIR="$(mktemp -d "${TMPDIR:-/tmp}/pgc-release-XXXXXX")"
+trap 'rm -rf "$VALIDATOR_TMPDIR"' EXIT
+SKILL_VALIDATOR_COPY="$VALIDATOR_TMPDIR/quick_validate.py"
+PLUGIN_VALIDATOR_COPY="$VALIDATOR_TMPDIR/validate_plugin.py"
+cp -p "$SKILL_VALIDATOR_PATH" "$SKILL_VALIDATOR_COPY"
+cp -p "$PLUGIN_VALIDATOR_PATH" "$PLUGIN_VALIDATOR_COPY"
+
+copied_skill_sha="$(shasum -a 256 "$SKILL_VALIDATOR_COPY" | awk '{print $1}')"
+copied_plugin_sha="$(shasum -a 256 "$PLUGIN_VALIDATOR_COPY" | awk '{print $1}')"
+if [[ "$copied_skill_sha" != "$EXPECTED_SKILL_SHA256" ]]; then
+  echo "VALIDATOR_CHECKSUM_MISMATCH: quick_validate.py copy" >&2
+  exit 1
+fi
+if [[ "$copied_plugin_sha" != "$EXPECTED_PLUGIN_SHA256" ]]; then
+  echo "VALIDATOR_CHECKSUM_MISMATCH: validate_plugin.py copy" >&2
+  exit 1
+fi
+
 VALIDATION_VENV="$(cd "$(dirname "$VALIDATION_PYTHON")/.." && pwd -P)"
 VALIDATION_VENV="$VALIDATION_VENV" "$VALIDATION_PYTHON" -B -c \
   'import os, platform, sys, yaml; from pathlib import Path; root = Path(os.environ["VALIDATION_VENV"]).resolve(); assert platform.python_implementation() == "CPython"; assert sys.version_info[:3] == (3, 11, 15); assert sys.platform == "darwin"; assert platform.machine() == "arm64"; assert yaml.__version__ == "6.0.3"; assert Path(yaml.__file__).resolve().is_relative_to(root)'
 
 "$VALIDATION_PYTHON" -B "$PROJECT_ROOT/scripts/check_repository_privacy.py" --repo-root "$PROJECT_ROOT"
-"$VALIDATION_PYTHON" -B "$SKILL_VALIDATOR_PATH" "$LINKEDIN_SKILL_ROOT"
-PYTHONDONTWRITEBYTECODE=1 "$VALIDATION_PYTHON" -B "$PLUGIN_VALIDATOR_PATH" "$SOURCE_PLUGIN_ROOT"
+"$VALIDATION_PYTHON" -B "$SKILL_VALIDATOR_COPY" "$LINKEDIN_SKILL_ROOT"
+PYTHONDONTWRITEBYTECODE=1 "$VALIDATION_PYTHON" -B "$PLUGIN_VALIDATOR_COPY" "$SOURCE_PLUGIN_ROOT"
 "$VALIDATION_PYTHON" -B -m unittest discover -s "$PROJECT_ROOT/tests" -p 'test*.py' -q
