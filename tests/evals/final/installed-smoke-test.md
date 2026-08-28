@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T06:35:54-06:00`
+release_timestamp: `2026-08-28T06:57:36-06:00`
 
-source_commit: `dad05350e2946946721f227cf5fa754abfcf91c2`
+source_commit: `fd964a9cc0efd529640751a9e36b90709f9d34bf`
 
-source_tree: `575342771ca5b8d9300bf6c0aa65bfe9efdcebb3`
+source_tree: `d5c393faeb5513ca4233add8b5eeecee64afafcc`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828120000`
+installed_cache_version: `0.2.0+codex.20260828130000`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `90ca66f7469139f6041dfe156aab66a0ca1b7d59d6b9b226078c1626f0467b3c`
+normalized_source_cache_sha256: `4a3c22f73ef44b2381575c5bac893b669c189463f80739342d8022dd4e13da20`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -139,6 +139,8 @@ installed_continuity_rail_semantics_smoke: `2/2 installed EN/ES outcome/checkpoi
 installed_triage_handoff_version_compatibility_smoke: `2/2 installed v2 builder attestation and legacy v1 reader compatibility without projection snapshot`
 
 installed_private_outcome_export_smoke: `10/10 installed reply receipt export maps only response_date, rejects requested/terminal events, requires application context, deduplicates replay, preserves distinct rows under force, includes source-artifact identity in replay keys, rejects symlink outputs and parents, and blocks spreadsheet formulas`
+
+installed_recruiter_negation_routing_smoke: `2/2 installed had-no/have-no recruiter screen or interview wording routes to preparation intake while no-trouble/no-questions post-screen wording remains eligible for debrief or next-stage review`
 
 installed_practice_marker_contrast_smoke: `1/1 installed practice continuity and triage-route markers use 2px borders in prefers-contrast: more`
 
