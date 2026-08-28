@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T04:32:10-06:00`
+release_timestamp: `2026-08-28T04:57:40-06:00`
 
-source_commit: `c33ea00374c6ce0b1eea7bb63b392d8adaddbcbd`
+source_commit: `972cbc46a0fb20e6387229781f9addc6253b2223`
 
-source_tree: `b760348109cebba9c6a045a5614cefcaed4148c0`
+source_tree: `601eda56996064a4a32b53d854a31c35cb1fa573`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828200000`
+installed_cache_version: `0.2.0+codex.20260828220000`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `173`
 
 installed_file_count: `173`
 
-normalized_source_cache_sha256: `33e5e40c46a8228247cb0b6d690a730cef92615bb4f568cd25714ab6c5a47a67`
+normalized_source_cache_sha256: `6426a94293b2ceeca1ffca38c54e236e0be02faa879e6bbf4880289f7de87f4f`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -45,7 +45,9 @@ source_cache_equivalence: `diff_qr_silent`
 
 installed_renderer_smokes: `6/6 triage validator/renderer fixtures`
 
-installed_reading_path_smoke: `6/6 localized fragment links; aria-current fallback; nearest-target IntersectionObserver enhancement; tablet and mobile sticky-rail offsets; print/mobile offsets`
+installed_reading_path_smoke: `6/6 localized fragment links; aria-current fallback; nearest-target IntersectionObserver enhancement; rAF-guarded scroll/resize/observer updates; tablet and mobile sticky-rail offsets; print/mobile offsets`
+
+installed_recruiter_pre_screen_boundary_smoke: `9/9 future and explicit EN/ES non-completion phrases return artifact-free recruiter_target_screen_intake`
 
 installed_dossier_v2_smoke: `4/4 EN/ES validator and renderer`
 
