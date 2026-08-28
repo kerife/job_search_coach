@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T00:17:27-06:00`
+release_timestamp: `2026-08-28T00:30:20-06:00`
 
-source_commit: `41e821ef05773f2d8fc79e9e53ad88d874d3ab1c`
+source_commit: `816d9d58ed100f72dedad863f7965bc4acb089e9`
 
-source_tree: `d14206d83fbefd5109e3376c59981e744a3e4a38`
+source_tree: `ef75589da8dab7c436f159088e4b1f4eab663118`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828001727`
+installed_cache_version: `0.2.0+codex.20260828003020`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `172`
 
 installed_file_count: `172`
 
-normalized_source_cache_sha256: `709270765a5ed4cc362ba6697d229aa7d60785a2380899063e238ae5bb0df1d8`
+normalized_source_cache_sha256: `0809f6fedf8c168c47c3a732562cf27b3f8f4e8fa785b3caab884f35a059ccc5`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -182,6 +182,8 @@ installed_recruiter_handoff_render_smoke: `16/16 installed decision-gate, screen
 
 installed_recruiter_intake_hardening_smoke: `41/41 installed natural-language triggers, invalid target containers, and artifact-free downstream recovery responses stay bounded and actionable`
 
+installed_recruiter_locale_recovery_smoke: `5/5 installed downstream handoffs recover non-string locale payloads as artifact-free needs_intake responses without traceback`
+
 installed_recruiter_recovery_smoke: `5/5 installed valid recruiter chain, route-specific ES/EN recovery copy, taxonomy-derived invalid-transition recovery, terminal offer-stage recovery, and malformed-input fail-closed behavior`
 
 installed_recruiter_schema_contract_smoke: `22/22 installed valid recruiter handoff chain accepted; unknown nested snapshot fields and impossible decision/state/forward-transition combinations rejected`
@@ -200,6 +202,8 @@ installed_recruiter_validator_date_smoke: `5/5 installed recruiter target/debrie
 installed_recruiter_gate_freshness_smoke: `1/1 installed screen-intake bridge downgrades a 91-day-old gate to clarify_first even with structurally valid checks`
 
 installed_shortlist_color_fallback_smoke: `1/1 installed priority card keeps a surface background fallback when color-mix is unsupported`
+
+installed_market_source_link_touch_target_smoke: `1/1 installed market source links retain a minimum 44px touch target with centered text`
 
 fresh_agent_smoke: `not_run`
 
