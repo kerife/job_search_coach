@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T04:57:40-06:00`
+release_timestamp: `2026-08-28T05:13:12-06:00`
 
-source_commit: `972cbc46a0fb20e6387229781f9addc6253b2223`
+source_commit: `3b62b8cc4c22ef32a7346ba44668852474451ea2`
 
-source_tree: `601eda56996064a4a32b53d854a31c35cb1fa573`
+source_tree: `228aec836bc2fee6a216ae9ef36a3010b08cf4db`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828220000`
+installed_cache_version: `0.2.0+codex.20260828230000`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `173`
 
 installed_file_count: `173`
 
-normalized_source_cache_sha256: `6426a94293b2ceeca1ffca38c54e236e0be02faa879e6bbf4880289f7de87f4f`
+normalized_source_cache_sha256: `5dce5fd5c8c7796d70cb1a016641b407d99c94f3311edf3422b645da4ec8c9f3`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -247,3 +247,6 @@ installed_recruiter_high_contrast_boundary_smoke: `2/2 screen-intake and debrief
 installed_linkedin_canonical_date_runtime_smoke: `2/2 LinkedIn runtime and schema validators reject week-date spellings while accepting YYYY-MM-DD`
 
 installed_private_canonical_date_cli_smoke: `4/4 private recruiter conversion and follow-through validators/renderers reject week-date --as-of values without echoing the supplied value`
+
+installed_projection_integrity_smoke: `1/1 triage-to-practice projection snapshot rejects changed verified-fact prose while source snapshot remains unchanged`
+installed_compact_receipt_high_contrast_smoke: `2/2 conversion-outcome and follow-through rails strengthen rail, step, and marker borders under prefers-contrast: more`
