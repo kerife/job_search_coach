@@ -109,12 +109,20 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertEqual("T-001", built["top_priority_target_id"])
         self.assertFalse(built["delivery"]["no_message_action"] is False)
 
+    def test_priority_card_has_legacy_background_fallback_before_color_mix(self) -> None:
+        css = (ROOT / "plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css").read_text(encoding="utf-8")
+        self.assertRegex(css, r"\.shortlist-priority-card\s*\{[^}]*background:\s*var\(--surface\);[^}]*background:\s*color-mix\(")
+
     def test_validator_blocks_advance_without_context_or_supported_proof(self) -> None:
         value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
         value["targets"][0]["context_state"] = "context_needed"
         value["targets"][0]["supported_fact_ids"] = []
         errors = validate_shortlist(value, as_of=date(2026, 8, 27))
         self.assertIn("targets[0].advance requires named context, supported facts, and no missing context", errors)
+
+    def test_validator_rejects_future_evaluation_date(self) -> None:
+        value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
+        self.assertIn("as_of cannot be in the future", validate_shortlist(value, as_of=date.today() + dt.timedelta(days=1)))
 
     def test_validator_rejects_target_identity_material_and_unapproved_action(self) -> None:
         value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())

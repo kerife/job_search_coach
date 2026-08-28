@@ -104,6 +104,8 @@ def replay_fingerprint(value: Mapping[str, object]) -> str:
 
 def validate_next_stage_review(value: object, debrief: Mapping[str, object] | None, receipt: Mapping[str, object] | None, intake: Mapping[str, object] | None, checkpoint: Mapping[str, object] | None = None, *, as_of: dt.date | None = None) -> list[str]:
     errors: list[str] = []
+    if as_of is not None and as_of > dt.date.today():
+        errors.append("as_of cannot be in the future")
     item = _closed(value, "review", TOP_FIELDS, errors)
     if item is None:
         return sorted(set(errors))

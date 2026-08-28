@@ -1912,7 +1912,7 @@ h1 { margin-bottom: 0; font-size: clamp(2rem, 5vw, 3.25rem); letter-spacing: -.0
 .shortlist-overview { border-top: .35rem solid var(--accent); margin-bottom: 1rem; }
 .shortlist-overview h2 { margin-bottom: .4rem; font-size: 1rem; }
 .shortlist-goal { max-width: 48rem; font-size: 1.12rem; }
-.shortlist-priority-card { margin-top: 1rem; padding: .8rem 1rem; border-left: .35rem solid var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+.shortlist-priority-card { margin-top: 1rem; padding: .8rem 1rem; border-left: .35rem solid var(--accent); background: var(--surface); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
 .shortlist-priority-label { margin: 0; color: var(--muted); font-size: .72rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
 .shortlist-priority-value { margin: .15rem 0 0; font-weight: 750; }
 .shortlist-decision-summary { margin-top: 1rem; }

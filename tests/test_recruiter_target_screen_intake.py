@@ -81,6 +81,20 @@ class RecruiterTargetScreenIntakeTests(unittest.TestCase):
         self.assertEqual("collect_screen_intake", intake["handoff"]["next_safe_action"])
         self.assertEqual([], validate_screen_intake(intake, as_of=date(2026, 8, 27)))
 
+    def test_validator_rejects_future_evaluation_date(self) -> None:
+        intake = build_screen_intake(self.gate(), "T-001", valid_screen_intake())
+        self.assertIn("as_of cannot be in the future", validate_screen_intake(intake, as_of=date.today() + timedelta(days=1)))
+
+    def test_stale_gate_cannot_prepare_interview_even_with_fresh_source_context(self) -> None:
+        stale_gate = build_decision_gate(
+            build_shortlist("en", (date.today() - timedelta(days=91)).isoformat(), valid_plan(), valid_targets())
+        )
+        context = valid_screen_intake()
+        context["source_date"] = (date.today() - timedelta(days=91)).isoformat()
+        intake = build_screen_intake(stale_gate, "T-001", context)
+        self.assertEqual("clarify_first", intake["readiness_decision"])
+        self.assertEqual("collect_screen_intake", intake["handoff"]["next_safe_action"])
+
     def test_source_context_is_fresh_at_the_ninety_day_boundary(self) -> None:
         context = valid_screen_intake()
         context["source_date"] = (date(2026, 8, 27) - timedelta(days=90)).isoformat()

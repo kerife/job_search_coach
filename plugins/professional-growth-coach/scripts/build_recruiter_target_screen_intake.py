@@ -104,7 +104,7 @@ def build_screen_intake(gate: Mapping[str, object], target_id: str, context: Map
         readiness = "stop"
         event = "stop_decision"
         action = "stop_and_record"
-    elif target["decision"] == "advance" and len(statuses) == 4 and all(status == "pass" for status in statuses) and 0 <= (reference_date - parsed_source_date).days <= VALIDATOR.SOURCE_FRESHNESS_DAYS:
+    elif target["decision"] == "advance" and len(statuses) == 4 and all(status == "pass" for status in statuses) and 0 <= (reference_date - parsed_source_date).days <= VALIDATOR.SOURCE_FRESHNESS_DAYS and 0 <= (dt.date.today() - reference_date).days <= VALIDATOR.SOURCE_FRESHNESS_DAYS:
         readiness = "ready"
         event = "screen_context_submitted"
         action = "manual_prepare_role_interviews_review"
@@ -115,7 +115,7 @@ def build_screen_intake(gate: Mapping[str, object], target_id: str, context: Map
     output["readiness_decision"] = readiness
     output["measurement_event"] = event
     output["handoff"]["next_safe_action"] = action
-    if VALIDATOR.validate_screen_intake(output, source_gate=gate, as_of=reference_date):
+    if VALIDATOR.validate_screen_intake(output, source_gate=gate, as_of=dt.date.today()):
         raise ValueError("screen intake validation failed")
     return output
 

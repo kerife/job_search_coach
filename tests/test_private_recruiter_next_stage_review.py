@@ -6,7 +6,7 @@ import copy
 import json
 import sys
 import unittest
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -42,6 +42,13 @@ class PrivateRecruiterNextStageReviewTests(unittest.TestCase):
         self.assertEqual("ready", artifact["review_state"])
         self.assertEqual("manual_prepare_next_stage_review", artifact["handoff"]["next_safe_action"])
         self.assertEqual("candidate_with_coach_review", artifact["review_owner"])
+
+    def test_validator_rejects_future_evaluation_date(self) -> None:
+        artifact = build_next_stage_review(self.debrief, RECEIPT, self.intake, valid_checkpoint(), "first_interview")
+        self.assertIn(
+            "as_of cannot be in the future",
+            validate_next_stage_review(artifact, self.debrief, RECEIPT, self.intake, valid_checkpoint(), as_of=date.today() + timedelta(days=1)),
+        )
 
     def test_incomplete_or_stopped_debrief_is_blocked(self) -> None:
         paused = valid_debrief()

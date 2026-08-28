@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import datetime as dt
 import json
 import tempfile
 import sys
@@ -48,6 +49,10 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
         shortlist["as_of_date"] = "2999-01-01"
         with self.assertRaises(ValueError):
             build_decision_gate(shortlist)
+
+    def test_validator_rejects_future_evaluation_date(self) -> None:
+        gate = build_decision_gate(self.shortlist())
+        self.assertIn("as_of cannot be in the future", validate_decision_gate(gate, as_of=date.today() + dt.timedelta(days=1)))
 
     def test_validator_rejects_tampered_source_snapshot_and_counts(self) -> None:
         gate = build_decision_gate(self.shortlist())

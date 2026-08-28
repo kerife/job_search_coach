@@ -81,6 +81,12 @@ The recruiter shortlist renderer reads its HTML and CSS only through the same
 package-local regular-file boundary, and rejects future-dated artifacts even
 when called directly instead of through the builder.
 
+Recruiter validators also reject a future evaluation date supplied through
+`--as-of`; an explicit historical replay must use a date no later than today.
+The target-specific screen-intake bridge applies the same inclusive 90-day
+window to the source gate itself, so an old gate can only return `clarify_first`
+until a fresh gate is built.
+
 The visual release gate treats the full recruiter review flow as one
 `recruiter_review` family: shortlist, decision gate, screen intake, screen
 debrief, and next-stage review. `scripts/validate_design_tokens.py` checks all

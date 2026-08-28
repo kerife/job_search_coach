@@ -96,6 +96,8 @@ def _date(value: object, path: str, errors: list[str], reference: dt.date | None
 
 def validate_screen_intake(value: object, *, source_gate: Mapping[str, object] | None = None, as_of: dt.date | None = None) -> list[str]:
     errors: list[str] = []
+    if as_of is not None and as_of > dt.date.today():
+        errors.append("as_of cannot be in the future")
     item = _closed(value, "intake", TOP_FIELDS, errors)
     if item is None:
         return sorted(set(errors))
@@ -188,7 +190,9 @@ def validate_screen_intake(value: object, *, source_gate: Mapping[str, object] |
         and intake_as_of is not None
         and 0 <= (intake_as_of - source_date).days <= SOURCE_FRESHNESS_DAYS
     )
-    expected_readiness = "stop" if target_decision == "stop" or has_stop else ("ready" if target_decision == "advance" and all_pass and stage in STAGES and requirements and facts and company_state in {"verified", "candidate_reported"} and source_is_fresh else "clarify_first")
+    evaluation_date = as_of or dt.date.today()
+    gate_is_fresh = intake_as_of is not None and 0 <= (evaluation_date - intake_as_of).days <= SOURCE_FRESHNESS_DAYS
+    expected_readiness = "stop" if target_decision == "stop" or has_stop else ("ready" if target_decision == "advance" and all_pass and stage in STAGES and requirements and facts and company_state in {"verified", "candidate_reported"} and source_is_fresh and gate_is_fresh else "clarify_first")
     if readiness != expected_readiness:
         errors.append("readiness_decision does not reconcile with target decision and checks")
     event = item.get("measurement_event")

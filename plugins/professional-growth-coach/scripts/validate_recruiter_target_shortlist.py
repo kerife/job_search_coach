@@ -116,6 +116,8 @@ def _date(value: object, path: str, errors: list[str], reference: dt.date | None
 
 def validate_shortlist(value: object, *, as_of: dt.date | None = None) -> list[str]:
     errors: list[str] = []
+    if as_of is not None and as_of > dt.date.today():
+        errors.append("as_of cannot be in the future")
     item = _closed(value, "shortlist", TOP_FIELDS, errors)
     if item is None:
         return sorted(set(errors))

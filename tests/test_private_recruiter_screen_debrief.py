@@ -6,7 +6,7 @@ import copy
 import json
 import sys
 import unittest
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -90,6 +90,13 @@ class PrivateRecruiterScreenDebriefTests(unittest.TestCase):
         self.assertEqual(["structured_debrief_context"], routed["evidence_gaps"])
         self.assertIn("Filtro atendido", routed["intake_question"])
         self.assertNotRegex(routed["intake_question"], r"(?:T-\\d{3}|D-\\d{3}|F-\\d{3}|https?://)")
+
+    def test_validator_rejects_future_evaluation_date(self) -> None:
+        artifact = build_screen_debrief(valid_checkpoint(), RECEIPT, self.intake, valid_debrief())
+        self.assertIn(
+            "as_of cannot be in the future",
+            validate_screen_debrief(artifact, RECEIPT, self.intake, as_of=date.today() + timedelta(days=1)),
+        )
 
     def test_debrief_intake_recovery_is_specific_and_artifact_free(self) -> None:
         for checkpoint, receipt, intake in (
