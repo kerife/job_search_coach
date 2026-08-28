@@ -3,7 +3,7 @@
   "artifact_kind": "deterministic-regression-fixture",
   "cycle": 1,
   "case_id": "imminent-interview",
-  "source_commit": "5f1c6111787ed327be8d5039754757eb7e390d41",
+  "source_commit": "e521b5bfaeb9195a509f5ac76ac058ea84d52943",
   "source_tree": "9441fbb63fda3ef249a87b94c42f92328eaad423",
   "fork_turns": "none",
   "run_id": "JSC-RUN-C1-IMMINENT-INTERVIEW",
