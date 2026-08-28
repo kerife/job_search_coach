@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T22:22:58-06:00`
+release_timestamp: `2026-08-27T22:46:40-06:00`
 
-source_commit: `c938caaa1dc2cbdbef6518274529d7af6f494f6b`
+source_commit: `3fcc85cc16c3fc9d7065878dbe619a369959925e`
 
-source_tree: `c6b0943d6c19b6147ba403fde3bfddc76df0b2ae`
+source_tree: `591eec2d1ee5bf9dab17f9eb42e64b05a2b21193`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827222258`
+installed_cache_version: `0.2.0+codex.20260827224640`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `172`
 
 installed_file_count: `172`
 
-normalized_source_cache_sha256: `9522bf1000b0fd2e236bbe1928e1887e319ceaf76b563abf877c7c6c38c6a78e`
+normalized_source_cache_sha256: `6dd69c80ab0b29a95381e0e2e6b9a904b0047e4d4484dc4309e19fc02fc0bcb4`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -211,3 +211,7 @@ external_action_state: `not_executed`
 
 This record is a deterministic synthetic release attestation. It contains no
 real profile mapping, recruiter identity, credential, or external action.
+
+installed_followthrough_receipt_gate_smoke: `3/3 installed completed checkpoints reject contact, reply, and referral receipts from preparation routing`
+installed_dark_high_contrast_border_smoke: `4/4 installed recruiter review surfaces keep dark + prefers-contrast: more borders at or above the 3:1 non-text contrast floor`
+installed_delimited_local_path_smoke: `4/4 installed validators and repository privacy scanner reject local paths after delimiters without echoing private values`
