@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T06:42:05-06:00`
+release_timestamp: `2026-08-28T07:08:11-06:00`
 
-source_commit: `0fc7997999d2cd3952f1d467f20cbfa328f6fe19`
+source_commit: `0e05a07809a3600531f91211c5cc4eebd1d10ec4`
 
-source_tree: `704a4928273e10727b029b28e962b77c83c22eef`
+source_tree: `b38e39e7009c252dbe51e46356744a7964a8b179`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828064205`
+installed_cache_version: `0.2.0+codex.20260828070811`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `172`
 
 installed_file_count: `172`
 
-normalized_source_cache_sha256: `1040e6f416612f5b58701391d338d7e623bb539a516a6f6bff86434e4e4a1872`
+normalized_source_cache_sha256: `24f8538d07e1bb4a383d17b12bd44205f0898da4216e6aae6fe23806a570301d`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -73,6 +73,8 @@ installed_vacancy_freshness_smoke: `2/2 EN/ES per-vacancy access/publication dat
 installed_learning_source_identity_smoke: `1/1 installed learning validator rejects trailing-slash and percent-decoded equivalent source URLs`
 installed_release_digest_documentation_smoke: `1/1 release runner validator digests match the release documentation`
 installed_release_validator_copy_smoke: `1/1 release runner re-hashes private validator copies before execution`
+installed_validator_support_hash_smoke: `1/1 release runner pins, copies, and re-hashes identifier_validation.py`
+installed_shortlist_next_step_smoke: `2/2 ES/EN localized review date and fixed batch next-step panel`
 
 installed_replay_fingerprint_smoke: `1/1 stable identity-free receipt/checkpoint replay key`
 installed_source_traceability_smoke: `2/2 EN/ES public-source links and research dates`
