@@ -34,6 +34,7 @@ VALIDATION_VENV="$(cd "$(dirname "$VALIDATION_PYTHON")/.." && pwd -P)"
 VALIDATION_VENV="$VALIDATION_VENV" "$VALIDATION_PYTHON" -B -c \
   'import os, platform, sys, yaml; from pathlib import Path; root = Path(os.environ["VALIDATION_VENV"]).resolve(); assert platform.python_implementation() == "CPython"; assert sys.version_info[:3] == (3, 11, 15); assert sys.platform == "darwin"; assert platform.machine() == "arm64"; assert yaml.__version__ == "6.0.3"; assert Path(yaml.__file__).resolve().is_relative_to(root)'
 
+"$VALIDATION_PYTHON" -B "$PROJECT_ROOT/scripts/check_repository_privacy.py" --repo-root "$PROJECT_ROOT"
 "$VALIDATION_PYTHON" -B "$SKILL_VALIDATOR_PATH" "$LINKEDIN_SKILL_ROOT"
 PYTHONDONTWRITEBYTECODE=1 "$VALIDATION_PYTHON" -B "$PLUGIN_VALIDATOR_PATH" "$SOURCE_PLUGIN_ROOT"
 "$VALIDATION_PYTHON" -B -m unittest discover -s "$PROJECT_ROOT/tests" -p 'test*.py' -q

@@ -133,6 +133,8 @@ value so action text remains above the contrast floor on dark surfaces.
 The executive dossier reading path also switches to a two-column tablet layout
 through 900px, then to one column at 640px, keeping all four destinations
 usable without horizontal scrolling.
+Its methodology links retain a minimum 44x44px touch target, including when a
+link is rendered on a single line.
 At the tablet breakpoint, section anchors reserve space for the sticky reading path so each destination opens below the rail; the mobile breakpoint reserves `18rem` for its taller one-column rail.
 The career-market matrix uses the same labelled stacked-row treatment in print
 as on narrow screens, keeping multi-vacancy comparisons readable on paper

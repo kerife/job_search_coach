@@ -4080,8 +4080,25 @@ Action boundary: authorization required before action.
             text = cycle_path.read_text(encoding="utf-8")
             self.assertIn("## Artifact index", text)
             self.assertIn("## Observed failures", text)
+            source_commit_match = re.search(r"(?m)^source_commit=([0-9a-f]+)$", text)
+            source_tree_match = re.search(r"(?m)^source_tree=([0-9a-f]+)$", text)
+            self.assertIsNotNone(source_commit_match, cycle_name)
+            self.assertIsNotNone(source_tree_match, cycle_name)
+            source_commit = source_commit_match.group(1)
+            source_tree = source_tree_match.group(1)
+            self.assertEqual(40, len(source_commit), cycle_name)
+            self.assertEqual(40, len(source_tree), cycle_name)
             for case_id in FINAL_CASES:
                 self.assertIn(f"cycle-{cycle_name[6]}/{case_id}.json", text)
+                artifact = json.loads(
+                    (REPO_ROOT / "tests" / "evals" / "final" / f"cycle-{cycle_name[6]}" / f"{case_id}.json").read_text(encoding="utf-8")
+                )
+                self.assertEqual(source_commit, artifact["source_commit"], cycle_name)
+                self.assertEqual(source_tree, artifact["source_tree"], cycle_name)
+            checker = load_static_checker()
+            first_artifact_path = REPO_ROOT / "tests" / "evals" / "final" / f"cycle-{cycle_name[6]}" / f"{FINAL_CASES[0]}.json"
+            first_artifact = json.loads(first_artifact_path.read_text(encoding="utf-8"))
+            self.assertEqual([], checker.validate_eval_provenance(first_artifact, REPO_ROOT))
 
         cycle_2 = (REPO_ROOT / "tests" / "evals" / "final" / "cycle-2.md").read_text(encoding="utf-8")
         self.assertIn("## Comparison with cycle 1", cycle_2)

@@ -46,6 +46,8 @@ python3 -B -m unittest discover -s tests -p 'test*.py' -q
 The root discovery pass is intentional: it exercises the repository's
 cross-plugin contracts without allowing a helper import to shadow a
 same-named root test.
+The release runner also invokes `scripts/check_repository_privacy.py` before
+the official validators and the full root discovery pass.
 
 The official plugin validator additionally requires the `PyYAML` package in the
 active Python environment. Do not install dependencies implicitly in release

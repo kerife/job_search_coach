@@ -457,7 +457,13 @@ details summary {
 
 .method-list { padding-left: 1.25rem; }
 .method-list li + li { margin-top: 0.6rem; }
-.method-list a { word-break: break-word; }
+.method-list a {
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  word-break: break-word;
+}
 
 .footer {
   padding-block: 1.5rem 2.5rem;

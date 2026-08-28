@@ -939,6 +939,13 @@ raise SystemExit(64)
             digest = match.group(1)
             self.assertIn(f"- `{label}`: `{digest}`", documentation)
 
+    def test_release_runner_invokes_repository_privacy_scanner(self) -> None:
+        runner = RELEASE_RUNNER_PATH.read_text(encoding="utf-8")
+        self.assertIn(
+            '"$VALIDATION_PYTHON" -B "$PROJECT_ROOT/scripts/check_repository_privacy.py" --repo-root "$PROJECT_ROOT"',
+            runner,
+        )
+
     def test_bootstrap_replaces_stale_final_environment_and_is_repeatable(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)

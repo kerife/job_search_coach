@@ -110,6 +110,13 @@ def _page_sections() -> dict[str, str]:
 
 
 class SuperdesignThemeAssetParityTests(unittest.TestCase):
+    def test_method_links_preserve_minimum_touch_target(self):
+        css = (ASSETS / "executive-career-dossier-v1.css").read_text(encoding="utf-8")
+        self.assertRegex(
+            css,
+            r"\.method-list a\s*\{[^}]*display:\s*inline-flex;[^}]*min-width:\s*44px;[^}]*min-height:\s*44px;",
+        )
+
     def test_page_dependency_map_is_one_to_one_with_routes_and_assets(self):
         routes = {
             route.strip("`")
