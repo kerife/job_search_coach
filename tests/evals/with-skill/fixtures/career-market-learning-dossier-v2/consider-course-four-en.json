@@ -344,13 +344,13 @@
   "learning_evidence_mode": "synthetic",
   "search_summary": {
     "bounded_queries_run": 12,
-    "limit_reason": "target_reached",
-    "limitation": "none",
+    "limit_reason": "source_limit",
+    "limitation": "Only four identity-free fixture vacancies were available.",
     "vacancy_sample_count": 4
   },
   "source_executive_dossier_snapshot": "snap-dossier-sha256-0000000000000000000000000000000000000000000000000000000000000000",
-  "source_learning_research_snapshot": "snap-learning-sha256-0c94ce132209db03f44a8e28054fac205cd14db7332999a90d1a4d14d2f5b8fa",
-  "source_market_snapshot": "snap-market-sha256-9f4c7c4e600481dfd94103511cbb97183064fa89953f14dacbc5640e3861c506",
+  "source_learning_research_snapshot": "snap-learning-sha256-a0ed753948a26c60cc38738765a66155081569952fe5a5125dc563a131d3f162",
+  "source_market_snapshot": "snap-market-sha256-bf9229d36177e0000a6eaa4fcf06e58d3d3708997e3613d27a5469dd984b5b3b",
   "source_research_snapshot": "snap-market-sha256-0000000000000000000000000000000000000000000000000000000000000000",
   "state": "limited_market_evidence",
   "vacancy_cards": [

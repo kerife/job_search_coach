@@ -37,6 +37,8 @@ def _recurring_market(sample_size: int = 5) -> dict[str, object]:
     cards = market["vacancy_cards"][:sample_size]
     market["state"] = "complete" if sample_size == 5 else "limited_market_evidence"
     market["search_summary"]["vacancy_sample_count"] = sample_size
+    market["search_summary"]["limit_reason"] = "target_reached" if sample_size == 5 else "source_limit"
+    market["search_summary"]["limitation"] = "none" if sample_size == 5 else "Synthetic fixture exposes fewer than five vacancies."
     market["vacancy_cards"] = cards
     signals = ("terraform_iac", "kubernetes", "observability")
     for card in cards:
