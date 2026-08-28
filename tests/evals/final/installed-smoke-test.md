@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T21:00:33-06:00`
+release_timestamp: `2026-08-27T21:20:53-06:00`
 
-source_commit: `8a2bd65284f323b4f1e2d3c141b374e90e326b74`
+source_commit: `2cc25f7493cbc331ebabc0c8bc01f2706f65a3fe`
 
-source_tree: `a501573558d5149d026dfdacd9a33b3f8c152634`
+source_tree: `3b3d2443515d9a56a7999124f2781229c6fa24fc`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827210033`
+installed_cache_version: `0.2.0+codex.20260827212053`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `172`
 
 installed_file_count: `172`
 
-normalized_source_cache_sha256: `2df027197cc8d7d0f2069c386bc754ae5923bceb3e7e72d2be7d88763410a458`
+normalized_source_cache_sha256: `34412b922cd7958f861aee7099d24a39fc7969a861fd6d92a6e77b89b2ee281d`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -93,6 +93,8 @@ installed_mobile_reading_path_smoke: `1/1 18rem anchor offset clears the one-col
 installed_market_print_matrix_smoke: `1/1 multi-vacancy matrix stacks labelled rows for paper readability`
 
 installed_renderer_bounded_diagnostics_smoke: `2/2 v1/v2 renderer validation stderr stays within the shared 16 KiB budget with a stable truncation marker`
+
+installed_recruiter_intent_smoke: `2/2 singular Spanish first-recruiter-interview intent and recursively nested plans route to bounded, artifact-free intake`
 
 installed_descriptor_boundary_smoke: `6/6`
 
