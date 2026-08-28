@@ -119,7 +119,7 @@ value so action text remains above the contrast floor on dark surfaces.
 The executive dossier reading path also switches to a two-column tablet layout
 through 900px, then to one column at 640px, keeping all four destinations
 usable without horizontal scrolling.
-At the tablet breakpoint, section anchors reserve space for the sticky reading path so each destination opens below the rail; the compact mobile offset remains unchanged.
+At the tablet breakpoint, section anchors reserve space for the sticky reading path so each destination opens below the rail; the mobile breakpoint reserves `18rem` for its taller one-column rail.
 The career-market matrix uses the same labelled stacked-row treatment in print
 as on narrow screens, keeping multi-vacancy comparisons readable on paper
 without changing table semantics.
@@ -146,6 +146,9 @@ truncation marker, so malformed private fixtures cannot flood a terminal or
 log sink. Learning-option evidence deduplicates source URLs by a normalized
 HTTPS identity (host, default port, decoded path, and trailing slash), so
 equivalent public URLs cannot masquerade as independent options.
+Recruiter shortlist fact IDs are type-checked before uniqueness checks, so
+malformed nested values produce the same opaque invalid-artifact response
+without a traceback.
 Renderer modules can also be imported directly from an installed checkout;
 sibling safety helpers resolve relative to the module when no `PYTHONPATH` is
 configured.

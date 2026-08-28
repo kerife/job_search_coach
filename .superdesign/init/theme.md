@@ -1864,7 +1864,7 @@ dd { margin: .15rem 0 0; font-weight: 600; }
   .reading-path a { justify-content: center; }
   .section-coverage-facts { grid-template-columns: 1fr; }
   .market-next-investigation-facts { grid-template-columns: 1fr; }
-  #section-coverage, #coach-priorities, #market-evidence, #screen-preparation { scroll-margin-top: 16rem; }
+  #section-coverage, #coach-priorities, #market-evidence, #screen-preparation { scroll-margin-top: 18rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

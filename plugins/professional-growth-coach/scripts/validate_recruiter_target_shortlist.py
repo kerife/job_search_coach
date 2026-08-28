@@ -173,7 +173,12 @@ def validate_shortlist(value: object, *, as_of: dt.date | None = None) -> list[s
             if target.get("relationship_warmth") not in WARMTH:
                 errors.append(f"{path}.relationship_warmth has invalid value")
             fact_ids = target.get("supported_fact_ids")
-            if not isinstance(fact_ids, list) or len(fact_ids) > 3 or len(set(fact_ids)) != len(fact_ids) or not all(isinstance(fact, str) and FACT_ID.fullmatch(fact) for fact in fact_ids):
+            if (
+                not isinstance(fact_ids, list)
+                or len(fact_ids) > 3
+                or not all(isinstance(fact, str) and FACT_ID.fullmatch(fact) for fact in fact_ids)
+                or len(set(fact_ids)) != len(fact_ids)
+            ):
                 errors.append(f"{path}.supported_fact_ids has invalid value")
             score = target.get("priority_score")
             if type(score) is not int or not 0 <= score <= 100:

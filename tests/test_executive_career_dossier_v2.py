@@ -646,13 +646,18 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         css = (ASSETS_ROOT / "executive-career-dossier-v2.css").read_text(encoding="utf-8")
         self.assertIn(".reading-path-scope", css)
         mobile = css[css.index("@media screen and (max-width: 640px)"):css.index("@media (prefers-reduced-motion: reduce)")]
-        self.assertIn("scroll-margin-top: 16rem", mobile)
+        self.assertIn("scroll-margin-top: 18rem", mobile)
         css = (ASSETS_ROOT / "executive-career-dossier-v2.css").read_text(encoding="utf-8")
         self.assertIn("position: sticky", css)
         self.assertIn("scroll-margin-top", css)
         self.assertIn("position: static", css[css.index("@media print"):])
         self.assertIn(".reading-path a[aria-current=\"location\"]", css)
         self.assertIn("@media (prefers-reduced-motion: reduce)", css)
+
+    def test_mobile_reading_path_scroll_margin_clears_sticky_rail(self) -> None:
+        css = (ASSETS_ROOT / "executive-career-dossier-v2.css").read_text(encoding="utf-8")
+        mobile = css[css.index("@media screen and (max-width: 640px)"):css.index("@media (prefers-reduced-motion: reduce)")]
+        self.assertIn("scroll-margin-top: 18rem", mobile)
 
     def test_tablet_reading_path_scroll_margin_clears_sticky_rail(self) -> None:
         css = (ASSETS_ROOT / "executive-career-dossier-v2.css").read_text(encoding="utf-8")

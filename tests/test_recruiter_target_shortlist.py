@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import datetime as dt
+import json
 import re
 import subprocess
 import sys
@@ -134,6 +135,21 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
     def test_validator_rejects_future_evaluation_date(self) -> None:
         value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
         self.assertIn("as_of cannot be in the future", validate_shortlist(value, as_of=date.today() + dt.timedelta(days=1)))
+
+    def test_validator_rejects_unhashable_fact_ids_without_traceback(self) -> None:
+        value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
+        value["targets"][0]["supported_fact_ids"] = [["F-001"]]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "invalid.json"
+            path.write_text(json.dumps(value), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, "-B", str(SCRIPTS / "validate_recruiter_target_shortlist.py"), str(path), "--as-of", "2026-08-27"],
+                capture_output=True,
+                text=True,
+            )
+        self.assertEqual(2, result.returncode)
+        self.assertEqual('{"error":{"code":"invalid_shortlist"}}\n', result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
 
     def test_validator_rejects_target_identity_material_and_unapproved_action(self) -> None:
         value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
