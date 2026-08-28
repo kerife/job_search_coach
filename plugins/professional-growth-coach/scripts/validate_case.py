@@ -239,6 +239,16 @@ def normalize_case(case: Mapping[str, Any]) -> dict[str, Any]:
     return normalized
 
 
+def _is_stable_opaque_candidate_id(value: object) -> bool:
+    """Reject human-readable or format-obfuscated candidate identifiers."""
+    if not isinstance(value, str) or not value.strip():
+        return False
+    if any(unicodedata.category(character) == "Cf" for character in value):
+        return False
+    normalized = unicodedata.normalize("NFKC", value)
+    return not any(character.isspace() for character in normalized)
+
+
 def validate_case(case: object) -> list[str]:
     """Return newline-ready validation errors for one candidate's case."""
     if not isinstance(case, Mapping):
@@ -258,6 +268,8 @@ def validate_case(case: object) -> list[str]:
     has_valid_candidate_id = isinstance(candidate_id, str) and bool(candidate_id.strip())
     if "candidate_id" in case and not has_valid_candidate_id:
         errors.append("candidate_id must be a non-empty string")
+    elif "candidate_id" in case and not _is_stable_opaque_candidate_id(candidate_id):
+        errors.append("candidate_id must be a stable opaque identifier")
 
     if "schema_version" in case and case.get("schema_version") != "1.0":
         errors.append("schema_version must equal 1.0")

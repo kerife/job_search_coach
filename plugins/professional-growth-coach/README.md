@@ -18,7 +18,7 @@ This plugin evaluates the market; it does not encourage resignation. `preserve_c
 
 ## Privacy
 
-Keep one `candidate_id` per case. Coach mode must split combined requests into separately labelled candidate sections before analysis. Cross-candidate benchmarking stays off unless explicit consent is recorded, and consent never authorizes external actions.
+Keep one `candidate_id` per case. It must be a stable opaque identifier without whitespace or Unicode format characters; human-readable names are rejected before records are bound. Coach mode must split combined requests into separately labelled candidate sections before analysis. Cross-candidate benchmarking stays off unless explicit consent is recorded, and consent never authorizes external actions.
 
 The plugin can prepare drafts, plans, rubrics, and analyses. It must ask again before editing LinkedIn, publishing content, sending messages, applying to jobs, uploading files, or sharing candidate work with a third party.
 

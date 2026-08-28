@@ -21,7 +21,7 @@ Schema version must equal `1.0` and is closed at every object boundary. The only
 - each `intervention`: `candidate_id`, `intervention_id`, `kind`, `description`, `occurred_at`.
 - each `outcome`: `candidate_id`, `outcome_id`, `kind`, `value`, `observed_at`, `benchmark_candidate_ids`.
 
-- `candidate_id` is a non-empty stable identifier. Every item in `sources`, `claims`, `interventions`, and `outcomes` carries the same ID. Each collection's provenance ID (`source_id`, `claim_id`, `intervention_id`, or `outcome_id`) is a non-empty stable identifier unique within that collection.
+- `candidate_id` is a non-empty stable opaque identifier without whitespace or Unicode format characters; human-readable names are rejected. Every item in `sources`, `claims`, `interventions`, and `outcomes` carries the same ID. Each collection's provenance ID (`source_id`, `claim_id`, `intervention_id`, or `outcome_id`) is a non-empty stable identifier unique within that collection.
 - `mode` is `self-service` or `coach`. Coach mode has one record per candidate, never a combined record.
 - `consent.benchmark` defaults to `false`; only explicit, revocable `true` permits anonymized benchmarking.
 - `target` is the candidate's stated role, geography, compensation, or constraints. Missing targets are evidence gaps.

@@ -258,6 +258,20 @@ class ValidateCaseTests(unittest.TestCase):
         self.assertEqual(result.returncode, 2)
         self.assertEqual(result.stderr, "candidate_id is required\n")
 
+    def test_rejects_human_name_or_format_character_as_candidate_id(self) -> None:
+        for candidate_id in ("John Smith", "John\u200bSmith"):
+            case = valid_case()
+            case["candidate_id"] = candidate_id
+            for field in ("sources", "claims"):
+                case[field][0]["candidate_id"] = candidate_id
+            with self.subTest(candidate_id=candidate_id):
+                result = run_validator(case)
+                self.assertEqual(result.returncode, 2)
+                self.assertEqual(
+                    result.stderr,
+                    "candidate_id must be a stable opaque identifier\n",
+                )
+
     def test_rejects_an_invalid_evidence_label(self) -> None:
         case = valid_case()
         case["claims"] = [
