@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T15:38:57-06:00`
+release_timestamp: `2026-08-28T16:00:07-06:00`
 
-source_commit: `16e279ae640beb6db108538776d27b1f1b056b72`
+source_commit: `6d403063b37b69daf86f8e383a12abf408cf9e2e`
 
-source_tree: `71902c185c3fa32d9ecc0093b83096675f54ed8c`
+source_tree: `439038939b3a2183e6e7c7e45a4c051d9dbd7e41`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828153510`
+installed_cache_version: `0.2.0+codex.20260828155406`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `bb507543eab8f4322e3d80db9b5556bf84866dfc437d7f5f44eca6b0e346fda2`
+normalized_source_cache_sha256: `d8daf4f9f46eb9cfea3bae72b0d80c985972b87c6ef417183b3e6966e96a9b5e`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -64,6 +64,7 @@ installed_market_cli_argument_privacy_smoke: `5/5 market validators and builder 
 installed_market_research_smoke: `2/2 complete/limited validator`
 
 installed_market_learning_smoke: `2/2 complete/limited builder and validator`
+installed_learning_schema_boundary_smoke: `3/3 schema-only checks reject stale/unavailable provider states, mode mismatches, and HTTPS userinfo/query/fragment shapes`
 installed_market_freshness_reconciliation_smoke: `2/2 v1/v2 publication-date freshness envelope rejects contradictory status/basis/reason combinations and preserves unknown-date fallback`
 installed_vacancy_research_freshness_smoke: `4/4 target-vacancy research rejects missing/old publication dates marked current and accepts the inclusive 90-day boundary`
 installed_readiness_muted_contrast_smoke: `2/2 light/dark readiness copy uses the themed muted token with accessible contrast`
@@ -75,6 +76,7 @@ installed_market_renderer_smoke: `2/2 complete/limited market composition`
 installed_v2_context_smoke: `2/2 EN/ES provenance, alignment coverage, vacancy context, public-source links, dates, and directional legend`
 installed_vacancy_freshness_smoke: `2/2 EN/ES per-vacancy access/publication dates, 90-day status text, unknown-date boundary, and title-contextual source aria-label`
 installed_learning_source_identity_smoke: `1/1 installed learning validator rejects trailing-slash and percent-decoded equivalent source URLs`
+installed_next_stage_print_continuity_smoke: `1/1 next-stage review footer remains atomic in print`
 installed_release_digest_documentation_smoke: `1/1 release runner validator digests match the release documentation`
 installed_release_validator_copy_smoke: `1/1 release runner re-hashes private validator copies before execution`
 installed_validator_support_hash_smoke: `1/1 release runner pins, copies, and re-hashes identifier_validation.py`
