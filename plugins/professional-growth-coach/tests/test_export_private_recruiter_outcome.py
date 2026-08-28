@@ -107,6 +107,41 @@ class PrivateRecruiterOutcomeExportTests(unittest.TestCase):
             self.assertEqual('{"error":{"code":"export_failed"}}\n', result.stderr)
             self.assertNotIn("candidate-private", result.stderr)
 
+    def test_rejects_symlink_output_before_reading_existing_csv(self) -> None:
+        receipt = _receipt("reply-received-en.json")
+        with tempfile.TemporaryDirectory() as directory:
+            real = Path(directory) / "real.csv"
+            write_export(
+                receipt,
+                candidate_id="candidate-001",
+                application_id="app-001",
+                application_date="2026-08-01",
+                as_of="2026-08-08",
+                output=real,
+            )
+            link = Path(directory) / "out.csv"
+            link.symlink_to(real)
+            with self.assertRaisesRegex(ExportError, "output target is not a regular file"):
+                write_export(
+                    receipt,
+                    candidate_id="candidate-001",
+                    application_id="app-001",
+                    application_date="2026-08-01",
+                    as_of="2026-08-08",
+                    output=link,
+                )
+
+    def test_rejects_spreadsheet_formula_values_in_optional_prose_fields(self) -> None:
+        with self.assertRaisesRegex(ExportError, "role is invalid"):
+            export_row(
+                _receipt("reply-received-en.json"),
+                candidate_id="candidate-001",
+                application_id="app-001",
+                application_date="2026-08-01",
+                as_of="2026-08-08",
+                role="=HYPERLINK(\"https://example.invalid\")",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

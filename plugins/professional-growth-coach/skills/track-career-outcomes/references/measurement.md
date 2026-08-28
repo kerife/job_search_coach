@@ -54,7 +54,8 @@ events proves a response or interview. Do not map a requested screen to
 events remain in the follow-through/debrief artifacts until a separately
 reviewed adapter with explicit confirmation exists. The bridge never copies
 raw receipt prose or source IDs, combines candidates, changes the summarizer,
-or performs an external action.
+or performs an external action. Symlinked/non-regular output targets and
+spreadsheet formula prefixes in optional text fields are rejected before write.
 
 ## LinkedIn outreach diagnostics
 

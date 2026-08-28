@@ -11,6 +11,7 @@ import json
 import os
 import re
 import secrets
+import stat
 import sys
 import tempfile
 from collections.abc import Mapping
@@ -34,6 +35,7 @@ _INTERVENTION_PREFIX = "recruiter-receipt-sha256-"
 _SAFE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
 _SAFE_VERSION = re.compile(r"^[a-z0-9][a-z0-9.-]{0,31}$")
 _SAFE_CURRENCY = re.compile(r"^[A-Z]{3}$")
+_FORMULA_PREFIX = re.compile(r"^\s*[=+\-@]")
 
 
 def _required_id(value: str, label: str) -> str:
@@ -100,7 +102,7 @@ def export_row(
         raise ExportError("application_date cannot follow response_date")
     if role or geography or confounders:
         for label, value in (("role", role), ("geography", geography), ("confounders", confounders)):
-            if "\n" in value or "\r" in value or len(value) > 180:
+            if "\n" in value or "\r" in value or len(value) > 180 or _FORMULA_PREFIX.match(value):
                 raise ExportError(f"{label} is invalid")
     if currency and not _SAFE_CURRENCY.fullmatch(currency):
         raise ExportError("currency is invalid")
@@ -203,7 +205,13 @@ def write_export(
     )
     target = Path(os.path.abspath(os.fspath(output)))
     fingerprint = row["intervention_id"]
-    if target.exists() and _existing_has_fingerprint(target, fingerprint):
+    try:
+        status = os.lstat(target)
+    except FileNotFoundError:
+        status = None
+    if status is not None and (stat.S_ISLNK(status.st_mode) or not stat.S_ISREG(status.st_mode)):
+        raise ExportError("output target is not a regular file")
+    if status is not None and _existing_has_fingerprint(target, fingerprint):
         return {"status": "already_present", "intervention_id": fingerprint}
     _atomic_write(target, _csv_bytes(row), force=force)
     return {"status": "written", "intervention_id": fingerprint}
