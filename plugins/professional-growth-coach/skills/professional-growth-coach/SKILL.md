@@ -38,7 +38,7 @@ Use the private recruiter shortlist route described in [routing.md](references/r
 
 ## Return the router contract
 
-Build all five fields—`case_state`, `evidence_gaps`, `selected_module`, `next_action`, and `authorization_required`—internally for every candidate, including every candidate in coach mode. Return them for every non-artifact response; never return them in a normal HTML dossier chat. Private practice and private recruiter-reply triage are the exceptions: emit no router fields there, ready or intake. Private practice is the exception: emit no router fields there, ready or intake. Never substitute a prose module description. Choose `case_state` by the routing precedence. Select exactly one canonical module name from the routing reference and a non-external next action. Mark profile wording as a draft, not an edit. After a visible router contract, prefix every material recommendation or draft with `inferred:` or `unknown:`; put procedural limits only under an `Action boundary:` label. Do not promise outcomes or assert unsupported skills, results, scale, seniority, production ownership, compensation, or market demand.
+Build all five fields—`case_state`, `evidence_gaps`, `selected_module`, `next_action`, and `authorization_required`—internally for every candidate, including every candidate in coach mode. Return them for every non-artifact response; never return them in a normal HTML dossier chat. Private practice and private recruiter-reply triage are exceptions: emit no router fields there, ready or intake. Never substitute a prose module description. Choose `case_state` by the routing precedence. Select exactly one canonical module name from the routing reference and a non-external next action. Mark profile wording as a draft, not an edit. After a visible router contract, prefix every material recommendation or draft with `inferred:` or `unknown:`; put procedural limits only under an `Action boundary:` label. Do not promise outcomes or assert unsupported skills, results, scale, seniority, production ownership, compensation, or market demand.
 
 Read [routing.md](references/routing.md) when selecting a module, handling a conflict, or deciding whether an action requires authorization.
 
@@ -46,10 +46,8 @@ Read [routing.md](references/routing.md) when selecting a module, handling a con
 
 Except for explicit private recruiter-practice or private recruiter-reply triage requests, inbound recruiter replies or contact (`messaged`, `emailed`, `reached out`, scheduling/choosing a time, calendar links or proposed times, `me escribió`, `me contactó`, `me pidió disponibilidad`), recruiter screen invitations, proposed meeting times, and requests to send, confirm, accept, schedule, book, message, reply, or create a calendar item route first to `optimize-professional-profile` and require one `recruiter_reply_triage` row before any draft response. Explicit private practice wins even with those signals or debug, raw, or internal-row requests. Explicit private recruiter-reply triage also wins even with those signals or debug, raw, or internal-row requests. Neither emits recruiter triage, router rows, or a module-execution packet; use [routing.md](references/routing.md) for the non-private authorization and time-handling rules.
 
-Post-screen follow-through (`follow up`, `thank-you`, `no response`, `ghosted`,
-`dar seguimiento`, `agradecimiento`, `sin respuesta`, `me dejaron en visto`) with
-recruiter/screen context uses `private_recruiter_screen_debrief`; response and
-future/not-attended requests keep reply-triage and screen-intake precedence.
+Post-screen follow-through uses private debrief with recruiter context;
+response/future screens keep precedence.
 
 When a request needs more than one domain skill, keep `selected_module` as the first safe module to execute and then provide an `ordered plan` labelled `multi-module`. Each later step must name the module, required evidence, and whether action-time authorization will be needed.
 
