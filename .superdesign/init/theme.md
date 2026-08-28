@@ -694,6 +694,7 @@ details summary {
 body { margin: 0; background: var(--next-bg); color: var(--next-text); font: 16px/1.55 system-ui, -apple-system, sans-serif; overflow-wrap: anywhere; }
 .skip-link { position: absolute; left: 1rem; top: -4rem; background: var(--next-text); color: var(--next-surface); padding: .5rem .75rem; border-radius: .25rem; }
 .skip-link:focus { top: 1rem; }
+.skip-link:focus-visible, main:focus-visible { outline: 3px solid var(--next-accent); outline-offset: 3px; }
 .next-stage-shell { max-width: 52rem; margin: 0 auto; padding: 2rem 1rem 3rem; }
 .next-stage-header { margin-bottom: 1.5rem; }
 .next-stage-kicker, .next-stage-state { color: var(--next-accent); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
@@ -718,7 +719,7 @@ h2 { margin-top: 0; font-size: 1.2rem; }
 .next-stage-check--needs_clarification { color: var(--next-blocked); }
 .next-stage-footer { color: var(--next-muted); font-size: .92rem; margin-top: 1.5rem; }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
-@media (forced-colors: active) { .next-stage-card { border: 2px solid CanvasText; } .next-stage-summary { border-left: .35rem solid Highlight; } .next-stage-summary--blocked { border-left-style: dashed; border-left-color: CanvasText; } .next-stage-guidance { border-color: CanvasText; } .next-stage-guidance strong { color: CanvasText; } }
+@media (forced-colors: active) { .next-stage-card { border: 2px solid CanvasText; } .next-stage-summary { border-left: .35rem solid Highlight; } .next-stage-summary--blocked { border-left-style: dashed; border-left-color: CanvasText; } .next-stage-guidance { border-color: CanvasText; } .next-stage-guidance strong { color: CanvasText; } .skip-link:focus-visible, main:focus-visible { outline: 3px solid Highlight; outline-offset: 3px; } }
 @media (max-width: 640px) { .next-stage-shell { padding: 1.25rem .75rem 2rem; } .next-stage-check { align-items: flex-start; flex-direction: column; gap: .1rem; } }
 @media (prefers-contrast: more) { .next-stage-card, .next-stage-guidance { border-width: 2px; box-shadow: none; } }
 @media print { html { color-scheme: light; } body { background: #fff; color: #000; } .next-stage-card { break-inside: avoid; page-break-inside: avoid; box-shadow: none; } .skip-link { display: none; } }
@@ -750,6 +751,7 @@ html { background: var(--debrief-soft); }
 body { margin:0; color:var(--debrief-ink); background:var(--debrief-soft); font:16px/1.55 ui-sans-serif,system-ui,-apple-system,sans-serif; overflow-wrap:anywhere; }
 .skip-link { position:absolute; left:1rem; top:-4rem; padding:.6rem .8rem; color:#fff; background:var(--debrief-ink); border-radius:.4rem; z-index:2; }
 .skip-link:focus { top:1rem; }
+.skip-link:focus-visible, main:focus-visible { outline:3px solid var(--debrief-blue); outline-offset:3px; }
 .debrief-shell { width:min(960px,calc(100% - 2rem)); margin:0 auto; padding:3rem 0; }
 .debrief-header { margin-bottom:1.25rem; }
 .debrief-kicker { margin:0 0 .35rem; color:var(--debrief-blue); font-size:.78rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
@@ -766,7 +768,7 @@ dt { color:var(--debrief-muted); font-size:.78rem; font-weight:800; letter-spaci
 @media (max-width:640px) { .debrief-shell { width:min(100% - 1rem,960px); padding-top:2rem; } .debrief-context-grid { grid-template-columns:1fr; } }
 @media (prefers-contrast:more) { :root { --debrief-border:#536176; } .debrief-card { box-shadow:none; } }
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition:none !important; } }
-@media (forced-colors:active) { .debrief-card,.debrief-coverage { border:2px solid CanvasText; box-shadow:none; } .debrief-summary,.debrief-coverage { border-left-color:CanvasText; } }
+@media (forced-colors:active) { .debrief-card,.debrief-coverage { border:2px solid CanvasText; box-shadow:none; } .debrief-summary,.debrief-coverage { border-left-color:CanvasText; } .skip-link:focus-visible, main:focus-visible { outline:3px solid Highlight; outline-offset:3px; } }
 @media screen and (prefers-color-scheme: dark) { :root { color-scheme: dark; --debrief-ink:#edf2fa; --debrief-muted:#b9c5d8; --debrief-surface:#1c2738; --debrief-soft:#111927; --debrief-border:#536176; } }
 @media print { html,body { color-scheme:light; background:#fff; } .debrief-shell { width:100%; padding:0; } .debrief-card { box-shadow:none; break-inside:avoid; page-break-inside:avoid; } .skip-link { display:none; } }
 
@@ -808,6 +810,7 @@ html { background: var(--screen-soft); }
 body { margin: 0; color: var(--screen-ink); background: var(--screen-soft); font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, sans-serif; overflow-wrap: anywhere; }
 .skip-link { position: absolute; left: 1rem; top: -4rem; padding: .6rem .8rem; color: #fff; background: var(--screen-ink); border-radius: .4rem; z-index: 2; }
 .skip-link:focus { top: 1rem; }
+.skip-link:focus-visible, main:focus-visible { outline: 3px solid var(--screen-blue); outline-offset: 3px; }
 .screen-shell { width: min(960px, calc(100% - 2rem)); margin: 0 auto; padding: 3rem 0; }
 .screen-header { margin-bottom: 1.25rem; }
 .screen-kicker { margin: 0 0 .35rem; color: var(--screen-blue); font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
@@ -836,7 +839,7 @@ dd { margin: .25rem 0 0; font-weight: 700; }
 @media (max-width: 640px) { .screen-shell { width: min(100% - 1rem, 960px); padding-top: 2rem; } .screen-context-grid { grid-template-columns: 1fr; } }
 @media (prefers-contrast: more) { :root { --screen-border: #536176; } .screen-card, .screen-check { box-shadow: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
-@media (forced-colors: active) { .screen-card, .screen-check { border: 2px solid CanvasText; box-shadow: none; } .screen-decision, .screen-check { border-left-color: CanvasText; } }
+@media (forced-colors: active) { .screen-card, .screen-check { border: 2px solid CanvasText; box-shadow: none; } .screen-decision, .screen-check { border-left-color: CanvasText; } .skip-link:focus-visible, main:focus-visible { outline: 3px solid Highlight; outline-offset: 3px; } }
 @media screen and (prefers-color-scheme: dark) { :root { color-scheme: dark; --screen-ink: #edf2fa; --screen-muted: #b9c5d8; --screen-surface: #1c2738; --screen-soft: #111927; --screen-border: #536176; } }
 @media print { html, body { color-scheme: light; background: #fff; } .screen-shell { width: 100%; padding: 0; } .screen-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
 
@@ -1287,6 +1290,10 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-claim-guardrail { padding: .875rem; }
   .recruiter-practice-document .practice-rehearsal--triage-first-answer ol { grid-template-columns: 1fr; }
   .recruiter-practice-document .practice-next-version ol { grid-template-columns: 1fr; }
+}
+
+@media screen and (max-width: 420px) {
+  .recruiter-practice-document .screen-readiness-grid { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2008,6 +2015,7 @@ body { margin: 0; background: var(--canvas); color: var(--ink); font: 16px/1.5 -
 .gate-shell { width: min(100% - 2rem, 58rem); margin: 0 auto; padding: 2rem 0 3rem; }
 .skip-link { position: absolute; left: .75rem; top: .75rem; transform: translateY(-180%); background: var(--ink); color: var(--surface); padding: .65rem .8rem; font-weight: 700; }
 .skip-link:focus { transform: translateY(0); }
+.skip-link:focus-visible, main:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .gate-header { display: grid; grid-template-columns: 1fr auto; gap: .35rem 1rem; align-items: end; margin-bottom: 1.25rem; }
 .gate-kicker { grid-column: 1 / -1; margin: 0; color: var(--accent); font-size: .75rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 h1, h2, h3, p { margin-top: 0; }
@@ -2062,6 +2070,7 @@ dd { margin: .2rem 0 0; }
   .gate-card, .gate-row { forced-color-adjust: none; border: 2px solid CanvasText; background: Canvas; color: CanvasText; box-shadow: none; }
   .gate-next, .gate-context, .gate-row { border-left: .65rem solid CanvasText; }
   .skip-link { background: CanvasText; color: Canvas; }
+  .skip-link:focus-visible, main:focus-visible { outline: 3px solid Highlight; outline-offset: 3px; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 @media print {

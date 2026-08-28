@@ -126,7 +126,7 @@ def _base_market(value: Mapping[str, object]) -> dict[str, object]:
     return base
 
 
-def _validate_decision(value: object, index: int, recurrence: Mapping[str, Mapping[str, object]], options: Mapping[str, Mapping[str, object]], preferences: Mapping[str, object], errors: list[str]) -> None:
+def _validate_decision(value: object, index: int, recurrence: Mapping[str, Mapping[str, object]], options: Mapping[str, Mapping[str, object]], preferences: Mapping[str, object], as_of_date: object, errors: list[str]) -> None:
     path = f"learning_decisions[{index}]"
     row = _closed(value, DECISION_FIELDS, path, errors)
     if row is None:
@@ -171,6 +171,8 @@ def _validate_decision(value: object, index: int, recurrence: Mapping[str, Mappi
             errors.append(f"{path} paid recommendation requires known candidate budgets")
         if option.get("source_state") != "active":
             errors.append(f"{path} paid recommendation requires an active provider source")
+        if not RESEARCH.provider_source_is_fresh(option.get("source_date"), as_of_date):
+            errors.append(f"{path} recommended requires a fresh provider source")
     if option_type in PAID_OPTIONS and decision == "consider" and (preferences.get("weekly_time_budget") == "unknown" or preferences.get("money_budget") == "unknown"):
         if "budget" not in str(row.get("next_action_gate", "")).casefold() and "preference" not in str(row.get("next_action_gate", "")).casefold():
             errors.append(f"{path}.next_action_gate must name budget or preference review")
@@ -188,7 +190,7 @@ def _validate_decision(value: object, index: int, recurrence: Mapping[str, Mappi
     elif option_type in {"candidate_owned_project", "lab"}:
         expected_decision = "project_first"
     elif option_type in PAID_OPTIONS:
-        expected_decision = "recommended" if rec.get("sample_size", 0) >= 2 and occurrences >= threshold and preferences.get("weekly_time_budget") != "unknown" and preferences.get("money_budget") != "unknown" and option.get("source_state") == "active" else "consider"
+        expected_decision = "recommended" if rec.get("sample_size", 0) >= 2 and occurrences >= threshold and preferences.get("weekly_time_budget") != "unknown" and preferences.get("money_budget") != "unknown" and option.get("source_state") == "active" and RESEARCH.provider_source_is_fresh(option.get("source_date"), as_of_date) else "consider"
     elif option_type == "free_resource":
         expected_decision = "consider"
     else:
@@ -240,6 +242,7 @@ def validate_learning_dossier(value: object) -> list[str]:
             preferences = {}
         elif preferences.get("purchase_authorized") is not False:
             errors.append("candidate_preferences.purchase_authorized must be false")
+        as_of_date = value.get("as_of_date")
         options_value = value.get("learning_options")
         options: dict[str, Mapping[str, object]] = {}
         if not isinstance(options_value, list) or not 1 <= len(options_value) <= 5:
@@ -273,7 +276,7 @@ def validate_learning_dossier(value: object) -> list[str]:
         else:
             seen_signals: set[str] = set()
             for index, decision in enumerate(decisions):
-                _validate_decision(decision, index, recurrence, options, preferences, errors)
+                _validate_decision(decision, index, recurrence, options, preferences, as_of_date, errors)
                 if isinstance(decision, Mapping) and isinstance(decision.get("gap_signal"), str):
                     if decision["gap_signal"] in seen_signals:
                         errors.append("learning_decisions must contain one decision per recurring signal")

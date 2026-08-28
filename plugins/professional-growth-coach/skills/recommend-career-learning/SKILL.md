@@ -17,6 +17,11 @@ Record a separate official-source row for every provider option with these expli
 
 For structured runs, keep provider rows in the closed `learning-option-research-v1` artifact and validate it with `scripts/validate_learning_option_research.py` before any ROI composition. The artifact is identity-free, source-snapshot bound, synthetic-fixture safe, and always `no_external_action=true`; stale or unavailable sources remain blocked from current recommendations. Set its own `evidence_mode` to `synthetic` or `live`: synthetic mode requires every provider row to be synthetic, while live mode requires active provider rows and public current URLs. This provider mode is distinct from vacancy-market evidence.
 
+The v2 recommendation gate treats an active provider source as fresh only when
+`source_date` is within 90 calendar days of the dossier `as_of_date`, inclusive.
+If the source is older, a paid option must remain `consider` with an explicit
+provider-source refresh gate; it cannot be `recommended` until refreshed.
+
 For market-linked runs, compose `career-market-learning-dossier-v2` only after
 validating both the v1 market dossier and the exact learning-research snapshot.
 Return three to five ranked decisions tied to recurring vacancy signals; use a

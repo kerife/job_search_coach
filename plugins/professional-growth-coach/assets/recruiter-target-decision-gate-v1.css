@@ -19,6 +19,7 @@ body { margin: 0; background: var(--canvas); color: var(--ink); font: 16px/1.5 -
 .gate-shell { width: min(100% - 2rem, 58rem); margin: 0 auto; padding: 2rem 0 3rem; }
 .skip-link { position: absolute; left: .75rem; top: .75rem; transform: translateY(-180%); background: var(--ink); color: var(--surface); padding: .65rem .8rem; font-weight: 700; }
 .skip-link:focus { transform: translateY(0); }
+.skip-link:focus-visible, main:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .gate-header { display: grid; grid-template-columns: 1fr auto; gap: .35rem 1rem; align-items: end; margin-bottom: 1.25rem; }
 .gate-kicker { grid-column: 1 / -1; margin: 0; color: var(--accent); font-size: .75rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 h1, h2, h3, p { margin-top: 0; }
@@ -73,6 +74,7 @@ dd { margin: .2rem 0 0; }
   .gate-card, .gate-row { forced-color-adjust: none; border: 2px solid CanvasText; background: Canvas; color: CanvasText; box-shadow: none; }
   .gate-next, .gate-context, .gate-row { border-left: .65rem solid CanvasText; }
   .skip-link { background: CanvasText; color: Canvas; }
+  .skip-link:focus-visible, main:focus-visible { outline: 3px solid Highlight; outline-offset: 3px; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 @media print {

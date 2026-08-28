@@ -4,6 +4,7 @@ html { background: var(--debrief-soft); }
 body { margin:0; color:var(--debrief-ink); background:var(--debrief-soft); font:16px/1.55 ui-sans-serif,system-ui,-apple-system,sans-serif; overflow-wrap:anywhere; }
 .skip-link { position:absolute; left:1rem; top:-4rem; padding:.6rem .8rem; color:#fff; background:var(--debrief-ink); border-radius:.4rem; z-index:2; }
 .skip-link:focus { top:1rem; }
+.skip-link:focus-visible, main:focus-visible { outline:3px solid var(--debrief-blue); outline-offset:3px; }
 .debrief-shell { width:min(960px,calc(100% - 2rem)); margin:0 auto; padding:3rem 0; }
 .debrief-header { margin-bottom:1.25rem; }
 .debrief-kicker { margin:0 0 .35rem; color:var(--debrief-blue); font-size:.78rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
@@ -20,7 +21,7 @@ dt { color:var(--debrief-muted); font-size:.78rem; font-weight:800; letter-spaci
 @media (max-width:640px) { .debrief-shell { width:min(100% - 1rem,960px); padding-top:2rem; } .debrief-context-grid { grid-template-columns:1fr; } }
 @media (prefers-contrast:more) { :root { --debrief-border:#536176; } .debrief-card { box-shadow:none; } }
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition:none !important; } }
-@media (forced-colors:active) { .debrief-card,.debrief-coverage { border:2px solid CanvasText; box-shadow:none; } .debrief-summary,.debrief-coverage { border-left-color:CanvasText; } }
+@media (forced-colors:active) { .debrief-card,.debrief-coverage { border:2px solid CanvasText; box-shadow:none; } .debrief-summary,.debrief-coverage { border-left-color:CanvasText; } .skip-link:focus-visible, main:focus-visible { outline:3px solid Highlight; outline-offset:3px; } }
 @media screen and (prefers-color-scheme: dark) { :root { color-scheme: dark; --debrief-ink:#edf2fa; --debrief-muted:#b9c5d8; --debrief-surface:#1c2738; --debrief-soft:#111927; --debrief-border:#536176; } }
 @media print { html,body { color-scheme:light; background:#fff; } .debrief-shell { width:100%; padding:0; } .debrief-card { box-shadow:none; break-inside:avoid; page-break-inside:avoid; } .skip-link { display:none; } }
 

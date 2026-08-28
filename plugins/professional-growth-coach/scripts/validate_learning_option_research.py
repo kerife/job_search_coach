@@ -54,6 +54,7 @@ OPTION_TYPES = frozenset({
     "do_nothing_now",
 })
 SOURCE_STATES = frozenset({"active", "stale", "unavailable", "synthetic"})
+PROVIDER_SOURCE_FRESHNESS_DAYS = 90
 DURATION_BASES = frozenset({"provider_verified", "provider_duration_unknown", "candidate_estimated"})
 REVIEW_STATES = frozenset({"required", "not_applicable"})
 TOP_FIELDS = frozenset({
@@ -123,6 +124,19 @@ def _date(value: object, path: str, errors: list[str]) -> date | None:
     except ValueError:
         errors.append(f"{path} must be an ISO date")
         return None
+
+
+def provider_source_is_fresh(source_date: object, as_of_date: object) -> bool:
+    """Return whether a dated provider source is inside the recommendation window."""
+    if not isinstance(source_date, str) or not isinstance(as_of_date, str):
+        return False
+    try:
+        published = date.fromisoformat(source_date)
+        as_of = date.fromisoformat(as_of_date)
+    except ValueError:
+        return False
+    age = (as_of - published).days
+    return 0 <= age <= PROVIDER_SOURCE_FRESHNESS_DAYS
 
 
 def _url_error(value: object, source_state: object, evidence_mode: object) -> str | None:

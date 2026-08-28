@@ -192,6 +192,57 @@ class CareerMarketLearningDossierV2Tests(unittest.TestCase):
         self.assertIn("budget", paid[0]["next_action_gate"].casefold())
         self.assertEqual([], validate_learning_dossier(dossier))
 
+    def test_paid_learning_requires_a_fresh_provider_source(self) -> None:
+        market = _recurring_market(5)
+        research = _research(market, project=True, course=True)
+        research["evidence_mode"] = "live"
+        research["candidate_preferences"].update({"weekly_time_budget": "5 hours/week", "money_budget": "1000", "currency": "MXN"})
+        as_of = date.fromisoformat(research["as_of_date"])
+        for option in research["options"]:
+            option["source_state"] = "active"
+            if option["option_type"] != "do_nothing_now":
+                option["url"] = f"https://www.python.org/dev/jobs/{option['option_id']}"
+        course = next(option for option in research["options"] if option["option_type"] == "course")
+        course["source_date"] = (as_of - timedelta(days=91)).isoformat()
+        dossier = build_learning_dossier(market, research)
+        kubernetes = next(row for row in dossier["learning_decisions"] if row["gap_signal"] == "kubernetes")
+        self.assertEqual("consider", kubernetes["decision"])
+        self.assertIn("refresh", kubernetes["next_action_gate"].casefold())
+        self.assertEqual([], validate_learning_dossier(dossier))
+
+    def test_ninety_day_provider_source_remains_eligible(self) -> None:
+        market = _recurring_market(5)
+        research = _research(market, project=True, course=True)
+        research["evidence_mode"] = "live"
+        research["candidate_preferences"].update({"weekly_time_budget": "5 hours/week", "money_budget": "1000", "currency": "MXN"})
+        as_of = date.fromisoformat(research["as_of_date"])
+        for option in research["options"]:
+            option["source_state"] = "active"
+            if option["option_type"] != "do_nothing_now":
+                option["url"] = f"https://www.python.org/dev/jobs/{option['option_id']}"
+        course = next(option for option in research["options"] if option["option_type"] == "course")
+        course["source_date"] = (as_of - timedelta(days=90)).isoformat()
+        dossier = build_learning_dossier(market, research)
+        kubernetes = next(row for row in dossier["learning_decisions"] if row["gap_signal"] == "kubernetes")
+        self.assertEqual("recommended", kubernetes["decision"])
+
+    def test_validator_rejects_recommended_paid_learning_with_stale_source(self) -> None:
+        market = _recurring_market(5)
+        research = _research(market, project=True, course=True)
+        research["evidence_mode"] = "live"
+        research["candidate_preferences"].update({"weekly_time_budget": "5 hours/week", "money_budget": "1000", "currency": "MXN"})
+        as_of = date.fromisoformat(research["as_of_date"])
+        for option in research["options"]:
+            option["source_state"] = "active"
+            if option["option_type"] != "do_nothing_now":
+                option["url"] = f"https://www.python.org/dev/jobs/{option['option_id']}"
+        course = next(option for option in research["options"] if option["option_type"] == "course")
+        course["source_date"] = (as_of - timedelta(days=91)).isoformat()
+        dossier = build_learning_dossier(market, research)
+        row = next(row for row in dossier["learning_decisions"] if row["gap_signal"] == "kubernetes")
+        row["decision"] = "recommended"
+        self.assertIn("fresh provider source", " ".join(validate_learning_dossier(dossier)))
+
     def test_non_recurring_sample_cannot_produce_paid_recommendation(self) -> None:
         market_one = _recurring_market(1)
         with self.assertRaises(ValueError):

@@ -16,6 +16,7 @@ html { background: var(--screen-soft); }
 body { margin: 0; color: var(--screen-ink); background: var(--screen-soft); font: 16px/1.55 ui-sans-serif, system-ui, -apple-system, sans-serif; overflow-wrap: anywhere; }
 .skip-link { position: absolute; left: 1rem; top: -4rem; padding: .6rem .8rem; color: #fff; background: var(--screen-ink); border-radius: .4rem; z-index: 2; }
 .skip-link:focus { top: 1rem; }
+.skip-link:focus-visible, main:focus-visible { outline: 3px solid var(--screen-blue); outline-offset: 3px; }
 .screen-shell { width: min(960px, calc(100% - 2rem)); margin: 0 auto; padding: 3rem 0; }
 .screen-header { margin-bottom: 1.25rem; }
 .screen-kicker { margin: 0 0 .35rem; color: var(--screen-blue); font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
@@ -44,7 +45,7 @@ dd { margin: .25rem 0 0; font-weight: 700; }
 @media (max-width: 640px) { .screen-shell { width: min(100% - 1rem, 960px); padding-top: 2rem; } .screen-context-grid { grid-template-columns: 1fr; } }
 @media (prefers-contrast: more) { :root { --screen-border: #536176; } .screen-card, .screen-check { box-shadow: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
-@media (forced-colors: active) { .screen-card, .screen-check { border: 2px solid CanvasText; box-shadow: none; } .screen-decision, .screen-check { border-left-color: CanvasText; } }
+@media (forced-colors: active) { .screen-card, .screen-check { border: 2px solid CanvasText; box-shadow: none; } .screen-decision, .screen-check { border-left-color: CanvasText; } .skip-link:focus-visible, main:focus-visible { outline: 3px solid Highlight; outline-offset: 3px; } }
 @media screen and (prefers-color-scheme: dark) { :root { color-scheme: dark; --screen-ink: #edf2fa; --screen-muted: #b9c5d8; --screen-surface: #1c2738; --screen-soft: #111927; --screen-border: #536176; } }
 @media print { html, body { color-scheme: light; background: #fff; } .screen-shell { width: 100%; padding: 0; } .screen-card { box-shadow: none; break-inside: avoid; page-break-inside: avoid; } .skip-link { display: none; } }
 

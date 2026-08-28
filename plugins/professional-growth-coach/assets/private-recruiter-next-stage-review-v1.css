@@ -3,6 +3,7 @@
 body { margin: 0; background: var(--next-bg); color: var(--next-text); font: 16px/1.55 system-ui, -apple-system, sans-serif; overflow-wrap: anywhere; }
 .skip-link { position: absolute; left: 1rem; top: -4rem; background: var(--next-text); color: var(--next-surface); padding: .5rem .75rem; border-radius: .25rem; }
 .skip-link:focus { top: 1rem; }
+.skip-link:focus-visible, main:focus-visible { outline: 3px solid var(--next-accent); outline-offset: 3px; }
 .next-stage-shell { max-width: 52rem; margin: 0 auto; padding: 2rem 1rem 3rem; }
 .next-stage-header { margin-bottom: 1.5rem; }
 .next-stage-kicker, .next-stage-state { color: var(--next-accent); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
@@ -27,7 +28,7 @@ h2 { margin-top: 0; font-size: 1.2rem; }
 .next-stage-check--needs_clarification { color: var(--next-blocked); }
 .next-stage-footer { color: var(--next-muted); font-size: .92rem; margin-top: 1.5rem; }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
-@media (forced-colors: active) { .next-stage-card { border: 2px solid CanvasText; } .next-stage-summary { border-left: .35rem solid Highlight; } .next-stage-summary--blocked { border-left-style: dashed; border-left-color: CanvasText; } .next-stage-guidance { border-color: CanvasText; } .next-stage-guidance strong { color: CanvasText; } }
+@media (forced-colors: active) { .next-stage-card { border: 2px solid CanvasText; } .next-stage-summary { border-left: .35rem solid Highlight; } .next-stage-summary--blocked { border-left-style: dashed; border-left-color: CanvasText; } .next-stage-guidance { border-color: CanvasText; } .next-stage-guidance strong { color: CanvasText; } .skip-link:focus-visible, main:focus-visible { outline: 3px solid Highlight; outline-offset: 3px; } }
 @media (max-width: 640px) { .next-stage-shell { padding: 1.25rem .75rem 2rem; } .next-stage-check { align-items: flex-start; flex-direction: column; gap: .1rem; } }
 @media (prefers-contrast: more) { .next-stage-card, .next-stage-guidance { border-width: 2px; box-shadow: none; } }
 @media print { html { color-scheme: light; } body { background: #fff; color: #000; } .next-stage-card { break-inside: avoid; page-break-inside: avoid; box-shadow: none; } .skip-link { display: none; } }

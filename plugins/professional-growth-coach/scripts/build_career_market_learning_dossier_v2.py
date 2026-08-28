@@ -41,7 +41,7 @@ def _is_professional_signal(signal: object) -> bool:
     return value in {"professional_experience", "production_experience", "operational_experience", "leadership_experience"} or "experience" in value or value.startswith(("production_", "operational_", "leadership_"))
 
 
-def _decision_for(option: Mapping[str, object], recurrence: Mapping[str, object], preferences: Mapping[str, object]) -> str:
+def _decision_for(option: Mapping[str, object], recurrence: Mapping[str, object], preferences: Mapping[str, object], as_of_date: str) -> str:
     option_type = option.get("option_type")
     signal = str(option.get("gap_signal"))
     if _is_professional_signal(signal):
@@ -54,7 +54,7 @@ def _decision_for(option: Mapping[str, object], recurrence: Mapping[str, object]
         return "project_first"
     if option_type in {"course", "certification"}:
         threshold = required_recurrence(int(recurrence["sample_size"]))
-        if int(recurrence["occurrences"]) >= threshold and preferences.get("weekly_time_budget") != "unknown" and preferences.get("money_budget") != "unknown" and option.get("source_state") == "active":
+        if int(recurrence["occurrences"]) >= threshold and preferences.get("weekly_time_budget") != "unknown" and preferences.get("money_budget") != "unknown" and option.get("source_state") == "active" and RESEARCH.provider_source_is_fresh(option.get("source_date"), as_of_date):
             return "recommended"
         return "consider"
     if option_type == "free_resource":
@@ -76,12 +76,13 @@ def _preferred_option(options: list[Mapping[str, object]]) -> Mapping[str, objec
     )
 
 
-def _decision_row(rank: int, option: Mapping[str, object], recurrence: Mapping[str, object], decision: str, preferences: Mapping[str, object]) -> dict[str, object]:
+def _decision_row(rank: int, option: Mapping[str, object], recurrence: Mapping[str, object], decision: str, preferences: Mapping[str, object], as_of_date: str) -> dict[str, object]:
     signal = str(option["gap_signal"])
     option_type = str(option["option_type"])
     paid_unknown = option_type in {"course", "certification"} and (preferences.get("weekly_time_budget") == "unknown" or preferences.get("money_budget") == "unknown")
-    basis = "candidate-owned evidence has higher signal than a certificate; keep publication review pending" if decision == "project_first" else "official provider source and exact recurring vacancy evidence; review budget and authorization before enrollment" if option_type in {"course", "certification"} else "recurring vacancy evidence is bounded and the next review gate remains private"
-    gate = "no external action; complete ownership, secrets, confidentiality, customer-data, rights-holder, and publication review" if option_type == "candidate_owned_project" else "no external action; confirm candidate budget/time preferences and exact enrollment authorization" if paid_unknown else "no external action; confirm the exact candidate action and target before proceeding"
+    provider_stale = option_type in {"course", "certification"} and option.get("source_state") == "active" and not RESEARCH.provider_source_is_fresh(option.get("source_date"), as_of_date)
+    basis = "candidate-owned evidence has higher signal than a certificate; keep publication review pending" if decision == "project_first" else "official provider source is outside the 90-day freshness window; refresh it before considering enrollment" if provider_stale else "official provider source and exact recurring vacancy evidence; review budget and authorization before enrollment" if option_type in {"course", "certification"} else "recurring vacancy evidence is bounded and the next review gate remains private"
+    gate = "no external action; complete ownership, secrets, confidentiality, customer-data, rights-holder, and publication review" if option_type == "candidate_owned_project" else "no external action; refresh provider source and confirm exact enrollment authorization" if provider_stale else "no external action; confirm candidate budget/time preferences and exact enrollment authorization" if paid_unknown else "no external action; confirm the exact candidate action and target before proceeding"
     if paid_unknown and signal not in {"professional_experience", "production_experience", "operational_experience", "leadership_experience"}:
         decision = "consider"
     return {
@@ -137,11 +138,11 @@ def build_learning_dossier(market: Mapping[str, object], learning_research: Mapp
         by_signal.setdefault(str(option["gap_signal"]), []).append(option)
     for signal, candidates in by_signal.items():
         option = _preferred_option(candidates)
-        pending.append((option, _decision_for(option, recurrence[signal], preferences)))
+        pending.append((option, _decision_for(option, recurrence[signal], preferences, str(learning_research["as_of_date"]))))
     if len(pending) < 3:
         raise ValueError("three distinct explicit recurring learning gaps are required")
     pending.sort(key=lambda item: (_decision_rank(item[1]), str(item[0]["option_id"])))
-    decisions = [_decision_row(index, option, recurrence[str(option["gap_signal"])], decision, preferences) for index, (option, decision) in enumerate(pending[:5], 1)]
+    decisions = [_decision_row(index, option, recurrence[str(option["gap_signal"])], decision, preferences, str(learning_research["as_of_date"])) for index, (option, decision) in enumerate(pending[:5], 1)]
     if len(decisions) < 3:
         raise ValueError("three through five learning decisions are required")
     output["learning_decisions"] = decisions

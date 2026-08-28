@@ -174,6 +174,26 @@ class DarkModeAccessibilityTests(unittest.TestCase):
                 if filename in {"recruiter-target-shortlist-v1.css", "recruiter-target-decision-gate-v1.css"}:
                     self.assertIn("break-inside: avoid; page-break-inside: avoid", print_css)
 
+    def test_recruiter_intake_surfaces_share_keyboard_focus_contract(self) -> None:
+        expected = {
+            "recruiter-target-screen-intake-v1.css": "var(--screen-blue)",
+            "private-recruiter-screen-debrief-v1.css": "var(--debrief-blue)",
+            "recruiter-target-decision-gate-v1.css": "var(--accent)",
+            "private-recruiter-next-stage-review-v1.css": "var(--next-accent)",
+        }
+        for filename, accent in expected.items():
+            with self.subTest(filename=filename):
+                css = (ASSETS / filename).read_text(encoding="utf-8")
+                self.assertRegex(css, rf"\.skip-link:focus-visible,\s*main:focus-visible\s*\{{[^}}]*outline:\s*3px solid {re.escape(accent)};[^}}]*outline-offset:\s*3px;")
+                forced = css[css.index("@media (forced-colors") :]
+                self.assertRegex(forced, r"\.skip-link:focus-visible,\s*main:focus-visible\s*\{[^}]*outline:\s*3px solid Highlight;[^}]*outline-offset:\s*3px;")
+
+    def test_practice_readiness_grid_becomes_single_column_on_small_screens(self) -> None:
+        css = (ASSETS / "recruiter-practice-session-v1.css").read_text(encoding="utf-8")
+        self.assertIn("@media screen and (max-width: 420px)", css)
+        compact = css[css.index("@media screen and (max-width: 420px)") :]
+        self.assertIn(".recruiter-practice-document .screen-readiness-grid { grid-template-columns: 1fr; }", compact)
+
     def test_forced_colors_keeps_footer_boundary_readable(self) -> None:
         selectors = {
             "executive-career-dossier-v1.css": ".footer",

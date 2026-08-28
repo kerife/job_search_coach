@@ -22,6 +22,12 @@ Use learning recommendations as an investment decision, not a shopping list. Do 
 
 Recommend paid learning only when repeated comparable vacancies show the gap, current dated official source or official provider source data is available, and the candidate lacks a cheaper credible proof path. A single source, stale provider page, blog ranking, or unverified market claim cannot justify a purchase.
 
+For the structured v2 artifact, a provider source is fresh only when its
+`source_date` is no more than 90 calendar days before the dossier
+`as_of_date` (the 90-day boundary is inclusive). An `active` source outside
+that window cannot support `recommended`; keep the option at `consider` and
+make the next gate an explicit provider-source refresh before enrollment.
+
 Prefer `do_nothing_now` when the requirement is rare, unsupported by current target evidence, already covered by candidate facts, or lower leverage than applications, LinkedIn repositioning, interview preparation, or a portfolio project.
 
 When the comparison yields a clear priority, especially when a project beats a certification, add a `Coach decision` block before the option rows. It contains one `recommended_next_action`, `why_now`, `why_not_*_now`, `first_deliverable`, `acceptance_criteria`, and `next_action_gate`. The decision must convert the comparison into the next job-search move, not a shopping list. The deliverable must be inspectable, and acceptance criteria must map to vacancy IDs and candidate fact IDs.

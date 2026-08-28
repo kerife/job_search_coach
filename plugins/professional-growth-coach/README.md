@@ -192,6 +192,11 @@ look current. When several options cover one recurring gap, selection is
 deterministic: candidate-owned project, lab, free resource, course,
 certification, then no-learning; ties use the stable option ID.
 
+Paid learning decisions also enforce a 90-day provider-source freshness window
+relative to the dossier snapshot. A source older than that remains a private
+`consider` decision with a refresh gate; it cannot authorize a current
+recommendation or enrollment.
+
 For a normal local profile dossier, the default route is bounded five-vacancy
 research: SRE, Platform Engineering, and DevOps in Mexico or stated remote
 scope. It searches five distinct employers first, prefers official employer

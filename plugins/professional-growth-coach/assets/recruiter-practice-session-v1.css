@@ -330,6 +330,10 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-next-version ol { grid-template-columns: 1fr; }
 }
 
+@media screen and (max-width: 420px) {
+  .recruiter-practice-document .screen-readiness-grid { grid-template-columns: 1fr; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .recruiter-practice-document *,
   .recruiter-practice-document *::before,
