@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T15:24:02-06:00`
+release_timestamp: `2026-08-28T15:38:57-06:00`
 
-source_commit: `5f1c6111787ed327be8d5039754757eb7e390d41`
+source_commit: `16e279ae640beb6db108538776d27b1f1b056b72`
 
-source_tree: `9441fbb63fda3ef249a87b94c42f92328eaad423`
+source_tree: `71902c185c3fa32d9ecc0093b83096675f54ed8c`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828151739`
+installed_cache_version: `0.2.0+codex.20260828153510`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `9f486d466608c1f7c5d90915e694120fdb30cacf2a306b82e036410c0887ad3b`
+normalized_source_cache_sha256: `bb507543eab8f4322e3d80db9b5556bf84866dfc437d7f5f44eca6b0e346fda2`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -105,6 +105,10 @@ installed_recruiter_unhashable_fact_id_smoke: `1/1 malformed nested fact IDs ret
 installed_mobile_reading_path_smoke: `1/1 static one-column rail with compact 1rem anchor margin prevents mobile overlap under reflow and zoom`
 
 installed_nested_debrief_schema_smoke: `2/2 malformed shortlist delivery authorization and target_id mutations rejected by schema-only validation`
+
+installed_next_stage_offer_stage_schema_smoke: `1/1 schema-only forward transition from offer_stage rejected to match terminal runtime recovery`
+
+installed_forced_colors_decision_rail_smoke: `2/2 shortlist and decision-gate forced-colors rails preserve solid/dashed/double/dotted decision styles`
 
 installed_market_print_matrix_smoke: `1/1 multi-vacancy matrix stacks labelled rows for paper readability`
 
