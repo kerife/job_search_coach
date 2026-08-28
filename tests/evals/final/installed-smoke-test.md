@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T16:00:07-06:00`
+release_timestamp: `2026-08-28T16:15:17-06:00`
 
-source_commit: `6d403063b37b69daf86f8e383a12abf408cf9e2e`
+source_commit: `579a145c4c0802ac90dd330f55591a83e4563384`
 
-source_tree: `439038939b3a2183e6e7c7e45a4c051d9dbd7e41`
+source_tree: `dea01f509a596f80204a716b1b8481578da344f1`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828155406`
+installed_cache_version: `0.2.0+codex.20260828161517`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `d8daf4f9f46eb9cfea3bae72b0d80c985972b87c6ef417183b3e6966e96a9b5e`
+normalized_source_cache_sha256: `69d08c59bff61c1b6c5494a9d3f463a2d958311b4d681e0f4e0dbd11b8938c5b`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -184,6 +184,7 @@ installed_decision_gate_smoke: `3/3 installed EN/ES decision-gate builder, valid
 
 installed_screen_intake_smoke: `3/3 installed EN/ES target-specific intake builder, validator, and renderer; advance-only manual handoff, snapshot/locale binding, private IDs hidden, and 0600 output`
 installed_screen_intake_dark_contrast_smoke: `1/1 dark-mode screen-blue token uses the accessible contrast value and stays synchronized with the Superdesign theme dump`
+installed_screen_intake_print_footer_smoke: `1/1 screen-intake footer remains atomic in print with its card`
 installed_screen_debrief_control_contrast_smoke: `2/2 dark-mode skip links and continuity markers use accessible surface/marker tokens in screen intake and debrief`
 
 installed_screen_debrief_intake_smoke: `4/4 installed artifact-free EN/ES attended-screen bridge; screen_requested and interview_requested receipts carry forward, target binding is enforced, structured coverage is the only next input, malformed recovery stays bounded`
@@ -191,6 +192,8 @@ installed_screen_debrief_intake_smoke: `4/4 installed artifact-free EN/ES attend
 installed_debrief_locale_binding_smoke: `3/3 installed valid ES, mixed-locale recovery, interview_requested carry-forward`
 
 installed_debrief_lineage_smoke: `4/4 installed valid binding, interview carry-forward, target mismatch, legacy recovery`
+installed_screen_debrief_print_footer_smoke: `1/1 post-screen debrief footer remains atomic in print with its cards`
+installed_screen_debrief_recursion_smoke: `1/1 deeply nested debrief input returns artifact-free needs_intake without traceback`
 installed_debrief_sensitive_material_smoke: `1/1 installed screen debrief rejects generic local paths and credential markers before persistence`
 installed_reading_path_tablet_smoke: `1/1 installed dossier reading path switches to a two-column tablet layout through 900px and one column at 640px`
 
