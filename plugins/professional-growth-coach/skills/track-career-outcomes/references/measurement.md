@@ -35,6 +35,27 @@ Warnings use only in-window rows for currency and intervention claims. Warn for 
 
 Never perform FX conversion and never compare cross-currency offer values as equivalent. The CLI reports funnel counts and rates only; it makes no causal attribution.
 
+## Explicit recruiter receipt export
+
+`export_private_recruiter_outcome.py` is a manual adapter for the one mapping
+that is semantically safe without a second artifact: a validated
+`reply_received` receipt becomes a CSV `response_date`. The caller must provide
+`candidate_id`, `application_id`, `application_date`, and `as_of`; optional
+role, geography, currency, asset-version, referral, confounder, and consent
+fields are copied only as bounded caller-supplied CSV values. The adapter uses
+the canonical header and a deterministic
+`recruiter-receipt-sha256-...` `intervention_id` derived from the receipt's
+structural fields and application ID. Repeating the same pair is a no-op.
+
+The adapter rejects `contact_received`, `referral_received`,
+`screen_requested`, `interview_requested`, and `stop_decision`; none of those
+events proves a response or interview. Do not map a requested screen to
+`interview_date`, and do not map a stop to `response_date`. Screen-attended
+events remain in the follow-through/debrief artifacts until a separately
+reviewed adapter with explicit confirmation exists. The bridge never copies
+raw receipt prose or source IDs, combines candidates, changes the summarizer,
+or performs an external action.
+
 ## LinkedIn outreach diagnostics
 
 Use `source=linkedin_outreach` for rows driven by a LinkedIn outreach sequence, and store the LinkedIn `measurement_event` ID in `intervention_id` (for example `LI-FIRST-002`). `outreach_diagnostics` is a coaching interpretation layered over the deterministic JSON; it does not add or change CLI counts.

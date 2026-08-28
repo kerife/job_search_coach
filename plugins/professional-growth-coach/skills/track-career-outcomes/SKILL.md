@@ -11,6 +11,29 @@ Measure job-search outcomes descriptively without claiming causality from uncont
 
 The conversion receipt is a candidate-supplied observation only: one dated event in one declared source namespace, with no candidate identity claim and no aggregation. Map events exactly: `contact_received` and `reply_received` → `clarify_context_before_reply`; `referral_received` → `prepare_fact_checked_summary`; `screen_requested` and `interview_requested` → `route_to_prepare-role-interviews`; `stop_decision` → `record_stop_decision`. This is descriptive measurement, with no causality, fit, score, offer, or outcome proof. It preserves the normal CSV and `summarize_outcomes.py` route unchanged. The only next step is a manual next step for the candidate; it has no auto-start, no module packet, no send, no schedule, and no calendar item, and does not retain raw event prose.
 
+### Explicit receipt-to-CSV bridge
+
+The ordinary CSV route remains unchanged, but a candidate may explicitly bridge
+one `reply_received` receipt into one application row after supplying the
+application context. Run:
+
+```bash
+python3 plugins/professional-growth-coach/scripts/export_private_recruiter_outcome.py \
+  --receipt REPLY_RECEIPT.json --candidate-id CANDIDATE_ID \
+  --application-id APPLICATION_ID --application-date YYYY-MM-DD \
+  --as-of YYYY-MM-DD --output OUTCOMES.csv
+```
+
+The bridge maps only `reply_received` to `response_date`. It rejects
+`screen_requested`, `interview_requested`, and `stop_decision` instead of
+guessing `interview_date` or `response_date`; a later screen-attended export
+requires a separately reviewed adapter and explicit confirmation. The output
+contains the canonical CSV headers, fixed `source=recruiter_private_receipt`,
+and a deterministic `recruiter-receipt-sha256-...` `intervention_id`. Repeating
+the same receipt/application pair is idempotent. The bridge is draft-only,
+identity-aware only in the caller-supplied CSV fields, never retains raw
+receipt prose, and does not aggregate candidates or perform external actions.
+
 ### Follow-through checkpoint (candidate-supplied, manual)
 
 When a separately supplied `private-recruiter-conversion-outcome-v1` receipt is followed by a `private-recruiter-followthrough-checkpoint-v1`, validate the receipt first and require exact source fields and event/action identity. The checkpoint is replay-safe: reprocessing the same receipt and checkpoint is idempotent; reprocessing the same receipt/checkpoint pair idempotently must not append a second event, change the CSV, aggregate candidates, or advance a route. Use the validator's pure `replay_fingerprint(checkpoint, receipt)` helper as the no-persistence replay key before any local event handling; equal keys are the same pair, while a changed receipt or checkpoint must be handled as a new pair. The key contains only validated structural fields and never raw event prose or candidate identity. A completed `screen_requested` or `interview_requested` observation may offer only a manual, explicit handoff to `prepare-role-interviews`; a completed `screen_attended` observation offers only the manual `debrief_after_screen` cue to re-enter a private conversation; this artifact does not capture or persist debrief notes. These cues do not start preparation, transfer an execution packet, send, or schedule follow-up. `accepted` and `deferred` remain manual checkpoints, while `declined` and any `stop_decision` source block interview preparation and route only to recording the stop. Unknown or non-completed measurement events stay unknown. The ordinary CSV measurement path and ordinary recruiter-reply routes remain unchanged when this explicit pair of private artifacts is absent. No auto-start, send, schedule, calendar action, score, causality, outcome guarantee, or candidate aggregation is allowed.

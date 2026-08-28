@@ -363,6 +363,18 @@ auto-start preparation, or create a message, calendar, or other external
 action. Its surface token remains readable in dark mode and its borders/text
 remain explicit in print, forced-colors, and higher-contrast modes.
 
+An explicit CSV bridge is available only when the candidate supplies an
+application context: `export_private_recruiter_outcome.py` accepts a validated
+`reply_received` receipt plus `candidate_id`, `application_id`,
+`application_date`, and `as_of`, then writes one canonical `outcomes.csv` row
+with `response_date` set to the observed reply date. It rejects
+`screen_requested`, `interview_requested`, and `stop_decision` rather than
+turning requests or terminal events into interviews or responses. The export
+uses a deterministic `recruiter-receipt-sha256-...` replay key, so repeating
+the same receipt/application pair is a no-op; no raw receipt prose, source ID,
+candidate aggregation, message, calendar action, or causal claim is added.
+Use `--force` only after reviewing a different existing output file.
+
 After a completed `screen_attended` checkpoint, the rail uses the closed
 `debrief_after_screen` action. `route_recruiter_screen_debrief_intake` carries
 that validated boundary into an artifact-free prompt for requirement coverage,

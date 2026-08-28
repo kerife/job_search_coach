@@ -1416,6 +1416,8 @@ html { color-scheme: light; background: var(--paper); }
   .recruiter-practice-document .practice-next-version li { border-width: 2px; }
   .recruiter-practice-document .continuity-rail,
   .recruiter-practice-document .continuity-step { border-width: 2px; }
+  .recruiter-practice-document .continuity-step::before,
+  .recruiter-practice-document .triage-practice-route-step::before { border-width: 2px; }
   .recruiter-practice-document .continuity-rail--feedback-available .continuity-step--pending,
   .recruiter-practice-document .continuity-rail--feedback-available .continuity-step--blocked { border-left-width: .5rem; }
   .recruiter-practice-document .feedback-label { text-decoration: underline; text-decoration-thickness: 0.12em; }

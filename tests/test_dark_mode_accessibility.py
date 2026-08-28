@@ -169,6 +169,17 @@ class DarkModeAccessibilityTests(unittest.TestCase):
                 self.assertRegex(contrast, r"\.continuity-step,\s*\.continuity-step--recorded\s*\{[^}]*border-width:\s*2px;")
                 self.assertRegex(contrast, r"\.continuity-step::before\s*\{[^}]*border-width:\s*2px;")
 
+    def test_practice_markers_strengthen_borders_in_high_contrast(self) -> None:
+        css = (ASSETS / "recruiter-practice-session-v1.css").read_text(encoding="utf-8")
+        start = css.index("@media (prefers-contrast: more)")
+        contrast = css[start:]
+        self.assertRegex(
+            contrast,
+            r"\.recruiter-practice-document \.continuity-step::before,\s*"
+            r"\.recruiter-practice-document \.triage-practice-route-step::before\s*"
+            r"\{[^}]*border-width:\s*2px;",
+        )
+
     def test_recruiter_continuity_rail_is_a_static_section_not_navigation(self) -> None:
         surfaces = (
             "recruiter-target-shortlist-v1.html",

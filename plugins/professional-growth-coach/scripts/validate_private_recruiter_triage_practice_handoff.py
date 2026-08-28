@@ -214,7 +214,7 @@ def validate_handoff(value: object) -> list[str]:
     if not isinstance(snapshot, str) or not snapshot.startswith(_SNAPSHOT_PREFIX) or len(snapshot) != len(_SNAPSHOT_PREFIX) + 64:
         errors.append("handoff.source_snapshot must use the triage snapshot format")
     projection_snapshot = handoff.get("projection_snapshot")
-    if schema_version == SCHEMA_VERSION:
+    if schema_version == SCHEMA_VERSION or projection_snapshot is not None:
         if not isinstance(projection_snapshot, str) or not projection_snapshot.startswith(_PROJECTION_SNAPSHOT_PREFIX) or len(projection_snapshot) != len(_PROJECTION_SNAPSHOT_PREFIX) + 64:
             errors.append("handoff.projection_snapshot must use the practice projection format")
     session = _mapping(handoff.get("practice_session"))
@@ -222,9 +222,9 @@ def validate_handoff(value: object) -> list[str]:
         errors.append("practice_session must be an object")
         return sorted(set(errors))
     if (
-        schema_version == SCHEMA_VERSION
-        and isinstance(projection_snapshot, str)
+        isinstance(projection_snapshot, str)
         and projection_snapshot.startswith(_PROJECTION_SNAPSHOT_PREFIX)
+        and (schema_version == SCHEMA_VERSION or projection_snapshot is not None)
         and projection_snapshot != projection_snapshot_for_session(session)
     ):
         errors.append("handoff.projection_snapshot must match practice_session content")

@@ -77,6 +77,11 @@ class PrivateRecruiterTriagePracticeHandoffValidatorTests(unittest.TestCase):
         handoff.pop("projection_snapshot")
         self.assertEqual([], validate_handoff(handoff))
 
+    def test_accepts_legacy_v1_handoff_with_projection_snapshot(self) -> None:
+        handoff = self._handoff()
+        handoff["schema_version"] = "private-recruiter-triage-practice-handoff-v1"
+        self.assertEqual([], validate_handoff(handoff))
+
     def test_rejects_private_source_url_contact_and_path_prose_without_echoing_it(self) -> None:
         targets = {
             "safe_context.summary": ("safe_context", "summary"),
