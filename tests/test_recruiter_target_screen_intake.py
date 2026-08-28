@@ -152,6 +152,7 @@ class RecruiterTargetScreenIntakeTests(unittest.TestCase):
         self.assertIn("Preparar entrevista para revisión", rendered)
         self.assertNotIn("T-001", rendered)
         self.assertNotIn("F-001", rendered)
+        self.assertNotRegex(rendered, r"\bV-\d{3}\b")
         english_gate = build_decision_gate(build_shortlist("en", "2026-08-27", valid_plan(), valid_targets()))
         english = build_screen_intake(english_gate, "T-001", valid_screen_intake())
         english_rendered = render_screen_intake_html(english)

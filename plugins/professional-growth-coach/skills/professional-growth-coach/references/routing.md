@@ -48,6 +48,15 @@ forward to the hiring manager”, and “ya pasé el filtro y ahora sigue” ent
 `private_recruiter_next_stage_review` with the same artifact-free debrief intake;
 it does not infer a successful outcome or start preparation automatically.
 
+Post-screen follow-through wording (`follow up`, `thank-you`, `no response`,
+`ghosted`, `dar seguimiento`, `agradecimiento`, `sin respuesta`, `me dejaron en
+visto`) requires recruiter plus screen context and routes to artifact-free
+`private_recruiter_screen_debrief` with `collect_debrief_context`. A response
+request keeps `private_recruiter_reply_triage` precedence; future or explicitly
+not-attended screens keep `recruiter_target_screen_intake` precedence. The
+screen-intake renderer removes internal `V-###` requirement keys from rendered
+HTML while preserving them in validated source data.
+
 ## Private recruiter-practice routing
 
 Before every other route, check for an explicit private recruiter-practice request. It takes precedence over recruiter-reply triage, every LinkedIn branch, and debug, eval, detail, raw, or internal-row requests. When it includes an identity-free vacancy summary and at least one supplied candidate fact, select `prepare-role-interviews` and create the separate private recruiter practice session. This is a private artifact branch for one recruiter-screen question, not a normal local LinkedIn artifact and not a client-report fallback.

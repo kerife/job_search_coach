@@ -77,6 +77,14 @@ Progression phrases such as “passed the recruiter screen”, “moved forward 
 the hiring manager”, and “ya pasé el filtro y ahora sigue” enter the same
 artifact-free next-stage review instead of ordinary coaching.
 
+Post-screen follow-through wording such as “follow up”, “thank-you note”, “no
+response”, “ghosted”, “dar seguimiento”, “agradecimiento” or “me dejaron en
+visto” enters the artifact-free private screen-debrief intake when recruiter
+and screen context are present. A request to respond to the recruiter remains
+reply triage; future or not-yet-attended screens remain preparation intake. The
+screen-intake renderer strips internal `V-###` requirement keys from HTML while
+retaining them in validated source data.
+
 The same preparation boundary covers explicit non-attendance such as “I never
 went to the recruiter interview”, “I didn’t go to the recruiter screen”,
 “Nunca fui a la entrevista con el reclutador”, “No fui”, “No me presenté”, and

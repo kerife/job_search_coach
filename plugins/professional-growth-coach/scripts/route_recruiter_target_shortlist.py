@@ -138,7 +138,7 @@ RECRUITER_INBOUND_INTENT = re.compile(
     re.I,
 )
 RECRUITER_REPLY_REQUEST_INTENT = re.compile(
-    r"(?:\b(?:what\s+should\s+i\s+(?:say|reply)(?:\s+back)?|what\s+do\s+i\s+tell|say\s+back|reply\s+to\s+(?:a\s+|the\s+)?recruiters?|help\s+me\s+(?:formulate|write|draft)\s+(?:a\s+)?response|help\s+me\s+respond\s+to\s+(?:a\s+|the\s+)?recruiters?|formulate\s+(?:a\s+)?response|help\s+me\s+answer|get\s+back\s+to)\b|"
+    r"(?:\b(?:what\s+should\s+i\s+(?:say|reply)(?:\s+back)?|what\s+do\s+i\s+tell|how\s+(?:should|do)\s+i\s+respond\s+to|respond\s+to\s+(?:a\s+|the\s+)?recruiters?|say\s+back|reply\s+to\s+(?:a\s+|the\s+)?recruiters?|help\s+me\s+(?:formulate|write|draft)\s+(?:a\s+)?response|help\s+me\s+respond\s+to\s+(?:a\s+|the\s+)?recruiters?|formulate\s+(?:a\s+)?response|help\s+me\s+answer|get\s+back\s+to)\b|"
     r"\b(?:qu[eé]\s+(?:le\s+)?(?:digo|contesto)|c[oó]mo\s+(?:le\s+)?respondo|ay[uú]dame\s+a\s+(?:contestar|responder)|responderle|formular\s+(?:una\s+)?respuesta)\b)",
     re.I,
 )
@@ -157,6 +157,15 @@ POST_SCREEN_PROGRESSION_INTENT = re.compile(
     r"\b(?:recruiter)\b[^.!?\n]{0,70}\bprogress(?:ed|ing)\s+to\s+(?:the\s+)?hiring\s+manager\b|"
     r"\b(?:avanc[eé]|avanz[oó])\s+(?:a\s+)?(?:la\s+)?siguiente\s+ronda\b[^.!?\n]{0,60}\b(?:filtro|reclutador|recruiter)\b|"
     r"\b(?:ya\s+)?pas[eé]\s+(?:el\s+)?filtro\b[^.!?\n]{0,60}\b(?:sigue|hiring\s+manager|siguiente)\b)",
+    re.I,
+)
+POST_SCREEN_FOLLOWTHROUGH_INTENT = re.compile(
+    r"(?:\b(?:follow[- ]?up|thank[- ]?you(?:\s+note)?|no\s+(?:response|reply)|"
+    r"(?:hasn['’]?t|have\s+not)\s+repl(?:ied|y)|not\s+heard\s+back|ghosted|"
+    r"wait\s+(?:or|and)\s+follow[- ]?up)\b|"
+    r"\b(?:seguimiento|agradecimiento|dar\s+las\s+gracias|sin\s+respuesta|"
+    r"no\s+(?:responde|me\s+ha\s+respondido)|no\s+he\s+recibido\s+respuesta|"
+    r"me\s+dejaron\s+en\s+visto|insistir)\b)",
     re.I,
 )
 READINESS_NEGATION = re.compile(
@@ -228,6 +237,17 @@ def _has_recruiter_screen_context(request: str) -> bool:
     return bool(EXPLICIT_RECRUITER_INTENT.search(request) and SCREEN_CONTEXT.search(request))
 
 
+def _has_recruiter_followthrough_context(request: str) -> bool:
+    if not SCREEN_CONTEXT.search(request):
+        return False
+    if EXPLICIT_RECRUITER_INTENT.search(request):
+        return True
+    return bool(
+        re.search(r"\bfiltro\b", request, re.I)
+        and re.search(r"\b(?:despu[eé]s|tras|luego|post)\b", request, re.I)
+    )
+
+
 def _natural_recruiter_route(request: str) -> str | None:
     """Classify natural recruiter follow-up language before shortlist routing."""
     has_screen_context = _has_recruiter_screen_context(request)
@@ -258,6 +278,8 @@ def _natural_recruiter_route(request: str) -> str | None:
         SCREEN_NOT_COMPLETED.search(request) or FUTURE_SCREEN_DATE.search(request)
     ):
         return "pre_screen"
+    if _has_recruiter_followthrough_context(request) and POST_SCREEN_FOLLOWTHROUGH_INTENT.search(request):
+        return "debrief"
     if has_screen_context and INVITED_NEXT_STAGE.search(request) and NEXT_STAGE_INTENT.search(request):
         return "next_stage"
     if has_screen_context and READINESS_NEGATION.search(request) and NEXT_STAGE_INTENT.search(request):

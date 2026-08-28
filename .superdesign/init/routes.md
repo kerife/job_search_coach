@@ -63,6 +63,13 @@ recruiter screen`, `moved forward to the hiring manager`, `ya pasé el filtro y
 ahora sigue`) uses the same artifact-free next-stage review surface and remains
 manual-only.
 
+Post-screen follow-through (`follow up`, `thank-you`, `no response`, `ghosted`,
+`dar seguimiento`, `agradecimiento`, `sin respuesta`, `me dejaron en visto`)
+with recruiter/screen context uses the artifact-free debrief intake; response
+requests remain reply triage and future/not-attended screens remain preparation
+intake. Screen-intake HTML shows requirement prose without internal `V-###`
+keys, while validated source data retains those keys for traceability.
+
 No router config file exists, so there is no router source to include. All renderer CLIs keep local artifact paths out of successful receipts by default; a trusted caller that needs a verified local link must pass `--include-artifact-path`. Unknown arguments use the same fixed opaque diagnostic boundary and never echo rejected values.
 
 For the recruiter handoff chain, route functions return `artifact` plus

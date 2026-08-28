@@ -700,6 +700,58 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertTrue(routed["authorization_required"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_post_screen_followthrough_language_enters_private_debrief(self) -> None:
+        cases = (
+            ("I want to follow up with the recruiter after the screen.", "en", True),
+            ("How do I follow up after the recruiter interview?", "en", True),
+            ("Can you draft a thank-you note after my recruiter screen?", "en", False),
+            ("No response from recruiter after interview.", "en", False),
+            ("I have been ghosted by the recruiter after the screen.", "en", False),
+            ("¿Cómo doy seguimiento después de la entrevista con el reclutador?", "es", True),
+            ("¿Debo mandar un agradecimiento después del filtro?", "es", True),
+            ("Me dejaron en visto después de la entrevista con el reclutador.", "es", False),
+        )
+        for request, locale, authorization_required in cases:
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+                self.assertEqual("private_recruiter_screen_debrief", routed["route_kind"])
+                self.assertEqual("collect_debrief_context", routed["next_action"])
+                self.assertEqual(authorization_required, routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_post_screen_followthrough_preserves_reply_and_pre_screen_precedence(self) -> None:
+        for request, locale, expected_route in (
+            (
+                "How should I respond to a recruiter after my interview?",
+                "en",
+                "private_recruiter_reply_triage",
+            ),
+            (
+                "¿Cómo respondo al reclutador después de la entrevista?",
+                "es",
+                "private_recruiter_reply_triage",
+            ),
+            (
+                "My recruiter screen is scheduled next week; should I follow up before it?",
+                "en",
+                "recruiter_target_screen_intake",
+            ),
+            (
+                "I haven't had the recruiter screen yet; should I follow up?",
+                "en",
+                "recruiter_target_screen_intake",
+            ),
+            (
+                "I want to follow up with the hiring manager after my interview.",
+                "en",
+                "ordinary_professional_growth",
+            ),
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+                self.assertEqual(expected_route, routed["route_kind"])
+                self.assertIsNone(routed["artifact"])
+
     def test_recruiter_preparation_without_inbound_contact_stays_preparation_only(self) -> None:
         routed = route_recruiter_request(
             "Help me prepare for a recruiter interview next week.",

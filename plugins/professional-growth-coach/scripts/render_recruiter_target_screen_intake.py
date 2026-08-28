@@ -8,6 +8,7 @@ import datetime as dt
 import html
 import importlib.util
 import json
+import re
 import sys
 from collections.abc import Mapping
 from pathlib import Path
@@ -51,6 +52,11 @@ def _unique(pairs: list[tuple[str, object]]) -> dict[str, object]:
             raise ValueError("duplicate JSON key")
         result[key] = value
     return result
+
+
+def _display_requirement(value: object) -> str:
+    """Render requirement prose without exposing the internal V-### key."""
+    return re.sub(r"^V-\d{3}:\s*", "", str(value))
 
 
 COPY = {
@@ -144,7 +150,10 @@ def render_screen_intake_html(value: Mapping[str, object]) -> str:
         check_items.append(
             f'<li class="screen-check screen-check--{html.escape(str(check["status"]))}"><strong>{html.escape(labels["check_names"][str(check["check"])])}</strong><span>{html.escape(label)}</span><p>{html.escape(str(check["evidence_note"]), quote=True)}</p></li>'
         )
-    requirement_items = "".join(f"<li>{html.escape(str(item), quote=True)}</li>" for item in intake["vacancy_requirements"])
+    requirement_items = "".join(
+        f"<li>{html.escape(_display_requirement(item), quote=True)}</li>"
+        for item in intake["vacancy_requirements"]
+    )
     fact_count = str(len(intake["candidate_fact_ids"]))
     template = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, TEMPLATE_PATH)
     css = ASSET_LOADER.read_private_asset(ASSET_ROOT.parent, CSS_PATH)
