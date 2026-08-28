@@ -487,6 +487,20 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         for path in sorted(fixture_dir.glob("*.json")):
             value = json.loads(path.read_text(encoding="utf-8"))
             self.assertEqual([], validate_schema_instance(value, market_schema), path.name)
+        complete = json.loads((fixture_dir / "complete-five-es.json").read_text(encoding="utf-8"))
+        for field in ("access_date", "publication_date", "freshness_status", "freshness_basis", "freshness_window_days", "freshness_reason"):
+            invalid = copy.deepcopy(complete)
+            del invalid["vacancy_cards"][0][field]
+            with self.subTest(field=field):
+                self.assertTrue(validate_schema_instance(invalid, market_schema))
+        contradictory = copy.deepcopy(complete)
+        contradictory["vacancy_cards"][0].update(
+            publication_date="2026-08-10",
+            freshness_status="current",
+            freshness_basis="publication_date",
+            freshness_reason="outside_window",
+        )
+        self.assertTrue(validate_schema_instance(contradictory, market_schema))
         alignment_schema = self._schema("candidate-market-alignment-v1.schema.json")
         invalid = {
             "schema_version": "candidate-market-alignment-v1",

@@ -978,6 +978,7 @@ dd { margin: .25rem 0 0; font-weight: 700; }
   --coral: #b9513a;
   --coral-soft: #f6e0da;
   --decision-term: #dfbf70;
+  --muted: #46534d;
   --line: #b8c7c0;
   --measure: 72ch;
   --serif: Georgia, "Times New Roman", Times, serif;
@@ -1121,14 +1122,14 @@ html { color-scheme: light; background: var(--paper); }
 .recruiter-practice-document .screen-readiness { padding: 1rem; border: 1px solid var(--line); border-left: 4px solid var(--decision-term); background: var(--paper); }
 .recruiter-practice-document .screen-readiness-kicker { margin: 0; color: var(--forest); font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .recruiter-practice-document .screen-readiness h2 { margin: .25rem 0 0; font-size: 1.3rem; }
-.recruiter-practice-document .screen-readiness-intro { max-width: var(--measure); margin: .45rem 0 0; color: #46534d; }
+.recruiter-practice-document .screen-readiness-intro { max-width: var(--measure); margin: .45rem 0 0; color: var(--muted); }
 .recruiter-practice-document .screen-readiness-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .65rem; margin: .8rem 0 0; }
 .recruiter-practice-document .screen-readiness-item { position: relative; min-width: 0; padding: .7rem; border: 1px solid var(--line); background: var(--surface); }
 .recruiter-practice-document .screen-readiness-item--current { border-top: 3px solid var(--forest); }
 .recruiter-practice-document .screen-readiness-item--pending { border-top: 3px solid var(--decision-term); }
 .recruiter-practice-document .screen-readiness-label { display: block; color: var(--forest); font-size: .78rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
 .recruiter-practice-document .screen-readiness-item strong { display: block; margin-top: .25rem; }
-.recruiter-practice-document .screen-readiness-state { display: block; margin-top: .35rem; color: #46534d; font-size: .75rem; font-weight: 700; text-transform: uppercase; }
+.recruiter-practice-document .screen-readiness-state { display: block; margin-top: .35rem; color: var(--muted); font-size: .75rem; font-weight: 700; text-transform: uppercase; }
 .recruiter-practice-document .practice-next-action { background: var(--forest); color: #fff; border: 1px solid var(--forest); padding: 1rem; }
 .recruiter-practice-document .practice-next-action h2 { color: #fff; }
 .recruiter-practice-document .practice-next-action p { max-width: var(--measure); margin: 0.45rem 0 0; }

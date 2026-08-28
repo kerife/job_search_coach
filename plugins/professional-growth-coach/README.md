@@ -286,6 +286,12 @@ publication date when known, a 90-day freshness window, and an explicit
 accessible name includes the vacancy title for auditability. The link is for
 auditability only: it does not open an application flow, send a message, or
 authorize any external action.
+Every vacancy card must carry the complete six-field freshness envelope. The
+validator rejects contradictory status, basis, reason, or date-window
+combinations: a dated posting is current only when its source status is current
+and within 90 days; otherwise it is explicitly unknown. A missing publication
+date is always unknown with an explicit access-date basis, so hand-authored
+artifacts cannot present stale or unverified evidence as current.
 Canonical source labels remain localized for `official_employer`,
 `employer_operated_ats`, and `linkedin_jobs_backup`.
 The follow-through checkpoint validator also exposes a pure `replay_fingerprint`

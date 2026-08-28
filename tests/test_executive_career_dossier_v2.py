@@ -189,6 +189,8 @@ def make_composable_market_dossier(name: str, dossier: dict[str, object]) -> dic
     market = json.loads((MARKET_FIXTURE_ROOT / name).read_text(encoding="utf-8"))
     market["locale"] = dossier["locale"]
     market["as_of_date"] = dossier["evidence_as_of"]
+    for card in market.get("vacancy_cards", []):
+        card["access_date"] = market["as_of_date"]
     canonical = json.dumps(dossier, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
     market["source_executive_dossier_snapshot"] = "snap-dossier-sha256-" + hashlib.sha256(canonical).hexdigest()
     return market
@@ -202,6 +204,8 @@ def make_composable_learning_market_dossier(
     market["learning_evidence_mode"] = "synthetic"
     market["locale"] = dossier["locale"]
     market["as_of_date"] = dossier["evidence_as_of"]
+    for card in market.get("vacancy_cards", []):
+        card["access_date"] = market["as_of_date"]
     for option in market["learning_options"]:
         option["source_date"] = dossier["evidence_as_of"]
     canonical = json.dumps(dossier, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")

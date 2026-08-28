@@ -212,6 +212,29 @@ class CareerMarketLearningDossierTests(unittest.TestCase):
         self.assertEqual("unknown", first["freshness_status"])
         self.assertEqual("outside_window", first["freshness_reason"])
 
+    def test_validator_reconciles_freshness_status_basis_and_reason(self) -> None:
+        research = valid_research()
+        dossier = valid_dossier()
+        built = build_market_dossier(research, dossier, bindings_for(research, dossier))
+        mutations = (
+            ("freshness_status", "unknown", "freshness_reason", "publication_date_within_window"),
+            ("freshness_status", "current", "freshness_reason", "outside_window"),
+            ("freshness_basis", "unknown", "freshness_reason", "publication_date_within_window"),
+        )
+        for field, value, companion, companion_value in mutations:
+            with self.subTest(field=field):
+                mutated = copy.deepcopy(built)
+                mutated["vacancy_cards"][0][field] = value
+                mutated["vacancy_cards"][0][companion] = companion_value
+                errors = validate_market_dossier(mutated)
+                self.assertTrue(any("freshness" in error for error in errors), errors)
+
+        missing = copy.deepcopy(built)
+        for card in missing["vacancy_cards"]:
+            for field in ("access_date", "publication_date", "freshness_status", "freshness_basis", "freshness_window_days", "freshness_reason"):
+                del card[field]
+        self.assertTrue(validate_market_dossier(missing))
+
     def test_builder_rejects_stale_snapshot_unknown_evidence_and_state_mismatch(self) -> None:
         research = valid_research()
         dossier = valid_dossier()

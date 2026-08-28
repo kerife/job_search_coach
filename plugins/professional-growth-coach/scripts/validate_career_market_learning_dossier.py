@@ -299,6 +299,51 @@ def _qualitative_band(alignment: int, coverage: int) -> str:
     return "lower_documented_alignment"
 
 
+def _validate_freshness(row: Mapping[str, object], path: str, as_of_date: date | None, errors: list[str]) -> None:
+    """Require freshness metadata to describe one coherent source state."""
+    access_date = _date(row.get("access_date"), f"{path}.access_date", errors)
+    if access_date and as_of_date and access_date != as_of_date:
+        errors.append(f"{path}.access_date must equal as_of_date")
+    publication = row.get("publication_date")
+    publication_date = None if publication is None else _date(publication, f"{path}.publication_date", errors)
+    if publication_date and as_of_date and publication_date > as_of_date:
+        errors.append(f"{path}.publication_date cannot be after as_of_date")
+    status = row.get("freshness_status")
+    if status not in FRESHNESS_STATUSES:
+        errors.append(f"{path}.freshness_status has invalid value")
+    basis = row.get("freshness_basis")
+    if basis not in FRESHNESS_BASES:
+        errors.append(f"{path}.freshness_basis has invalid value")
+    window = row.get("freshness_window_days")
+    if type(window) is not int or not 1 <= window <= 365:
+        errors.append(f"{path}.freshness_window_days has invalid value")
+    reason = row.get("freshness_reason")
+    if reason not in FRESHNESS_REASONS:
+        errors.append(f"{path}.freshness_reason has invalid value")
+
+    if publication_date is None:
+        if status == "current":
+            errors.append(f"{path}.freshness_status cannot be current without publication_date")
+        expected = {
+            "freshness_status": "unknown",
+            "freshness_basis": "unknown",
+            "freshness_reason": "publication_date_unknown_verified_open_on_access_date",
+        }
+    else:
+        expected = {"freshness_basis": "publication_date"}
+        age_days = (as_of_date - publication_date).days if as_of_date else None
+        if type(window) is int and age_days is not None and age_days >= 0:
+            if age_days > window:
+                expected.update(freshness_status="unknown", freshness_reason="outside_window")
+            elif status == "current":
+                expected["freshness_reason"] = "publication_date_within_window"
+            else:
+                expected.update(freshness_status="unknown", freshness_reason="source_status_unknown")
+    for field, expected_value in expected.items():
+        if row.get(field) != expected_value:
+            errors.append(f"{path}.{field} does not reconcile with freshness metadata")
+
+
 def validate_market_dossier(value: object) -> list[str]:
     """Validate output shape and recompute every deterministic calculation."""
     errors: list[str] = []
@@ -318,7 +363,7 @@ def validate_market_dossier(value: object) -> list[str]:
             errors.append("evidence_mode has invalid value")
         if value.get("locale") not in {"es", "en"}:
             errors.append("locale has invalid value")
-        _date(value.get("as_of_date"), "as_of_date", errors, live=evidence_mode == "live")
+        as_of_date = _date(value.get("as_of_date"), "as_of_date", errors, live=evidence_mode == "live")
         if not isinstance(value.get("source_research_snapshot"), str) or not MARKET_SNAPSHOT.fullmatch(value["source_research_snapshot"]):
             errors.append("source_research_snapshot has invalid value")
         if not isinstance(value.get("source_executive_dossier_snapshot"), str) or not DOSSIER_SNAPSHOT.fullmatch(value["source_executive_dossier_snapshot"]):
@@ -346,7 +391,7 @@ def validate_market_dossier(value: object) -> list[str]:
                     f"vacancy_cards[{index}]",
                     BASE_CARD_FIELDS | FRESHNESS_FIELDS,
                     errors,
-                    required_fields=BASE_CARD_FIELDS,
+                    required_fields=BASE_CARD_FIELDS | FRESHNESS_FIELDS,
                 )
                 if row is None:
                     continue
@@ -366,35 +411,7 @@ def validate_market_dossier(value: object) -> list[str]:
                 if source_error:
                     errors.append(source_error if "reserved domain" in source_error else f"vacancy_cards[{index}].source_url is invalid")
                 requirements = _card_requirements(row.get("requirements"), f"vacancy_cards[{index}].requirements", errors)
-                present_freshness = FRESHNESS_FIELDS & set(row)
-                if present_freshness:
-                    if present_freshness != FRESHNESS_FIELDS:
-                        errors.append(f"vacancy_cards[{index}] freshness fields must be complete")
-                    access_date = _date(row.get("access_date"), f"vacancy_cards[{index}].access_date", errors)
-                    as_of_date = _date(value.get("as_of_date"), "as_of_date", errors)
-                    if access_date and as_of_date and access_date != as_of_date:
-                        errors.append(f"vacancy_cards[{index}].access_date must equal as_of_date")
-                    publication = row.get("publication_date")
-                    publication_date = None if publication is None else _date(publication, f"vacancy_cards[{index}].publication_date", errors)
-                    if publication_date and as_of_date and publication_date > as_of_date:
-                        errors.append(f"vacancy_cards[{index}].publication_date cannot be after as_of_date")
-                    status = row.get("freshness_status")
-                    if status not in FRESHNESS_STATUSES:
-                        errors.append(f"vacancy_cards[{index}].freshness_status has invalid value")
-                    if row.get("freshness_basis") not in FRESHNESS_BASES:
-                        errors.append(f"vacancy_cards[{index}].freshness_basis has invalid value")
-                    window = row.get("freshness_window_days")
-                    if type(window) is not int or not 1 <= window <= 365:
-                        errors.append(f"vacancy_cards[{index}].freshness_window_days has invalid value")
-                    if row.get("freshness_reason") not in FRESHNESS_REASONS:
-                        errors.append(f"vacancy_cards[{index}].freshness_reason has invalid value")
-                    if status == "current" and publication_date is None:
-                        errors.append(f"vacancy_cards[{index}].freshness_status cannot be current without publication_date")
-                    if status == "current" and publication_date and as_of_date and type(window) is int:
-                        if not 0 <= (as_of_date - publication_date).days <= window:
-                            errors.append(f"vacancy_cards[{index}].freshness_status does not reconcile with publication_date")
-                    if row.get("freshness_reason") == "publication_date_unknown_verified_open_on_access_date" and publication_date is not None:
-                        errors.append(f"vacancy_cards[{index}].freshness_reason requires unknown publication_date")
+                _validate_freshness(row, f"vacancy_cards[{index}]", as_of_date, errors)
                 row = dict(row)
                 row["requirements"] = requirements
                 cards.append(row)

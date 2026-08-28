@@ -199,6 +199,15 @@ class DarkModeAccessibilityTests(unittest.TestCase):
         compact = css[css.index("@media screen and (max-width: 420px)") :]
         self.assertIn(".recruiter-practice-document .screen-readiness-grid { grid-template-columns: 1fr; }", compact)
 
+    def test_practice_readiness_copy_uses_themed_muted_token_in_dark_mode(self) -> None:
+        css = (ASSETS / "recruiter-practice-session-v1.css").read_text(encoding="utf-8")
+        self.assertIn(".recruiter-practice-document .screen-readiness-intro { max-width: var(--measure); margin: .45rem 0 0; color: var(--muted); }", css)
+        self.assertIn(".recruiter-practice-document .screen-readiness-state { display: block; margin-top: .35rem; color: var(--muted);", css)
+        self.assertNotIn(".screen-readiness-intro { max-width: var(--measure); margin: .45rem 0 0; color: #46534d; }", css)
+        self.assertNotIn(".screen-readiness-state { display: block; margin-top: .35rem; color: #46534d;", css)
+        dark = css[css.index("@media screen and (prefers-color-scheme: dark)") : css.index("@keyframes practice-enter")]
+        self.assertIn("--muted: #b8c4d8;", dark)
+
     def test_forced_colors_keeps_footer_boundary_readable(self) -> None:
         selectors = {
             "executive-career-dossier-v1.css": ".footer",

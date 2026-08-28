@@ -136,6 +136,10 @@ MARKET_DOSSIER_VALIDATOR_PATH = (
     Path(__file__).resolve().parents[1]
     / "plugins/professional-growth-coach/scripts/validate_career_market_learning_dossier.py"
 )
+MARKET_DOSSIER_V2_VALIDATOR_PATH = (
+    Path(__file__).resolve().parents[1]
+    / "plugins/professional-growth-coach/scripts/validate_career_market_learning_dossier_v2.py"
+)
 PUBLIC_MARKET_ROW_SCHEMAS = frozenset(
     {
         frozenset(
@@ -481,6 +485,9 @@ def _safe_market_artifact_scan_value(text: str, value: object) -> dict[str, obje
     elif version == "career-market-learning-dossier-v1":
         validator_path = MARKET_DOSSIER_VALIDATOR_PATH
         validator_name = "validate_market_dossier"
+    elif version == "career-market-learning-dossier-v2":
+        validator_path = MARKET_DOSSIER_V2_VALIDATOR_PATH
+        validator_name = "validate_learning_dossier"
     else:
         return None
     if len(text.encode("utf-8")) > 256 * 1024 or not _json_depth_is_bounded(value, 12):

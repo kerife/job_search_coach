@@ -834,6 +834,13 @@ class RepositoryPrivacyTests(unittest.TestCase):
 
         self.assertGreater(violations["SECRET_ASSIGNMENT"], 0)
 
+    def test_valid_market_learning_v2_artifact_is_privacy_safe(self) -> None:
+        scanner = load_scanner()
+        artifact_path = Path("tests/evals/with-skill/fixtures/career-market-learning-dossier-v2/project-first-five-es.json")
+        artifact = (REPO_ROOT / artifact_path).read_text(encoding="utf-8")
+        violations = scanner.scan_text(artifact_path, artifact)
+        self.assertNotIn("SINGLING_OUT_STRUCTURED_COMBINATION", violations)
+
     def test_non_mapping_marker_requires_boolean_true_or_exact_markdown_field(self) -> None:
         scanner = load_scanner()
         accepted = (

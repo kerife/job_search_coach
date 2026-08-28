@@ -349,8 +349,8 @@
     "vacancy_sample_count": 4
   },
   "source_executive_dossier_snapshot": "snap-dossier-sha256-0000000000000000000000000000000000000000000000000000000000000000",
-  "source_learning_research_snapshot": "snap-learning-sha256-5554909af34d277196546bf4bf290a7db31d78be553f1b85f542e0b9a47b6664",
-  "source_market_snapshot": "snap-market-sha256-7af5fe1ae765415c0113e639fa60282211b1aebcfe3eaee393f9b7b9282fd468",
+  "source_learning_research_snapshot": "snap-learning-sha256-0c94ce132209db03f44a8e28054fac205cd14db7332999a90d1a4d14d2f5b8fa",
+  "source_market_snapshot": "snap-market-sha256-9f4c7c4e600481dfd94103511cbb97183064fa89953f14dacbc5640e3861c506",
   "source_research_snapshot": "snap-market-sha256-0000000000000000000000000000000000000000000000000000000000000000",
   "state": "limited_market_evidence",
   "vacancy_cards": [
@@ -365,6 +365,12 @@
       "location": "Mexico",
       "maximum_points": 12,
       "qualitative_band": "lower_documented_alignment",
+      "access_date": "2026-08-13",
+      "publication_date": null,
+      "freshness_status": "unknown",
+      "freshness_basis": "unknown",
+      "freshness_window_days": 90,
+      "freshness_reason": "publication_date_unknown_verified_open_on_access_date",
       "requirements": [
         {
           "importance": "must_have",
@@ -398,6 +404,12 @@
       "location": "Mexico",
       "maximum_points": 12,
       "qualitative_band": "lower_documented_alignment",
+      "access_date": "2026-08-13",
+      "publication_date": null,
+      "freshness_status": "unknown",
+      "freshness_basis": "unknown",
+      "freshness_window_days": 90,
+      "freshness_reason": "publication_date_unknown_verified_open_on_access_date",
       "requirements": [
         {
           "importance": "must_have",
@@ -431,6 +443,12 @@
       "location": "Mexico",
       "maximum_points": 12,
       "qualitative_band": "lower_documented_alignment",
+      "access_date": "2026-08-13",
+      "publication_date": null,
+      "freshness_status": "unknown",
+      "freshness_basis": "unknown",
+      "freshness_window_days": 90,
+      "freshness_reason": "publication_date_unknown_verified_open_on_access_date",
       "requirements": [
         {
           "importance": "must_have",
@@ -464,6 +482,12 @@
       "location": "Mexico",
       "maximum_points": 12,
       "qualitative_band": "lower_documented_alignment",
+      "access_date": "2026-08-13",
+      "publication_date": null,
+      "freshness_status": "unknown",
+      "freshness_basis": "unknown",
+      "freshness_window_days": 90,
+      "freshness_reason": "publication_date_unknown_verified_open_on_access_date",
       "requirements": [
         {
           "importance": "must_have",
