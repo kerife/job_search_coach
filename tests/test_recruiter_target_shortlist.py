@@ -752,6 +752,36 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual(expected_route, routed["route_kind"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_post_screen_no_reply_and_speaking_variants_keep_private_debrief(self) -> None:
+        for request, locale, expected_route, authorization_required in (
+            ("The recruiter has not replied after my screen.", "en", "private_recruiter_screen_debrief", False),
+            ("The recruiter never replied after my interview.", "en", "private_recruiter_screen_debrief", False),
+            ("El reclutador no respondió después de la entrevista.", "es", "private_recruiter_screen_debrief", False),
+            ("After speaking to the recruiter, should I send a thank-you?", "en", "private_recruiter_screen_debrief", True),
+            ("Después de hablar con el reclutador, debo enviar agradecimiento", "es", "private_recruiter_screen_debrief", True),
+            ("Después de la llamada del recruiter, ¿qué le escribo?", "es", "private_recruiter_reply_triage", True),
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+                self.assertEqual(expected_route, routed["route_kind"])
+                self.assertEqual(authorization_required, routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_additional_recruiter_schedule_and_received_message_language_enters_private_triage(self) -> None:
+        for request, locale in (
+            ("Recruiter asked me to book a slot.", "en"),
+            ("Recruiter sent over some times for a call.", "en"),
+            ("El recruiter me compartió horarios.", "es"),
+            ("I received a recruiter email; what should I do?", "en"),
+            ("I received a LinkedIn message from a recruiter.", "en"),
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+                self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
+                self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
     def test_recruiter_preparation_without_inbound_contact_stays_preparation_only(self) -> None:
         routed = route_recruiter_request(
             "Help me prepare for a recruiter interview next week.",

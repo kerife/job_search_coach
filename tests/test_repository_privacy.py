@@ -623,6 +623,25 @@ class RepositoryPrivacyTests(unittest.TestCase):
             with self.assertRaises(OSError):
                 scanner._read_regular_text(evals / "link.md")
 
+    def test_main_marks_symlinked_marker_as_unreadable(self) -> None:
+        scanner = load_scanner()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            markers = root / "markers"
+            markers.mkdir()
+            outside = root / "outside.md"
+            outside.write_text("true", encoding="utf-8")
+            (markers / "link.md").symlink_to(outside)
+            with mock.patch.object(scanner, "scan_paths", return_value=()), mock.patch.object(
+                scanner, "staged_release_artifact_snapshot", return_value=()
+            ), mock.patch.object(
+                scanner,
+                "required_marker_paths",
+                return_value=(Path("markers/link.md"),),
+            ), contextlib.redirect_stdout(io.StringIO()) as output:
+                self.assertEqual(1, scanner.main(["--repo-root", str(root)]))
+            self.assertIn("SCAN_INPUT_UNREADABLE", output.getvalue())
+
     def test_dossier_source_inventory_uses_non_overbroad_source_scanning(self) -> None:
         scanner = load_scanner()
         for path in DOSSIER_SOURCE_INVENTORY_PATHS:
@@ -647,6 +666,7 @@ class RepositoryPrivacyTests(unittest.TestCase):
             "fullwidth-and-format": "ｌｉｎｋｅｄｉｎ．ｃｏｍ／ｉｎ／synthetic\u200bdecoy",
             "url-encoded": "%6c%69%6e%6b%65%64%69%6e%2e%63%6f%6d%2f%69%6e%2fsynthetic-decoy",
             "double-url-encoded": "%256c%2569%256e%256b%2565%2564%2569%256e%252e%2563%256f%256d%252f%2569%256e%252fsynthetic-decoy",
+            "quadruple-url-encoded": "%2525256c%25252569%2525256e%2525256b%25252565%25252564%25252569%2525256e%2525252e%25252563%2525256f%2525256d%2525252f%25252569%2525256e%2525252fsynthetic-decoy",
             "json-escaped": r"linkedin\u002ecom\u002fin\u002fsynthetic-decoy",
         }
         for label, text in cases.items():
@@ -654,6 +674,15 @@ class RepositoryPrivacyTests(unittest.TestCase):
                 self.assertIn(
                     "LINKEDIN_PROFILE_URL",
                     scanner.scan_text(Path("synthetic.md"), text),
+                )
+
+    def test_html_entities_are_decoded_before_scanning(self) -> None:
+        scanner = load_scanner()
+        for text in ("person&#64;example.invalid", "person&#x40;example.invalid"):
+            with self.subTest(text=text):
+                self.assertIn(
+                    "EMAIL_ADDRESS",
+                    scanner.scan_text(Path("synthetic.html"), text),
                 )
 
     def test_decoded_json_scalars_and_canonical_rendering_are_scanned(self) -> None:

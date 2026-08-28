@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import html
 import importlib.util
 import json
 import re
@@ -22,6 +23,7 @@ from urllib.parse import unquote
 TEXT_SUFFIXES = frozenset(
     {".csv", ".html", ".json", ".md", ".tsv", ".txt", ".yaml", ".yml"}
 )
+MAX_NORMALIZATION_ROUNDS = 5
 STAGED_RELEASE_ARTIFACT_ROOTS = frozenset(
     {Path(".professional-growth-coach-artifacts"), Path(".superpowers")}
 )
@@ -229,14 +231,14 @@ def _decode_json_escape_sequences(value: str) -> str:
 
 def normalize_and_decode(value: str) -> str:
     current = value
-    for _ in range(3):
+    for _ in range(MAX_NORMALIZATION_ROUNDS):
         normalized = unicodedata.normalize("NFKC", current)
         normalized = "".join(
             character
             for character in normalized
             if unicodedata.category(character) != "Cf"
         )
-        decoded = _decode_json_escape_sequences(unquote(normalized))
+        decoded = _decode_json_escape_sequences(unquote(html.unescape(normalized)))
         if decoded == current:
             return decoded
         current = decoded
@@ -1088,7 +1090,11 @@ def main(argv: list[str] | None = None) -> int:
     if current_snapshot != staged_snapshot:
         failures[(Path(".git/index"), "STAGED_INDEX_CHANGED")] += 1
     for path in required_marker_paths(repo_root):
-        text = (repo_root / path).read_text(encoding="utf-8")
+        try:
+            text = _read_regular_text(repo_root / path)
+        except (OSError, UnicodeError):
+            failures[(path, "SCAN_INPUT_UNREADABLE")] += 1
+            continue
         if not has_true_non_mapping_marker(path, text):
             failures[(path, "NON_MAPPING_MARKER")] += 1
     for (path, rule_id), count in sorted(failures.items()):
