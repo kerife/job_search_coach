@@ -31,8 +31,9 @@ title-contextual accessible source name. Directional evidence and
 non-inferred eligibility remain visible boundaries. Source labels are localized
 from the closed market enums.
 At screen widths up to 680px, its signal cells stack with localized labels;
-print keeps the semantic table layout and no horizontal-scroll affordance is
-required.
+print keeps the market matrix as stacked, labeled rows (the semantic header is
+visually clipped while `data-label` values remain readable), and no
+horizontal-scroll affordance is required.
 The section-coverage ledger likewise keeps a single facts column at 640px and
 below, preserving the same semantic reading order without horizontal scrolling.
 The v2 opening keeps the verdict and recruiter scan together in the first

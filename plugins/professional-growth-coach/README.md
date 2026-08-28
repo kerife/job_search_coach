@@ -140,8 +140,9 @@ keys, oversized integers, and excessive nesting before validation or output;
 their command-line failures stay opaque and never echo supplied content. All
 private builders, validators, and renderers apply the same boundary to unknown
 CLI arguments: they return the fixed `invalid_arguments` diagnostic without
-reflecting the rejected value. The LinkedIn client-report validator also caps
-multi-error stderr at the shared 16 KiB diagnostic budget and emits a stable
+reflecting the rejected value. The LinkedIn client-report validator and
+executive dossier renderers also cap multi-error stderr at the shared 16 KiB
+diagnostic budget and emit a stable
 truncation marker, so malformed private fixtures cannot flood a terminal or
 log sink. Learning-option evidence deduplicates source URLs by a normalized
 HTTPS identity (host, default port, decoded path, and trailing slash), so

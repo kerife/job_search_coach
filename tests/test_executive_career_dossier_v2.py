@@ -1328,6 +1328,27 @@ class ExecutiveCareerDossierV2LoadAndCliTests(unittest.TestCase):
             self.assertLessEqual(len(result.stderr.encode("utf-8")), 16 * 1024)
             self.assertIn("validation diagnostics truncated; additional errors omitted", result.stderr)
 
+    def test_renderer_cli_bounds_validation_diagnostics(self) -> None:
+        dossier = make_v2_dossier()
+        dossier["section_coverage"] = [None] * 700
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            dossier_path = root / "many-errors.json"
+            output = root / "executive-career-dossier-v2.html"
+            dossier_path.write_text(json.dumps(dossier), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, "-B", str(RENDERER_PATH), str(dossier_path), "--output", str(output)],
+                cwd=REPO_ROOT,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+        self.assertEqual(result.returncode, 2)
+        self.assertLessEqual(len(result.stderr.encode("utf-8")), 16 * 1024)
+        self.assertIn("validation diagnostics truncated; additional errors omitted", result.stderr)
+        self.assertNotIn("Traceback", result.stderr)
+        self.assertFalse(output.exists())
+
     def test_cli_accepts_a_valid_v2_dossier(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "valid.json"

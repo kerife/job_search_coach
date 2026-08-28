@@ -34,7 +34,8 @@ class PrintContinuityFooterIntegrityTests(unittest.TestCase):
         for selector in (".market-summary", ".market-key", ".market-matrix-wrap", ".gap-closure-route", ".vacancy-alignment-card", ".recurrence-row"):
             with self.subTest(selector=selector):
                 self.assertIn(selector, print_css)
-        self.assertIn("table-header-group", print_css)
+        self.assertIn(".market-matrix thead", print_css)
+        self.assertIn("clip: rect(0, 0, 0, 0)", print_css)
 
     def test_print_keeps_each_continuity_footer_atomic(self) -> None:
         for name, selector in FOOTERS.items():

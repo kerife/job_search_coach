@@ -83,7 +83,9 @@ The dependency-free schema subset also rejects non-finite numeric values
 (`NaN`, positive infinity, and negative infinity), including non-finite schema
 numeric bounds.
 
-Current vacancy research also rejects duplicate normalized `source_url` values
+Executive dossier v1/v2 renderers cap validation diagnostics at the same 16 KiB
+budget as their validators and emit a stable truncation marker. Current vacancy
+research also rejects duplicate normalized `source_url` values
 before market alignment, so one public posting cannot inflate the evidence
 sample under different vacancy IDs or fingerprints.
 

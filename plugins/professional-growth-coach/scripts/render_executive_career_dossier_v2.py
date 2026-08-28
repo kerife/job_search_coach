@@ -884,7 +884,7 @@ def _cli(argv: list[str] | None = None) -> int:
         return 3
     except (VALIDATOR.DossierLoadError, DossierValidationError) as error:
         if isinstance(error, DossierValidationError):
-            print("\n".join(error.errors), file=sys.stderr)
+            sys.stderr.write(BASE.VALIDATOR.format_bounded_diagnostics(error.errors))
             return 2
         else:
             print(str(error), file=sys.stderr)
