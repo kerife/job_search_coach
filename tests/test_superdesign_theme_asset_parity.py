@@ -320,6 +320,22 @@ class SuperdesignThemeAssetParityTests(unittest.TestCase):
                     rf"\.target-shortlist-card--{state}\s*\{{[^}}]*border-left-style:\s*{style};",
                 )
 
+    def test_forced_colors_preserve_shortlist_and_gate_decision_rail_styles(self):
+        expected = {"advance": "solid", "clarify": "dashed", "pause": "double", "stop": "dotted"}
+        for name, selector in (
+            ("recruiter-target-shortlist-v1.css", ".target-shortlist-card"),
+            ("recruiter-target-decision-gate-v1.css", ".gate-row"),
+        ):
+            css = (ASSETS / name).read_text(encoding="utf-8")
+            forced = css.split("@media (forced-colors: active)", 1)[1]
+            for state, style in expected.items():
+                with self.subTest(name=name, state=state):
+                    state_selector = selector if name.endswith("decision-gate-v1.css") and state == "advance" else f"{selector}--{state}"
+                    self.assertRegex(
+                        forced,
+                        rf"{re.escape(state_selector)}\s*\{{[^}}]*border-left:\s*[^;]+\s+{style}\s+CanvasText;",
+                    )
+
     def test_theme_dump_set_covers_every_shipped_css_asset(self):
         self.assertEqual(
             _theme_asset_names(),

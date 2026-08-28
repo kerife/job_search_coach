@@ -2063,7 +2063,10 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
   .shortlist-priority-card { background: Canvas; color: CanvasText; border-color: CanvasText; }
   .shortlist-priority-score, .target-shortlist-score-note { color: CanvasText; }
   .target-shortlist-no-contact { background: Canvas; color: CanvasText; border-color: CanvasText; }
-  .target-shortlist-card--advance, .target-shortlist-card--clarify, .target-shortlist-card--pause, .target-shortlist-card--stop { border-left: .6rem solid CanvasText; }
+  .target-shortlist-card--advance { border-left: .6rem solid CanvasText; }
+  .target-shortlist-card--clarify { border-left: .6rem dashed CanvasText; }
+  .target-shortlist-card--pause { border-left: .6rem double CanvasText; }
+  .target-shortlist-card--stop { border-left: .6rem dotted CanvasText; }
 }
 @media print {
   html { color-scheme: light; }
@@ -2178,6 +2181,9 @@ dd { margin: .2rem 0 0; }
 @media (forced-colors: active) {
   .gate-card, .gate-row { forced-color-adjust: none; border: 2px solid CanvasText; background: Canvas; color: CanvasText; box-shadow: none; }
   .gate-next, .gate-row { border-left: .65rem solid CanvasText; }
+  .gate-row--clarify { border-left: .65rem dashed CanvasText; }
+  .gate-row--pause { border-left: .65rem double CanvasText; }
+  .gate-row--stop { border-left: .65rem dotted CanvasText; }
   .skip-link { background: CanvasText; color: Canvas; }
   .skip-link:focus-visible, main:focus-visible { outline: 3px solid Highlight; outline-offset: 3px; }
   .gate-row-decision { border-color: CanvasText; color: CanvasText; }

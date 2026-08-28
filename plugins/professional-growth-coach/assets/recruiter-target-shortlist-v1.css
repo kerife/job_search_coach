@@ -100,7 +100,10 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
   .shortlist-priority-card { background: Canvas; color: CanvasText; border-color: CanvasText; }
   .shortlist-priority-score, .target-shortlist-score-note { color: CanvasText; }
   .target-shortlist-no-contact { background: Canvas; color: CanvasText; border-color: CanvasText; }
-  .target-shortlist-card--advance, .target-shortlist-card--clarify, .target-shortlist-card--pause, .target-shortlist-card--stop { border-left: .6rem solid CanvasText; }
+  .target-shortlist-card--advance { border-left: .6rem solid CanvasText; }
+  .target-shortlist-card--clarify { border-left: .6rem dashed CanvasText; }
+  .target-shortlist-card--pause { border-left: .6rem double CanvasText; }
+  .target-shortlist-card--stop { border-left: .6rem dotted CanvasText; }
 }
 @media print {
   html { color-scheme: light; }

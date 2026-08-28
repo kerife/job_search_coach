@@ -312,6 +312,10 @@ class PrivateSchemaConformanceTests(unittest.TestCase):
         invalid_transition = copy.deepcopy(review)
         invalid_transition["next_stage"] = "offer_stage"
         self.assertTrue(validate_schema_instance(invalid_transition, review_schema))
+        invalid_terminal_source = copy.deepcopy(review)
+        invalid_terminal_source["source_intake"]["intake"]["stated_stage"] = "offer_stage"
+        invalid_terminal_source["next_stage"] = "first_interview"
+        self.assertTrue(validate_schema_instance(invalid_terminal_source, review_schema))
 
     def test_dossier_methodology_categories_keep_schema_runtime_and_registry_in_lockstep(self):
         helper = _load_v2_dossier_helper()
