@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T17:11:11-06:00`
+release_timestamp: `2026-08-28T17:25:52-06:00`
 
-source_commit: `724909c2c296ff20874a520678c3a58539bdd517`
+source_commit: `16cbbab16715641e700ab0aac0db8bb44a898aea`
 
-source_tree: `2bc4150c1d0f5c34327e3e1ba70bf4ff8de922fd`
+source_tree: `57a4499154bac3fe5ac13f189f58442e1542a75e`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828171111`
+installed_cache_version: `0.2.0+codex.20260828172552`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `6c87fab873ad8978d4c07ccde823e164727320df584ac1f49d0e2c25108373c5`
+normalized_source_cache_sha256: `306ca3b7cf4f70ff216c1bf027d0f64a334e36dbb41fb8ce226cf6c9d08ebc89`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -87,6 +87,8 @@ installed_recruiter_continuity_orientation_smoke: `5/5 recruiter review surfaces
 installed_recruiter_negative_outcome_smoke: `4/4 EN/ES explicit recruiter rejection or failed-screen observations route to artifact-free private debrief; non-attendance remains screen intake`
 
 installed_recruiter_print_wrap_smoke: `5/5 recruiter review print rules preserve overflow-wrap:anywhere for long localized target/company names`
+
+installed_recruiter_uri_scheme_smoke: `4/4 candidate-facing ftp, ws, gopher, and userinfo authority URLs are rejected without echoing input`
 
 installed_recruiter_private_input_encoding_smoke: `focused regression suite passes for percent- and HTML-decoded email, URL, password-marker, diagnostic, and Unicode-control variants; rejected or opaque`
 
