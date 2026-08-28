@@ -202,11 +202,55 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertIn('<time datetime="2026-08-27">2026-08-27</time>', english_rendered)
         self.assertIn("Review the draft locally before any contact.", english_rendered)
 
+    def test_renderer_frames_context_priority_as_manual_ordering_not_prediction(self) -> None:
+        value = build_shortlist("es", "2026-08-27", valid_plan(), valid_targets())
+        rendered = render_shortlist_html(value)
+        self.assertIn("Solo ordena la revisión; no predice respuesta", rendered)
+        self.assertEqual(4, rendered.count("Solo ordena la revisión; no predice respuesta"))
+        self.assertIn('class="shortlist-priority-score"', rendered)
+        self.assertIn('class="target-shortlist-score-note"', rendered)
+        english = copy.deepcopy(value)
+        english["locale"] = "en"
+        english_rendered = render_shortlist_html(english)
+        self.assertIn("Orders manual review only; does not predict a response", english_rendered)
+        self.assertEqual(4, english_rendered.count("Orders manual review only; does not predict a response"))
+        for forbidden in ("probabilidad", "probability", "chance", "likelihood"):
+            self.assertNotIn(forbidden, rendered.lower() + english_rendered.lower())
+
+    def test_priority_score_note_has_cross_media_accessibility_contract(self) -> None:
+        css = (ROOT / "plugins/professional-growth-coach/assets/recruiter-target-shortlist-v1.css").read_text(encoding="utf-8")
+        self.assertRegex(css, r"\.shortlist-priority-score\s*\{[^}]*display:\s*flex")
+        self.assertIn(".target-shortlist-score-note", css)
+        forced_colors = css.split("@media (forced-colors: active)", 1)[1]
+        self.assertIn(".target-shortlist-score-note", forced_colors)
+        print_css = css.split("@media print", 1)[1]
+        self.assertIn(".target-shortlist-score-note", print_css)
+
     def test_validator_rejects_restricted_or_unbounded_target_segments(self) -> None:
         value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
         value["network_plan"]["target_segments"] = ["https://private.example/profile"]
         errors = validate_shortlist(value, as_of=dt.date(2026, 8, 27))
         self.assertIn("network_plan.target_segments[0] contains restricted material", errors)
+
+    def test_validator_rejects_encoded_unicode_controls_in_bounded_prose(self) -> None:
+        value = build_shortlist("en", "2026-08-27", valid_plan(), valid_targets())
+        for path, encoded in (
+            ("network_plan.network_goal", "safe&#x0a;injected"),
+            ("targets[0].target_label", "safe&amp;#x0a;injected"),
+            ("targets[0].decision_reason", "safe%0ainjected"),
+        ):
+            mutated = copy.deepcopy(value)
+            if path.startswith("network_plan"):
+                mutated["network_plan"]["network_goal"] = encoded
+            elif path.endswith("target_label"):
+                mutated["targets"][0]["target_label"] = encoded
+            else:
+                mutated["targets"][0]["decision_reason"] = encoded
+            with self.subTest(path=path):
+                self.assertIn(
+                    f"{path} contains restricted material",
+                    validate_shortlist(mutated, as_of=dt.date(2026, 8, 27)),
+                )
 
     def test_builder_rejects_future_as_of_date(self) -> None:
         with self.assertRaises(ValueError):
@@ -683,6 +727,49 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
                 self.assertTrue(routed["authorization_required"])
                 self.assertIsNone(routed["artifact"])
+
+    def test_root_route_recognizes_recruiter_actor_aliases_and_natural_preparation(self) -> None:
+        for request, locale in (
+            ("I need to prepare for a talent acquisition call", "en"),
+            ("How can I build relationships with talent acquisition?", "en"),
+            ("I want to connect with talent acquisition", "en"),
+            ("I want to network with people who recruit engineers", "en"),
+            ("I need to prep for a recruiter screen", "en"),
+            ("I have a recruiter screen soon", "en"),
+            ("I need recruiter screen prep", "en"),
+            ("Tengo una llamada de reclutador pronto", "es"),
+        ):
+            routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+            with self.subTest(request=request):
+                expected = "recruiter_target_screen_intake" if any(marker in request.lower() for marker in ("prep", "prepare", "prepar", "screen soon", "llamada")) else "recruiter_target_shortlist"
+                self.assertEqual(expected, routed["route_kind"])
+                self.assertEqual("needs_intake", routed["case_state"])
+
+    def test_root_route_recognizes_passive_and_called_inbound_recruiter_contact(self) -> None:
+        for request in (
+            "I was contacted by a recruiter about a role",
+            "A recruiter got in touch with me",
+            "Recruiter called me about a role",
+            "Me llamó el reclutador por una vacante",
+        ):
+            locale = "es" if request.startswith("Me ") else "en"
+            routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+            with self.subTest(request=request):
+                self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
+                self.assertTrue(routed["authorization_required"])
+
+    def test_root_route_recognizes_plain_post_screen_waiting_and_thanks_language(self) -> None:
+        for request in (
+            "Recruiter has not gotten back to me after the screen",
+            "No update after recruiter interview",
+            "Still waiting after recruiter screen",
+            "I have not heard anything after my recruiter call",
+            "After the recruiter screen, should I thank them?",
+        ):
+            routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-28")
+            with self.subTest(request=request):
+                self.assertEqual("private_recruiter_screen_debrief", routed["route_kind"])
+                self.assertEqual("collect_debrief_context", routed["next_action"])
 
     def test_fallback_recruiter_action_synonyms_preserve_authorization_requirement(self) -> None:
         for request in (

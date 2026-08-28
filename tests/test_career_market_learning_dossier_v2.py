@@ -327,6 +327,17 @@ class CareerMarketLearningDossierV2Tests(unittest.TestCase):
         mutated["source_learning_research_snapshot"] = "snap-learning-sha256-" + "f" * 64
         self.assertTrue(validate_learning_dossier(mutated))
 
+    def test_validator_rejects_percent_and_html_encoded_private_prose(self) -> None:
+        market = _recurring_market(5)
+        dossier = build_learning_dossier(market, _research(market))
+        for encoded in ("person%40example.com", "hello&#x0a;world", "https%3A%2F%2Flinkedin.com%2Fin%2Fp"):
+            mutated = copy.deepcopy(dossier)
+            mutated["vacancy_cards"][0]["title"] = encoded
+            with self.subTest(encoded=encoded):
+                errors = validate_learning_dossier(mutated)
+                self.assertTrue(errors)
+                self.assertNotIn(encoded, " ".join(errors))
+
     def test_research_snapshot_must_bind_to_exact_market_snapshot(self) -> None:
         market = _recurring_market(5)
         research = _research(market)

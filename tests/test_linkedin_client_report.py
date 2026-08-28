@@ -1812,6 +1812,18 @@ class LinkedInClientReportSafetyTests(unittest.TestCase):
                 )
                 self.assertNotIn(value, "\n".join(errors))
 
+    def test_candidate_facing_privacy_rejects_percent_and_html_encoded_private_values(self) -> None:
+        for value in (
+            "person%40example.com",
+            "person&amp;#64;example.com",
+            "https%3A%2F%2Flinkedin.com%2Fin%2Fp",
+            "Authorization%3A%20Bearer%20abcdefghijklmnopqrstuv",
+        ):
+            with self.subTest(value=value):
+                errors = validator.validate_candidate_facing_text(value)
+                self.assertTrue(errors)
+                self.assertNotIn(value, "\n".join(errors))
+
     def test_report_rejects_cross_candidate_identifiers_in_visible_and_normal_appendix_prose(self) -> None:
         foreign_bundle = self.bundle("scenario-b.json")
         tokens = (

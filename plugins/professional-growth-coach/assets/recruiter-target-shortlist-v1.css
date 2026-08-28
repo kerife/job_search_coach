@@ -32,6 +32,8 @@ h1 { margin-bottom: 0; font-size: clamp(2rem, 5vw, 3.25rem); letter-spacing: -.0
 .shortlist-priority-card { margin-top: 1rem; padding: .8rem 1rem; border-left: .35rem solid var(--accent); background: var(--surface); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
 .shortlist-priority-label { margin: 0; color: var(--muted); font-size: .72rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
 .shortlist-priority-value { margin: .15rem 0 0; font-weight: 750; }
+.shortlist-priority-score { display: flex; flex-wrap: wrap; gap: .2rem .65rem; align-items: baseline; margin: .35rem 0 0; color: var(--muted); font-size: .82rem; font-variant-numeric: tabular-nums; }
+.target-shortlist-score-note { color: var(--muted); font-size: .78rem; font-weight: 500; font-variant-numeric: normal; }
 .shortlist-decision-summary { margin-top: 1rem; }
 .shortlist-decision-summary h3 { margin: 0 0 .45rem; font-size: .82rem; text-transform: uppercase; letter-spacing: .08em; }
 .shortlist-decision-counts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .5rem; list-style: none; margin: 0; padding: 0; }
@@ -80,6 +82,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
   .shortlist-card, .shortlist-decision-count, .target-shortlist-card { box-shadow: none; border-width: 2px; }
   .continuity-rail { border-width: 2px; }
   .continuity-rail__marker { border-width: 2px; }
+  .target-shortlist-score-note { font-weight: 700; }
 }
 @media screen and (prefers-color-scheme: dark) {
   :root { --canvas: #10171d; --surface: #17212b; --ink: #ecf2f6; --muted: #adbac4; --line: #3b4a55; --accent: #75d2e4; --continuity-marker-ink: #10232a; --advance: #69d39a; --clarify: #e7bd65; --pause: #c5a7f4; --stop: #ff938a; }
@@ -91,6 +94,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
   .skip-link { forced-color-adjust: none; color: Canvas; background: CanvasText; }
   .shortlist-card, .shortlist-next-step { forced-color-adjust: none; border: 2px solid CanvasText; background: Canvas; color: CanvasText; box-shadow: none; }
   .shortlist-priority-card { background: Canvas; color: CanvasText; border-color: CanvasText; }
+  .shortlist-priority-score, .target-shortlist-score-note { color: CanvasText; }
   .target-shortlist-card--advance, .target-shortlist-card--clarify, .target-shortlist-card--pause, .target-shortlist-card--stop { border-left: .6rem solid CanvasText; }
 }
 @media print {
@@ -101,6 +105,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
   .shortlist-card, .shortlist-next-step { box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
   .target-shortlist-card { break-inside: avoid; page-break-inside: avoid; }
   .shortlist-footer { break-inside: avoid; page-break-inside: avoid; }
+  .shortlist-priority-score, .target-shortlist-score-note { color: #000; }
   .skip-link { display: none; }
 }
 

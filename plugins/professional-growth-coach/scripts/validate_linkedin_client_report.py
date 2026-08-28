@@ -49,7 +49,7 @@ except ModuleNotFoundError:
     read_bounded_bytes = _loader_module.read_bounded_bytes
 
 try:
-    from private_prose_safety import format_bounded_diagnostics
+    from private_prose_safety import format_bounded_diagnostics, normalize_prose_for_validation
 except ModuleNotFoundError:
     _prose_spec = importlib.util.spec_from_file_location(
         "_pgc_private_prose_safety",
@@ -60,6 +60,7 @@ except ModuleNotFoundError:
     _prose_module = importlib.util.module_from_spec(_prose_spec)
     _prose_spec.loader.exec_module(_prose_module)
     format_bounded_diagnostics = _prose_module.format_bounded_diagnostics
+    normalize_prose_for_validation = _prose_module.normalize_prose_for_validation
 
 try:
     from canonical_date import parse_canonical_date
@@ -1597,6 +1598,7 @@ def _nfkc_without_format_characters(text: str) -> str:
 
 
 def _normalized_guard_text(text: str) -> str:
+    text = normalize_prose_for_validation(text)
     decomposed = unicodedata.normalize(
         "NFKD", _nfkc_without_format_characters(text).casefold()
     )

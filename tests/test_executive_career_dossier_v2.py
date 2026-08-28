@@ -314,6 +314,15 @@ class ExecutiveCareerDossierV2Tests(unittest.TestCase):
                 self.assertTrue(errors)
                 self.assertTrue(all(character not in error for error in errors))
 
+    def test_v2_validator_rejects_percent_and_html_encoded_private_prose(self) -> None:
+        for encoded in ("person%40example.com", "person&amp;#64;example.com", "https%3A%2F%2Flinkedin.com%2Fin%2Fp"):
+            dossier = make_v2_dossier("en")
+            dossier["priorities"][0]["coach_observation"] = encoded
+            with self.subTest(encoded=encoded):
+                errors = self.validator.validate_dossier(dossier)
+                self.assertTrue(any("forbidden private value" in error for error in errors))
+                self.assertNotIn(encoded, " ".join(errors))
+
     def test_unavailable_sections_require_current_session_read_only_decisions(self) -> None:
         dossier = make_v2_dossier()
         dossier["section_coverage"][10] = {

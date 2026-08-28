@@ -97,7 +97,7 @@ def _text(value: object, path: str, errors: list[str], maximum: int = 500) -> bo
         errors.append(f"{path} must be bounded text")
         return False
     normalized = PROSE.normalize_prose_for_validation(value)
-    if PROSE.contains_unicode_controls(value) or RESTRICTED.search(normalized) or PROSE.contains_restricted_private_material(normalized):
+    if PROSE.contains_unicode_controls(normalized) or RESTRICTED.search(normalized) or PROSE.contains_restricted_private_material(normalized):
         errors.append(f"{path} contains restricted material")
         return False
     return True

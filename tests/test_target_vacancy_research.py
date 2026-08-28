@@ -329,6 +329,16 @@ class TargetVacancyResearchTests(unittest.TestCase):
         self.assertTrue(validate_research(raw_markup))
         self.assertNotIn("<script>", " ".join(validate_research(raw_markup)))
 
+    def test_research_text_rejects_percent_and_html_encoded_private_values(self) -> None:
+        source = load_fixture("complete-five-es.json")
+        for encoded in ("person%40example.com", "hello&#x0a;world", "https%3A%2F%2Flinkedin.com%2Fin%2Fp"):
+            value = copy.deepcopy(source)
+            value["vacancies"][0]["title"] = encoded
+            with self.subTest(encoded=encoded):
+                errors = validate_research(value)
+                self.assertTrue(errors)
+                self.assertNotIn(encoded, " ".join(errors))
+
     def test_loader_is_bounded_and_rejects_duplicate_json_keys(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "research.json"

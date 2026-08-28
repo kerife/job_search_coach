@@ -89,11 +89,12 @@ def _valid_text(value: object, path: str, errors: list[str]) -> None:
 def _validate_private_prose(value: object, path: str, errors: list[str]) -> None:
     if not isinstance(value, str):
         return
+    normalized = _prose.normalize_prose_for_validation(value)
     if (
-        re.search(r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}", value)
-        or re.search(r"(?:https?://|www\.)", value, re.I)
-        or re.search(r"(?:^|\s)(?:/[A-Za-z]|[A-Za-z]:[\\/])", value)
-        or _prose.contains_unicode_controls(value)
+        re.search(r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}", normalized)
+        or re.search(r"(?:[a-z][a-z0-9+.-]{1,31}://|www\.|linkedin\.com/)", normalized, re.I)
+        or re.search(r"(?:^|\s)(?:/[A-Za-z]|[A-Za-z]:[\\/])", normalized)
+        or _prose.contains_unicode_controls(normalized)
     ):
         errors.append(f"{path} contains forbidden private value")
 

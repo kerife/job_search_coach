@@ -89,13 +89,14 @@ def _text(value: object, path: str, errors: list[str], *, maximum: int) -> bool:
     if not isinstance(value, str) or not value or len(value) > maximum:
         errors.append(f"{path} must be bounded text")
         return False
-    if _prose.contains_unicode_controls(value):
+    normalized = _prose.normalize_prose_for_validation(value)
+    if _prose.contains_unicode_controls(normalized):
         errors.append(f"{path} contains forbidden control characters")
         return False
-    if re.search(r"<\/?(?:script|iframe|object|style)\b", value, re.I):
+    if re.search(r"<\/?(?:script|iframe|object|style)\b", normalized, re.I):
         errors.append(f"{path} contains forbidden markup")
         return False
-    if re.search(r"(?:[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|(?<![A-Za-z0-9])/(?:Users|home|private|tmp|var|opt|etc)(?:/|$)|(?:^|[^A-Za-z0-9])[A-Za-z]:[\\/])", value):
+    if re.search(r"(?:[a-z][a-z0-9+.-]{1,31}://|www\.|linkedin\.com/|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|(?<![A-Za-z0-9])/(?:Users|home|private|tmp|var|opt|etc)(?:/|$)|(?:^|[^A-Za-z0-9])[A-Za-z]:[\\/])", normalized, re.I):
         errors.append(f"{path} contains private value")
         return False
     return True
@@ -103,7 +104,7 @@ def _text(value: object, path: str, errors: list[str], *, maximum: int) -> bool:
 
 def _observation_text(value: object, path: str, errors: list[str], *, maximum: int) -> None:
     _text(value, path, errors, maximum=maximum)
-    if isinstance(value, str) and RESTRICTED_OBSERVATION.search(value):
+    if isinstance(value, str) and RESTRICTED_OBSERVATION.search(_prose.normalize_prose_for_validation(value)):
         errors.append(f"{path} contains restricted observation data")
 
 

@@ -104,6 +104,7 @@ COPY = {
         "pause": "Pausar",
         "stop": "Detener",
         "score": "Prioridad contextual",
+        "score_note": "Solo ordena la revisión; no predice respuesta",
         "context": "Contexto disponible",
         "theme": "Tema objetivo",
         "reason": "Razón de decisión",
@@ -138,6 +139,7 @@ COPY = {
         "pause": "Pause",
         "stop": "Stop",
         "score": "Context priority",
+        "score_note": "Orders manual review only; does not predict a response",
         "context": "Available context",
         "theme": "Target theme",
         "reason": "Decision reason",
@@ -189,7 +191,7 @@ def _target_card(target: Mapping[str, object], locale: str, index: int) -> str:
     return f'''<li class="target-shortlist-item"><article class="target-shortlist-card target-shortlist-card--{html.escape(decision)}" aria-labelledby="target-title-{index}">
       <p class="target-shortlist-index">{index}</p>
       <h2 id="target-title-{index}">{html.escape(str(target["target_label"]), quote=True)}</h2>
-      <p class="target-shortlist-status"><strong>{html.escape(status)}</strong> · {labels["score"]}: {int(target["priority_score"])} / 100</p>
+      <p class="target-shortlist-status"><strong>{html.escape(status)}</strong> · {labels["score"]}: {int(target["priority_score"])} / 100 <span class="target-shortlist-score-note">{html.escape(labels["score_note"])}</span></p>
       <dl class="target-shortlist-facts">
         <div><dt>{html.escape(labels["context"])}</dt><dd>{html.escape(str(target["context_source"]), quote=True)}</dd></div>
         <div><dt>{html.escape(labels["theme"])}</dt><dd>{html.escape(str(target["target_theme"]), quote=True)}</dd></div>
@@ -215,7 +217,7 @@ def render_shortlist_html(value: Mapping[str, object]) -> str:
     decision_counts = "".join(f'<li class="shortlist-decision-count shortlist-decision-count--{decision}"><strong>{html.escape(count_labels[decision])}</strong><span>{counts[decision]}</span></li>' for decision in counts)
     top_target = targets[0]
     flow_label, flow_rail = CONTINUITY_RAIL.render_continuity_rail(locale, "shortlist")
-    priority = f'<p class="shortlist-priority-label">{html.escape(labels["priority"])}</p><p class="shortlist-priority-value">{html.escape(str(top_target["target_label"]), quote=True)}</p>'
+    priority = f'<p class="shortlist-priority-label">{html.escape(labels["priority"])}</p><p class="shortlist-priority-value">{html.escape(str(top_target["target_label"]), quote=True)}</p><p class="shortlist-priority-score"><span>{html.escape(labels["score"])}: {int(top_target["priority_score"])} / 100</span><span class="target-shortlist-score-note">{html.escape(labels["score_note"])}</span></p>'
     queries = "".join(f"<li>{html.escape(str(query), quote=True)}</li>" for query in plan["source_queries"])
     segments = ", ".join(
         html.escape(SEGMENT_LABELS[locale].get(str(segment), labels["other_context"]), quote=True)
