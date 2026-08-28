@@ -1840,6 +1840,18 @@ class LinkedInClientReportSafetyTests(unittest.TestCase):
         errors = validator.validate_candidate_facing_text('<a href="java\t\tscript:alert(1)">open</a>')
         self.assertIn("client report contains dangerous URL scheme", errors)
 
+    def test_candidate_facing_text_rejects_non_http_authority_urls(self) -> None:
+        for value in (
+            "ftp://public.example/resource",
+            "ws://public.example/socket",
+            "gopher://public.example/1",
+            "ftp://alice:opaque-value@public.example/resource",
+        ):
+            with self.subTest(value=value):
+                errors = validator.validate_candidate_facing_text(value)
+                self.assertIn("client report contains forbidden URL value", errors)
+                self.assertNotIn(value, "\n".join(errors))
+
     def test_report_rejects_cross_candidate_identifiers_in_visible_and_normal_appendix_prose(self) -> None:
         foreign_bundle = self.bundle("scenario-b.json")
         tokens = (

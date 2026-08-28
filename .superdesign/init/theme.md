@@ -30,7 +30,7 @@ This plugin has **no shared Tailwind config, CSS module system, theme provider, 
 | Dossier | light `--paper #f6f4ee`, `--forest #173e30`, `--ink #1a1a1a`, `--muted #e2ddd6`, `--muted-text #5d5a55`, `--line #c8c0b5`, `--coral #d96c52`, `--gold #be9338`, `--surface #ffffff`; dark `--paper #101521`, `--surface #182235`, `--ink #f3f6ff`, `--muted #b8c4d8`, `--muted-text #b8c4d8`, `--forest #8fc9b0`, `--coral #ff9f8d`, `--gold #f2c970`, `--line #5f718e` |
 | Practice / triage | light `--paper #f6f4ee`, `--surface #ffffff`, `--ink #1b1c1a`, `--forest #173e30`, `--forest-soft #dce5e0`, `--coral #b9513a`, `--line #b8c7c0`, `--decision-term #dfbf70`; dark `--paper #101521`, `--surface #182235`, `--ink #f3f6ff`, `--forest #8fc9b0`, `--coral #ff9f8d`, `--line #5f718e`, `--decision-term #f5d68a` |
 | Checkpoint / outcome | `--ink #172033`, `--muted #536174`, `--surface #fff`, `--accent #315bd6`, `--line #d9dfeb`; document background `#f4f6fa` |
-| Recruiter review | Five registered surfaces: shortlist, decision gate, screen intake, screen debrief, and next-stage review. Their shared identity-free continuity rail uses each surface's existing text, muted, border, and accent tokens; shortlist and decision-gate dark markers use `--continuity-marker-ink` for WCAG-safe text on bright accents. It is checked as one family by `validate_design_tokens.py`, and no new color is valid without an allowlist update and parity review. |
+| Recruiter review | Five registered surfaces: shortlist, decision gate, screen intake, screen debrief, and next-stage review. Their shared identity-free continuity rail uses each surface's existing text, muted, border, and accent tokens; shortlist and decision-gate dark markers use `--continuity-marker-ink` for WCAG-safe text on bright accents. It is checked as one family by `validate_design_tokens.py`, and no new color is valid without an allowlist update and parity review. Compact outcome/checkpoint fact values also wrap long bounded labels in narrow and print layouts. |
 
 ### Typography and dimensions
 
@@ -760,7 +760,7 @@ h2 { margin-top: 0; font-size: 1.2rem; }
 @media screen and (max-width: 420px) { .continuity-rail ol { grid-template-columns: 1fr; } }
 @media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
-@media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
+@media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: anywhere; hyphens: auto; } }
 ```
 
 ### `plugins/professional-growth-coach/assets/private-recruiter-screen-debrief-v1.css`
@@ -812,7 +812,7 @@ dt { color:var(--debrief-muted); font-size:.78rem; font-weight:800; letter-spaci
 @media screen and (max-width: 420px) { .continuity-rail ol { grid-template-columns: 1fr; } }
 @media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
-@media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
+@media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: anywhere; hyphens: auto; } }
 ```
 
 ### `plugins/professional-growth-coach/assets/recruiter-target-screen-intake-v1.css`
@@ -885,7 +885,7 @@ dd { margin: .25rem 0 0; font-weight: 700; }
 @media screen and (max-width: 420px) { .continuity-rail ol { grid-template-columns: 1fr; } }
 @media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
-@media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
+@media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: anywhere; hyphens: auto; } }
 ```
 
 ### `plugins/professional-growth-coach/assets/career-market-learning-dossier-v1.css`
@@ -1740,7 +1740,7 @@ h1 { margin-top: .25rem; font-size: clamp(1.6rem, 4vw, 2.35rem); }
 .checkpoint-facts { display: grid; gap: 1rem; margin: 2rem 0; }
 .checkpoint-facts div { border-top: 1px solid var(--line); padding-top: .75rem; }
 dt { color: var(--muted); font-size: .85rem; font-weight: 700; }
-dd { margin: .15rem 0 0; font-weight: 600; }
+.checkpoint-facts dd { margin: .15rem 0 0; font-weight: 600; overflow-wrap: anywhere; }
 .checkpoint-boundary { border-left: .25rem solid var(--accent); margin: 0; padding: .75rem 1rem; color: var(--muted); }
 .checkpoint-manual-next-step { min-width: 0; overflow-wrap: anywhere; border-left: .25rem solid var(--accent); margin: 1rem 0 0; padding: .75rem 1rem; color: var(--muted); }
 .checkpoint-manual-next-step h2 { margin: 0; font-size: 1rem; }
@@ -1795,7 +1795,7 @@ h1 { margin-top: .25rem; font-size: clamp(1.6rem, 4vw, 2.35rem); }
 .outcome-facts { display: grid; gap: 1rem; margin: 2rem 0; }
 .outcome-facts div { border-top: 1px solid var(--line); padding-top: .75rem; }
 dt { color: var(--muted); font-size: .85rem; font-weight: 700; }
-dd { margin: .15rem 0 0; font-weight: 600; }
+.outcome-facts dd { margin: .15rem 0 0; font-weight: 600; overflow-wrap: anywhere; }
 .outcome-boundary { border-left: .25rem solid var(--accent); margin: 0; padding: .75rem 1rem; color: var(--muted); }
 .outcome-manual-next-step { min-width: 0; overflow-wrap: anywhere; border-left: .25rem solid var(--accent); margin: 1rem 0 0; padding: .75rem 1rem; color: var(--muted); }
 .outcome-manual-next-step h2 { margin: 0; font-size: 1rem; }
@@ -2095,7 +2095,7 @@ ul { margin: .2rem 0 0; padding-left: 1.15rem; }
 @media screen and (max-width: 420px) { .continuity-rail ol { grid-template-columns: 1fr; } }
 @media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
-@media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
+@media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: anywhere; hyphens: auto; } }
 ```
 
 ### `plugins/professional-growth-coach/assets/recruiter-target-decision-gate-v1.css`
@@ -2211,5 +2211,5 @@ dd { margin: .2rem 0 0; }
 @media screen and (max-width: 420px) { .continuity-rail ol { grid-template-columns: 1fr; } }
 @media (min-width: 721px) and (max-width: 900px) { .continuity-rail ol { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (forced-colors: active) { .continuity-rail, .continuity-rail li { border-color: CanvasText; } .continuity-rail li[data-state="current"] { background: Canvas; } .continuity-rail li[data-state="current"] .continuity-rail__marker { background: Highlight; border-color: CanvasText; color: HighlightText; } }
-@media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; } }
+@media print { .continuity-rail { break-inside: avoid; page-break-inside: avoid; } .continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continuity-rail__copy strong { overflow-wrap: anywhere; hyphens: auto; } }
 ```

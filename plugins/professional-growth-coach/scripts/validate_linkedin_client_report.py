@@ -175,7 +175,7 @@ _PROFILE_URL = re.compile(
     re.I,
 )
 _LOCAL_PATH = re.compile(r"(?:^|\s)(?:/Users/|/home/|[A-Z]:[/\\])", re.I)
-_ANY_URL = re.compile(r"(?:https?|file)://", re.I)
+_ANY_URL = re.compile(r"(?<![A-Za-z0-9+.-])[A-Za-z][A-Za-z0-9+.-]*://", re.I)
 _FORBIDDEN_URI_PREFIXES = (("tel:", "phone-like"), ("file:", "local-path"))
 SOURCE_REGISTRY_PATH = Path(__file__).with_name("linkedin_source_registry.json")
 PROVENANCE_LIMITS = MappingProxyType({"publisher": 120, "document_title": 240})

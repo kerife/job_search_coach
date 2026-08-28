@@ -201,10 +201,14 @@ POST_SCREEN_PROGRESSION_INTENT = re.compile(
 )
 POST_SCREEN_NEGATIVE_OUTCOME_INTENT = re.compile(
     r"(?:\b(?:got|was|were)\s+(?:rejected|declined|turned\s+down)\b|"
+    r"\b(?:got|received)\s+(?:a\s+)?rejection\b[^.!?\n]{0,80}\b(?:after|following)\b|"
     r"\b(?:rejected|declined|turned\s+down)\b[^.!?\n]{0,80}\b(?:after|following)\b|"
     r"\bfailed\s+(?:(?:the|my|a)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
+    r"\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\s+(?:was|were)\s+unsuccessful(?:ly)?\b|"
+    r"\b(?:went\s+with|chose|selected)\s+(?:another\s+candidate|someone\s+else)\b|"
+    r"\bdecidi[oó]\s+seguir\s+con\s+(?:otra\s+persona|otro\s+candidato|alguien\s+m[aá]s)\b|"
     r"\b(?:recruiters?|recruiting|reclutador(?:a|es)?)\b[^.!?\n]{0,60}\b(?:rejected|declined|turned\s+down|me\s+rechaz[oó]|me\s+descart[oó])\b|"
-    r"\b(?:me\s+rechaz[oó]|me\s+descart[oó]|no\s+me\s+seleccionaron)\b)",
+    r"\b(?:me\s+rechaz(?:ó|aron)|me\s+descart(?:ó|aron)|no\s+me\s+seleccionaron)\b)",
     re.I,
 )
 POST_SCREEN_FOLLOWTHROUGH_INTENT = re.compile(

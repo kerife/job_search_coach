@@ -155,8 +155,9 @@ and equivalent bounded forms return `recruiter_target_screen_intake` without an
 artifact. Positive `spoke with` or `hablé con` wording remains eligible for
 post-screen debrief or next-stage review.
 
-Negative post-screen observations such as `rejected`, `declined`, `failed the
-recruiter screen`, `me rechazó`, or `me descartaron` also route to the
+Negative post-screen observations such as `rejected`, `declined`, `rejection`,
+`unsuccessful`, `failed the recruiter screen`, `another candidate`, `me
+rechazaron`, or `me descartaron` also route to the
 artifact-free `private_recruiter_screen_debrief` with
 `selected_module=track-career-outcomes` and `next_action=collect_debrief_context`
 when recruiter or screen context is present. This records the candidate's
@@ -178,6 +179,11 @@ The next-stage JSON Schema mirrors the runtime terminal boundary: when the embed
 `route_recruiter_next_stage_review` consumes that debrief only with a manually selected forward transition from the closed recruiter-stage taxonomy (`recruiter_screen`, `first_interview`, `technical_screen`, `hiring_manager`, `technical_deep_dive`, `take_home`, `system_design`, `behavioral_loop`, `panel`, `offer_stage`) and builds `private-recruiter-next-stage-review-v1`. It validates the debrief, receipt, target intake, and checkpoint before deriving any transition recovery; invalid source inputs stay artifact-free with an explicit evidence gap. A validated artifact returns the private in-memory `rendered_html` for ready, blocked, and terminal stop states. It returns a private `ready|blocked` checklist, maps blocked reviews to `case_state=needs_intake`, maps stop decisions to terminal `case_state=stopped`, rejects same-stage and backward transitions plus stale dates, and preserves the manual-only `prepare-role-interviews` boundary. When the debrief is already complete but the selected stage is invalid, non-terminal stages use `next_action=select_forward_stage` and expose only taxonomy-derived `allowed_next_stages`; `offer_stage` is terminal and instead returns `case_state=terminal`, `next_action=record_terminal_stage`, `terminal_reason=offer_stage_has_no_forward_transition`, and no allowed stages. Other failures ask specifically for the missing debrief/checkpoint context. The rendered header shows `current stage → target stage` in localized copy without identifiers.
 
 All five recruiter review artifacts render the same localized, non-interactive five-step continuity rail: shortlist, decision gate, screen intake, screen debrief, and next-stage review. The current artifact alone carries `aria-current="location"`; the rail is a static `section`, not a navigation landmark, collapses to one column below 420px, uses 2px rail and marker borders in `prefers-contrast: more`, does not infer completed stages, and does not add links, contacts, messages, calendar actions, or other external behavior. Its labels and markup come from `scripts/recruiter_continuity_rail.py` and remain identity-free across screen, print, forced-colors, and responsive output. The five rail styles preserve `overflow-wrap: anywhere` inside their print rules so long localized target or company names cannot overflow the two-column paper layout.
+
+The candidate-facing Markdown validator rejects every URI scheme with an
+authority (`scheme://`) unless it is a permitted validated LinkedIn source;
+this includes `ftp`, `ws`, `gopher`, and embedded userinfo. Dangerous inline
+schemes such as `javascript`, `vbscript`, and `data` remain rejected separately.
 
 In forced-colors mode, shortlist and decision-gate rows retain the redundant left-border styles for `advance`, `clarify`, `pause`, and `stop` (`solid`, `dashed`, `double`, and `dotted`), so high-contrast comparison does not depend on color.
 

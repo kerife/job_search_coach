@@ -136,7 +136,9 @@ class DarkModeAccessibilityTests(unittest.TestCase):
                 self.assertIn("@media screen and (max-width: 420px)", css)
                 self.assertIn(".continuity-rail ol { grid-template-columns: 1fr; }", css)
                 self.assertIn(".continuity-rail ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }", css[css.index("@media print"):])
-                self.assertIn(".continuity-rail__copy strong { overflow-wrap: normal; hyphens: auto; }", css[css.index("@media print"):])
+                print_css = css[css.index("@media print"):]
+                self.assertIn(".continuity-rail__copy strong { overflow-wrap: anywhere; hyphens: auto; }", print_css)
+                self.assertNotIn(".continuity-rail__copy strong { overflow-wrap: normal;", print_css)
 
     def test_recruiter_continuity_rail_strengthens_borders_in_high_contrast(self) -> None:
         surfaces = (

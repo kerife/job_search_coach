@@ -74,3 +74,12 @@ class RecruiterContinuityRailTests(unittest.TestCase):
                 print_block = css.split("@media print", 1)[-1]
                 self.assertIn(".continuity-rail__copy strong { overflow-wrap: anywhere;", print_block)
                 self.assertNotIn(".continuity-rail__copy strong { overflow-wrap: normal;", print_block)
+
+    def test_terminal_receipt_facts_keep_long_values_wrappable(self) -> None:
+        for filename, selector in (
+            ("private-recruiter-conversion-outcome-v1.css", ".outcome-facts dd"),
+            ("private-recruiter-followthrough-checkpoint-v1.css", ".checkpoint-facts dd"),
+        ):
+            with self.subTest(filename=filename):
+                css = (ROOT / "plugins/professional-growth-coach/assets" / filename).read_text(encoding="utf-8")
+                self.assertIn(f"{selector} {{ margin: .15rem 0 0; font-weight: 600; overflow-wrap: anywhere; }}", css)
