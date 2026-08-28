@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-27T19:12:10-06:00`
+release_timestamp: `2026-08-27T19:29:13-06:00`
 
-source_commit: `254a3e35935bae5872e51885876ce46b080fede7`
+source_commit: `7a3e441c870b8abf4feb3e8a4c17adaa0b093069`
 
-source_tree: `36c4b058a56681fd0f0dc25e40ae71aa0f167ae1`
+source_tree: `5411f0d98edc0e71cfb6196398c7847d7d0baefe`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260827191210`
+installed_cache_version: `0.2.0+codex.20260827192913`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `172`
 
 installed_file_count: `172`
 
-normalized_source_cache_sha256: `139ab5d4e739b80b8183f717f10c0465681634131501d42cad8df1af55abe579`
+normalized_source_cache_sha256: `0bdfaea71bbfc4474dca80b821730669029489e8aaca4630f6df07b385f36ff6`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -166,6 +166,12 @@ installed_recruiter_future_gate_smoke: `1/1 installed decision-gate builder reje
 installed_recruiter_receipt_contract_smoke: `7/7 installed recruiter builders, validators, and renderers emit bounded JSON success receipts without paths, identifiers, or free text`
 
 installed_dossier_reduced_motion_smoke: `1/1 installed dossier CSS suppresses card hover transforms under prefers-reduced-motion`
+
+installed_recruiter_validator_date_smoke: `5/5 installed recruiter target/debrief validators reject an evaluation date after today while preserving bounded historical replay`
+
+installed_recruiter_gate_freshness_smoke: `1/1 installed screen-intake bridge downgrades a 91-day-old gate to clarify_first even with structurally valid checks`
+
+installed_shortlist_color_fallback_smoke: `1/1 installed priority card keeps a surface background fallback when color-mix is unsupported`
 
 fresh_agent_smoke: `not_run`
 
