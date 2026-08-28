@@ -34,8 +34,10 @@ VALIDATOR_TMPDIR="$(mktemp -d "${TMPDIR:-/tmp}/pgc-release-XXXXXX")"
 trap 'rm -rf "$VALIDATOR_TMPDIR"' EXIT
 SKILL_VALIDATOR_COPY="$VALIDATOR_TMPDIR/quick_validate.py"
 PLUGIN_VALIDATOR_COPY="$VALIDATOR_TMPDIR/validate_plugin.py"
+PLUGIN_VALIDATOR_SUPPORT_PATH="$(dirname "$PLUGIN_VALIDATOR_PATH")/identifier_validation.py"
 cp -p "$SKILL_VALIDATOR_PATH" "$SKILL_VALIDATOR_COPY"
 cp -p "$PLUGIN_VALIDATOR_PATH" "$PLUGIN_VALIDATOR_COPY"
+cp -p "$PLUGIN_VALIDATOR_SUPPORT_PATH" "$VALIDATOR_TMPDIR/identifier_validation.py"
 
 copied_skill_sha="$(shasum -a 256 "$SKILL_VALIDATOR_COPY" | awk '{print $1}')"
 copied_plugin_sha="$(shasum -a 256 "$PLUGIN_VALIDATOR_COPY" | awk '{print $1}')"
