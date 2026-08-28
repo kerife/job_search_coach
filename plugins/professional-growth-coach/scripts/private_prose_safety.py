@@ -11,6 +11,7 @@ from urllib.parse import unquote
 
 MAX_DIAGNOSTIC_BYTES = 16_384
 DIAGNOSTIC_TRUNCATION_MARKER = "validation diagnostics truncated; additional errors omitted\n"
+MAX_NORMALIZATION_PASSES = 12
 
 
 _SUSPICIOUS_DIAGNOSTIC_FIELD = re.compile(
@@ -48,13 +49,17 @@ def is_safe_prose_text(value: object) -> bool:
 
 
 def normalize_prose_for_validation(value: str) -> str:
-    """Decode bounded nested markup and percent escapes before safety checks."""
+    """Decode nested markup and percent escapes to a fixed point, failing closed on depth abuse."""
     normalized = unicodedata.normalize("NFKC", value)
-    for _ in range(5):
+    for _ in range(MAX_NORMALIZATION_PASSES):
         decoded = html.unescape(unquote(normalized))
         if decoded == normalized:
             break
         normalized = decoded
+    else:
+        # A control character makes every downstream prose validator reject an
+        # input that still changes after the bounded normalization budget.
+        normalized += "\x00"
     return normalized
 
 

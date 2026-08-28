@@ -66,7 +66,8 @@ COPY = {
         "overview": "Resumen del lote",
         "target_count": "Objetivos",
         "counts": "Conteo por decisión",
-        "priority": "Objetivo prioritario",
+        "priority": "Primer objetivo para revisar",
+        "priority_blocked": "Objetivo bloqueado de mayor puntuación",
         "why": "Por qué ahora",
         "missing": "Qué falta para avanzar",
         "screen_missing": "Comparte un resumen de vacante y un hecho verificable antes de preparar la entrevista.",
@@ -99,7 +100,8 @@ COPY = {
         "overview": "Batch summary",
         "target_count": "Targets",
         "counts": "Decision counts",
-        "priority": "Priority target",
+        "priority": "First target to review",
+        "priority_blocked": "Highest-score blocked target",
         "why": "Why now",
         "missing": "What is needed to advance",
         "screen_missing": "Provide a vacancy summary and one verifiable fact before preparing the interview.",
@@ -140,6 +142,14 @@ def _row(row: Mapping[str, object], target: Mapping[str, object], locale: str, i
     </li>'''
 
 
+def _review_priority_target(source_targets: list[Mapping[str, object]]) -> tuple[Mapping[str, object], bool]:
+    """Choose the highest-score target eligible for manual review, with a clear blocked fallback."""
+    for target in source_targets:
+        if target.get("decision") == "advance":
+            return target, True
+    return source_targets[0], False
+
+
 def render_decision_gate_html(value: Mapping[str, object]) -> str:
     errors = VALIDATOR.validate_decision_gate(value, as_of=dt.date.today())
     if errors:
@@ -148,7 +158,7 @@ def render_decision_gate_html(value: Mapping[str, object]) -> str:
     labels = COPY[locale]
     source = value["source_shortlist"]
     source_targets = source["targets"]
-    top = source_targets[0]
+    top, top_is_eligible = _review_priority_target(source_targets)
     handoff = value["handoff"]
     flow_label, flow_rail = CONTINUITY_RAIL.render_continuity_rail(locale, "decision_gate")
     screen_present = value["screen_context"] is not None
@@ -174,7 +184,7 @@ def render_decision_gate_html(value: Mapping[str, object]) -> str:
         "{{TARGET_COUNT}}": str(len(source_targets)),
         "{{COUNTS_LABEL}}": html.escape(labels["counts"]),
         "{{COUNTS}}": count_items,
-        "{{PRIORITY_LABEL}}": html.escape(labels["priority"]),
+        "{{PRIORITY_LABEL}}": html.escape(labels["priority"] if top_is_eligible else labels["priority_blocked"]),
         "{{PRIORITY}}": html.escape(str(top["target_label"]), quote=True),
         "{{WHY_LABEL}}": html.escape(labels["why"]),
         "{{WHY}}": html.escape(str(top["decision_reason"]), quote=True),

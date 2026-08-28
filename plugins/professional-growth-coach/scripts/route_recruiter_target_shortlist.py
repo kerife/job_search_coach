@@ -723,6 +723,27 @@ def route_recruiter_next_stage_review(
     next_stage: str,
 ) -> dict[str, object]:
     """Route a completed screen debrief to an explicit, manual next-stage review."""
+    try:
+        if not all(isinstance(value, Mapping) for value in (debrief, receipt, intake, checkpoint)):
+            raise ValueError("next-stage inputs are unavailable")
+        source_errors = SCREEN_DEBRIEF_BUILDER.VALIDATOR.validate_screen_debrief(
+            debrief,
+            receipt,
+            intake,
+            checkpoint=checkpoint,
+            as_of=dt.date.today(),
+        )
+        if source_errors:
+            raise ValueError("next-stage source inputs are invalid")
+    except (TypeError, ValueError):
+        return _artifact_free_intake(
+            "private_recruiter_next_stage_review",
+            selected_module="prepare-role-interviews",
+            next_action="collect_debrief_context",
+            locale=_safe_locale(debrief),
+            question_key="private_recruiter_next_stage_review",
+            evidence_gaps=["validated_screen_debrief_receipt_intake_checkpoint"],
+        )
     transition_recovery = _transition_recovery(debrief, intake, next_stage)
     if transition_recovery is not None:
         return transition_recovery

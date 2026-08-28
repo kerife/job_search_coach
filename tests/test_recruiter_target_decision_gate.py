@@ -222,6 +222,26 @@ class RecruiterTargetDecisionGateTests(unittest.TestCase):
         self.assertIn("No additional context", english_rendered)
         self.assertNotIn(">none<", english_rendered)
 
+    def test_renderer_prioritizes_highest_score_eligible_target(self) -> None:
+        targets = valid_targets()
+        targets[0]["priority_score"] = 60
+        targets[1].update({
+            "priority_score": 99,
+            "decision": "stop",
+            "context_state": "do_not_contact",
+            "contactability_status": "do_not_contact",
+            "do_not_contact_reason": "closed_role",
+            "recommended_draft_type": "none",
+            "next_safe_action": "record_observation_only",
+            "missing_context": "Role is closed; record the observation only.",
+            "decision_reason": "The role is closed and cannot be contacted safely.",
+        })
+        gate = build_decision_gate(build_shortlist("es", "2026-08-27", valid_plan(), targets))
+        rendered = render_decision_gate_html(gate)
+        self.assertIn("Primer objetivo para revisar", rendered)
+        self.assertIn("Named platform recruiter", rendered)
+        self.assertNotIn("<dt>Primer objetivo para revisar</dt><dd>Alumni referral path</dd>", rendered)
+
     def test_downstream_routes_recover_from_non_string_locale(self) -> None:
         cases = (
             lambda: route_recruiter_decision_gate({"locale": []}),

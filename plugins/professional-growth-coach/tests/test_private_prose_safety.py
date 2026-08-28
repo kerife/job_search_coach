@@ -1,5 +1,6 @@
 import sys
 import unittest
+from urllib.parse import quote
 from pathlib import Path
 
 
@@ -10,6 +11,7 @@ from private_prose_safety import (
     contains_unicode_controls,
     format_bounded_diagnostics,
     is_safe_prose_text,
+    normalize_prose_for_validation,
     safe_diagnostic_field_name,
 )
 
@@ -43,6 +45,21 @@ class PrivateProseSafetyTests(unittest.TestCase):
         for value in ("visible&#x0a;text", "visible&amp;#x0a;text", "visible%0atext"):
             with self.subTest(value=value):
                 self.assertFalse(is_safe_prose_text(value))
+
+    def test_deeply_nested_encoding_reaches_a_safe_fixed_point_or_fails_closed(self):
+        for value in ("person@example.com", "hello\u202e world", "<script>alert(1)</script>"):
+            encoded = value
+            for _ in range(6):
+                encoded = quote(encoded, safe="")
+            with self.subTest(value=value):
+                self.assertEqual(value, normalize_prose_for_validation(encoded))
+                if "\u202e" in value:
+                    self.assertFalse(is_safe_prose_text(encoded))
+
+        abusive = "person@example.com"
+        for _ in range(20):
+            abusive = quote(abusive, safe="")
+        self.assertFalse(is_safe_prose_text(abusive))
 
     def test_safe_diagnostic_field_name_redacts_suspicious_names_only(self):
         cases = {

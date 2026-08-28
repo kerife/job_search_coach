@@ -67,6 +67,23 @@ class PrivateRecruiterNextStageReviewTests(unittest.TestCase):
         self.assertIsNone(routed["artifact"])
         self.assertFalse(routed["authorization_required"])
 
+    def test_transition_recovery_requires_validated_source_inputs(self) -> None:
+        routed = route_recruiter_next_stage_review(
+            {
+                "decision": "continue_review",
+                "coverage": [{"status": "discussed"}] * 3,
+                "unknown_topics": [],
+            },
+            {},
+            self.intake,
+            valid_checkpoint(),
+            "first_interview",
+        )
+        self.assertEqual("needs_intake", routed["case_state"])
+        self.assertEqual("collect_debrief_context", routed["next_action"])
+        self.assertIsNone(routed["artifact"])
+        self.assertIn("validated_screen_debrief_receipt_intake_checkpoint", routed["evidence_gaps"])
+
     def test_offer_stage_recovery_is_terminal_when_no_forward_stage_exists(self) -> None:
         context = valid_screen_intake()
         context["stated_stage"] = "offer_stage"
