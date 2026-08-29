@@ -54,6 +54,8 @@ Action-shaped requests that name a recruiting alias (`recruiting`, `recruitment`
 
 Inbound scheduling language from those aliases (for example, shared times, a request to choose a slot, or a wish to schedule a call/interview) is also reply-triage context: collect the identity-free summary and one verified fact, keep `authorization_required=true`, and never schedule or accept a time.
 
+Connection wording with an alias target (`connect with a sourcer`, `connect me with a sourcer`, or `conectar con un sourcer`) uses the manual `recruiter_target_shortlist` boundary with `authorization_required=true`; it collects target context and never sends a connection request. Exploratory `network with` language remains analysis-only and does not require authorization.
+
 Inbound scheduling language from those organizational aliases (for example, a calendar link, proposed times, or a request to choose a slot) follows the same triage boundary and never schedules an event. Generic technical language such as recruiting systems remains outside the recruiter flow.
 
 General inbound contact from those aliases (for example, `contacted me`, `reached out`, `emailed me`, `called me`, passive forms such as `I was contacted by a sourcer`, or Spanish order variants such as `Me contactó un sourcer` and `Fui contactado por un sourcer`) also enters artifact-free reply triage with authorization; system or algorithm language without a contact verb remains ordinary coaching.

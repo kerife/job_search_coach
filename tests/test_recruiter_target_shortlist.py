@@ -854,6 +854,19 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual(expected_route, routed["route_kind"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_recruiter_alias_connection_requests_use_manual_shortlist_boundary(self) -> None:
+        for request, locale in (
+            ("I want to connect with a sourcer", "en"),
+            ("Please connect me with a sourcer", "en"),
+            ("Quiero conectar con un sourcer", "es"),
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+                self.assertEqual("recruiter_target_shortlist", routed["route_kind"])
+                self.assertEqual("ask_one_intake_question", routed["next_action"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
     def test_spanish_talent_acquisition_invitation_and_availability_keep_triage_boundaries(self) -> None:
         cases = (
             ("Me invitó adquisición de talento a una entrevista", "recruiter_target_screen_intake", False),
@@ -1145,6 +1158,19 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
             "Adquisición de talento compartió los horarios para una llamada.",
             "Adquisición de talento pidió escoger un horario.",
             "Adquisición de talento quiere agendar una llamada.",
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-28")
+                self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
+                self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_spanish_talent_acquisition_schedule_synonyms_stay_private_triage(self) -> None:
+        for request in (
+            "Adquisición de talento pidió elegir un horario.",
+            "Adquisición de talento me propuso horarios.",
+            "Adquisición de talento me mandó horarios.",
         ):
             with self.subTest(request=request):
                 routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-28")
