@@ -1186,10 +1186,25 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertTrue(routed["authorization_required"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_passive_organizational_recruiter_contact_enters_private_triage(self) -> None:
+        cases = (
+            ("I was contacted by talent acquisition about a role", "en"),
+            ("I was emailed by a sourcer about a role", "en"),
+            ("I was messaged by a headhunter about a role", "en"),
+        )
+        for request, locale in cases:
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+                self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
+                self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
     def test_organizational_alias_system_language_stays_outside_inbound_triage(self) -> None:
         for request in (
             "Talent acquisition systems need redesign.",
             "Headhunter algorithm research is on the roadmap.",
+            "I was contacted by an employer about a role.",
         ):
             with self.subTest(request=request):
                 routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-28")
