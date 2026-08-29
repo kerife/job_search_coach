@@ -35,6 +35,8 @@ Explicit requests to expand a network, contact recruiters, or prepare for a recr
 
 The classifier also covers common preparation wording such as “get ready for a recruiter phone screen” and “preparing for a recruiter interview”, completed follow-through such as “I talked with the recruiter”, “what happens after talking to a recruiter?”, and Spanish “¿qué viene después de hablar con un reclutador?”. “Networking con reclutadores” remains the shortlist route.
 
+Recruiter invitation word order is normalized too: “I received a recruiter screen invitation” and “A recruiter invited me to a screen” enter the artifact-free screen-intake boundary, while technical interview invitations without recruiter context remain ordinary coaching.
+
 `screening` is treated as the natural-language equivalent of `screen` across recruiter debrief, next-stage, invitation, and future/non-attendance preparation routes. For example, “I completed my recruiter screening”, “what comes next after the recruiter screening?”, and “tengo un screening con el reclutador la próxima semana” keep the same artifact-free precedence and context-collection boundaries as their `screen` equivalents.
 
 Natural-language coverage also includes upcoming or plain preparation requests (“my recruiter call is coming up”, “getting ready for a recruiter screen”, “preparar una llamada con un reclutador”), recruiting/recruitment aliases in post-screen follow-through, relationship and visibility networking language, and inbound recruiting contact without a message verb. These variants keep the same artifact-free preparation, next-stage, shortlist, or reply-triage boundary and preserve authorization gating.
@@ -43,7 +45,7 @@ Action-shaped requests that name a recruiting alias (`recruiting`, `recruitment`
 
 Inbound scheduling language from those organizational aliases (for example, a calendar link, proposed times, or a request to choose a slot) follows the same triage boundary and never schedules an event. Generic technical language such as recruiting systems remains outside the recruiter flow.
 
-General inbound contact from those aliases (for example, `contacted me`, `reached out`, `emailed me`, `called me`, passive forms such as `I was contacted by a sourcer`, or their Spanish equivalents) also enters artifact-free reply triage with authorization; system or algorithm language without a contact verb remains ordinary coaching.
+General inbound contact from those aliases (for example, `contacted me`, `reached out`, `emailed me`, `called me`, passive forms such as `I was contacted by a sourcer`, or Spanish order variants such as `Me contactó un sourcer` and `Fui contactado por un sourcer`) also enters artifact-free reply triage with authorization; system or algorithm language without a contact verb remains ordinary coaching.
 
 Invitation language from those aliases is classified with the same precedence as a recruiter invitation: preparation-only requests enter the artifact-free `recruiter_target_screen_intake`, while a request to reply, accept, confirm, or follow up enters `private_recruiter_reply_triage` with `authorization_required=true`. A technical interview invitation without recruiter context remains ordinary professional-growth routing.
 

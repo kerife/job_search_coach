@@ -149,9 +149,10 @@ FUTURE_SCREEN_DATE = re.compile(
     re.I,
 )
 RECRUITER_INVITATION_INTENT = re.compile(
-    r"(?:\b(?:got|received|was)\s+(?:an?\s+)?(?:invited|invitation)\b[^.!?\n]{0,55}\b(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\b|"
+    r"(?:\b(?:i\s+)?(?:got|received)\s+(?:an?\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+invitation\b|"
+    r"\b(?:got|received|was)\s+(?:an?\s+)?(?:invited|invitation)\b[^.!?\n]{0,55}\b(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\b|"
     r"\b(?:was\s+asked|asked)\s+to\s+(?:interview|speak|talk)\s+with\s+(?:(?:a|an?|the)\s+)?recruiters?\b|"
-    r"\b(?:the\s+)?recruiter\s+invited\s+me\s+to\s+(?:a\s+)?(?:screen(?:ing)?|interview|call|conversation)\b|"
+    r"\b(?:(?:a|the)\s+)?recruiter\s+invited\s+me\s+to\s+(?:a\s+)?(?:screen(?:ing)?|interview|call|conversation)\b|"
     r"\b(?:pending|booked)\s+(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\b|"
     r"\b(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+booked\b|"
     r"\b(?:scheduled\s+to\s+(?:speak|talk)\s+with\s+(?:(?:a|an?|the)\s+)?recruiters?)\b|"
@@ -283,7 +284,9 @@ RECRUITER_ALIAS_INBOUND_INTENT = re.compile(
     r"pidi[oó]\s+(?:mi\s+)?disponibilidad|me\s+pidi[oó]\s+(?:elegir|escoger)\s+(?:un\s+)?(?:horario|slot)|me\s+pidi[oó]\s+(?:agendar|programar))|"
     r"sent\s+(?:me\s+)?(?:a\s+)?(?:calendar\s+)?(?:invite|link)|sent\s+(?:me\s+)?(?:over\s+)?(?:some\s+)?times|shared\s+(?:a\s+few\s+)?times|"
     r"me\s+(?:envi[oó]|comparti[oó])\s+(?:los\s+)?(?:horarios|tiempos)|me\s+(?:envi[oó]|comparti[oó])\s+(?:un\s+)?(?:enlace|link)\s+de\s+calendario)\b|"
-    rf"\b(?:i\s+)?was\s+(?:contacted|emailed|messaged|called)\s+by\s+(?:a\s+|an\s+|the\s+)?{RECRUITER_NON_PERSON_ACTOR}\b)",
+    rf"\b(?:i\s+)?was\s+(?:contacted|emailed|messaged|called)\s+by\s+(?:a\s+|an\s+|the\s+)?{RECRUITER_NON_PERSON_ACTOR}\b|"
+    rf"\bme\s+(?:contact[oó]|escribi[oó]|llam[oó])\s+(?:(?:un|una|el|la)\s+)?{RECRUITER_NON_PERSON_ACTOR}\b[^.!?\n]{{0,90}}|"
+    rf"\b(?:fui|fue)\s+contactad[oa]\s+por\s+(?:(?:un|una|el|la)\s+)?{RECRUITER_NON_PERSON_ACTOR}\b)",
     re.I,
 )
 HANDOFF_QUESTIONS = {

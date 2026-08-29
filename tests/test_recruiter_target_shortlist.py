@@ -1088,6 +1088,18 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertFalse(routed["authorization_required"])
         self.assertIsNone(routed["artifact"])
 
+    def test_recruiter_screen_invitation_word_order_enters_screen_intake(self) -> None:
+        for request in (
+            "I received a recruiter screen invitation",
+            "A recruiter invited me to a screen",
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-28")
+                self.assertEqual("recruiter_target_screen_intake", routed["route_kind"])
+                self.assertEqual("collect_screen_intake", routed["next_action"])
+                self.assertFalse(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
     def test_invitation_with_reply_or_accept_request_enters_private_triage_boundary(self) -> None:
         for request, locale in (
             ("I was invited to a recruiter screen; can you help me respond?", "en"),
@@ -1195,6 +1207,21 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         for request, locale in cases:
             with self.subTest(request=request):
                 routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+                self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
+                self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_spanish_recruiter_alias_contact_order_enters_private_triage(self) -> None:
+        cases = (
+            "Me contactó un sourcer sobre una vacante",
+            "Me llamó un sourcer sobre una vacante",
+            "Fui contactado por un sourcer sobre una vacante",
+            "Me contactó talent acquisition sobre una vacante",
+        )
+        for request in cases:
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-28")
                 self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
                 self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
                 self.assertTrue(routed["authorization_required"])
