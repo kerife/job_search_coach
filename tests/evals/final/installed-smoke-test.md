@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T17:46:14-06:00`
+release_timestamp: `2026-08-28T18:00:07-06:00`
 
-source_commit: `2541b5aa3c53935c3bcf0ec56258547e250ad4da`
+source_commit: `b4485a13ba1262adff9dc1bb1003b6534677cb1e`
 
-source_tree: `3239af65420dc810db359cd6f48d314f103b0659`
+source_tree: `8fe929c5cba4200b64c693afd43789893767a911`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828174614`
+installed_cache_version: `0.2.0+codex.20260828180007`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `99132fc00881ae121f1134c3d7d5d7472445c333024c0611f6c4e9336ba848dc`
+normalized_source_cache_sha256: `46e788e38c016ec6ea651d9bd9f56b780a047c9a2e9b2c5e220bd95001e04bb6`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -91,6 +91,12 @@ installed_recruiter_negative_paraphrase_smoke: `6/6 screening, didn't-get-past, 
 installed_recruiter_print_wrap_smoke: `5/5 recruiter review print rules preserve overflow-wrap:anywhere for long localized target/company names`
 
 installed_recruiter_compact_print_grid_smoke: `3/3 practice, conversion-outcome, and follow-through rails use two print columns while narrow screens remain one column`
+
+installed_recruiter_received_message_smoke: `4/4 EN/ES “got/received” and “me llegó/recibí” recruiter message/email variants enter private reply triage with authorization required`
+
+installed_copy_fallback_failure_smoke: `1/1 dossier copy control reports a visible failure when Clipboard API and fallback fail and always removes its temporary textarea`
+
+installed_url_control_obfuscation_smoke: `3/3 learning, vacancy, and LinkedIn secondary-source URL policies reject raw tab, LF, and CR controls before parsing`
 
 installed_recruiter_uri_scheme_smoke: `4/4 candidate-facing ftp, ws, gopher, and userinfo authority URLs are rejected without echoing input`
 
