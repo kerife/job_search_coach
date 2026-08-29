@@ -115,6 +115,7 @@ SCREEN_NOT_COMPLETED = re.compile(
     r"(?:have|has|had)\s+been\s+invited\s+to\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
     r"(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+(?:was|got|were)\s+rescheduled|"
     r"(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+(?:was|got|were)\s+(?:canceled|cancelled|missed)|"
+    r"(?:entrevista|filtro|llamada|conversaci[oó]n)\b[^.!?\n]{0,60}\b(?:fue|qued[oó])\s+cancelad[oa]\b|"
     r"(?:missed|skipped|canceled|cancelled)\s+(?:(?:the|a|an|my)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
     r"could\s+not\s+(?:attend|make)\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
     r"was\s+not\s+able\s+to\s+attend\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
@@ -215,6 +216,8 @@ POST_SCREEN_NEGATIVE_OUTCOME_INTENT = re.compile(
     r"\b(?:i\s+)?was\s+not\s+selected\b[^.!?\n]{0,80}\b(?:after|following)\b|"
     r"\b(?:went\s+with|chose|selected|moved\s+forward\s+with)\s+(?:another\s+candidate|someone\s+else)\b|"
     r"\bdecidi[oó]\s+seguir\s+con\s+(?:otra\s+persona|otro\s+candidato|alguien\s+m[aá]s)\b|"
+    r"\bno\s+fui\s+seleccionad[oa]\b|"
+    r"\b(?:reclutador(?:a|es)?|reclutamiento)\b[^.!?\n]{0,80}\beligi[oó]\s+a\s+otra\s+persona\b|"
     r"\b(?:recruiters?|recruiting|reclutador(?:a|es)?)\b[^.!?\n]{0,60}\b(?:rejected|declined|turned\s+down|me\s+rechaz[oó]|me\s+descart[oó])\b|"
     r"\b(?:me\s+rechaz(?:ó|aron)|me\s+descart(?:ó|aron)|no\s+me\s+seleccionaron|no\s+pas[eé]\s+(?:el\s+)?(?:filtro|screen(?:ing)?|entrevista)|no\s+me\s+(?:eligieron|seleccionaron)|sigui[oó]\s+con\s+(?:otra\s+persona|otro\s+candidato|alguien\s+m[aá]s))\b|"
     r"\b(?:recruiters?|recruiting|recruitment)\b[^.!?\n]{0,60}\b(?:said\s+no|passed\s+on\s+me|didn['’]?t\s+select\s+me|not\s+selected)\b)",

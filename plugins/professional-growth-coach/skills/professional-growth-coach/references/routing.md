@@ -166,7 +166,8 @@ Negative post-screen observations such as `rejected`, `declined`, `rejection`,
 screening`, `didn't get past the recruiter screen`, `got a no after the
 screen`, `said no`, `not selected`, `another candidate`, `moved forward with
 another candidate`, `no pasé el filtro`, `no me eligieron`, `me rechazaron`,
-`me descartaron`, or `siguió con otra persona` also route to the
+`me descartaron`, `no fui seleccionado`, `el reclutador eligió a otra persona`,
+or `siguió con otra persona` also route to the
 artifact-free `private_recruiter_screen_debrief` with
 `selected_module=track-career-outcomes` and `next_action=collect_debrief_context`
 when recruiter or screen context is present. This records the candidate's
@@ -230,7 +231,7 @@ The same preparation boundary covers reversed invitation wording such as `I rece
 
 Actor-requested confirmation or acceptance (`Recruiter asked me to confirm the interview`, `The recruiter wants me to accept the interview`, or the equivalent aliases) enters `private_recruiter_reply_triage` with authorization and no external action. A technical confirmation without a recruiter actor remains ordinary, while its action guard stays visible.
 
-The same confirmation boundary is localized: `El reclutador me pidió confirmar la entrevista`, `La reclutadora quiere que acepte la entrevista`, and `Reclutamiento me pidió confirmar la entrevista` require private reply triage and authorization. Passive `screen was/got canceled` or `I was not selected after the recruiter screen` wording follows screen-intake or private debrief respectively; technical outcomes without recruiter context stay ordinary.
+The same confirmation boundary is localized: `El reclutador me pidió confirmar la entrevista`, `La reclutadora quiere que acepte la entrevista`, and `Reclutamiento me pidió confirmar la entrevista` require private reply triage and authorization. Passive `screen was/got canceled`, `La entrevista con el reclutador fue cancelada`, or `I was not selected after the recruiter screen` wording follows screen-intake or private debrief respectively; technical outcomes without recruiter context stay ordinary.
 
 The same invitation precedence applies when the actor is an organizational alias (`recruiting`, `recruitment`, `talent acquisition`, `talent partners`, `sourcer`, `headhunter`, or `reclutamiento`): alias-plus-invitation language enters screen-intake for preparation, and enters reply triage with authorization when the request asks to reply, accept, confirm, or follow up. A technical interview invitation without recruiter context stays ordinary.
 

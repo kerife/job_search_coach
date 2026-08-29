@@ -1160,6 +1160,41 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertFalse(routed["authorization_required"])
         self.assertIsNone(routed["artifact"])
 
+    def test_passive_spanish_recruiter_rejections_enter_private_debrief(self) -> None:
+        for request in (
+            "No fui seleccionado después de la entrevista con el reclutador",
+            "El reclutador eligió a otra persona después de la entrevista",
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-28")
+                self.assertEqual("private_recruiter_screen_debrief", routed["route_kind"])
+                self.assertEqual("collect_debrief_context", routed["next_action"])
+                self.assertFalse(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_passive_spanish_recruiter_cancellation_enters_screen_intake(self) -> None:
+        routed = route_recruiter_request(
+            "La entrevista con el reclutador fue cancelada",
+            locale="es",
+            as_of_date="2026-08-28",
+        )
+        self.assertEqual("recruiter_target_screen_intake", routed["route_kind"])
+        self.assertEqual("collect_screen_intake", routed["next_action"])
+        self.assertFalse(routed["authorization_required"])
+        self.assertIsNone(routed["artifact"])
+
+    def test_passive_spanish_technical_outcomes_stay_ordinary(self) -> None:
+        for request in (
+            "No fui seleccionado después de la entrevista técnica",
+            "La entrevista técnica fue cancelada",
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-28")
+                self.assertEqual("ordinary_professional_growth", routed["route_kind"])
+                self.assertEqual("continue_normal_routing", routed["next_action"])
+                self.assertFalse(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
     def test_passive_technical_rejection_without_recruiter_actor_stays_ordinary(self) -> None:
         routed = route_recruiter_request(
             "I was not selected for a technical interview",
