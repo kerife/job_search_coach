@@ -257,6 +257,10 @@ Connection requests naming an alias target (`I want to connect with a sourcer`, 
 
 Availability synonyms from an organizational alias (`preguntó cuándo estoy libre`, `preguntó por mi disponibilidad`, or `me pidió que elija un horario`) use the same private reply-triage boundary as proposed times: collect identity-free context, preserve authorization, and take no calendar action.
 
+English first/initial preparation with an organizational alias (`first interview with talent acquisition`, `initial call with recruiting`, or `first interview with a sourcer`) enters artifact-free `recruiter_target_screen_intake` with `collect_screen_intake` and no authorization. A first technical interview without recruiter context and analysis-only networking remain outside this branch.
+
+Subjunctive confirmation/acceptance (`La adquisición de talento me pidió que confirmara la entrevista` or `...que aceptara...`) enters `private_recruiter_reply_triage` with `authorization_required=true`; no confirmation, response, or calendar action is performed.
+
 Inbound calendar and availability wording from those aliases is also covered: `asked me to schedule a call`, `asked me to choose a time`, `sent a calendar link`, and their Spanish equivalents enter `private_recruiter_reply_triage` with `collect_recruiter_reply_triage_context`; no event is scheduled and no link or contact detail is retained. Technical phrases such as `recruiting systems` remain ordinary professional-growth language.
 
 General inbound contact from those aliases is covered as well: `contacted me`, `reached out`, `emailed me`, `called me`, passive forms such as `I was contacted by a sourcer`, `me contactó`, `me escribió`, `me llamó`, `Me contactó un sourcer`, and `Fui contactado por un sourcer` enter the same artifact-free reply-triage boundary with authorization. A system, algorithm, or research statement without an inbound contact verb remains ordinary professional-growth language.

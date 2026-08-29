@@ -75,6 +75,12 @@ PLAIN_SCREEN_PREP_INTENT = re.compile(
     r"recruiter\s+screen(?:ing)?\s+prep|"
     r"(?:have\s+)?a\s+recruiter\s+screen(?:ing)?\s+soon|"
     r"prepare\s+for\s+a\s+talent\s+acquisition\s+call|"
+    r"(?:have|got|will\s+have)\s+(?:a|an)\s+(?:first|initial)\s+(?:interview|call|conversation)\s+with\s+(?:(?:a|an|the)\s+)?(?:recruiters?|recruiting|recruitment|reclutamiento|talent\s+acquisition|talent\s+partners?|sourcers?|headhunters?)|"
+    r"(?:need|want)\s+to\s+prepare\s+for\s+(?:my|a|an|the)\s+(?:first|initial)\s+(?:interview|call|conversation)\s+with\s+(?:(?:a|an|the)\s+)?(?:recruiters?|recruiting|recruitment|reclutamiento|talent\s+acquisition|talent\s+partners?|sourcers?|headhunters?)|"
+    r"(?:help\s+me\s+)?prepare\s+for\s+(?:my|a|an|the)\s+(?:first|initial)\s+(?:interview|call|conversation)\s+with\s+(?:(?:a|an|the)\s+)?(?:recruiters?|recruiting|recruitment|reclutamiento|talent\s+acquisition|talent\s+partners?|sourcers?|headhunters?)|"
+    r"prepare\s+me\s+for\s+(?:my|a|an|the)\s+(?:first|initial)\s+(?:interview|call|conversation)\s+with\s+(?:(?:a|an|the)\s+)?(?:recruiters?|recruiting|recruitment|reclutamiento|talent\s+acquisition|talent\s+partners?|sourcers?|headhunters?)|"
+    r"prep[aá]rame\s+para\s+(?:mi|un(?:a)?|el|la)\s+(?:primer[ao]|inicial)\s+(?:entrevista|llamada|conversaci[oó]n)\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
+    r"prep[aá]rame\s+para\s+(?:mi|un(?:a)?|el|la)\s+(?:entrevista|llamada|conversaci[oó]n)\s+(?:primer[ao]|inicial)\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
     r"(?:quiero\s+|necesito\s+)?practic(?:ar|ando)\s+(?:mi|la|una?)\s+(?:(?:primera|inicial)\s+)?(?:entrevista|llamada)\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
     r"(?:necesito\s+)?preparar\s+(?:una?\s+)?llamada\s+con\s+(?:un\s+)?reclutador(?:a|es)?|"
     r"(?:necesito\s+)?prepar(?:ar|arme)\s+para\s+(?:una?\s+)?(?:primera|inicial)?\s*(?:entrevista|llamada)\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
@@ -253,7 +259,7 @@ RECRUITER_NON_PERSON_ACTOR = r"(?:recruiting|recruitment|reclutamiento|talent\s+
 EXPLICIT_RECRUITER_INTENT = re.compile(rf"\b{RECRUITER_ACTOR}\b", re.I)
 RECRUITER_CONFIRMATION_REQUEST_INTENT = re.compile(
     rf"(?:\b(?:a\s+|the\s+)?{RECRUITER_ACTOR}\b[^.!?\n]{{0,90}}\b(?:asked|wants?|needs?)\s+(?:me\s+)?to\s+(?:confirm|accept)\b|"
-    rf"\b(?:el\s+|la\s+|un\s+|una\s+)?{RECRUITER_ACTOR}\b[^.!?\n]{{0,90}}\b(?:me\s+pidi[oó]|quiere\s+que|necesita\s+que)\s+(?:me\s+)?(?:confirmar|aceptar|confirme|acepte)\b)",
+    rf"\b(?:el\s+|la\s+|un\s+|una\s+)?{RECRUITER_ACTOR}\b[^.!?\n]{{0,90}}\b(?:me\s+pidi[oó](?:\s+que)?|quiere\s+que|necesita\s+que)\s+(?:me\s+)?(?:confirmar|aceptar|confirme|acepte|confirmara|confirmase|aceptara|aceptase)\b)",
     re.I,
 )
 RECRUITER_ALIAS_INVITATION_INTENT = re.compile(
