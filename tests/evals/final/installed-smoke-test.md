@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T20:20:46-06:00`
+release_timestamp: `2026-08-28T20:31:43-06:00`
 
-source_commit: `ec4bb1772286a9e40b0d6fb79949be4af7df706b`
+source_commit: `3279cf1caf646f90511379e635fbe3376ace629b`
 
-source_tree: `58c5c025d8b5a137ce0780169b366657e8edf9f2`
+source_tree: `c500ecacd416c476a4184f2fa6fc3ca966dfb28c`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828202046`
+installed_cache_version: `0.2.0+codex.20260828203143`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `d17e2f5d0bd26ab9a68372e0c99fb22a1aaaad9b78c4838b1ad9173279792594`
+normalized_source_cache_sha256: `4f12d451c2f900b5e0e5b065ac922f3263a95c61cff0a7d4865933f9b786d371`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -60,6 +60,8 @@ installed_recruiter_alias_passive_contact_smoke: `3/3 passive organizational-ali
 installed_recruiter_invitation_order_smoke: `2/2 reversed recruiter-screen invitation variants enter artifact-free screen intake without authorization`
 
 installed_recruiter_alias_spanish_order_smoke: `4/4 Spanish alias contact-order variants enter private reply triage with authorization and no artifact`
+
+installed_recruiter_confirmation_request_smoke: `2/2 recruiter-requested confirm/accept variants enter private reply triage with authorization and no artifact`
 
 installed_v1_table_semantics_smoke: `1/1 responsive v1 market table emits explicit table, rowgroup, row, header, and cell roles`
 
