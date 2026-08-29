@@ -265,8 +265,8 @@ RECRUITER_ALIAS_INVITATION_INTENT = re.compile(
     re.I,
 )
 EXTERNAL_ACTION_INTENT = re.compile(
-    r"\b(?:send|message|messages|reply|repl(?:y|ies)|respond(?:ed|s|ing|er)?\b|write\s+back|ping|dm|connect|contact|reach|talk|speak|follow[- ]?up|followup|nudge|check[- ]?in|apply|publish|schedule|scheduled|book|calendar|"
-    r"confirm|accept|enviar|mensaje|mensajes|responder|conectar|contactar|hablar|aplicar|publicar|agendar|"
+    r"\b(?:send|message|messages|reply|repl(?:y|ies)|respond(?:ed|s|ing|er)?\b|write\s+back|ping|dm|connect|contact|reach|follow[- ]?up|followup|nudge|check[- ]?in|apply|publish|schedule|scheduled|book|calendar|"
+    r"confirm|accept|enviar|mensaje|mensajes|responder|conectar|contactar|aplicar|publicar|agendar|"
     r"reservar|calendario|confirmar|aceptar|programar|seguimiento|dar\s+seguimiento|cont[eé]st\w*|resp[oó]nd(?:er|e|a|an|amos|o|ele|eme|elo|ela)\b|escr[ií]b\w*|env[ií]\w*|m[aá]nd\w*)\b|"
     r"\b(?:email|e-mail)\s+(?:(?:an?|the)\s+)?(?:recruiters?|reclutador(?:a|es)?)\b|"
     r"\bcorreo\s+(?:a(?:l| la)?|para)\s+(?:recruiters?|reclutador(?:a|es)?)\b",
@@ -561,6 +561,7 @@ def route_recruiter_request(
         natural_route == "pre_screen"
         and PLAIN_SCREEN_PREP_INTENT.search(request)
         and not RECRUITER_ACTION_REQUEST_INTENT.search(request)
+        and not EXTERNAL_ACTION_INTENT.search(request)
     ):
         request_authorization_required = False
     if natural_route == "debrief":

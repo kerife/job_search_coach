@@ -152,6 +152,9 @@ with `collect_screen_intake`; networking or connecting with those aliases stays
 in shortlist unless the user explicitly requests an external action. Generic
 `have an upcoming` wording is restricted to recruiter screen/interview/call/
 conversation events, so recruiting-systems or metrics meetings remain ordinary.
+Conversational preparation (`prepare to talk`, `speak with`, or `prepararme para
+hablar`) is not itself an external action; explicit email, apply, contact, or
+schedule wording keeps `authorization_required=true` even on the pre-screen route.
 
 Post-screen classification must treat explicit non-completion as pre-screen intake before checking debrief or next-stage intent. English forms include `didn't attend`, `did not complete`, `have not had`, `had no`, `have no`, `never had`, `never completed`, `never went`, and `didn't go`; Spanish forms include `no asistí`, `no tuve`, `todavía no`, `aún no`, `nunca tuve`, `nunca asistí`, `nunca fui`, `no fui`, `no me presenté`, and `nunca pasé por`. These requests return artifact-free `recruiter_target_screen_intake` with `selected_module=prepare-role-interviews` and `next_action=collect_screen_intake`; positive completion wording remains eligible for debrief or next-stage review. The `never`/`nunca`/`no fui`/`no me presenté` checks are restricted to recruiter screen/interview/call/conversation events, so phrases such as `had no trouble` or `had no questions` remain completed-screen language.
 

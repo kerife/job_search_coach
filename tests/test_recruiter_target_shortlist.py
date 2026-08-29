@@ -878,6 +878,18 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual("continue_normal_routing", routed["next_action"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_pre_screen_with_external_action_keeps_authorization_required(self) -> None:
+        for request in (
+            "I have an upcoming recruiter interview; email the recruiter.",
+            "I have an upcoming recruiter interview; apply to this job.",
+            "I have an upcoming recruiter interview; schedule it.",
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-28")
+                self.assertEqual("recruiter_target_screen_intake", routed["route_kind"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
     def test_root_route_recognizes_recruiting_aliases_for_post_screen_followthrough(self) -> None:
         for request, locale, expected_route in (
             ("I talked with the recruiter and want next steps", "en", "private_recruiter_next_stage_review"),
