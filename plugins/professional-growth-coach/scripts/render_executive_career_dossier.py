@@ -795,11 +795,11 @@ def _render_market_context(dossier: Mapping[str, object], locale: str) -> str:
         rows = []
         for role in _rows(market["target_roles"]):
             rows.append(f"""
-          <tr>
-            <th scope="row">{text(role['title'])}</th>
-            <td data-label="{text(labels['required'])}">{_join_values(role['required_signals'])}</td>
-            <td data-label="{text(labels['supported'])}">{_join_values(role['supported_signals'])}</td>
-            <td data-label="{text(labels['gaps'])}">{_join_values(role['gaps'])}</td>
+          <tr role="row">
+            <th role="rowheader" scope="row">{text(role['title'])}</th>
+            <td role="cell" data-label="{text(labels['required'])}">{_join_values(role['required_signals'])}</td>
+            <td role="cell" data-label="{text(labels['supported'])}">{_join_values(role['supported_signals'])}</td>
+            <td role="cell" data-label="{text(labels['gaps'])}">{_join_values(role['gaps'])}</td>
           </tr>""")
         source_items = "".join(
             f'<li><a href="{text(source["url"])}" rel="noreferrer">{text(source["document_title"])}</a> — {text(source["publisher"])}</li>'
@@ -809,10 +809,10 @@ def _render_market_context(dossier: Mapping[str, object], locale: str) -> str:
         <p class="status-label">{state_label}</p>
         <p>{text(market['geography'])} · {ARRANGEMENT_LABELS[locale][text(market['arrangement'])]} · {text(market['research_date'])}</p>
         <p>{labels['market_sample']}: {market['vacancy_sample_count']} {labels['vacancies']}</p>
-        <table class="comparison-table">
+        <table class="comparison-table" role="table">
           <caption>{labels['market_caption']}</caption>
-          <thead><tr><th scope="col">{labels['role']}</th><th scope="col">{labels['required']}</th><th scope="col">{labels['supported']}</th><th scope="col">{labels['gaps']}</th></tr></thead>
-          <tbody>{''.join(rows)}</tbody>
+          <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">{labels['role']}</th><th role="columnheader" scope="col">{labels['required']}</th><th role="columnheader" scope="col">{labels['supported']}</th><th role="columnheader" scope="col">{labels['gaps']}</th></tr></thead>
+          <tbody role="rowgroup">{''.join(rows)}</tbody>
         </table>
         <h3>{labels['market_sources']}</h3><ul class="method-list">{source_items}</ul>
         <p class="boundary">{labels['market_boundary']}</p>"""

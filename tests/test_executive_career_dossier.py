@@ -2137,18 +2137,28 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
         dossier = load_fixture("scenario-market-en.json")
         rendered = self.renderer.render_dossier_html(dossier)
 
-        self.assertIn('<table class="comparison-table">', rendered)
+        self.assertIn('<table class="comparison-table" role="table">', rendered)
         self.assertIn(
             "<caption>Comparison kept separate from the LinkedIn diagnosis</caption>",
             rendered,
         )
-        self.assertEqual(rendered.count('<th scope="col">'), 4)
+        self.assertEqual(rendered.count('scope="col"'), 4)
         self.assertEqual(
-            rendered.count('<th scope="row">'),
+            rendered.count('scope="row"'),
             len(dossier["market_context"]["target_roles"]),
         )
         self.assertNotIn("<canvas", rendered)
         self.assertNotIn("<svg", rendered)
+
+    def test_dated_market_table_keeps_explicit_roles_when_responsive_css_reflows_it(self) -> None:
+        dossier = load_fixture("scenario-market-en.json")
+        rendered = self.renderer.render_dossier_html(dossier)
+
+        self.assertIn('<table class="comparison-table" role="table">', rendered)
+        self.assertIn('<thead role="rowgroup"><tr role="row">', rendered)
+        self.assertIn('<tbody role="rowgroup">', rendered)
+        self.assertIn('<th role="rowheader" scope="row">', rendered)
+        self.assertIn('<td role="cell"', rendered)
 
     def test_controls_focus_and_motion_have_accessible_structural_guards(self) -> None:
         rendered = self.renderer.render_dossier_html(self.es_dossier)

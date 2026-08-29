@@ -1120,6 +1120,31 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertTrue(routed["authorization_required"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_organizational_recruiter_alias_calendar_language_enters_private_triage(self) -> None:
+        cases = (
+            ("Recruiting asked me to schedule a call", "en"),
+            ("Talent acquisition asked me to choose a time", "en"),
+            ("A sourcer sent me a calendar link", "en"),
+            ("Reclutamiento me pidió elegir un horario", "es"),
+        )
+        for request, locale in cases:
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+                self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
+                self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_technical_recruiting_alias_language_stays_outside_inbound_triage(self) -> None:
+        routed = route_recruiter_request(
+            "Our recruiting systems schedule technical interviews automatically.",
+            locale="en",
+            as_of_date="2026-08-28",
+        )
+        self.assertEqual("ordinary_professional_growth", routed["route_kind"])
+        self.assertEqual("continue_normal_routing", routed["next_action"])
+        self.assertIsNone(routed["artifact"])
+
     def test_post_screen_followthrough_language_enters_private_debrief(self) -> None:
         cases = (
             ("I want to follow up with the recruiter after the screen.", "en", True),

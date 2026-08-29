@@ -267,6 +267,14 @@ RECRUITER_NON_PERSON_CONTACT_REQUEST_INTENT = re.compile(
     rf"[^.!?\n]{{0,80}}\b{RECRUITER_NON_PERSON_ACTOR}\b",
     re.I,
 )
+RECRUITER_ALIAS_INBOUND_INTENT = re.compile(
+    rf"\b{RECRUITER_NON_PERSON_ACTOR}\b[^.!?\n]{{0,90}}\b(?:"
+    r"asked[^.!?\n]{0,35}\b(?:about\s+(?:my\s+)?availability|when\s+i\s+am\s+free|(?:me\s+)?(?:to\s+)?(?:choose|pick)\s+(?:a\s+)?(?:time|slot)|(?:me\s+)?(?:to\s+)?(?:schedule|book|set\s+up)\s+(?:a\s+)?(?:call|slot)|"
+    r"pidi[oó]\s+(?:mi\s+)?disponibilidad|me\s+pidi[oó]\s+(?:elegir|escoger)\s+(?:un\s+)?(?:horario|slot)|me\s+pidi[oó]\s+(?:agendar|programar))|"
+    r"sent\s+(?:me\s+)?(?:a\s+)?(?:calendar\s+)?(?:invite|link)|sent\s+(?:me\s+)?(?:over\s+)?(?:some\s+)?times|shared\s+(?:a\s+few\s+)?times|"
+    r"me\s+(?:envi[oó]|comparti[oó])\s+(?:los\s+)?(?:horarios|tiempos)|me\s+(?:envi[oó]|comparti[oó])\s+(?:un\s+)?(?:enlace|link)\s+de\s+calendario)\b",
+    re.I,
+)
 HANDOFF_QUESTIONS = {
     "es": {
         "recruiter_target_decision_gate": "Comparte la shortlist validada de 3–6 objetivos y su contexto visible o proporcionado por ti para revisar la siguiente decisión manual.",
@@ -329,7 +337,8 @@ def _natural_recruiter_route(request: str) -> str | None:
         EXPLICIT_RECRUITER_INTENT.search(request) and RECRUITER_INVITATION_INTENT.search(request)
     )
     has_recruiter_inbound = bool(
-        EXPLICIT_RECRUITER_INTENT.search(request) and RECRUITER_INBOUND_INTENT.search(request)
+        EXPLICIT_RECRUITER_INTENT.search(request)
+        and (RECRUITER_INBOUND_INTENT.search(request) or RECRUITER_ALIAS_INBOUND_INTENT.search(request))
     )
     has_recruiter_reply_request = bool(
         EXPLICIT_RECRUITER_INTENT.search(request) and RECRUITER_REPLY_REQUEST_INTENT.search(request)

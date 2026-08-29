@@ -41,6 +41,8 @@ Natural-language coverage also includes upcoming or plain preparation requests (
 
 Action-shaped requests that name a recruiting alias (`recruiting`, `recruitment`, `talent acquisition`, `talent partners`, `sourcer`, `headhunter`, or Spanish `reclutamiento`) also enter the artifact-free `private_recruiter_reply_triage` boundary. The route sets `authorization_required=true` for requests such as emailing, replying, following up, contacting, or writing to those actors, while generic hiring-manager requests remain outside recruiter triage.
 
+Inbound scheduling language from those organizational aliases (for example, a calendar link, proposed times, or a request to choose a slot) follows the same triage boundary and never schedules an event. Generic technical language such as recruiting systems remains outside the recruiter flow.
+
 Natural recruiter interview intent also covers defined-article and scheduled
 forms such as “I have an interview with the recruiter”, “tengo una entrevista
 con la reclutadora”, “my recruiter screen is this Friday”, and “el viernes”; a
