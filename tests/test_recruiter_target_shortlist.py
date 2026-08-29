@@ -1171,6 +1171,33 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertTrue(routed["authorization_required"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_organizational_recruiter_alias_contact_language_enters_private_triage(self) -> None:
+        cases = (
+            ("Talent acquisition contacted me about a role", "en"),
+            ("A headhunter reached out about a role", "en"),
+            ("Sourcers emailed me about a role", "en"),
+            ("Reclutamiento me contactó sobre una vacante", "es"),
+        )
+        for request, locale in cases:
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+                self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
+                self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_organizational_alias_system_language_stays_outside_inbound_triage(self) -> None:
+        for request in (
+            "Talent acquisition systems need redesign.",
+            "Headhunter algorithm research is on the roadmap.",
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-28")
+                self.assertEqual("ordinary_professional_growth", routed["route_kind"])
+                self.assertEqual("continue_normal_routing", routed["next_action"])
+                self.assertFalse(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
     def test_technical_recruiting_alias_language_stays_outside_inbound_triage(self) -> None:
         routed = route_recruiter_request(
             "Our recruiting systems schedule technical interviews automatically.",

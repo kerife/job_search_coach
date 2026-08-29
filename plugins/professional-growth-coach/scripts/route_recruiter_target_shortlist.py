@@ -278,6 +278,7 @@ RECRUITER_NON_PERSON_CONTACT_REQUEST_INTENT = re.compile(
 )
 RECRUITER_ALIAS_INBOUND_INTENT = re.compile(
     rf"\b{RECRUITER_NON_PERSON_ACTOR}\b[^.!?\n]{{0,90}}\b(?:"
+    r"(?:messaged|emailed|contacted)(?:\s+me)?|reached\s+out(?:\s+to(?:\s+me)?)?|called(?:\s+me)?|wrote\s+to(?:\s+me)?|got\s+in\s+touch(?:\s+with(?:\s+me)?)?|me\s+(?:contact[oó]|escribi[oó]|llam[oó])|"
     r"asked[^.!?\n]{0,35}\b(?:about\s+(?:my\s+)?availability|when\s+i\s+am\s+free|(?:me\s+)?(?:to\s+)?(?:choose|pick)\s+(?:a\s+)?(?:time|slot)|(?:me\s+)?(?:to\s+)?(?:schedule|book|set\s+up)\s+(?:a\s+)?(?:call|slot)|"
     r"pidi[oó]\s+(?:mi\s+)?disponibilidad|me\s+pidi[oó]\s+(?:elegir|escoger)\s+(?:un\s+)?(?:horario|slot)|me\s+pidi[oó]\s+(?:agendar|programar))|"
     r"sent\s+(?:me\s+)?(?:a\s+)?(?:calendar\s+)?(?:invite|link)|sent\s+(?:me\s+)?(?:over\s+)?(?:some\s+)?times|shared\s+(?:a\s+few\s+)?times|"
