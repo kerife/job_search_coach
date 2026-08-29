@@ -49,7 +49,7 @@ except ModuleNotFoundError:
     read_bounded_bytes = _loader_module.read_bounded_bytes
 
 try:
-    from private_prose_safety import format_bounded_diagnostics, normalize_prose_for_validation
+    from private_prose_safety import contains_unicode_controls, format_bounded_diagnostics, normalize_prose_for_validation
 except ModuleNotFoundError:
     _prose_spec = importlib.util.spec_from_file_location(
         "_pgc_private_prose_safety",
@@ -61,6 +61,7 @@ except ModuleNotFoundError:
     _prose_spec.loader.exec_module(_prose_module)
     format_bounded_diagnostics = _prose_module.format_bounded_diagnostics
     normalize_prose_for_validation = _prose_module.normalize_prose_for_validation
+    contains_unicode_controls = _prose_module.contains_unicode_controls
 
 try:
     from canonical_date import parse_canonical_date
@@ -3371,6 +3372,8 @@ def _host_is_reserved_or_special_use(host: str) -> bool:
 
 def _secondary_source_url_error(value: object) -> str | None:
     if not isinstance(value, str):
+        return "secondary URL must use HTTPS"
+    if contains_unicode_controls(value):
         return "secondary URL must use HTTPS"
     try:
         parsed = urlsplit(value)

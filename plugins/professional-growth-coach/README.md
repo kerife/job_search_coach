@@ -70,7 +70,8 @@ performed. Follow-up wording (`follow up`, `follow-up`, `dar seguimiento`) also
 keeps the authorization requirement on fallback routes.
 
 Inbound recruiter contact is normalized before any reply drafting: `messaged`,
-`emailed`, `reached out`, “asked about my availability”, “what should I say?”,
+`emailed`, `reached out`, “I got a recruiter message/email”, “me llegó un
+mensaje/correo del recruiter”, “asked about my availability”, “what should I say?”,
 and Spanish equivalents such as “me escribió”, “me contactó”, “me preguntó” and
 “¿qué le digo?” enter artifact-free `recruiter_reply_triage` with an identity-free
 summary plus one verified fact. The route remains authorization-gated and
@@ -269,7 +270,9 @@ only `active` or `synthetic` rows are schema-valid, every row must match the
 artifact's `evidence_mode`/`learning_evidence_mode`, and URL strings must use
 HTTPS without userinfo, query, or fragment controls. Runtime validation still
 applies the stricter public-host and reserved-address policy, so schema validity
-never substitutes for the full safety check.
+never substitutes for the full safety check. Learning, vacancy, and LinkedIn
+secondary-source URL policies reject raw ASCII control/format characters before
+URL parsing, including tab, line-feed, and carriage-return obfuscation.
 Recruiter shortlist fact IDs are type-checked before uniqueness checks, so
 malformed nested values produce the same opaque invalid-artifact response
 without a traceback.
@@ -327,6 +330,9 @@ set the active target immediately. Without script it remains a static,
 keyboard-visible fallback. The anchors use responsive scroll-safe offsets,
 remain available in print, and stack into 44px touch targets at 640px and
 below; they do not hide or reorder any evidence.
+Copy controls keep a live status message even when both the Clipboard API and
+the local fallback fail; the temporary textarea is always removed, so a
+`file://` or permission failure is visible and recoverable rather than silent.
 
 When market evidence is unavailable, the `Mercado`/`Market` region now keeps a
 static next-research card visible instead of ending at a generic notice. It

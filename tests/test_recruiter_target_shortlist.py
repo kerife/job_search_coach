@@ -908,7 +908,26 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual("private_recruiter_screen_debrief", routed["route_kind"])
                 self.assertEqual("track-career-outcomes", routed["selected_module"])
                 self.assertEqual("collect_debrief_context", routed["next_action"])
+            self.assertIsNone(routed["artifact"])
+
+    def test_root_route_classifies_received_recruiter_messages_as_private_triage(self) -> None:
+        cases = (
+            ("I got a recruiter message and want to understand the role.", "en", True),
+            ("I got a recruiter email and want to understand the role.", "en", True),
+            ("Me llegó un mensaje del recruiter y quiero entender el rol.", "es", True),
+            ("Me llegó un correo del recruiter y quiero entender la vacante.", "es", True),
+        )
+        for request, locale, authorization_required in cases:
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+                self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
+                self.assertEqual("needs_intake", routed["case_state"])
+                self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
                 self.assertIsNone(routed["artifact"])
+                self.assertEqual(authorization_required, routed["authorization_required"])
+
+        ordinary = route_recruiter_request("I got a message and want to understand the role.", locale="en", as_of_date="2026-08-28")
+        self.assertEqual("ordinary_professional_growth", ordinary["route_kind"])
 
     def test_fallback_recruiter_action_synonyms_preserve_authorization_requirement(self) -> None:
         for request in (

@@ -502,10 +502,12 @@ INLINE_SCRIPT = """
     area.style.position = 'fixed';
     area.style.opacity = '0';
     document.body.appendChild(area);
-    area.select();
-    const copied = document.execCommand('copy');
-    area.remove();
-    return copied;
+    try {
+      area.select();
+      return document.execCommand('copy');
+    } finally {
+      area.remove();
+    }
   };
 
   document.querySelectorAll('[data-copy-target]').forEach((button) => {
@@ -526,7 +528,11 @@ INLINE_SCRIPT = """
           copied = copyFallback(value);
         }
       } catch (_) {
-        copied = copyFallback(value);
+        try {
+          copied = copyFallback(value);
+        } catch (_) {
+          copied = false;
+        }
       }
       const status = document.getElementById(button.dataset.copyStatus);
       if (status) status.textContent = copied ? button.dataset.copySuccess : button.dataset.copyFailure;

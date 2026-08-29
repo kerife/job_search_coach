@@ -41,7 +41,8 @@ or “¿qué le digo?”)
 enters artifact-free `private_recruiter_reply_triage` before any draft. It asks
 only for an identity-free summary and one verified fact, keeps
 `authorization_required=true`, and never sends, schedules, or creates a calendar
-item.
+item. Received-message wording such as `I got a recruiter message/email` and
+`me llegó un mensaje/correo del recruiter` follows the same boundary.
 
 Post-screen progression wording such as “passed the recruiter screen”, “moved
 forward to the hiring manager”, and “ya pasé el filtro y ahora sigue” enters
@@ -187,6 +188,9 @@ The candidate-facing Markdown validator rejects every URI scheme with an
 authority (`scheme://`) unless it is a permitted validated LinkedIn source;
 this includes `ftp`, `ws`, `gopher`, and embedded userinfo. Dangerous inline
 schemes such as `javascript`, `vbscript`, and `data` remain rejected separately.
+The learning, vacancy, and LinkedIn secondary-source URL policies also reject
+raw ASCII control/format characters before URL parsing, so tab/newline/carriage-
+return obfuscation cannot be normalized into an accepted public URL.
 
 In forced-colors mode, shortlist and decision-gate rows retain the redundant left-border styles for `advance`, `clarify`, `pause`, and `stop` (`solid`, `dashed`, `double`, and `dotted`), so high-contrast comparison does not depend on color.
 

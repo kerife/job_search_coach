@@ -2037,6 +2037,17 @@ class ExecutiveCareerDossierRendererTests(unittest.TestCase):
                 self.assertEqual(self.renderer.COPY[dossier['locale']]['copy_button'], visible)
                 self.assertIn("Copy draft" if dossier["locale"] == "en" else "Copiar borrador", label)
 
+    def test_copy_fallback_failure_still_reports_status_and_cleans_up(self) -> None:
+        script = self.renderer.INLINE_SCRIPT
+        self.assertRegex(
+            script,
+            r"catch \(_\) \{\s*try \{\s*copied = copyFallback\(value\);\s*\} catch \(_\) \{\s*copied = false;\s*\}\s*\}",
+        )
+        self.assertRegex(
+            script,
+            r"try \{\s*area\.select\(\);\s*return document\.execCommand\('copy'\);\s*\} finally \{\s*area\.remove\(\);\s*\}",
+        )
+
     def test_dossier_article_cards_have_named_headings_in_spanish_and_english(self) -> None:
         selectors = (
             'data-priority-card="true"',

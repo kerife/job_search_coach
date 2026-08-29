@@ -192,6 +192,8 @@ def source_url_policy_error(
 ) -> str | None:
     if not isinstance(value, str):
         return "source URL must use HTTPS"
+    if _prose.contains_unicode_controls(value):
+        return "source URL must use HTTPS"
     try:
         from urllib.parse import urlsplit
 

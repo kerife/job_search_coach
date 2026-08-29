@@ -144,6 +144,8 @@ def provider_source_is_fresh(source_date: object, as_of_date: object) -> bool:
 def _url_error(value: object, source_state: object, evidence_mode: object) -> str | None:
     if not isinstance(value, str):
         return "learning source URL is invalid"
+    if _prose.contains_unicode_controls(value):
+        return "learning source URL is invalid"
     # Reserved test URLs are allowed only for explicitly synthetic fixtures.
     if evidence_mode == "synthetic":
         if not value.startswith("https://example.com/") or any(marker in value for marker in ("@", "?", "#")):
