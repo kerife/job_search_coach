@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T21:47:46-06:00`
+release_timestamp: `2026-08-28T21:58:40-06:00`
 
-source_commit: `cb963bc5dc32188c234486689d9a3a4d538ab8b6`
+source_commit: `6a733238f8041fc7391e52a0cc199263e7cace00`
 
-source_tree: `f8932f249fbe2d730b203e97b5053d0db954e960`
+source_tree: `f72c28e066e0b3d133494541fe1bc404febfb1dd`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828214746`
+installed_cache_version: `0.2.0+codex.20260828215840`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `1f39a442559161b44e006230f8faf96d06581558c2e835e692c246dce5a0fbb7`
+normalized_source_cache_sha256: `a80de1756761fb5fe51898e25c73cb3ff3b85226d762b710535301bd0b5daff2`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -44,6 +44,7 @@ release_smoke_plugin: `professional-growth-coach@professional-growth-coach-local
 source_cache_equivalence: `diff_qr_silent`
 
 installed_recruiter_authorization_preservation_smoke: `3/3 pre-screen requests with email/apply/schedule preserve authorization`
+installed_recruiter_alias_boundary_smoke: `3/3 alias connection requests use manual shortlist authorization`
 
 installed_renderer_smokes: `6/6 triage validator/renderer fixtures`
 
