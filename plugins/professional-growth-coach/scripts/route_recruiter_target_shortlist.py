@@ -36,7 +36,10 @@ SCREEN_DEBRIEF_RENDERER = _sibling("render_private_recruiter_screen_debrief.py")
 NEXT_STAGE_REVIEW_RENDERER = _sibling("render_private_recruiter_next_stage_review.py")
 STAGE_TAXONOMY = _sibling("recruiter_stage_taxonomy.py")
 INTENT = re.compile(
-    r"(?:\b(?:expand(?:ir|iendo)?|ampliar|crecer|grow)\s+(?:(?:my|mi)\s+)?(?:red|network)\s+(?:(?:de|of)\s+)?(?:recruiters?|reclutadores?)\b|"
+    r"(?:\b(?:build|create|prepare)\s+(?:(?:a|an|the|una|un|la)\s+)?(?:recruiter|recruiting|recruitment|reclutador(?:a|es)?|reclutamiento|talent\s+acquisition|adquisici[oó]n\s+de\s+talento)\s+(?:target\s+)?shortlist\b|"
+    r"\b(?:need|want)\s+(?:(?:a|an|the|una|un|la)\s+)?(?:(?:recruiter|recruiting|recruitment|reclutador(?:a|es)?|reclutamiento|talent\s+acquisition|adquisici[oó]n\s+de\s+talento)\s+)(?:target\s+)?shortlist\b|"
+    r"\b(?:shortlist\s+(?:of|de)\s+(?:recruiters?|reclutadores?)|lista\s+(?:corta|breve)\s+(?:de\s+)?(?:objetivos\s+)?(?:recruiters?|reclutadores?))\b|"
+    r"\b(?:expand(?:ir|iendo)?|ampliar|crecer|grow)\s+(?:(?:my|mi)\s+)?(?:red|network)\s+(?:(?:de|of)\s+)?(?:recruiters?|reclutadores?)\b|"
     r"\b(?:expand(?:ir|iendo)?|grow)\s+(?:(?:my|mi)\s+)?(?:recruiters?|reclutadores?)\s+(?:network|red)\b|"
     r"\b(?:build|construir)\s+(?:relationships?|relaciones)\s+(?:with|con)\s+(?:recruiters?|reclutadores?)\b|"
     r"\b(?:build|construir)\s+(?:recruiters?|reclutadores?)\s+(?:relationships?|relaciones)\b|"
@@ -83,6 +86,7 @@ PLAIN_SCREEN_PREP_INTENT = re.compile(
     r"(?:get\s+ready|prepare)\s+for\s+(?:my|a|an|the)\s+(?:first|initial)\s+(?:interview|call|conversation)\s+with\s+(?:(?:a|an|the)\s+)?recruiter|"
     r"prep[aá]rame\s+para\s+(?:mi|un(?:a)?|el|la)\s+(?:primer[ao]|inicial)\s+(?:entrevista|llamada|conversaci[oó]n)\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
     r"prep[aá]rame\s+para\s+(?:mi|un(?:a)?|el|la)\s+(?:entrevista|llamada|conversaci[oó]n)\s+(?:primer[ao]|inicial)\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
+    r"(?:quiero|necesito)\s+(?:prepararme|practicar)\s+para\s+(?:mi|la|una?)\s+(?:entrevista|llamada|conversaci[oó]n)\s+(?:primer[ao]|inicial)\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
     r"(?:quiero|necesito)\s+(?:prepararme|practicar)\s+(?:para\s+)?(?:mi|la|una?)\s+(?:primer[ao]|inicial)\s+(?:entrevista|llamada|conversaci[oó]n)\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
     r"(?:quiero\s+|necesito\s+)?practic(?:ar|ando)\s+(?:mi|la|una?)\s+(?:(?:primera|inicial)\s+)?(?:entrevista|llamada)\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
     r"(?:necesito\s+)?preparar\s+(?:una?\s+)?llamada\s+con\s+(?:un\s+)?reclutador(?:a|es)?|"

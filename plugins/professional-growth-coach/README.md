@@ -56,6 +56,8 @@ English first/initial preparation with organizational aliases (`first interview 
 
 Actor-before-event forms (`prepare for a first recruiter interview`, `get ready for my first call with the recruiter`, and `prepare for a first recruiter screen`) and natural Spanish forms (`quiero prepararme/practicar mi primera entrevista o conversación con adquisición de talento`) use the same screen-intake boundary. Technical suffixes such as `recruiting systems`, `recruiting operations`, and `talent acquisition analytics` remain ordinary domain language.
 
+Direct artifact requests are also explicit: `build/create/prepare a recruiter shortlist`, `recruiter target shortlist`, `shortlist of recruiters`, and Spanish `crear una shortlist de reclutadores` or `lista corta de objetivos recruiter` enter the manual `recruiter_target_shortlist` intake. Shortlists of technical questions or platform topics remain ordinary coaching, so the artifact route is reserved for recruiter targets.
+
 When an organizational alias asks the candidate to confirm or accept using subjunctive Spanish (`me pidió que confirmara` or `me pidió que aceptara`), the request enters private reply triage with authorization and no external action.
 
 Action-shaped requests that name a recruiting alias (`recruiting`, `recruitment`, `talent acquisition`, Spanish `adquisición de talento`, `talent partners`, `sourcer`, `headhunter`, or `reclutamiento`) also enter the artifact-free `private_recruiter_reply_triage` boundary. The route sets `authorization_required=true` for requests such as emailing, replying, following up, contacting, or writing to those actors, while generic hiring-manager requests remain outside recruiter triage.

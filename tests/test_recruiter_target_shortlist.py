@@ -533,6 +533,33 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual("needs_intake", routed["case_state"])
                 self.assertEqual("ask_one_intake_question", routed["next_action"])
 
+    def test_root_route_accepts_explicit_recruiter_shortlist_requests(self) -> None:
+        for request, locale in (
+            ("I want to build a recruiter shortlist", "en"),
+            ("I need a recruiter target shortlist", "en"),
+            ("Create a shortlist of recruiters", "en"),
+            ("Quiero crear una shortlist de reclutadores", "es"),
+            ("Necesito preparar una lista corta de objetivos recruiter", "es"),
+        ):
+            routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+            with self.subTest(request=request):
+                self.assertEqual("recruiter_target_shortlist", routed["route_kind"])
+                self.assertEqual("needs_intake", routed["case_state"])
+                self.assertEqual("ask_one_intake_question", routed["next_action"])
+                self.assertFalse(routed["authorization_required"])
+
+    def test_recruiter_shortlist_wording_keeps_technical_shortlists_ordinary(self) -> None:
+        for request in (
+            "I need a shortlist of technical interview questions",
+            "Create a shortlist of platform engineering topics",
+            "Necesito una lista corta de preguntas técnicas",
+        ):
+            routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-28")
+            with self.subTest(request=request):
+                self.assertEqual("ordinary_professional_growth", routed["route_kind"])
+                self.assertEqual("continue_normal_routing", routed["next_action"])
+                self.assertIsNone(routed["artifact"])
+
     def test_root_route_accepts_defined_recruiter_articles_in_english_and_spanish(self) -> None:
         for request, locale, expected_route in (
             ("Prepare me for a first interview with the recruiter.", "en", "recruiter_target_screen_intake"),
@@ -912,6 +939,8 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
             "Quiero prepararme para mi primera entrevista con adquisición de talento",
             "Quiero practicar mi primera conversación con adquisición de talento",
             "Necesito prepararme para la primera entrevista con un sourcer",
+            "Quiero prepararme para la entrevista inicial con adquisición de talento",
+            "Necesito prepararme para mi llamada inicial con un sourcer",
         ):
             with self.subTest(request=request):
                 routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-28")
