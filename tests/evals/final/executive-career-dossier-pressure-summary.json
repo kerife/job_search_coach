@@ -2,7 +2,7 @@
   "schema_version": "executive-career-dossier-pressure-summary-1",
   "phase": "GREEN",
   "corpus_sha256": "cc17319c2b3885a7348bd9f7be52bc23799464bfcbdbbbd1680f7ec210cb8744",
-  "source_commit": "7ff2523e611e79e87bc5f5359d8276dea6665721",
+  "source_commit": "79883ce91706838f6cf5d0abeeb35d0791a1f94c",
   "source_tree_sha256": "829587212b07e28206982e2728ecc12542c49b59cbdaabeaf4d05358d9c4a2df",
   "source_bindings": [
     {
