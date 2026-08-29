@@ -18,9 +18,9 @@ release_version_prefix: `0.2.0+codex`
 
 release_timestamp: `2026-08-28T18:43:11-06:00`
 
-source_commit: `b25b035b389386fe95be5068877e914885cd4546`
+source_commit: `8ddec6b2c5a1d5aab4d2ce58f44f6f75e11680a5`
 
-source_tree: `3a259bbf06021f1c590d594f3c97f7ecd0d0ddb4`
+source_tree: `730f9e9309f0f87b4c58b34b16732f4263f3e9e6`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
@@ -50,6 +50,10 @@ installed_reading_path_smoke: `6/6 localized fragment links; aria-current fallba
 installed_recruiter_pre_screen_boundary_smoke: `9/9 future and explicit EN/ES non-completion phrases return artifact-free recruiter_target_screen_intake`
 
 installed_recruiter_natural_language_smoke: `9/9 defined-article, upcoming-preparation, recruiting-alias, network-relationship, and inbound-contact variants preserve bounded routing`
+
+installed_recruiter_alias_calendar_smoke: `4/4 organizational recruiting aliases route inbound calendar/availability language to private triage with authorization`
+
+installed_v1_table_semantics_smoke: `1/1 responsive v1 market table emits explicit table, rowgroup, row, header, and cell roles`
 
 installed_dossier_v2_smoke: `4/4 EN/ES validator and renderer`
 
