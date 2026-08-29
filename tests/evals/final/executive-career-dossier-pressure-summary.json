@@ -2,8 +2,8 @@
   "schema_version": "executive-career-dossier-pressure-summary-1",
   "phase": "GREEN",
   "corpus_sha256": "cc17319c2b3885a7348bd9f7be52bc23799464bfcbdbbbd1680f7ec210cb8744",
-  "source_commit": "5b89e21cfccf6704a712d6a90ac375f8424f0a66",
-  "source_tree_sha256": "e91e9728801a2fe24e87c209463f5ddd08dec46adfbb79249100652e543419f5",
+  "source_commit": "cb963bc5dc32188c234486689d9a3a4d538ab8b6",
+  "source_tree_sha256": "33abad7708203db296530821b5781a80759b802936bd26d8560c9ad4d0fc6595",
   "source_bindings": [
     {
       "path": "plugins/professional-growth-coach/skills/professional-growth-coach/SKILL.md",
@@ -15,7 +15,7 @@
     },
     {
       "path": "plugins/professional-growth-coach/skills/professional-growth-coach/references/routing.md",
-      "sha256": "2ed43dfea2d194f61ef480f07fc0f8a655ec6cd2da387429e604dee969221d28"
+      "sha256": "8e988b01b0995854685c3a06b73b94f367577fd8683721d8c6084afdc1b0e45b"
     },
     {
       "path": "plugins/professional-growth-coach/skills/optimize-professional-profile/SKILL.md",
