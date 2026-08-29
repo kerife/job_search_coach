@@ -550,17 +550,20 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual("ask_one_intake_question", routed["next_action"])
 
     def test_root_route_accepts_initial_recruiter_conversation_variants(self) -> None:
-        for request, locale in (
-            ("Prepare me for an initial interview with the recruiter.", "en"),
-            ("Help me prepare for my first call with a recruiter.", "en"),
-            ("Prepárame para una entrevista inicial con el reclutador.", "es"),
-            ("Necesito practicar mi primera llamada con la reclutadora.", "es"),
+        for request, locale, expected_route in (
+            ("Prepare me for an initial interview with the recruiter.", "en", "recruiter_target_shortlist"),
+            ("Help me prepare for my first call with a recruiter.", "en", "recruiter_target_shortlist"),
+            ("Prepárame para una entrevista inicial con el reclutador.", "es", "recruiter_target_shortlist"),
+            ("Necesito practicar mi primera llamada con la reclutadora.", "es", "recruiter_target_screen_intake"),
         ):
             routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-27")
             with self.subTest(request=request):
-                self.assertEqual("recruiter_target_shortlist", routed["route_kind"])
+                self.assertEqual(expected_route, routed["route_kind"])
                 self.assertEqual("needs_intake", routed["case_state"])
-                self.assertEqual("ask_one_intake_question", routed["next_action"])
+                self.assertEqual(
+                    "collect_screen_intake" if expected_route == "recruiter_target_screen_intake" else "ask_one_intake_question",
+                    routed["next_action"],
+                )
 
     def test_root_route_sends_completed_recruiter_screens_to_the_correct_artifact_free_handoff(self) -> None:
         cases = (
@@ -1179,6 +1182,19 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertTrue(routed["authorization_required"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_spanish_talent_acquisition_availability_questions_stay_private_triage(self) -> None:
+        for request in (
+            "La adquisición de talento me preguntó cuándo estoy libre.",
+            "La adquisición de talento preguntó por mi disponibilidad.",
+            "La adquisición de talento me pidió que elija un horario.",
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-28")
+                self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
+                self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
     def test_technical_interview_invitation_without_recruiter_context_stays_ordinary(self) -> None:
         routed = route_recruiter_request(
             "I received a technical interview invitation",
@@ -1698,6 +1714,29 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         for request, expected_route in cases:
             with self.subTest(request=request):
                 routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-28")
+                self.assertEqual(expected_route, routed["route_kind"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_spanish_post_screen_practice_enters_private_debrief(self) -> None:
+        for request in (
+            "Quiero practicar después de hablar con el reclutador",
+            "Quiero repasar después de la llamada con adquisición de talento",
+            "Necesito prepararme después de hablar con la reclutadora",
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-28")
+                self.assertEqual("private_recruiter_screen_debrief", routed["route_kind"])
+                self.assertEqual("collect_debrief_context", routed["next_action"])
+                self.assertFalse(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_post_screen_practice_requires_recruiter_conversation_context(self) -> None:
+        for request, locale, expected_route in (
+            ("Necesito practicar mi primera llamada con la reclutadora", "es", "recruiter_target_screen_intake"),
+            ("Quiero practicar después de hablar con un cliente", "es", "ordinary_professional_growth"),
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
                 self.assertEqual(expected_route, routed["route_kind"])
                 self.assertIsNone(routed["artifact"])
 

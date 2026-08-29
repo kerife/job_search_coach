@@ -37,6 +37,8 @@ Passive screen outcomes are normalized too: a recruiter screen that was canceled
 
 The classifier also covers common preparation wording such as “get ready for a recruiter phone screen” and “preparing for a recruiter interview”, completed follow-through such as “I talked with the recruiter”, “what happens after talking to a recruiter?”, and Spanish “¿qué viene después de hablar con un reclutador?”. “Networking con reclutadores” remains the shortlist route.
 
+Post-screen continuity now includes Spanish practice wording such as “quiero practicar después de hablar con el reclutador”, “repasar después de la llamada”, and “prepararme después de hablar”; these enter the artifact-free debrief intake. Practice for a first recruiter call remains screen-intake, and the same words after talking with a non-recruiter remain ordinary coaching.
+
 Recruiter invitation word order is normalized too: “I received a recruiter screen invitation” and “A recruiter invited me to a screen” enter the artifact-free screen-intake boundary, while technical interview invitations without recruiter context remain ordinary coaching.
 
 When a recruiter asks the candidate to confirm or accept an interview, the request enters artifact-free reply triage with authorization before any response or calendar action; a technical confirmation without a recruiter actor remains ordinary coaching with its action guard.

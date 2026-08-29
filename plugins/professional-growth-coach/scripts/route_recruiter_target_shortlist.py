@@ -75,6 +75,7 @@ PLAIN_SCREEN_PREP_INTENT = re.compile(
     r"recruiter\s+screen(?:ing)?\s+prep|"
     r"(?:have\s+)?a\s+recruiter\s+screen(?:ing)?\s+soon|"
     r"prepare\s+for\s+a\s+talent\s+acquisition\s+call|"
+    r"(?:quiero\s+|necesito\s+)?practic(?:ar|ando)\s+(?:mi|la|una?)\s+(?:(?:primera|inicial)\s+)?(?:entrevista|llamada)\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
     r"(?:necesito\s+)?preparar\s+(?:una?\s+)?llamada\s+con\s+(?:un\s+)?reclutador(?:a|es)?|"
     r"(?:necesito\s+)?prepar(?:ar|arme)\s+para\s+(?:una?\s+)?(?:primera|inicial)?\s*(?:entrevista|llamada)\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
     r"(?:tengo|hay)\s+(?:una?\s+)?(?:entrevista|llamada)\s+(?:primera|inicial)\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
@@ -235,6 +236,7 @@ POST_SCREEN_FOLLOWTHROUGH_INTENT = re.compile(
     r"(?:hasn['’]?t|has\s+not|have\s+not|never)\s+repl(?:ied|y)|(?:didn['’]?t|did\s+not)\s+get\s+back|stopped\s+replying|not\s+heard\s+back|has\s+not\s+gotten\s+back|"
     r"no\s+update|still\s+waiting|have\s+not\s+heard\s+anything|thank(?:ed|s)?\s+(?:them|the\s+recruiter)|ghosted|"
     r"wait\s+(?:or|and)\s+follow[- ]?up)\b|"
+    r"\b(?:practicar|preparar(?:me)?|repasar|ensayar)\b[^.!?\n]{0,40}\bdespu[eé]s\s+de\s+(?:hablar|(?:la|una?)\s+(?:llamada|entrevista))\b|"
     r"\b(?:seguimiento|agradecimiento|dar\s+las\s+gracias|sin\s+respuesta|"
     r"no\s+(?:responde|respondi[oó]|me\s+(?:ha|han)\s+respondido)|nunca\s+respondi[oó]|no\s+(?:he\s+)?recib(?:ido|[ií]|i[oó])\s+respuesta|"
     r"me\s+dejaron\s+en\s+visto|insistir)\b)",
@@ -303,7 +305,7 @@ RECRUITER_ALIAS_INBOUND_INTENT = re.compile(
     r"pidi[oó]\s+(?:mi\s+)?disponibilidad|me\s+pidi[oó]\s+(?:mi\s+)?disponibilidad|me\s+pidi[oó]\s+(?:elegir|escoger)\s+(?:un\s+)?(?:horario|slot)|me\s+pidi[oó]\s+(?:agendar|programar))|"
     r"sent\s+(?:me\s+)?(?:a\s+)?(?:calendar\s+)?(?:invite|link)|sent\s+(?:me\s+)?(?:over\s+)?(?:some\s+)?times|shared\s+(?:a\s+few\s+)?times|"
     r"me\s+(?:envi[oó]|comparti[oó]|propus[oó]|mand[oó])\s+(?:los\s+)?(?:horarios|tiempos)|me\s+(?:envi[oó]|comparti[oó])\s+(?:un\s+)?(?:enlace|link)\s+de\s+calendario)\b|"
-    rf"\b{RECRUITER_NON_PERSON_ACTOR}\b[^.!?\n]{{0,90}}\bme\s+pidi[oó]\s+(?:mi\s+)?disponibilidad\b|"
+    rf"\b{RECRUITER_NON_PERSON_ACTOR}\b[^.!?\n]{{0,90}}\b(?:me\s+pidi[oó]\s+(?:mi\s+)?disponibilidad|me\s+pidi[oó]\s+que\s+(?:elija|escoja|escogiera|eligiera)\s+(?:un\s+)?(?:horario|slot)|pregunt[oó]\s+(?:por\s+(?:mi\s+)?disponibilidad|cu[aá]ndo\s+estoy\s+libre)|me\s+pregunt[oó]\s+cu[aá]ndo\s+estoy\s+libre)\b|"
     rf"\b(?:i\s+)?was\s+(?:contacted|emailed|messaged|called)\s+by\s+(?:a\s+|an\s+|the\s+)?{RECRUITER_NON_PERSON_ACTOR}\b|"
     rf"\bme\s+(?:contact[oó]|escribi[oó]|llam[oó])\s+(?:(?:un|una|el|la)\s+)?{RECRUITER_NON_PERSON_ACTOR}\b[^.!?\n]{{0,90}}|"
     rf"\b(?:fui|fue)\s+contactad[oa]\s+por\s+(?:(?:un|una|el|la)\s+)?{RECRUITER_NON_PERSON_ACTOR}\b)",
