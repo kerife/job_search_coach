@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T20:46:25-06:00`
+release_timestamp: `2026-08-28T20:59:44-06:00`
 
-source_commit: `89ebb90abf4fa7e42169fc4b17a605b79e8cb4b4`
+source_commit: `3cede8d833a619961b4366c5b33915f242ac0394`
 
-source_tree: `18e367ea52bba8b3162bb1fd02ddc467a410ac94`
+source_tree: `b6cdf6156a1c3b5797fb91a226f912b02beaefc8210c7cc7955fc2f32944e17d`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828204625`
+installed_cache_version: `0.2.0+codex.20260828205944`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `3b2ab3ae0d0ff8d6dcf07c2bc35db1a9a0458093bf68a5b26d816d1d7e7277db`
+normalized_source_cache_sha256: `b6cdf6156a1c3b5797fb91a226f912b02beaefc8210c7cc7955fc2f32944e17d`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -64,6 +64,8 @@ installed_recruiter_alias_spanish_order_smoke: `4/4 Spanish alias contact-order 
 installed_recruiter_confirmation_request_smoke: `2/2 recruiter-requested confirm/accept variants enter private reply triage with authorization and no artifact`
 
 installed_recruiter_passive_outcome_smoke: `3/3 passive cancel/miss and not-selected recruiter outcomes enter bounded intake or private debrief`
+
+installed_recruiter_spanish_passive_outcome_smoke: `3/3 Spanish passive selection, alternate-candidate, and cancellation phrases enter bounded debrief or screen intake`
 
 installed_v1_table_semantics_smoke: `1/1 responsive v1 market table emits explicit table, rowgroup, row, header, and cell roles`
 
