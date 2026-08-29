@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T18:43:11-06:00`
+release_timestamp: `2026-08-28T19:35:36-06:00`
 
-source_commit: `9a2c66024f29cf61b7ca1805aba73e57fbdc1c6d`
+source_commit: `9264c3800a8e13160466fcd26d1868bb8cd08e80`
 
-source_tree: `730f9e9309f0f87b4c58b34b16732f4263f3e9e6`
+source_tree: `cf25620ed95b8e0efbda002c480b2f71df1710b7`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828184311`
+installed_cache_version: `0.2.0+codex.20260828193536`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `d098ea1487d6e65e776ba1da29ecbff3cd1d939129640cfa285bc764460a14f4`
+normalized_source_cache_sha256: `2daf9fc4859de7ebedea90dd7281ddf20910ed93306e4daea814371da67cdf09`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -50,6 +50,8 @@ installed_reading_path_smoke: `6/6 localized fragment links; aria-current fallba
 installed_recruiter_pre_screen_boundary_smoke: `9/9 future and explicit EN/ES non-completion phrases return artifact-free recruiter_target_screen_intake`
 
 installed_recruiter_natural_language_smoke: `9/9 defined-article, upcoming-preparation, recruiting-alias, network-relationship, and inbound-contact variants preserve bounded routing`
+
+installed_recruiter_alias_invitation_smoke: `5/5 organizational-alias invitation variants preserve screen-intake preparation, reply-triage authorization, and technical negative routing`
 
 installed_recruiter_alias_calendar_smoke: `4/4 organizational recruiting aliases route inbound calendar/availability language to private triage with authorization`
 
