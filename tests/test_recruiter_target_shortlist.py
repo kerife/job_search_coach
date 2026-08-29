@@ -659,6 +659,34 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual("continue_normal_routing", routed["next_action"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_root_route_sends_recruiter_alias_actions_to_reply_triage(self) -> None:
+        cases = (
+            "Can you email recruiting about my application?",
+            "Please reply to recruiting about the role.",
+            "Send a follow-up to talent acquisition.",
+            "Help me contact a sourcer for opportunities.",
+            "Quiero escribirle a reclutamiento sobre la vacante.",
+        )
+        for request in cases:
+            routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-27")
+            with self.subTest(request=request):
+                self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
+                self.assertEqual("optimize-professional-profile", routed["selected_module"])
+                self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertEqual("needs_intake", routed["case_state"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_root_route_keeps_hiring_manager_action_outside_recruiter_triage(self) -> None:
+        routed = route_recruiter_request(
+            "Can you email the hiring manager about my application?",
+            locale="en",
+            as_of_date="2026-08-27",
+        )
+        self.assertEqual("ordinary_professional_growth", routed["route_kind"])
+        self.assertEqual("continue_normal_routing", routed["next_action"])
+        self.assertIsNone(routed["artifact"])
+
     def test_root_route_recognizes_common_next_step_wording_after_recruiter_screen(self) -> None:
         for request in (
             "After a recruiter screen, what comes next?",

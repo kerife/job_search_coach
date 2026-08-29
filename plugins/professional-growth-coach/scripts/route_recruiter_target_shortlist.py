@@ -233,7 +233,9 @@ READINESS_NEGATION = re.compile(
 )
 INVITED_NEXT_STAGE = re.compile(r"\binvited\s+to\s+(?:the\s+)?next\s+stage\b", re.I)
 TECHNICAL_INTENT = re.compile(r"\b(?:technical|t[eé]cnica|t[eé]cnico)\b", re.I)
-EXPLICIT_RECRUITER_INTENT = re.compile(r"\b(?:recruiter|recruiting|recruitment|reclutador(?:a|es)?|reclutamiento|talent\s+acquisition|talent\s+partners?|sourcers?|headhunters?)\b", re.I)
+RECRUITER_ACTOR = r"(?:recruiters?|recruiting|recruitment|reclutador(?:a|es)?|reclutamiento|talent\s+acquisition|talent\s+partners?|sourcers?|headhunters?)"
+RECRUITER_NON_PERSON_ACTOR = r"(?:recruiting|recruitment|reclutamiento|talent\s+acquisition|talent\s+partners?|sourcers?|headhunters?)"
+EXPLICIT_RECRUITER_INTENT = re.compile(rf"\b{RECRUITER_ACTOR}\b", re.I)
 EXTERNAL_ACTION_INTENT = re.compile(
     r"\b(?:send|message|messages|reply|repl(?:y|ies)|respond(?:ed|s|ing|er)?\b|write\s+back|ping|dm|connect|contact|reach|talk|speak|follow[- ]?up|followup|nudge|check[- ]?in|apply|publish|schedule|scheduled|book|calendar|"
     r"confirm|accept|enviar|mensaje|mensajes|responder|conectar|contactar|hablar|aplicar|publicar|agendar|"
@@ -250,6 +252,19 @@ REPLY_TRIAGE_ACTION_INTENT = re.compile(
     r"\b(?:reply|respond\w*|write\s+back|ping|dm|email|confirm|accept|schedule|book|calendar|"
     r"cont[eé]st\w*|resp[oó]nd\w*|escr[ií]b\w*|confirmar|aceptar|agendar|programar|seguimiento|"
     r"dar\s+seguimiento|enviar|mandar)\b",
+    re.I,
+)
+RECRUITER_ACTION_REQUEST_INTENT = re.compile(
+    rf"(?:\A|[.!?]\s*)(?:(?:can|could|would)\s+you|please|help\s+me|i\s+(?:want|need)\s+to|quiero|necesito|ay[uú]dame\s+a)?\s*"
+    rf"(?:send|message|reply|respond\w*|write(?:\s+to)?|email|e-mail|ping|dm|schedule|book|confirm|accept|"
+    rf"cont[eé]st\w*|resp[oó]nd\w*|escr[ií]b\w*|confirmar|aceptar|agendar|programar|enviar|mandar|env[ií]\w*|m[aá]nd\w*)\b"
+    rf"[^.!?\n]{{0,80}}\b{RECRUITER_ACTOR}\b",
+    re.I,
+)
+RECRUITER_NON_PERSON_CONTACT_REQUEST_INTENT = re.compile(
+    rf"(?:\A|[.!?]\s*)(?:(?:can|could|would)\s+you|please|help\s+me|i\s+(?:want|need)\s+to|quiero|necesito|ay[uú]dame\s+a)?\s*"
+    rf"(?:contact|reach(?:\s+out\s+to)?|contactar|conectar(?:me)?|hablar\s+con)\b"
+    rf"[^.!?\n]{{0,80}}\b{RECRUITER_NON_PERSON_ACTOR}\b",
     re.I,
 )
 HANDOFF_QUESTIONS = {
@@ -319,6 +334,10 @@ def _natural_recruiter_route(request: str) -> str | None:
     has_recruiter_reply_request = bool(
         EXPLICIT_RECRUITER_INTENT.search(request) and RECRUITER_REPLY_REQUEST_INTENT.search(request)
     )
+    has_recruiter_action_request = bool(
+        RECRUITER_ACTION_REQUEST_INTENT.search(request)
+        or RECRUITER_NON_PERSON_CONTACT_REQUEST_INTENT.search(request)
+    )
     has_post_screen_progression = bool(POST_SCREEN_PROGRESSION_INTENT.search(request))
     has_negative_outcome = bool(
         EXPLICIT_RECRUITER_INTENT.search(request)
@@ -360,6 +379,8 @@ def _natural_recruiter_route(request: str) -> str | None:
         return "next_stage"
     if has_screen_context and DEBRIEF_INTENT.search(request):
         return "debrief"
+    if has_recruiter_action_request:
+        return "reply_triage"
     if has_screen_context and SCREEN_COMPLETION.search(request):
         return "debrief"
     if has_screen_context and NEXT_STAGE_INTENT.search(request):
@@ -462,7 +483,8 @@ def route_recruiter_request(
 ) -> dict[str, object]:
     """Return an internal route receipt without echoing the request or executing actions."""
     request_authorization_required = bool(
-        isinstance(request, str) and EXTERNAL_ACTION_INTENT.search(request)
+        isinstance(request, str)
+        and (EXTERNAL_ACTION_INTENT.search(request) or RECRUITER_ACTION_REQUEST_INTENT.search(request))
     )
     if not isinstance(locale, str) or locale not in INTAKE:
         return {

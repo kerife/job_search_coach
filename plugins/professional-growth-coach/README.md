@@ -39,6 +39,8 @@ The classifier also covers common preparation wording such as “get ready for a
 
 Natural-language coverage also includes upcoming or plain preparation requests (“my recruiter call is coming up”, “getting ready for a recruiter screen”, “preparar una llamada con un reclutador”), recruiting/recruitment aliases in post-screen follow-through, relationship and visibility networking language, and inbound recruiting contact without a message verb. These variants keep the same artifact-free preparation, next-stage, shortlist, or reply-triage boundary and preserve authorization gating.
 
+Action-shaped requests that name a recruiting alias (`recruiting`, `recruitment`, `talent acquisition`, `talent partners`, `sourcer`, `headhunter`, or Spanish `reclutamiento`) also enter the artifact-free `private_recruiter_reply_triage` boundary. The route sets `authorization_required=true` for requests such as emailing, replying, following up, contacting, or writing to those actors, while generic hiring-manager requests remain outside recruiter triage.
+
 Natural recruiter interview intent also covers defined-article and scheduled
 forms such as “I have an interview with the recruiter”, “tengo una entrevista
 con la reclutadora”, “my recruiter screen is this Friday”, and “el viernes”; a

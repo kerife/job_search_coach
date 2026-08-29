@@ -724,19 +724,19 @@ def _render_market_context(market_dossier: Mapping[str, object], locale: str) ->
         f"V{index}": f"V{index}: {card['employer_name']} — {card['title']}"
         for index, card in enumerate(cards, start=1)
     }
-    header_cells = "".join(f"<th scope=\"col\">{key}</th>" for key in column_keys)
+    header_cells = "".join(f"<th role=\"columnheader\" scope=\"col\">{key}</th>" for key in column_keys)
     matrix_rows: list[str] = []
     for row_value in BASE._rows(market_dossier["matrix_rows"]):
         row = BASE._mapping(row_value)
         symbol, state_label = _market_state_copy(row["support_state"], locale)
-        profile_cell = f'<td data-label="{html.escape(labels["market_evidence"], quote=True)}"><span aria-hidden="true">{symbol}</span> {state_label}</td>'
+        profile_cell = f'<td role="cell" data-label="{html.escape(labels["market_evidence"], quote=True)}"><span aria-hidden="true">{symbol}</span> {state_label}</td>'
         cells: list[str] = [profile_cell]
         for index, cell_value in enumerate(BASE._rows(row["cells"]), start=1):
             required = BASE._mapping(cell_value)["required"]
             required_symbol, required_label = _market_state_copy("verified_match" if required else "not_required", locale)
             data_label = f"{column_labels[f'V{index}']}: {required_label}"
-            cells.append(f'<td data-label="{html.escape(data_label, quote=True)}"><span aria-hidden="true">{required_symbol}</span> {required_label}</td>')
-        matrix_rows.append(f'''<tr><th scope="row">{html.escape(str(row['signal']), quote=True)}<span class="market-state"> {symbol} {state_label}</span></th>{''.join(cells)}</tr>''')
+            cells.append(f'<td role="cell" data-label="{html.escape(data_label, quote=True)}"><span aria-hidden="true">{required_symbol}</span> {required_label}</td>')
+        matrix_rows.append(f'''<tr role="row"><th role="rowheader" scope="row">{html.escape(str(row['signal']), quote=True)}<span class="market-state"> {symbol} {state_label}</span></th>{''.join(cells)}</tr>''')
 
     recurrence: list[str] = []
     for index, row_value in enumerate(BASE._rows(market_dossier["recurrence_rows"]), start=1):
@@ -770,8 +770,8 @@ def _render_market_context(market_dossier: Mapping[str, object], locale: str) ->
       <div class="vacancy-alignment-list">{''.join(card_html)}</div>
       <section class="market-key" aria-labelledby="market-key-title"><h3 id="market-key-title">{labels['market_key']}</h3><ol>{''.join(key_rows)}</ol></section>
       <section class="market-matrix-wrap" aria-labelledby="market-matrix-title"><h3 id="market-matrix-title">{labels['market_matrix']}</h3>
-        <table class="market-matrix"><thead><tr><th scope="col">{'Señal' if locale == 'es' else 'Signal'}</th><th scope="col">{labels['market_evidence']}</th>{header_cells}</tr></thead>
-        <tbody>{''.join(matrix_rows)}</tbody></table></section>
+        <table class="market-matrix" role="table"><thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">{'Señal' if locale == 'es' else 'Signal'}</th><th role="columnheader" scope="col">{labels['market_evidence']}</th>{header_cells}</tr></thead>
+        <tbody role="rowgroup">{''.join(matrix_rows)}</tbody></table></section>
       <section aria-labelledby="market-recurrence-title"><h3 id="market-recurrence-title">{labels['market_recurrence']}</h3><ul class="recurrence-list">{''.join(recurrence)}</ul><p class="market-boundary">{labels['market_boundary']}</p></section>
       {learning_surface}
       <section class="gap-closure-route" aria-labelledby="gap-closure-route-title"><h3 id="gap-closure-route-title">{labels['market_route']}</h3><ol>{route}</ol></section>
