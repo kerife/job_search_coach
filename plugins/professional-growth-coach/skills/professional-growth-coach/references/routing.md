@@ -146,6 +146,11 @@ When a request explicitly asks to expand a recruiter/referral network, find recr
 
 Post-screen classification must treat explicit non-completion as pre-screen intake before checking debrief or next-stage intent. English forms include `didn't attend`, `did not complete`, `have not had`, `had no`, `have no`, `never had`, `never completed`, `never went`, and `didn't go`; Spanish forms include `no asistí`, `no tuve`, `todavía no`, `aún no`, `nunca tuve`, `nunca asistí`, `nunca fui`, `no fui`, `no me presenté`, and `nunca pasé por`. These requests return artifact-free `recruiter_target_screen_intake` with `selected_module=prepare-role-interviews` and `next_action=collect_screen_intake`; positive completion wording remains eligible for debrief or next-stage review. The `never`/`nunca`/`no fui`/`no me presenté` checks are restricted to recruiter screen/interview/call/conversation events, so phrases such as `had no trouble` or `had no questions` remain completed-screen language.
 
+Target-vacancy research applies the same temporal boundary to employer
+qualification evidence: `source_date` and `access_date` cannot be after the
+artifact `as_of_date`, preventing future employer facts from entering a
+historical snapshot.
+
 Phrases such as `had no trouble` or `had no questions` describe a completed
 screen rather than a missing screen; with an explicit next-step question they
 use the next-stage route, while explicit debrief/review wording still wins.

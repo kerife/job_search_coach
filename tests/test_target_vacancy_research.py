@@ -58,6 +58,16 @@ class TargetVacancyResearchTests(unittest.TestCase):
         self.assertIn("as_of_date cannot be in the future for live evidence", errors)
         self.assertNotIn(future, " ".join(errors))
 
+    def test_employer_evidence_cannot_be_after_as_of_date(self) -> None:
+        value = load_fixture("complete-five-es.json")
+        value["employers"][0]["source_date"] = "2026-08-14"
+        value["employers"][0]["access_date"] = "2026-08-14"
+
+        errors = validate_research(value)
+
+        self.assertIn("employers[0].source_date cannot be after as_of_date", errors)
+        self.assertIn("employers[0].access_date cannot be after as_of_date", errors)
+
     def test_research_rejects_noncanonical_calendar_as_of_date(self) -> None:
         value = load_fixture("complete-five-es.json")
         value["as_of_date"] = "2026-W33-4"

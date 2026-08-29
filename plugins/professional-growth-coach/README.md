@@ -347,6 +347,9 @@ public-source provenance, and exposes only `complete`,
 `limited_market_evidence`, or `market_evidence_unavailable`. Its deterministic
 snapshot is suitable for downstream dossier work; it never performs external
 actions or infers candidate eligibility.
+Employer qualification evidence is temporally bound to the same `as_of_date` as
+vacancy evidence: both `source_date` and `access_date` must be on or before the
+snapshot, while live evidence also cannot be future-dated.
 
 Every vacancy artifact declares `evidence_mode` as `live` or `synthetic`.
 Synthetic fixtures may use reserved example sources for reproducible tests;

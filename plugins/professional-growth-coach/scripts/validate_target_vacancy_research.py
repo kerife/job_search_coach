@@ -274,7 +274,7 @@ def _validate_search_scope(value: object, errors: list[str]) -> None:
             errors.append(f"search_scope.{field} must be true")
 
 
-def _validate_employers(value: object, evidence_mode: str, errors: list[str]) -> set[str]:
+def _validate_employers(value: object, as_of: date | None, evidence_mode: str, errors: list[str]) -> set[str]:
     if not isinstance(value, list):
         errors.append("employers must be an array")
         return set()
@@ -308,6 +308,10 @@ def _validate_employers(value: object, evidence_mode: str, errors: list[str]) ->
                     source_urls.add(normalized_url)
         source_date = _date(row.get("source_date"), f"{path}.source_date", errors, live=evidence_mode == "live")
         access_date = _date(row.get("access_date"), f"{path}.access_date", errors, live=evidence_mode == "live")
+        if as_of and source_date and source_date > as_of:
+            errors.append(f"{path}.source_date cannot be after as_of_date")
+        if as_of and access_date and access_date > as_of:
+            errors.append(f"{path}.access_date cannot be after as_of_date")
         if source_date and access_date and source_date > access_date:
             errors.append(f"{path}.source_date cannot be after access_date")
     return ids
@@ -472,7 +476,7 @@ def validate_research(value: object) -> list[str]:
             if type(search_limit.get("distinct_employer_search_exhausted")) is not bool:
                 errors.append("search_limit.distinct_employer_search_exhausted must be boolean")
             _observation_text(search_limit.get("limitation"), "search_limit.limitation", errors, maximum=500)
-        employers = _validate_employers(value.get("employers"), mode, errors)
+        employers = _validate_employers(value.get("employers"), as_of, mode, errors)
         vacancies = value.get("vacancies")
         _validate_vacancies(vacancies, employers, as_of, mode, errors)
         count = len(vacancies) if isinstance(vacancies, list) else -1
