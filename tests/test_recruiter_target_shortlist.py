@@ -1140,6 +1140,19 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertTrue(routed["authorization_required"])
         self.assertIsNone(routed["artifact"])
 
+    def test_spanish_talent_acquisition_schedule_language_enters_private_triage(self) -> None:
+        for request in (
+            "Adquisición de talento compartió los horarios para una llamada.",
+            "Adquisición de talento pidió escoger un horario.",
+            "Adquisición de talento quiere agendar una llamada.",
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-28")
+                self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
+                self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
     def test_technical_interview_invitation_without_recruiter_context_stays_ordinary(self) -> None:
         routed = route_recruiter_request(
             "I received a technical interview invitation",
