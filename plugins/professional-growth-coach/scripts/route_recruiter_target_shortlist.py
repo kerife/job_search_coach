@@ -114,7 +114,8 @@ SCREEN_NOT_COMPLETED = re.compile(
     r"(?:was|were)\s+invited\s+to\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
     r"(?:have|has|had)\s+been\s+invited\s+to\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
     r"(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+(?:was|got|were)\s+rescheduled|"
-    r"(?:missed|skipped|canceled|cancelled)\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
+    r"(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+(?:was|got|were)\s+(?:canceled|cancelled|missed)|"
+    r"(?:missed|skipped|canceled|cancelled)\s+(?:(?:the|a|an|my)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
     r"could\s+not\s+(?:attend|make)\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
     r"was\s+not\s+able\s+to\s+attend\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
     r"declined\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+invitation|"
@@ -211,6 +212,7 @@ POST_SCREEN_NEGATIVE_OUTCOME_INTENT = re.compile(
     r"\b(?:didn['’]?t|did\s+not)\s+get\s+past\s+(?:(?:the|my|a)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview)\b|"
     r"\b(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+(?:was|were)\s+unsuccessful(?:ly)?\b|"
     r"\b(?:got|received)\s+(?:a\s+)?no\b[^.!?\n]{0,80}\b(?:after|following)\b|"
+    r"\b(?:i\s+)?was\s+not\s+selected\b[^.!?\n]{0,80}\b(?:after|following)\b|"
     r"\b(?:went\s+with|chose|selected|moved\s+forward\s+with)\s+(?:another\s+candidate|someone\s+else)\b|"
     r"\bdecidi[oó]\s+seguir\s+con\s+(?:otra\s+persona|otro\s+candidato|alguien\s+m[aá]s)\b|"
     r"\b(?:recruiters?|recruiting|reclutador(?:a|es)?)\b[^.!?\n]{0,60}\b(?:rejected|declined|turned\s+down|me\s+rechaz[oó]|me\s+descart[oó])\b|"
@@ -238,7 +240,8 @@ RECRUITER_ACTOR = r"(?:recruiters?|recruiting|recruitment|reclutador(?:a|es)?|re
 RECRUITER_NON_PERSON_ACTOR = r"(?:recruiting|recruitment|reclutamiento|talent\s+acquisition|talent\s+partners?|sourcers?|headhunters?)"
 EXPLICIT_RECRUITER_INTENT = re.compile(rf"\b{RECRUITER_ACTOR}\b", re.I)
 RECRUITER_CONFIRMATION_REQUEST_INTENT = re.compile(
-    rf"\b(?:a\s+|the\s+)?{RECRUITER_ACTOR}\b[^.!?\n]{{0,90}}\b(?:asked|wants?|needs?)\s+(?:me\s+)?to\s+(?:confirm|accept)\b",
+    rf"(?:\b(?:a\s+|the\s+)?{RECRUITER_ACTOR}\b[^.!?\n]{{0,90}}\b(?:asked|wants?|needs?)\s+(?:me\s+)?to\s+(?:confirm|accept)\b|"
+    rf"\b(?:el\s+|la\s+|un\s+|una\s+)?{RECRUITER_ACTOR}\b[^.!?\n]{{0,90}}\b(?:me\s+pidi[oó]|quiere\s+que|necesita\s+que)\s+(?:me\s+)?(?:confirmar|aceptar|confirme|acepte)\b)",
     re.I,
 )
 RECRUITER_ALIAS_INVITATION_INTENT = re.compile(

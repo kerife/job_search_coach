@@ -1112,6 +1112,19 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertTrue(routed["authorization_required"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_spanish_recruiter_requested_confirmation_or_acceptance_enters_private_triage(self) -> None:
+        for request in (
+            "El reclutador me pidió confirmar la entrevista",
+            "La reclutadora quiere que acepte la entrevista",
+            "Reclutamiento me pidió confirmar la entrevista",
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-28")
+                self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
+                self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
     def test_technical_confirmation_without_recruiter_actor_stays_ordinary(self) -> None:
         routed = route_recruiter_request(
             "I want to confirm my technical interview",
@@ -1121,6 +1134,41 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertEqual("ordinary_professional_growth", routed["route_kind"])
         self.assertEqual("continue_normal_routing", routed["next_action"])
         self.assertTrue(routed["authorization_required"])
+        self.assertIsNone(routed["artifact"])
+
+    def test_passive_recruiter_cancellation_enters_screen_intake(self) -> None:
+        for request in (
+            "The recruiter screen was canceled",
+            "The recruiter screen got canceled",
+            "I canceled my recruiter screen",
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-28")
+                self.assertEqual("recruiter_target_screen_intake", routed["route_kind"])
+                self.assertEqual("collect_screen_intake", routed["next_action"])
+                self.assertFalse(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_passive_recruiter_rejection_enters_private_debrief(self) -> None:
+        routed = route_recruiter_request(
+            "I was not selected after the recruiter screen",
+            locale="en",
+            as_of_date="2026-08-28",
+        )
+        self.assertEqual("private_recruiter_screen_debrief", routed["route_kind"])
+        self.assertEqual("collect_debrief_context", routed["next_action"])
+        self.assertFalse(routed["authorization_required"])
+        self.assertIsNone(routed["artifact"])
+
+    def test_passive_technical_rejection_without_recruiter_actor_stays_ordinary(self) -> None:
+        routed = route_recruiter_request(
+            "I was not selected for a technical interview",
+            locale="en",
+            as_of_date="2026-08-28",
+        )
+        self.assertEqual("ordinary_professional_growth", routed["route_kind"])
+        self.assertEqual("continue_normal_routing", routed["next_action"])
+        self.assertFalse(routed["authorization_required"])
         self.assertIsNone(routed["artifact"])
 
     def test_invitation_with_reply_or_accept_request_enters_private_triage_boundary(self) -> None:
