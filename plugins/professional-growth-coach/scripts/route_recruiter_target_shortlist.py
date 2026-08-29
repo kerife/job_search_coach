@@ -41,6 +41,7 @@ INTENT = re.compile(
     r"\b(?:build|construir)\s+(?:relationships?|relaciones)\s+(?:with|con)\s+(?:recruiters?|reclutadores?)\b|"
     r"\b(?:build|construir)\s+(?:recruiters?|reclutadores?)\s+(?:relationships?|relaciones)\b|"
     r"\b(?:build|construir)\s+(?:relationships?|relaciones)\s+(?:with|con)\s+(?:talent\s+acquisition|talent\s+partners?|sourcers?|headhunters?)\b|"
+    r"\b(?:network|networking)\s+(?:with|con)\s+(?:talent\s+acquisition|adquisici[oó]n\s+de\s+talento|recruiting|recruitment|reclutamiento|talent\s+partners?|sourcers?|headhunters?)\b|"
     r"\b(?:connect|conectar(?:me)?)\s+(?:with|con)\s+(?:more\s+)?(?:recruiters?|reclutadores?)\b|"
     r"\b(?:connect|conectar(?:me)?)\s+(?:with|con)\s+(?:talent\s+acquisition|talent\s+partners?|sourcers?|headhunters?)\b|"
     r"\bnetwork\s+with\s+people\s+who\s+recruit\s+(?:engineers?|developers?)\b|"
@@ -67,7 +68,7 @@ INTENT = re.compile(
     re.I,
 )
 PLAIN_SCREEN_PREP_INTENT = re.compile(
-    r"\b(?:have\s+an?\s+upcoming|my\s+(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+is\s+(?:coming\s+up|upcoming)|"
+    r"\b(?:have\s+an?\s+upcoming\s+(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|my\s+(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+is\s+(?:coming\s+up|upcoming)|"
     r"(?:am\s+)?getting\s+ready\s+for\s+(?:a\s+)?recruiter\s+screen(?:ing)?|"
     r"need\s+to\s+prepare\s+to\s+(?:talk|speak)\s+to\s+(?:the\s+)?recruiter|"
     r"(?:need\s+to\s+)?prep(?:are)?\s+for\s+(?:a\s+)?recruiter\s+screen(?:ing)?|"
@@ -75,6 +76,11 @@ PLAIN_SCREEN_PREP_INTENT = re.compile(
     r"(?:have\s+)?a\s+recruiter\s+screen(?:ing)?\s+soon|"
     r"prepare\s+for\s+a\s+talent\s+acquisition\s+call|"
     r"(?:necesito\s+)?preparar\s+(?:una?\s+)?llamada\s+con\s+(?:un\s+)?reclutador(?:a|es)?|"
+    r"(?:necesito\s+)?prepar(?:ar|arme)\s+para\s+(?:una?\s+)?(?:primera|inicial)?\s*(?:entrevista|llamada)\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
+    r"(?:tengo|hay)\s+(?:una?\s+)?(?:entrevista|llamada)\s+(?:primera|inicial)\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
+    r"(?:quiero\s+)?prepar(?:ar|arme)\s+(?:la|una?)\s+(?:primera|inicial)\s+(?:entrevista|llamada)\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
+    r"(?:tengo|hay)\s+(?:una?\s+)?(?:primera|inicial)\s+entrevista\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
+    r"(?:necesito\s+)?prepar(?:ar|arme)\s+para\s+hablar\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
     r"mi\s+llamada\s+con\s+(?:el\s+)?recruiter\s+es\s+la\s+pr[oó]xima\s+semana|"
     r"tengo\s+una\s+llamada\s+de\s+reclutador\s+pronto)\b",
     re.I,
@@ -253,6 +259,7 @@ RECRUITER_ALIAS_INVITATION_INTENT = re.compile(
     r"screen(?:ing)?|interview|call|conversation)\s+(?:invitation|invite)\b|"
     rf"\b{RECRUITER_NON_PERSON_ACTOR}\b[^.!?\n]{{0,70}}\b(?:invited|asked)\s+me\s+to\s+(?:an?\s+)?(?:recruiter\s+)?(?:"
     r"screen(?:ing)?|interview|call|conversation)\b|"
+    rf"\bme\s+invit[oó]\s+{RECRUITER_NON_PERSON_ACTOR}\b[^.!?\n]{{0,45}}\b(?:screen(?:ing)?|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)\b|"
     rf"\b{RECRUITER_NON_PERSON_ACTOR}\b[^.!?\n]{{0,70}}\b(?:me\s+)?(?:invit[oó]|invitaron)\b[^.!?\n]{{0,45}}\b(?:"
     r"screen(?:ing)?|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)\b)",
     re.I,
@@ -284,7 +291,7 @@ RECRUITER_ACTION_REQUEST_INTENT = re.compile(
 )
 RECRUITER_NON_PERSON_CONTACT_REQUEST_INTENT = re.compile(
     rf"(?:\A|[.!?]\s*)(?:(?:can|could|would)\s+you|please|help\s+me|i\s+(?:want|need)\s+to|quiero|necesito|ay[uú]dame\s+a)?\s*"
-    rf"(?:contact|reach(?:\s+out\s+to)?|contactar|conectar(?:me)?|hablar\s+con)\b"
+    rf"(?:contact|reach(?:\s+out\s+to)?|contactar|hablar\s+con)\b"
     rf"[^.!?\n]{{0,80}}\b{RECRUITER_NON_PERSON_ACTOR}\b",
     re.I,
 )
@@ -292,9 +299,10 @@ RECRUITER_ALIAS_INBOUND_INTENT = re.compile(
     rf"(?:\b{RECRUITER_NON_PERSON_ACTOR}\b[^.!?\n]{{0,90}}\b(?:"
     r"(?:messaged|emailed|contacted)(?:\s+me)?|reached\s+out(?:\s+to(?:\s+me)?)?|called(?:\s+me)?|wrote\s+to(?:\s+me)?|got\s+in\s+touch(?:\s+with(?:\s+me)?)?|me\s+(?:contact[oó]|escribi[oó]|llam[oó])|"
     r"asked[^.!?\n]{0,35}\b(?:about\s+(?:my\s+)?availability|when\s+i\s+am\s+free|(?:me\s+)?(?:to\s+)?(?:choose|pick)\s+(?:a\s+)?(?:time|slot)|(?:me\s+)?(?:to\s+)?(?:schedule|book|set\s+up)\s+(?:a\s+)?(?:call|slot)|"
-    r"pidi[oó]\s+(?:mi\s+)?disponibilidad|me\s+pidi[oó]\s+(?:elegir|escoger)\s+(?:un\s+)?(?:horario|slot)|me\s+pidi[oó]\s+(?:agendar|programar))|"
+    r"pidi[oó]\s+(?:mi\s+)?disponibilidad|me\s+pidi[oó]\s+(?:mi\s+)?disponibilidad|me\s+pidi[oó]\s+(?:elegir|escoger)\s+(?:un\s+)?(?:horario|slot)|me\s+pidi[oó]\s+(?:agendar|programar))|"
     r"sent\s+(?:me\s+)?(?:a\s+)?(?:calendar\s+)?(?:invite|link)|sent\s+(?:me\s+)?(?:over\s+)?(?:some\s+)?times|shared\s+(?:a\s+few\s+)?times|"
     r"me\s+(?:envi[oó]|comparti[oó])\s+(?:los\s+)?(?:horarios|tiempos)|me\s+(?:envi[oó]|comparti[oó])\s+(?:un\s+)?(?:enlace|link)\s+de\s+calendario)\b|"
+    rf"\b{RECRUITER_NON_PERSON_ACTOR}\b[^.!?\n]{{0,90}}\bme\s+pidi[oó]\s+(?:mi\s+)?disponibilidad\b|"
     rf"\b(?:i\s+)?was\s+(?:contacted|emailed|messaged|called)\s+by\s+(?:a\s+|an\s+|the\s+)?{RECRUITER_NON_PERSON_ACTOR}\b|"
     rf"\bme\s+(?:contact[oó]|escribi[oó]|llam[oó])\s+(?:(?:un|una|el|la)\s+)?{RECRUITER_NON_PERSON_ACTOR}\b[^.!?\n]{{0,90}}|"
     rf"\b(?:fui|fue)\s+contactad[oa]\s+por\s+(?:(?:un|una|el|la)\s+)?{RECRUITER_NON_PERSON_ACTOR}\b)",
@@ -549,6 +557,12 @@ def route_recruiter_request(
             "artifact": None,
         }
     natural_route = _natural_recruiter_route(request)
+    if (
+        natural_route == "pre_screen"
+        and PLAIN_SCREEN_PREP_INTENT.search(request)
+        and not RECRUITER_ACTION_REQUEST_INTENT.search(request)
+    ):
+        request_authorization_required = False
     if natural_route == "debrief":
         return _artifact_free_intake(
             "private_recruiter_screen_debrief",

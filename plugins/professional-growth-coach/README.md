@@ -45,6 +45,11 @@ When a recruiter asks the candidate to confirm or accept an interview, the reque
 
 Natural-language coverage also includes upcoming or plain preparation requests (“my recruiter call is coming up”, “getting ready for a recruiter screen”, “preparar una llamada con un reclutador”), recruiting/recruitment aliases in post-screen follow-through, relationship and visibility networking language, and inbound recruiting contact without a message verb. These variants keep the same artifact-free preparation, next-stage, shortlist, or reply-triage boundary and preserve authorization gating.
 
+Preparation for a first or initial recruiter interview is also localized across
+`adquisición de talento`, `reclutamiento`, `sourcer`, and `headhunter`; those
+phrases enter screen-intake, while networking or connecting with the aliases
+stays in the shortlist route unless an explicit external action is requested.
+
 Action-shaped requests that name a recruiting alias (`recruiting`, `recruitment`, `talent acquisition`, Spanish `adquisición de talento`, `talent partners`, `sourcer`, `headhunter`, or `reclutamiento`) also enter the artifact-free `private_recruiter_reply_triage` boundary. The route sets `authorization_required=true` for requests such as emailing, replying, following up, contacting, or writing to those actors, while generic hiring-manager requests remain outside recruiter triage.
 
 Inbound scheduling language from those organizational aliases (for example, a calendar link, proposed times, or a request to choose a slot) follows the same triage boundary and never schedules an event. Generic technical language such as recruiting systems remains outside the recruiter flow.
