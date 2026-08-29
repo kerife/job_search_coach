@@ -116,6 +116,7 @@ SCREEN_NOT_COMPLETED = re.compile(
     r"(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+(?:was|got|were)\s+rescheduled|"
     r"(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+(?:was|got|were)\s+(?:canceled|cancelled|missed)|"
     r"(?:entrevista|filtro|llamada|conversaci[oó]n)\b[^.!?\n]{0,60}\b(?:fue|qued[oó])\s+cancelad[oa]\b|"
+    r"(?:entrevista|filtro|llamada|conversaci[oó]n)\b[^.!?\n]{0,60}\b(?:(?:fue|qued[oó])\s+reprogramad[oa]|se\s+reprogram[oó])\b|"
     r"(?:missed|skipped|canceled|cancelled)\s+(?:(?:the|a|an|my)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
     r"could\s+not\s+(?:attend|make)\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
     r"was\s+not\s+able\s+to\s+attend\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
@@ -239,8 +240,8 @@ READINESS_NEGATION = re.compile(
 )
 INVITED_NEXT_STAGE = re.compile(r"\binvited\s+to\s+(?:the\s+)?next\s+stage\b", re.I)
 TECHNICAL_INTENT = re.compile(r"\b(?:technical|t[eé]cnica|t[eé]cnico)\b", re.I)
-RECRUITER_ACTOR = r"(?:recruiters?|recruiting|recruitment|reclutador(?:a|es)?|reclutamiento|talent\s+acquisition|talent\s+partners?|sourcers?|headhunters?)"
-RECRUITER_NON_PERSON_ACTOR = r"(?:recruiting|recruitment|reclutamiento|talent\s+acquisition|talent\s+partners?|sourcers?|headhunters?)"
+RECRUITER_ACTOR = r"(?:recruiters?|recruiting|recruitment|reclutador(?:a|es)?|reclutamiento|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|talent\s+partners?|sourcers?|headhunters?)"
+RECRUITER_NON_PERSON_ACTOR = r"(?:recruiting|recruitment|reclutamiento|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|talent\s+partners?|sourcers?|headhunters?)"
 EXPLICIT_RECRUITER_INTENT = re.compile(rf"\b{RECRUITER_ACTOR}\b", re.I)
 RECRUITER_CONFIRMATION_REQUEST_INTENT = re.compile(
     rf"(?:\b(?:a\s+|the\s+)?{RECRUITER_ACTOR}\b[^.!?\n]{{0,90}}\b(?:asked|wants?|needs?)\s+(?:me\s+)?to\s+(?:confirm|accept)\b|"

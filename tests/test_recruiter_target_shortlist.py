@@ -1117,6 +1117,7 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
             "El reclutador me pidió confirmar la entrevista",
             "La reclutadora quiere que acepte la entrevista",
             "Reclutamiento me pidió confirmar la entrevista",
+            "La adquisición de talento me pidió confirmar la entrevista",
         ):
             with self.subTest(request=request):
                 routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-28")
@@ -1182,6 +1183,19 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
         self.assertEqual("collect_screen_intake", routed["next_action"])
         self.assertFalse(routed["authorization_required"])
         self.assertIsNone(routed["artifact"])
+
+    def test_passive_spanish_recruiter_rescheduling_enters_screen_intake(self) -> None:
+        for request in (
+            "La entrevista con el reclutador fue reprogramada",
+            "La entrevista con el reclutador se reprogramó",
+            "La entrevista con reclutamiento fue reprogramada",
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-28")
+                self.assertEqual("recruiter_target_screen_intake", routed["route_kind"])
+                self.assertEqual("collect_screen_intake", routed["next_action"])
+                self.assertFalse(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
 
     def test_passive_spanish_technical_outcomes_stay_ordinary(self) -> None:
         for request in (
@@ -1295,6 +1309,7 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
             ("A headhunter reached out about a role", "en"),
             ("Sourcers emailed me about a role", "en"),
             ("Reclutamiento me contactó sobre una vacante", "es"),
+            ("La adquisición de talento me contactó sobre una vacante", "es"),
         )
         for request, locale in cases:
             with self.subTest(request=request):
@@ -1303,6 +1318,17 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
                 self.assertTrue(routed["authorization_required"])
                 self.assertIsNone(routed["artifact"])
+
+    def test_spanish_talent_acquisition_domain_language_stays_ordinary(self) -> None:
+        routed = route_recruiter_request(
+            "La adquisición de talento de la empresa necesita rediseño",
+            locale="es",
+            as_of_date="2026-08-28",
+        )
+        self.assertEqual("ordinary_professional_growth", routed["route_kind"])
+        self.assertEqual("continue_normal_routing", routed["next_action"])
+        self.assertFalse(routed["authorization_required"])
+        self.assertIsNone(routed["artifact"])
 
     def test_passive_organizational_recruiter_contact_enters_private_triage(self) -> None:
         cases = (

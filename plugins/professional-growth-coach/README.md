@@ -45,7 +45,7 @@ When a recruiter asks the candidate to confirm or accept an interview, the reque
 
 Natural-language coverage also includes upcoming or plain preparation requests (“my recruiter call is coming up”, “getting ready for a recruiter screen”, “preparar una llamada con un reclutador”), recruiting/recruitment aliases in post-screen follow-through, relationship and visibility networking language, and inbound recruiting contact without a message verb. These variants keep the same artifact-free preparation, next-stage, shortlist, or reply-triage boundary and preserve authorization gating.
 
-Action-shaped requests that name a recruiting alias (`recruiting`, `recruitment`, `talent acquisition`, `talent partners`, `sourcer`, `headhunter`, or Spanish `reclutamiento`) also enter the artifact-free `private_recruiter_reply_triage` boundary. The route sets `authorization_required=true` for requests such as emailing, replying, following up, contacting, or writing to those actors, while generic hiring-manager requests remain outside recruiter triage.
+Action-shaped requests that name a recruiting alias (`recruiting`, `recruitment`, `talent acquisition`, Spanish `adquisición de talento`, `talent partners`, `sourcer`, `headhunter`, or `reclutamiento`) also enter the artifact-free `private_recruiter_reply_triage` boundary. The route sets `authorization_required=true` for requests such as emailing, replying, following up, contacting, or writing to those actors, while generic hiring-manager requests remain outside recruiter triage.
 
 Inbound scheduling language from those organizational aliases (for example, a calendar link, proposed times, or a request to choose a slot) follows the same triage boundary and never schedules an event. Generic technical language such as recruiting systems remains outside the recruiter flow.
 
@@ -71,6 +71,9 @@ Future dates are scoped to the recruiter event itself, including “is Monday”
 after a completed screen cannot reopen pre-screen intake. An invitation to a
 later stage remains a next-stage review request when the screen is already
 complete.
+
+Spanish passive rescheduling such as “la entrevista con el reclutador fue
+reprogramada” or “se reprogramó” enters the artifact-free screen-intake route.
 
 The preparation boundary also covers conversational non-attendance such as
 “I never went through the recruiter screen”, “I never spoke with a recruiter”,
