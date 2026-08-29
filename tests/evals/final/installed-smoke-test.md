@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T18:00:07-06:00`
+release_timestamp: `2026-08-28T18:10:59-06:00`
 
-source_commit: `b4485a13ba1262adff9dc1bb1003b6534677cb1e`
+source_commit: `857ffee8c6c20a66dc2d2402100b34d4e63a936d`
 
-source_tree: `8fe929c5cba4200b64c693afd43789893767a911`
+source_tree: `4ce8d369cd803924eab7f59169ea2d0ea807e6fe`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828180007`
+installed_cache_version: `0.2.0+codex.20260828181059`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `46e788e38c016ec6ea651d9bd9f56b780a047c9a2e9b2c5e220bd95001e04bb6`
+normalized_source_cache_sha256: `bc89579993cabd0f06b556463ddbfdc30c48aa57202e5a955d0616f8ef4374eb`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -67,6 +67,7 @@ installed_market_learning_smoke: `2/2 complete/limited builder and validator`
 installed_learning_schema_boundary_smoke: `3/3 schema-only checks reject stale/unavailable provider states, mode mismatches, and HTTPS userinfo/query/fragment shapes`
 installed_market_freshness_reconciliation_smoke: `2/2 v1/v2 publication-date freshness envelope rejects contradictory status/basis/reason combinations and preserves unknown-date fallback`
 installed_vacancy_research_freshness_smoke: `4/4 target-vacancy research rejects missing/old publication dates marked current and accepts the inclusive 90-day boundary`
+installed_employer_snapshot_date_smoke: `1/1 employer source/access dates after as_of_date are rejected while inclusive snapshot dates remain valid`
 installed_readiness_muted_contrast_smoke: `2/2 light/dark readiness copy uses the themed muted token with accessible contrast`
 installed_learning_decision_aggregation_smoke: `1/1 professional-gap apply_with_boundary/pause options require review_learning_options at the aggregate coach decision`
 installed_provider_freshness_smoke: `3/3 paid-learning decisions keep the inclusive 90-day boundary, demote 91-day active sources to consider with a refresh gate, and reject tampered recommended decisions`
