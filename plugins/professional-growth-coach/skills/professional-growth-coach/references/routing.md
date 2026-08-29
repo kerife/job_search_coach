@@ -228,6 +228,8 @@ Natural invitation and scheduling variants (`got invited`, `received an invitati
 
 The same preparation boundary covers reversed invitation wording such as `I received a recruiter screen invitation` and `A recruiter invited me to a screen`; a technical interview invitation without recruiter context remains ordinary.
 
+Actor-requested confirmation or acceptance (`Recruiter asked me to confirm the interview`, `The recruiter wants me to accept the interview`, or the equivalent aliases) enters `private_recruiter_reply_triage` with authorization and no external action. A technical confirmation without a recruiter actor remains ordinary, while its action guard stays visible.
+
 The same invitation precedence applies when the actor is an organizational alias (`recruiting`, `recruitment`, `talent acquisition`, `talent partners`, `sourcer`, `headhunter`, or `reclutamiento`): alias-plus-invitation language enters screen-intake for preparation, and enters reply triage with authorization when the request asks to reply, accept, confirm, or follow up. A technical interview invitation without recruiter context stays ordinary.
 
 The same action boundary applies when the actor is an alias such as `recruiting`, `recruitment`, `talent acquisition`, `talent partners`, `sourcer`, `headhunter`, or Spanish `reclutamiento`: a request-shaped email, reply, follow-up, contact, or write action enters `private_recruiter_reply_triage` with `authorization_required=true`. The matcher requires request framing or sentence-start action wording, so an inbound sentence such as `I received an email from recruiting` is not reclassified as a send request, and generic `hiring manager` actions remain outside recruiter triage.

@@ -37,6 +37,8 @@ The classifier also covers common preparation wording such as “get ready for a
 
 Recruiter invitation word order is normalized too: “I received a recruiter screen invitation” and “A recruiter invited me to a screen” enter the artifact-free screen-intake boundary, while technical interview invitations without recruiter context remain ordinary coaching.
 
+When a recruiter asks the candidate to confirm or accept an interview, the request enters artifact-free reply triage with authorization before any response or calendar action; a technical confirmation without a recruiter actor remains ordinary coaching with its action guard.
+
 `screening` is treated as the natural-language equivalent of `screen` across recruiter debrief, next-stage, invitation, and future/non-attendance preparation routes. For example, “I completed my recruiter screening”, “what comes next after the recruiter screening?”, and “tengo un screening con el reclutador la próxima semana” keep the same artifact-free precedence and context-collection boundaries as their `screen` equivalents.
 
 Natural-language coverage also includes upcoming or plain preparation requests (“my recruiter call is coming up”, “getting ready for a recruiter screen”, “preparar una llamada con un reclutador”), recruiting/recruitment aliases in post-screen follow-through, relationship and visibility networking language, and inbound recruiting contact without a message verb. These variants keep the same artifact-free preparation, next-stage, shortlist, or reply-triage boundary and preserve authorization gating.

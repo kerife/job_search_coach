@@ -237,6 +237,10 @@ TECHNICAL_INTENT = re.compile(r"\b(?:technical|t[eé]cnica|t[eé]cnico)\b", re.I
 RECRUITER_ACTOR = r"(?:recruiters?|recruiting|recruitment|reclutador(?:a|es)?|reclutamiento|talent\s+acquisition|talent\s+partners?|sourcers?|headhunters?)"
 RECRUITER_NON_PERSON_ACTOR = r"(?:recruiting|recruitment|reclutamiento|talent\s+acquisition|talent\s+partners?|sourcers?|headhunters?)"
 EXPLICIT_RECRUITER_INTENT = re.compile(rf"\b{RECRUITER_ACTOR}\b", re.I)
+RECRUITER_CONFIRMATION_REQUEST_INTENT = re.compile(
+    rf"\b(?:a\s+|the\s+)?{RECRUITER_ACTOR}\b[^.!?\n]{{0,90}}\b(?:asked|wants?|needs?)\s+(?:me\s+)?to\s+(?:confirm|accept)\b",
+    re.I,
+)
 RECRUITER_ALIAS_INVITATION_INTENT = re.compile(
     rf"(?:\b(?:got|received)\s+(?:an?\s+)?{RECRUITER_NON_PERSON_ACTOR}\b[^.!?\n]{{0,65}}\b(?:"
     r"screen(?:ing)?|interview|call|conversation)\s+(?:invitation|invite)\b|"
@@ -356,7 +360,11 @@ def _natural_recruiter_route(request: str) -> str | None:
     )
     has_recruiter_inbound = bool(
         EXPLICIT_RECRUITER_INTENT.search(request)
-        and (RECRUITER_INBOUND_INTENT.search(request) or RECRUITER_ALIAS_INBOUND_INTENT.search(request))
+        and (
+            RECRUITER_INBOUND_INTENT.search(request)
+            or RECRUITER_ALIAS_INBOUND_INTENT.search(request)
+            or RECRUITER_CONFIRMATION_REQUEST_INTENT.search(request)
+        )
     )
     has_recruiter_reply_request = bool(
         EXPLICIT_RECRUITER_INTENT.search(request) and RECRUITER_REPLY_REQUEST_INTENT.search(request)

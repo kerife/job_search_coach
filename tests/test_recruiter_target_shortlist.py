@@ -1100,6 +1100,29 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertFalse(routed["authorization_required"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_recruiter_requested_confirmation_or_acceptance_enters_private_triage(self) -> None:
+        for request in (
+            "Recruiter asked me to confirm the interview",
+            "The recruiter wants me to accept the interview",
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-28")
+                self.assertEqual("private_recruiter_reply_triage", routed["route_kind"])
+                self.assertEqual("collect_recruiter_reply_triage_context", routed["next_action"])
+                self.assertTrue(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_technical_confirmation_without_recruiter_actor_stays_ordinary(self) -> None:
+        routed = route_recruiter_request(
+            "I want to confirm my technical interview",
+            locale="en",
+            as_of_date="2026-08-28",
+        )
+        self.assertEqual("ordinary_professional_growth", routed["route_kind"])
+        self.assertEqual("continue_normal_routing", routed["next_action"])
+        self.assertTrue(routed["authorization_required"])
+        self.assertIsNone(routed["artifact"])
+
     def test_invitation_with_reply_or_accept_request_enters_private_triage_boundary(self) -> None:
         for request, locale in (
             ("I was invited to a recruiter screen; can you help me respond?", "en"),
