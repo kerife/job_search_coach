@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T20:07:37-06:00`
+release_timestamp: `2026-08-28T20:20:46-06:00`
 
-source_commit: `31bb23a758bf1407aa839456e497b9d56c540dde`
+source_commit: `ec4bb1772286a9e40b0d6fb79949be4af7df706b`
 
-source_tree: `5a5f9af1f68111f88a0b5ed59967e9958e6b54ae`
+source_tree: `58c5c025d8b5a137ce0780169b366657e8edf9f2`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828200737`
+installed_cache_version: `0.2.0+codex.20260828202046`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `b9e887c148f71775e0c87380d092cd7969d0ca63d63a5e6b2d27b90f6fdaacf2`
+normalized_source_cache_sha256: `d17e2f5d0bd26ab9a68372e0c99fb22a1aaaad9b78c4838b1ad9173279792594`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -56,6 +56,10 @@ installed_recruiter_alias_invitation_smoke: `5/5 organizational-alias invitation
 installed_recruiter_alias_calendar_smoke: `4/4 organizational recruiting aliases route inbound calendar/availability language to private triage with authorization`
 
 installed_recruiter_alias_passive_contact_smoke: `3/3 passive organizational-alias contact variants enter private reply triage with authorization and no artifact`
+
+installed_recruiter_invitation_order_smoke: `2/2 reversed recruiter-screen invitation variants enter artifact-free screen intake without authorization`
+
+installed_recruiter_alias_spanish_order_smoke: `4/4 Spanish alias contact-order variants enter private reply triage with authorization and no artifact`
 
 installed_v1_table_semantics_smoke: `1/1 responsive v1 market table emits explicit table, rowgroup, row, header, and cell roles`
 
