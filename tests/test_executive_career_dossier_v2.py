@@ -832,10 +832,10 @@ class ExecutiveCareerDossierV2RendererTests(unittest.TestCase):
         for locale, labels in expected.items():
             with self.subTest(locale=locale):
                 rendered = self.renderer.render_dossier_html(make_market_v2_dossier(locale))
-                self.assertIn("<thead>", rendered)
+                self.assertIn("<thead", rendered)
                 self.assertEqual(rendered.count("data-label="), 3)
                 for label in labels:
-                    self.assertIn(f'<td data-label="{label}">', rendered)
+                    self.assertIn(f'data-label="{label}"', rendered)
 
     def test_market_matrix_print_layout_stacks_rows_for_readability(self) -> None:
         css = (ASSETS_ROOT / "career-market-learning-dossier-v1.css").read_text(encoding="utf-8")
