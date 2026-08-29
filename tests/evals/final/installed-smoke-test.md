@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T20:59:44-06:00`
+release_timestamp: `2026-08-28T21:18:44-06:00`
 
-source_commit: `3cede8d833a619961b4366c5b33915f242ac0394`
+source_commit: `4daa80c8a6e4816545ef3edb9b14235af280111d`
 
-source_tree: `b6cdf6156a1c3b5797fb91a226f912b02beaefc8210c7cc7955fc2f32944e17d`
+source_tree: `727d76643be10656837c1bd3f94c740859ddeeb7`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828205944`
+installed_cache_version: `0.2.0+codex.20260828211844`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `b6cdf6156a1c3b5797fb91a226f912b02beaefc8210c7cc7955fc2f32944e17d`
+normalized_source_cache_sha256: `a0c245f38c46c077c36ec7f13114454ede5b5dc69a59fb8f30c0c2b0dd7d8573`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -66,6 +66,8 @@ installed_recruiter_confirmation_request_smoke: `2/2 recruiter-requested confirm
 installed_recruiter_passive_outcome_smoke: `3/3 passive cancel/miss and not-selected recruiter outcomes enter bounded intake or private debrief`
 
 installed_recruiter_spanish_passive_outcome_smoke: `3/3 Spanish passive selection, alternate-candidate, and cancellation phrases enter bounded debrief or screen intake`
+
+installed_recruiter_spanish_alias_reschedule_smoke: `4/4 Spanish talent-acquisition confirmation/contact and passive rescheduling variants preserve private triage or screen-intake boundaries`
 
 installed_v1_table_semantics_smoke: `1/1 responsive v1 market table emits explicit table, rowgroup, row, header, and cell roles`
 
