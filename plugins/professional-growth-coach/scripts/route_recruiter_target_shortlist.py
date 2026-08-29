@@ -48,8 +48,8 @@ INTENT = re.compile(
     r"\baumentar\s+mi\s+visibilidad\s+ante\s+(?:recruiters?|reclutadores?)\b|"
     r"\b(?:find|buscar|encontrar|identificar)\s+(?:a\s+)?(?:recruiters?|reclutadores?)\b|"
     r"\b(?:meet|get\s+to\s+know|conocer)\s+(?:recruiters?|reclutadores?)\b|"
-    r"\b(?:recruiter|recruiting|reclutador(?:a|es)?)\s+(?:screen|filtro|entrevista)\b|"
-    r"\b(?:first\s+(?:recruiter\s+)?screen|primer\s+filtro(?:\s+con\s+(?:un\s+)?reclutador)?|"
+    r"\b(?:recruiter|recruiting|reclutador(?:a|es)?)\s+(?:screen(?:ing)?|filtro|entrevista)\b|"
+    r"\b(?:first\s+(?:recruiter\s+)?screen(?:ing)?|primer\s+filtro(?:\s+con\s+(?:un\s+)?reclutador)?|"
     r"(?:first|initial)\s+interview\s+with\s+(?:(?:a|the)\s+)?recruiters?|"
     r"first\s+call\s+with\s+(?:(?:a|the)\s+)?recruiters?|"
     r"(?:(?:primera|inicial)\s+entrevista|entrevista\s+inicial)\s+con\s+(?:(?:un|una|el|la)\s+)?reclutador(?:a|es)?|"
@@ -67,12 +67,12 @@ INTENT = re.compile(
     re.I,
 )
 PLAIN_SCREEN_PREP_INTENT = re.compile(
-    r"\b(?:have\s+an?\s+upcoming|my\s+(?:recruiter\s+)?(?:screen|interview|call|conversation)\s+is\s+(?:coming\s+up|upcoming)|"
-    r"(?:am\s+)?getting\s+ready\s+for\s+(?:a\s+)?recruiter\s+screen|"
+    r"\b(?:have\s+an?\s+upcoming|my\s+(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+is\s+(?:coming\s+up|upcoming)|"
+    r"(?:am\s+)?getting\s+ready\s+for\s+(?:a\s+)?recruiter\s+screen(?:ing)?|"
     r"need\s+to\s+prepare\s+to\s+(?:talk|speak)\s+to\s+(?:the\s+)?recruiter|"
-    r"(?:need\s+to\s+)?prep(?:are)?\s+for\s+(?:a\s+)?recruiter\s+screen|"
-    r"recruiter\s+screen\s+prep|"
-    r"(?:have\s+)?a\s+recruiter\s+screen\s+soon|"
+    r"(?:need\s+to\s+)?prep(?:are)?\s+for\s+(?:a\s+)?recruiter\s+screen(?:ing)?|"
+    r"recruiter\s+screen(?:ing)?\s+prep|"
+    r"(?:have\s+)?a\s+recruiter\s+screen(?:ing)?\s+soon|"
     r"prepare\s+for\s+a\s+talent\s+acquisition\s+call|"
     r"(?:necesito\s+)?preparar\s+(?:una?\s+)?llamada\s+con\s+(?:un\s+)?reclutador(?:a|es)?|"
     r"mi\s+llamada\s+con\s+(?:el\s+)?recruiter\s+es\s+la\s+pr[oó]xima\s+semana|"
@@ -84,7 +84,7 @@ PLAIN_POST_SCREEN_NEXT_STAGE_INTENT = re.compile(
     re.I,
 )
 DEBRIEF_INTENT = re.compile(
-    r"\b(?:debrief|debriefing|post[- ]?(?:screen|interview)|review|revisit|reflect|"
+    r"\b(?:debrief|debriefing|post[- ]?(?:screen(?:ing)?|interview)|review|revisit|reflect|"
     r"revisar|revisi[oó]n|analizar|reflexionar)\b",
     re.I,
 )
@@ -96,66 +96,67 @@ SCREEN_COMPLETION = re.compile(
 SCREEN_NOT_COMPLETED = re.compile(
     r"\b(?:didn['’]?t\s+(?:attend|have|complete|finish|pass|clear)|did\s+not\s+(?:attend|have|complete|finish|pass|clear)|"
     r"haven['’]?t\s+(?:passed|cleared)|have\s+not\s+(?:passed|cleared)|"
-    r"(?:didn['’]?t|did\s+not)\s+go\s+to\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
-    r"never\s+went\s+to\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
-    r"never\s+went\s+through\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
+    r"(?:didn['’]?t|did\s+not)\s+go\s+to\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\b|"
+    r"never\s+went\s+to\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\b|"
+    r"never\s+went\s+through\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\b|"
     r"never\s+(?:spoke|talked)\s+with\s+(?:(?:a|an|the)\s+)?(?:recruiters?|reclutador(?:a|es)?)\b|"
-    r"never\s+(?:had|completed|attended|finished)\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
-    r"(?:had|have)\s+no\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
+    r"never\s+(?:had|completed|attended|finished)\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\b|"
+    r"(?:had|have)\s+no\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\b|"
     r"not\s+(?:yet\s+)?(?:had|attended|completed|finished)|haven['’]?t\s+"
     r"(?:had|attended|completed|finished)|have\s+not\s+(?:had|attended|completed|finished)|"
     r"no\s+he\s+tenido|(?:nunca|no)\s+(?:habl[eé]|convers[eé])\s+con\s+(?:(?:un|una|el|la)\s+)?(?:recruiters?|reclutador(?:a|es)?)\b|"
-    r"(?:nunca|no)\s+pas[eé]\s+por\s+(?:(?:un|una|el|la)\s+)?(?:recruiter\s+|reclutador(?:a|es)?\s+)?(?:screen|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)|"
-    r"(?:nunca|no)\s+fui\s+(?:(?:a|al|a la|el|la)\s+)?(?:recruiter\s+|reclutador(?:a|es)?\s+)?(?:screen|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)|"
-    r"no\s+me\s+present[eé]\s+(?:(?:a|al|a la|el|la)\s+)?(?:recruiter\s+|reclutador(?:a|es)?\s+)?(?:screen|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)|"
-    r"nunca\s+(?:he\s+)?(?:tenido|tuv[eé]|asist[ií]|asistido|complet[eé]|completado|termin[eé]|terminado|atend[ií]|atendido)\s+(?:(?:a|al|a la|el|la|un|una)\s+)?(?:recruiter\s+|reclutador(?:a|es)?\s+)?(?:screen|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)|"
-    r"(?:todav[ií]a\s+)?no\s+(?:he\s+)?(?:tenido|asist[ií]|tuv[eé]|complet[eé]|termin[eé]|atend[ií]|hecho)\s+(?:(?:a|al|a la|el|la|un|una)\s+)?(?:recruiter\s+|reclutador(?:a|es)?\s+)?(?:screen|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)|"
-    r"(?:haven['’]?t|have\s+not)\s+(?:done|taken)\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)|"
-    r"(?:was|were)\s+invited\s+to\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)|"
-    r"(?:have|has|had)\s+been\s+invited\s+to\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)|"
-    r"(?:recruiter\s+)?(?:screen|interview|call|conversation)\s+(?:was|got|were)\s+rescheduled|"
-    r"(?:missed|skipped|canceled|cancelled)\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)|"
-    r"could\s+not\s+(?:attend|make)\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)|"
-    r"was\s+not\s+able\s+to\s+attend\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)|"
-    r"declined\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\s+invitation|"
-    r"get\s+ready\s+for\s+(?:(?:my|a|an|the)\s+)?recruiter\s+(?:phone\s+)?screen\b|"
-    r"(?:prepare|preparing|prepared)\s+for\s+(?:(?:my|a|an|the)\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
+    r"(?:nunca|no)\s+pas[eé]\s+por\s+(?:(?:un|una|el|la)\s+)?(?:recruiter\s+|reclutador(?:a|es)?\s+)?(?:screen(?:ing)?|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)|"
+    r"(?:nunca|no)\s+fui\s+(?:(?:a|al|a la|el|la)\s+)?(?:recruiter\s+|reclutador(?:a|es)?\s+)?(?:screen(?:ing)?|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)|"
+    r"no\s+me\s+present[eé]\s+(?:(?:a|al|a la|el|la)\s+)?(?:recruiter\s+|reclutador(?:a|es)?\s+)?(?:screen(?:ing)?|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)|"
+    r"nunca\s+(?:he\s+)?(?:tenido|tuv[eé]|asist[ií]|asistido|complet[eé]|completado|termin[eé]|terminado|atend[ií]|atendido)\s+(?:(?:a|al|a la|el|la|un|una)\s+)?(?:recruiter\s+|reclutador(?:a|es)?\s+)?(?:screen(?:ing)?|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)|"
+    r"(?:todav[ií]a\s+)?no\s+(?:he\s+)?(?:tenido|asist[ií]|tuv[eé]|complet[eé]|termin[eé]|atend[ií]|hecho)\s+(?:(?:a|al|a la|el|la|un|una)\s+)?(?:recruiter\s+|reclutador(?:a|es)?\s+)?(?:screen(?:ing)?|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)|"
+    r"(?:haven['’]?t|have\s+not)\s+(?:done|taken)\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
+    r"(?:was|were)\s+invited\s+to\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
+    r"(?:have|has|had)\s+been\s+invited\s+to\s+(?:(?:a|an|the)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
+    r"(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+(?:was|got|were)\s+rescheduled|"
+    r"(?:missed|skipped|canceled|cancelled)\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
+    r"could\s+not\s+(?:attend|make)\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
+    r"was\s+not\s+able\s+to\s+attend\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
+    r"declined\s+(?:(?:the|a|an)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+invitation|"
+    r"get\s+ready\s+for\s+(?:(?:my|a|an|the)\s+)?recruiter\s+(?:phone\s+)?screen(?:ing)?\b|"
+    r"(?:prepare|preparing|prepared)\s+for\s+(?:(?:my|a|an|the)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\b|"
     r"(?:prepare|preparing|getting\s+ready)\s+(?:to\s+(?:talk|speak)\s+to\s+(?:a\s+)?recruiters?|(?:una?\s+)?llamada\s+con\s+(?:un\s+)?reclutador(?:a|es)?)\b|"
-    r"\b(?:my\s+)?(?:recruiter\s+)?(?:screen|interview|call|conversation)\s+(?:is\s+)?(?:upcoming|coming\s+up)\b|"
+    r"\b(?:my\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+(?:is\s+)?(?:upcoming|coming\s+up)\b|"
     r"\b(?:preparar(?:me)?|preparando)\s+(?:para\s+)?(?:una?\s+)?llamada\s+con\s+(?:un\s+)?reclutador(?:a|es)?\b|"
-    r"before\s+(?:the|my)\s+(?:recruiter\s+)?(?:screen|interview|call|conversation)\b)",
+    r"before\s+(?:the|my)\s+(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\b)",
     re.I,
 )
 SCREEN_CONTEXT = re.compile(
-    r"\b(?:screen|interview|entrevista|filtro|call|conversation|llamada|conversaci[oó]n|"
+    r"\b(?:screen(?:ing)?|interview|entrevista|filtro|call|conversation|llamada|conversaci[oó]n|"
     r"spoke\s+(?:with|to)|talked\s+(?:to|with)|speaking\s+(?:with|to)|talking\s+(?:to|with)|interviewed|habl[eé]\s+con|hablar\s+con|convers[eé]\s+con)\b",
     re.I,
 )
 FUTURE_SCREEN_DATE = re.compile(
-    r"\b(?:have|has|will\s+have|am\s+having|will\s+attend|am\s+attending)\b[^.!?\n]{0,60}\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b[^.!?\n]{0,40}\b(?:on|this|next)\s+"
+    r"\b(?:have|has|will\s+have|am\s+having|will\s+attend|am\s+attending)\b[^.!?\n]{0,60}\b(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\b[^.!?\n]{0,40}\b(?:on|this|next)\s+"
     r"(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|january|february|march|april|may|june|july|"
     r"august|september|october|november|december)(?:\s+\d{1,2})?\b|"
-    r"\b(?:have|has|will\s+have|am\s+having|will\s+attend|am\s+attending)\b[^.!?\n]{0,60}\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b[^.!?\n]{0,40}\bin\s+(?:\d+|two|three)\s+days?\b|"
-    r"\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b[^.!?\n]{0,50}\b(?:is(?:\s+scheduled(?:\s+for)?)?|will\s+be|scheduled(?:\s+for)?|rescheduled(?:\s+for)?|upcoming)\s+(?:on\s+)?(?:(?:this|next)\s+)?"
+    r"\b(?:have|has|will\s+have|am\s+having|will\s+attend|am\s+attending)\b[^.!?\n]{0,60}\b(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\b[^.!?\n]{0,40}\bin\s+(?:\d+|two|three)\s+days?\b|"
+    r"\b(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\b[^.!?\n]{0,50}\b(?:is(?:\s+scheduled(?:\s+for)?)?|will\s+be|scheduled(?:\s+for)?|rescheduled(?:\s+for)?|upcoming)\s+(?:on\s+)?(?:(?:this|next)\s+)?"
     r"(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|january|february|march|april|may|june|july|august|september|october|november|december)(?:\s+\d{1,2})?\b|"
-    r"\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b[^.!?\n]{0,30}\b(?:tomorrow|next\s+week|next\s+(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)|in\s+(?:\d+|two|three)\s+days?|coming\s+up|upcoming)\b|"
-    r"\b(?:will\s+attend|am\s+attending)\b[^.!?\n]{0,60}\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b[^.!?\n]{0,40}\b(?:on\s+)?(?:(?:this|next)\s+)?"
+    r"\b(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\b[^.!?\n]{0,30}\b(?:tomorrow|next\s+week|next\s+(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)|in\s+(?:\d+|two|three)\s+days?|coming\s+up|upcoming)\b|"
+    r"\b(?:will\s+attend|am\s+attending)\b[^.!?\n]{0,60}\b(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\b[^.!?\n]{0,40}\b(?:on\s+)?(?:(?:this|next)\s+)?"
     r"(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|january|february|march|april|may|june|july|august|september|october|november|december)(?:\s+\d{1,2})?\b|"
-    r"\b(?:tengo|tiene|tendr[eé]|estoy\s+teniendo|asistir[eé]|estoy\s+asistiendo)\b[^.!?\n]{0,60}\b(?:entrevista|filtro|llamada|conversaci[oó]n)\b[^.!?\n]{0,40}\b(?:el|este|en\s+(?:\d+|dos|tres)\s+d[ií]as?)\s+"
+    r"\b(?:tengo|tiene|tendr[eé]|estoy\s+teniendo|asistir[eé]|estoy\s+asistiendo)\b[^.!?\n]{0,60}\b(?:screening|entrevista|filtro|llamada|conversaci[oó]n)\b[^.!?\n]{0,40}\b(?:el|este|en\s+(?:\d+|dos|tres)\s+d[ií]as?)\s+"
     r"(?:lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo|\d{1,2}\s+de\s+(?:enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre))\b|"
-    r"\b(?:entrevista|filtro|llamada|conversaci[oó]n)\b[^.!?\n]{0,50}\b(?:es(?:\s+programad[oa])?|ser[aá]|est[aá]|programad[oa]\s+para|reprogramad[oa]\s+para)\s+(?:el\s+)?(?:pr[oó]xim[oa]\s+)?"
+    r"\b(?:tengo|tiene|tendr[eé]|estoy\s+teniendo|asistir[eé]|estoy\s+asistiendo)\b[^.!?\n]{0,60}\b(?:screening|entrevista|filtro|llamada|conversaci[oó]n)\b[^.!?\n]{0,40}\b(?:la\s+)?pr[oó]xima\s+semana\b|"
+    r"\b(?:screening|entrevista|filtro|llamada|conversaci[oó]n)\b[^.!?\n]{0,50}\b(?:es(?:\s+programad[oa])?|ser[aá]|est[aá]|programad[oa]\s+para|reprogramad[oa]\s+para)\s+(?:el\s+)?(?:pr[oó]xim[oa]\s+)?"
     r"(?:lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo|ma[ñn]ana|pr[oó]xima?\s+semana|en\s+(?:\d+|dos|tres)\s+d[ií]as?)\b",
     re.I,
 )
 RECRUITER_INVITATION_INTENT = re.compile(
-    r"(?:\b(?:got|received|was)\s+(?:an?\s+)?(?:invited|invitation)\b[^.!?\n]{0,55}\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
+    r"(?:\b(?:got|received|was)\s+(?:an?\s+)?(?:invited|invitation)\b[^.!?\n]{0,55}\b(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\b|"
     r"\b(?:was\s+asked|asked)\s+to\s+(?:interview|speak|talk)\s+with\s+(?:(?:a|an?|the)\s+)?recruiters?\b|"
-    r"\b(?:the\s+)?recruiter\s+invited\s+me\s+to\s+(?:a\s+)?(?:screen|interview|call|conversation)\b|"
-    r"\b(?:pending|booked)\s+(?:recruiter\s+)?(?:screen|interview|call|conversation)\b|"
-    r"\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\s+booked\b|"
+    r"\b(?:the\s+)?recruiter\s+invited\s+me\s+to\s+(?:a\s+)?(?:screen(?:ing)?|interview|call|conversation)\b|"
+    r"\b(?:pending|booked)\s+(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\b|"
+    r"\b(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+booked\b|"
     r"\b(?:scheduled\s+to\s+(?:speak|talk)\s+with\s+(?:(?:a|an?|the)\s+)?recruiters?)\b|"
-    r"\b(?:recruiter\s+)?(?:screen|interview|call|conversation)\s+(?:is\s+)?(?:scheduled|programmed)\b|"
-    r"\b(?:me\s+invitaron|recib[ií]\s+(?:una\s+)?invitaci[oó]n|me\s+pidieron)\b[^.!?\n]{0,55}\b(?:recruiter\s+|reclutador(?:a|es)?\s+)?(?:screen|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)\b|"
+    r"\b(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+(?:is\s+)?(?:scheduled|programmed)\b|"
+    r"\b(?:me\s+invitaron|recib[ií]\s+(?:una\s+)?invitaci[oó]n|me\s+pidieron)\b[^.!?\n]{0,55}\b(?:recruiter\s+|reclutador(?:a|es)?\s+)?(?:screen(?:ing)?|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)\b|"
     r"\b(?:filtro|entrevista|llamada|conversaci[oó]n)\s+(?:pendiente|agendada|programada|reservada)\b|"
     r"\b(?:tengo|hay)\s+(?:un|una)\s+(?:filtro|entrevista|llamada|conversaci[oó]n)\s+(?:pendiente|agendada|programada)\b|"
     r"\b(?:tengo|hay)\b[^.!?\n]{0,60}\b(?:entrevista|filtro|llamada|conversaci[oó]n)\b[^.!?\n]{0,40}\b(?:la\s+)?pr[oó]xima\s+semana\b)",
@@ -194,7 +195,7 @@ NEXT_STAGE_INTENT = re.compile(
     re.I,
 )
 POST_SCREEN_PROGRESSION_INTENT = re.compile(
-    r"(?:\b(?:passed|cleared)\s+(?:(?:my|the)\s+)?recruiter\s+(?:screen|interview)\b|"
+    r"(?:\b(?:passed|cleared)\s+(?:(?:my|the)\s+)?recruiter\s+(?:screen(?:ing)?|interview)\b|"
     r"\b(?:moved\s+forward|advanced|progressed)\s+to\s+(?:the\s+)?(?:hiring\s+manager|next\s+round)\b|"
     r"\b(?:recruiter)\b[^.!?\n]{0,70}\bprogress(?:ed|ing)\s+to\s+(?:the\s+)?hiring\s+manager\b|"
     r"\b(?:avanc[eé]|avanz[oó])\s+(?:a\s+)?(?:la\s+)?siguiente\s+ronda\b[^.!?\n]{0,60}\b(?:filtro|reclutador|recruiter)\b|"
@@ -205,14 +206,14 @@ POST_SCREEN_NEGATIVE_OUTCOME_INTENT = re.compile(
     r"(?:\b(?:got|was|were)\s+(?:rejected|declined|turned\s+down)\b|"
     r"\b(?:got|received)\s+(?:a\s+)?rejection\b[^.!?\n]{0,80}\b(?:after|following)\b|"
     r"\b(?:rejected|declined|turned\s+down)\b[^.!?\n]{0,80}\b(?:after|following)\b|"
-    r"\bfailed\s+(?:(?:the|my|a)\s+)?(?:recruiter\s+)?(?:screen|screening|interview|call|conversation)\b|"
-    r"\b(?:didn['’]?t|did\s+not)\s+get\s+past\s+(?:(?:the|my|a)\s+)?(?:recruiter\s+)?(?:screen|screening|interview)\b|"
-    r"\b(?:recruiter\s+)?(?:screen|screening|interview|call|conversation)\s+(?:was|were)\s+unsuccessful(?:ly)?\b|"
+    r"\bfailed\s+(?:(?:the|my|a)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\b|"
+    r"\b(?:didn['’]?t|did\s+not)\s+get\s+past\s+(?:(?:the|my|a)\s+)?(?:recruiter\s+)?(?:screen(?:ing)?|interview)\b|"
+    r"\b(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+(?:was|were)\s+unsuccessful(?:ly)?\b|"
     r"\b(?:got|received)\s+(?:a\s+)?no\b[^.!?\n]{0,80}\b(?:after|following)\b|"
     r"\b(?:went\s+with|chose|selected|moved\s+forward\s+with)\s+(?:another\s+candidate|someone\s+else)\b|"
     r"\bdecidi[oó]\s+seguir\s+con\s+(?:otra\s+persona|otro\s+candidato|alguien\s+m[aá]s)\b|"
     r"\b(?:recruiters?|recruiting|reclutador(?:a|es)?)\b[^.!?\n]{0,60}\b(?:rejected|declined|turned\s+down|me\s+rechaz[oó]|me\s+descart[oó])\b|"
-    r"\b(?:me\s+rechaz(?:ó|aron)|me\s+descart(?:ó|aron)|no\s+me\s+seleccionaron|no\s+pas[eé]\s+(?:el\s+)?(?:filtro|screen|entrevista)|no\s+me\s+(?:eligieron|seleccionaron)|sigui[oó]\s+con\s+(?:otra\s+persona|otro\s+candidato|alguien\s+m[aá]s))\b|"
+    r"\b(?:me\s+rechaz(?:ó|aron)|me\s+descart(?:ó|aron)|no\s+me\s+seleccionaron|no\s+pas[eé]\s+(?:el\s+)?(?:filtro|screen(?:ing)?|entrevista)|no\s+me\s+(?:eligieron|seleccionaron)|sigui[oó]\s+con\s+(?:otra\s+persona|otro\s+candidato|alguien\s+m[aá]s))\b|"
     r"\b(?:recruiters?|recruiting|recruitment)\b[^.!?\n]{0,60}\b(?:said\s+no|passed\s+on\s+me|didn['’]?t\s+select\s+me|not\s+selected)\b)",
     re.I,
 )

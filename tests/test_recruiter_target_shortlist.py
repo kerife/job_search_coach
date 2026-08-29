@@ -600,6 +600,65 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual("collect_debrief_context", routed["next_action"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_root_route_recognizes_screening_as_recruiter_screen_context(self) -> None:
+        cases = (
+            (
+                "I completed my recruiter screening and need a debrief.",
+                "private_recruiter_screen_debrief",
+                "track-career-outcomes",
+                "collect_debrief_context",
+            ),
+            (
+                "After the recruiter screening, what comes next?",
+                "private_recruiter_next_stage_review",
+                "prepare-role-interviews",
+                "collect_debrief_context",
+            ),
+            (
+                "I have a recruiter screening next week; help me prepare.",
+                "recruiter_target_screen_intake",
+                "prepare-role-interviews",
+                "collect_screen_intake",
+            ),
+            (
+                "Completé el screening con el reclutador; ¿qué sigue?",
+                "private_recruiter_next_stage_review",
+                "prepare-role-interviews",
+                "collect_debrief_context",
+            ),
+            (
+                "Tengo un screening con el reclutador la próxima semana; ayúdame a prepararme.",
+                "recruiter_target_screen_intake",
+                "prepare-role-interviews",
+                "collect_screen_intake",
+            ),
+            (
+                "No asistí al screening con el reclutador; ¿qué sigue?",
+                "recruiter_target_screen_intake",
+                "prepare-role-interviews",
+                "collect_screen_intake",
+            ),
+        )
+        for request, route_kind, selected_module, next_action in cases:
+            routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-27")
+            with self.subTest(request=request):
+                self.assertEqual(route_kind, routed["route_kind"])
+                self.assertEqual(selected_module, routed["selected_module"])
+                self.assertEqual(next_action, routed["next_action"])
+                self.assertEqual("needs_intake", routed["case_state"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_root_route_keeps_generic_technical_screening_outside_recruiter_flow(self) -> None:
+        for request in (
+            "I have a technical screening next week; help me prepare.",
+            "I completed a technical screening and need a debrief.",
+        ):
+            routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-27")
+            with self.subTest(request=request):
+                self.assertEqual("ordinary_professional_growth", routed["route_kind"])
+                self.assertEqual("continue_normal_routing", routed["next_action"])
+                self.assertIsNone(routed["artifact"])
+
     def test_root_route_recognizes_common_next_step_wording_after_recruiter_screen(self) -> None:
         for request in (
             "After a recruiter screen, what comes next?",

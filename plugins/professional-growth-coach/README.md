@@ -35,6 +35,8 @@ Explicit requests to expand a network, contact recruiters, or prepare for a recr
 
 The classifier also covers common preparation wording such as “get ready for a recruiter phone screen” and “preparing for a recruiter interview”, completed follow-through such as “I talked with the recruiter”, “what happens after talking to a recruiter?”, and Spanish “¿qué viene después de hablar con un reclutador?”. “Networking con reclutadores” remains the shortlist route.
 
+`screening` is treated as the natural-language equivalent of `screen` across recruiter debrief, next-stage, invitation, and future/non-attendance preparation routes. For example, “I completed my recruiter screening”, “what comes next after the recruiter screening?”, and “tengo un screening con el reclutador la próxima semana” keep the same artifact-free precedence and context-collection boundaries as their `screen` equivalents.
+
 Natural-language coverage also includes upcoming or plain preparation requests (“my recruiter call is coming up”, “getting ready for a recruiter screen”, “preparar una llamada con un reclutador”), recruiting/recruitment aliases in post-screen follow-through, relationship and visibility networking language, and inbound recruiting contact without a message verb. These variants keep the same artifact-free preparation, next-stage, shortlist, or reply-triage boundary and preserve authorization gating.
 
 Natural recruiter interview intent also covers defined-article and scheduled
