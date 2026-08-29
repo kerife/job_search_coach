@@ -236,6 +236,15 @@ TECHNICAL_INTENT = re.compile(r"\b(?:technical|t[eé]cnica|t[eé]cnico)\b", re.I
 RECRUITER_ACTOR = r"(?:recruiters?|recruiting|recruitment|reclutador(?:a|es)?|reclutamiento|talent\s+acquisition|talent\s+partners?|sourcers?|headhunters?)"
 RECRUITER_NON_PERSON_ACTOR = r"(?:recruiting|recruitment|reclutamiento|talent\s+acquisition|talent\s+partners?|sourcers?|headhunters?)"
 EXPLICIT_RECRUITER_INTENT = re.compile(rf"\b{RECRUITER_ACTOR}\b", re.I)
+RECRUITER_ALIAS_INVITATION_INTENT = re.compile(
+    rf"(?:\b(?:got|received)\s+(?:an?\s+)?{RECRUITER_NON_PERSON_ACTOR}\b[^.!?\n]{{0,65}}\b(?:"
+    r"screen(?:ing)?|interview|call|conversation)\s+(?:invitation|invite)\b|"
+    rf"\b{RECRUITER_NON_PERSON_ACTOR}\b[^.!?\n]{{0,70}}\b(?:invited|asked)\s+me\s+to\s+(?:an?\s+)?(?:recruiter\s+)?(?:"
+    r"screen(?:ing)?|interview|call|conversation)\b|"
+    rf"\b{RECRUITER_NON_PERSON_ACTOR}\b[^.!?\n]{{0,70}}\b(?:me\s+)?(?:invit[oó]|invitaron)\b[^.!?\n]{{0,45}}\b(?:"
+    r"screen(?:ing)?|interview|call|conversation|filtro|entrevista|llamada|conversaci[oó]n)\b)",
+    re.I,
+)
 EXTERNAL_ACTION_INTENT = re.compile(
     r"\b(?:send|message|messages|reply|repl(?:y|ies)|respond(?:ed|s|ing|er)?\b|write\s+back|ping|dm|connect|contact|reach|talk|speak|follow[- ]?up|followup|nudge|check[- ]?in|apply|publish|schedule|scheduled|book|calendar|"
     r"confirm|accept|enviar|mensaje|mensajes|responder|conectar|contactar|hablar|aplicar|publicar|agendar|"
@@ -333,8 +342,12 @@ def _has_recruiter_followthrough_context(request: str) -> bool:
 def _natural_recruiter_route(request: str) -> str | None:
     """Classify natural recruiter follow-up language before shortlist routing."""
     has_screen_context = _has_recruiter_screen_context(request)
+    has_recruiter_invitation_signal = bool(
+        RECRUITER_INVITATION_INTENT.search(request) or RECRUITER_ALIAS_INVITATION_INTENT.search(request)
+    )
     has_recruiter_invitation = bool(
-        EXPLICIT_RECRUITER_INTENT.search(request) and RECRUITER_INVITATION_INTENT.search(request)
+        EXPLICIT_RECRUITER_INTENT.search(request)
+        and has_recruiter_invitation_signal
     )
     has_recruiter_inbound = bool(
         EXPLICIT_RECRUITER_INTENT.search(request)
@@ -353,8 +366,7 @@ def _natural_recruiter_route(request: str) -> str | None:
         and POST_SCREEN_NEGATIVE_OUTCOME_INTENT.search(request)
     )
     if (has_screen_context or has_recruiter_invitation) and (
-        RECRUITER_INVITATION_INTENT.search(request)
-        and REPLY_TRIAGE_ACTION_INTENT.search(request)
+        has_recruiter_invitation_signal and REPLY_TRIAGE_ACTION_INTENT.search(request)
     ):
         return "reply_triage"
     if has_recruiter_inbound or has_recruiter_reply_request:
@@ -375,9 +387,9 @@ def _natural_recruiter_route(request: str) -> str | None:
     ):
         return "next_stage"
     if (has_screen_context or has_recruiter_invitation) and (
-        RECRUITER_INVITATION_INTENT.search(request)
-        or
-        SCREEN_NOT_COMPLETED.search(request) or FUTURE_SCREEN_DATE.search(request)
+        has_recruiter_invitation_signal
+        or SCREEN_NOT_COMPLETED.search(request)
+        or FUTURE_SCREEN_DATE.search(request)
     ):
         return "pre_screen"
     if _has_recruiter_followthrough_context(request) and POST_SCREEN_FOLLOWTHROUGH_INTENT.search(request):

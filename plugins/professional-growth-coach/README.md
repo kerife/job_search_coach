@@ -43,6 +43,8 @@ Action-shaped requests that name a recruiting alias (`recruiting`, `recruitment`
 
 Inbound scheduling language from those organizational aliases (for example, a calendar link, proposed times, or a request to choose a slot) follows the same triage boundary and never schedules an event. Generic technical language such as recruiting systems remains outside the recruiter flow.
 
+Invitation language from those aliases is classified with the same precedence as a recruiter invitation: preparation-only requests enter the artifact-free `recruiter_target_screen_intake`, while a request to reply, accept, confirm, or follow up enters `private_recruiter_reply_triage` with `authorization_required=true`. A technical interview invitation without recruiter context remains ordinary professional-growth routing.
+
 Natural recruiter interview intent also covers defined-article and scheduled
 forms such as “I have an interview with the recruiter”, “tengo una entrevista
 con la reclutadora”, “my recruiter screen is this Friday”, and “el viernes”; a
