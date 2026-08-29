@@ -259,6 +259,8 @@ Availability synonyms from an organizational alias (`preguntó cuándo estoy lib
 
 English first/initial preparation with an organizational alias (`first interview with talent acquisition`, `initial call with recruiting`, or `first interview with a sourcer`) enters artifact-free `recruiter_target_screen_intake` with `collect_screen_intake` and no authorization. A first technical interview without recruiter context and analysis-only networking remain outside this branch.
 
+The same boundary covers actor-before-event forms (`prepare for a first recruiter interview`, `get ready for my first call with the recruiter`, and `prepare for a first recruiter screen`) and Spanish `quiero prepararme/practicar mi primera entrevista o conversación con adquisición de talento`. Suffixes that denote technical domains (`recruiting systems`, `recruiting operations`, `talent acquisition analytics`) are explicitly excluded and remain ordinary professional-growth language.
+
 Subjunctive confirmation/acceptance (`La adquisición de talento me pidió que confirmara la entrevista` or `...que aceptara...`) enters `private_recruiter_reply_triage` with `authorization_required=true`; no confirmation, response, or calendar action is performed.
 
 Inbound calendar and availability wording from those aliases is also covered: `asked me to schedule a call`, `asked me to choose a time`, `sent a calendar link`, and their Spanish equivalents enter `private_recruiter_reply_triage` with `collect_recruiter_reply_triage_context`; no event is scheduled and no link or contact detail is retained. Technical phrases such as `recruiting systems` remain ordinary professional-growth language.

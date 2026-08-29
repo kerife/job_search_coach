@@ -869,6 +869,57 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertEqual(expected_route, routed["route_kind"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_english_recruiter_first_event_word_order_enters_screen_intake(self) -> None:
+        for request in (
+            "I want to prepare for a first recruiter interview",
+            "I need to get ready for my first call with the recruiter",
+            "I want to prepare for a first recruiter screen",
+            "Prepare me for my initial recruiter call",
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-28")
+                self.assertEqual("recruiter_target_screen_intake", routed["route_kind"])
+                self.assertEqual("collect_screen_intake", routed["next_action"])
+                self.assertFalse(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_recruiter_first_event_word_order_keeps_non_recruiter_context_out(self) -> None:
+        for request, expected_route in (
+            ("I want to prepare for a first technical interview", "ordinary_professional_growth"),
+            ("I want to prepare for a first interview with the hiring manager", "ordinary_professional_growth"),
+            ("I want to network with recruiters", "recruiter_target_shortlist"),
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-28")
+                self.assertEqual(expected_route, routed["route_kind"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_recruiter_alias_suffixes_for_technical_domains_stay_ordinary(self) -> None:
+        for request in (
+            "I have a first interview with recruiting systems",
+            "I need to prepare for my initial call with recruiting operations",
+            "I have a first interview with talent acquisition analytics",
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale="en", as_of_date="2026-08-28")
+                self.assertEqual("ordinary_professional_growth", routed["route_kind"])
+                self.assertEqual("continue_normal_routing", routed["next_action"])
+                self.assertFalse(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_spanish_natural_first_interview_preparation_with_aliases_enters_screen_intake(self) -> None:
+        for request in (
+            "Quiero prepararme para mi primera entrevista con adquisición de talento",
+            "Quiero practicar mi primera conversación con adquisición de talento",
+            "Necesito prepararme para la primera entrevista con un sourcer",
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-28")
+                self.assertEqual("recruiter_target_screen_intake", routed["route_kind"])
+                self.assertEqual("collect_screen_intake", routed["next_action"])
+                self.assertFalse(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
     def test_first_interview_networking_and_technical_language_keep_boundaries(self) -> None:
         cases = (
             ("Quiero hacer networking con sourcers", "recruiter_target_shortlist"),
@@ -1842,7 +1893,7 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
             network_plan=plan,
             targets=valid_targets(),
         )
-        self.assertEqual("recruiter_target_shortlist", routed["route_kind"])
+        self.assertEqual("recruiter_target_screen_intake", routed["route_kind"])
         self.assertEqual("needs_intake", routed["case_state"])
         self.assertIsNone(routed["artifact"])
 
