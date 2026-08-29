@@ -71,7 +71,9 @@ INTENT = re.compile(
     re.I,
 )
 PLAIN_SCREEN_PREP_INTENT = re.compile(
-    r"\b(?:have\s+an?\s+upcoming\s+(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|my\s+(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+is\s+(?:coming\s+up|upcoming)|"
+    r"\b(?:(?:want|need|would\s+like)\s+to\s+(?:practice|rehearse)\s+(?:a|an|the|my)?\s*(?:(?:recruiters?|recruiting|recruitment|talent\s+acquisition)\s+)?(?:screen(?:ing)?|interview|call|conversation)|"
+    r"(?:have|got)\s+(?:a|an|the|my)\s+recruiter\s+(?:screen(?:ing)?|interview|call|conversation)\s+and\s+(?:want|need)\s+(?:a\s+)?practice\s+session|"
+    r"have\s+an?\s+upcoming\s+(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)|my\s+(?:recruiter\s+)?(?:screen(?:ing)?|interview|call|conversation)\s+is\s+(?:coming\s+up|upcoming)|"
     r"(?:am\s+)?getting\s+ready\s+for\s+(?:a\s+)?recruiter\s+screen(?:ing)?|"
     r"need\s+to\s+prepare\s+to\s+(?:talk|speak)\s+to\s+(?:the\s+)?recruiter|"
     r"(?:need\s+to\s+)?prep(?:are)?\s+for\s+(?:a\s+)?recruiter\s+screen(?:ing)?|"
@@ -84,6 +86,7 @@ PLAIN_SCREEN_PREP_INTENT = re.compile(
     r"prepare\s+me\s+for\s+(?:my|a|an|the)\s+(?:first|initial)\s+(?:interview|call|conversation)\s+with\s+(?:(?:a|an|the)\s+)?(?:recruiters?|recruiting|recruitment|reclutamiento|talent\s+acquisition|talent\s+partners?|sourcers?|headhunters?)|"
     r"(?:prepare\s+me\s+for|prepare\s+for|get\s+ready\s+for)\s+(?:my|a|an|the)\s+(?:first|initial)\s+recruiter\s+(?:interview|call|conversation|screen(?:ing)?)|"
     r"(?:get\s+ready|prepare)\s+for\s+(?:my|a|an|the)\s+(?:first|initial)\s+(?:interview|call|conversation)\s+with\s+(?:(?:a|an|the)\s+)?recruiter|"
+    r"(?:quiero|necesito)\s+(?:practicar|ensayar)\s+(?:un(?:a)?|mi|la|el)?\s*(?:filtro|entrevista|llamada|conversaci[oó]n)\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
     r"prep[aá]rame\s+para\s+(?:mi|un(?:a)?|el|la)\s+(?:primer[ao]|inicial)\s+(?:entrevista|llamada|conversaci[oó]n)\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
     r"prep[aá]rame\s+para\s+(?:mi|un(?:a)?|el|la)\s+(?:entrevista|llamada|conversaci[oó]n)\s+(?:primer[ao]|inicial)\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
     r"(?:quiero|necesito)\s+(?:prepararme|practicar)\s+para\s+(?:mi|la|una?)\s+(?:entrevista|llamada|conversaci[oó]n)\s+(?:primer[ao]|inicial)\s+con\s+(?:(?:un(?:a)?|el|la)\s+)?(?:reclutador(?:a|es)?|reclutamiento|recruiters?|talent\s+acquisition|adquisici[oó]n\s+de\s+talento|sourcers?|headhunters?)|"
@@ -249,7 +252,7 @@ POST_SCREEN_FOLLOWTHROUGH_INTENT = re.compile(
     r"(?:hasn['’]?t|has\s+not|have\s+not|never)\s+repl(?:ied|y)|(?:didn['’]?t|did\s+not)\s+get\s+back|stopped\s+replying|not\s+heard\s+back|has\s+not\s+gotten\s+back|"
     r"no\s+update|still\s+waiting|have\s+not\s+heard\s+anything|thank(?:ed|s)?\s+(?:them|the\s+recruiter)|ghosted|"
     r"wait\s+(?:or|and)\s+follow[- ]?up)\b|"
-    r"\b(?:practicar|preparar(?:me)?|repasar|ensayar)\b[^.!?\n]{0,40}\bdespu[eé]s\s+de\s+(?:hablar|(?:la|una?)\s+(?:llamada|entrevista))\b|"
+    r"\b(?:practicar|preparar(?:me)?|repasar|ensayar)\b[^.!?\n]{0,40}\bdespu[eé]s\s+de\s+(?:hablar|(?:mi|la|una?)\s+(?:llamada|entrevista|conversaci[oó]n))\b|"
     r"\b(?:seguimiento|agradecimiento|dar\s+las\s+gracias|sin\s+respuesta|"
     r"no\s+(?:responde|respondi[oó]|me\s+(?:ha|han)\s+respondido)|nunca\s+respondi[oó]|no\s+(?:he\s+)?recib(?:ido|[ií]|i[oó])\s+respuesta|"
     r"me\s+dejaron\s+en\s+visto|insistir)\b)",

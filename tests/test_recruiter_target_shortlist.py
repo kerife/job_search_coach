@@ -910,6 +910,32 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
                 self.assertFalse(routed["authorization_required"])
                 self.assertIsNone(routed["artifact"])
 
+    def test_recruiter_screen_practice_requests_enter_screen_intake(self) -> None:
+        for request, locale in (
+            ("I want to practice a recruiter screen", "en"),
+            ("I want to rehearse a recruiter interview", "en"),
+            ("Quiero ensayar una entrevista con el reclutador", "es"),
+            ("Necesito practicar un filtro con la reclutadora", "es"),
+            ("I have a recruiter screen and want a practice session", "en"),
+        ):
+            with self.subTest(request=request):
+                routed = route_recruiter_request(request, locale=locale, as_of_date="2026-08-28")
+                self.assertEqual("recruiter_target_screen_intake", routed["route_kind"])
+                self.assertEqual("collect_screen_intake", routed["next_action"])
+                self.assertFalse(routed["authorization_required"])
+                self.assertIsNone(routed["artifact"])
+
+    def test_completed_recruiter_screen_practice_keeps_debrief_precedence(self) -> None:
+        routed = route_recruiter_request(
+            "I completed a recruiter screen and want to rehearse",
+            locale="en",
+            as_of_date="2026-08-28",
+        )
+        self.assertEqual("private_recruiter_screen_debrief", routed["route_kind"])
+        self.assertEqual("collect_debrief_context", routed["next_action"])
+        self.assertFalse(routed["authorization_required"])
+        self.assertIsNone(routed["artifact"])
+
     def test_recruiter_first_event_word_order_keeps_non_recruiter_context_out(self) -> None:
         for request, expected_route in (
             ("I want to prepare for a first technical interview", "ordinary_professional_growth"),
@@ -1838,6 +1864,8 @@ class RecruiterTargetShortlistTests(unittest.TestCase):
             "Quiero practicar después de hablar con el reclutador",
             "Quiero repasar después de la llamada con adquisición de talento",
             "Necesito prepararme después de hablar con la reclutadora",
+            "Quiero practicar después de mi llamada con adquisición de talento",
+            "Quiero practicar después de mi conversación con adquisición de talento",
         ):
             with self.subTest(request=request):
                 routed = route_recruiter_request(request, locale="es", as_of_date="2026-08-28")
