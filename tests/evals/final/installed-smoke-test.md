@@ -16,15 +16,15 @@ plugin_identity: `professional-growth-coach@professional-growth-coach-local`
 
 release_version_prefix: `0.2.0+codex`
 
-release_timestamp: `2026-08-28T22:23:25-06:00`
+release_timestamp: `2026-08-28T22:34:05-06:00`
 
-source_commit: `13dee0acf4776e0f082c8457cd2826d55937584c`
+source_commit: `d6a4105d1ca3e90ad56266aba3c3e017ea4f1e5f`
 
-source_tree: `80722a5d2ae6ed9a9a08f70d817f66e0e734121e`
+source_tree: `f9379e50fcb47e177d01e73a4ac99ed9f572e327`
 
 installed_cache_family: `professional-growth-coach-local/professional-growth-coach`
 
-installed_cache_version: `0.2.0+codex.20260828222325`
+installed_cache_version: `0.2.0+codex.20260828223405`
 
 installed_enabled: `true`
 
@@ -32,7 +32,7 @@ source_file_count: `177`
 
 installed_file_count: `177`
 
-normalized_source_cache_sha256: `9977fb18c19e03ce3908b32a80ae35822ae9536296dd927b72b055ed29fa85ef`
+normalized_source_cache_sha256: `fabec749b83da7011cd07509f68f9ab32dacbf7a3422f46cdb68da1900514a3c`
 
 normalized_digest_method: `sha256(sorted relative path + NUL + file bytes; excludes __pycache__)`
 
@@ -73,6 +73,8 @@ installed_recruiter_spanish_passive_outcome_smoke: `3/3 Spanish passive selectio
 installed_recruiter_spanish_alias_reschedule_smoke: `4/4 Spanish talent-acquisition confirmation/contact and passive rescheduling variants preserve private triage or screen-intake boundaries`
 
 installed_recruiter_first_interview_alias_smoke: `5/5 Spanish first-interview alias variants enter screen-intake; networking and technical-domain controls remain bounded`
+
+installed_recruiter_preparation_word_order_smoke: `4/4 actor-before-event preparation variants enter screen-intake while technical suffixes stay ordinary`
 
 installed_v1_table_semantics_smoke: `1/1 responsive v1 market table emits explicit table, rowgroup, row, header, and cell roles`
 
